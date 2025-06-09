@@ -24,6 +24,9 @@ import {
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 
+// Firebase Performance
+import { useFirebasePerformance } from '../hooks/useFirebasePerformance';
+
 // Redux
 import { useAppSelector, useAppDispatch } from '../hooks/useRedux';
 import { selectCurrentUser } from '../redux/slices/authSlice';
@@ -50,6 +53,9 @@ const DashboardPage = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const user = useAppSelector(selectCurrentUser);
+  
+  // Firebase Performance tracking for dashboard page
+  useFirebasePerformance('dashboard', user?.username);
   
   useEffect(() => {
     // Update page title

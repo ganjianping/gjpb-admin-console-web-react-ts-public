@@ -6,6 +6,7 @@ import { Toaster } from 'react-hot-toast'
 
 import './index.css'
 import '../../shared-lib/src/utils/i18n' // Initialize i18n
+import './config/firebase' // Initialize Firebase Performance Monitoring
 import { store } from './redux/store'
 import ThemeProvider from './theme/ThemeProvider'
 import CSRFInitializer from './components/CSRFInitializer'
@@ -14,16 +15,9 @@ import AppLoading from './components/AppLoading'
 // Lazy load the routes for better initial loading performance
 const AppRoutes = lazy(() => import('./routes/AppRoutes'))
 
-// Performance monitoring in production only
-// Only load in production to avoid unnecessary overhead
-const isProd = window.location.hostname !== 'localhost';
-if (isProd) {
-  // We use dynamic import() for code splitting
-  // This avoids loading the reportWebVitals code in development
-  import('./utils/reportWebVitals')
-    .then(({ reportWebVitals }) => reportWebVitals())
-    .catch(err => console.warn('Could not initialize performance monitoring', err));
-}
+// Firebase Performance Monitoring is automatically initialized
+// Web Vitals (CLS, FID, FCP, LCP, TTFB) are automatically tracked
+// No additional code needed - Firebase handles everything!
 
 // Improved mounting with error boundaries
 const rootElement = document.getElementById('root');

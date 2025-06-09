@@ -54,18 +54,23 @@ npm install
 
 ### Environment Setup
 
-The project uses environment-specific configuration files:
+⚠️ **Security Notice**: This project requires environment variables for Firebase configuration. 
 
-- `.env.development` - Development environment settings
-- `.env.production` - Production environment settings
-
-Example `.env.development` file:
-
-```dotenv
-# Development environment variables
-API_BASE_URL=/api
-VITE_ENABLE_MOCK_CSRF=false
+1. **Copy the environment template**:
+```bash
+cp .env.example .env
 ```
+
+2. **Configure Firebase credentials**:
+   - Create a Firebase project at [console.firebase.google.com](https://console.firebase.google.com/)
+   - Get your project configuration
+   - Update `.env` with your real Firebase credentials
+
+3. **Read the security guide**:
+   - 📖 See [ENVIRONMENT_SECURITY.md](./ENVIRONMENT_SECURITY.md) for detailed setup instructions
+   - 🔒 See [FIREBASE_PERFORMANCE.md](./FIREBASE_PERFORMANCE.md) for Firebase Performance setup
+
+**Never commit your `.env` file!** It contains sensitive credentials.
 
 ### Available Scripts
 
