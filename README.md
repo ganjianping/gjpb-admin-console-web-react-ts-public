@@ -42,8 +42,8 @@ A modern, secure, and responsive admin console for GJPB, built with React.js 19.
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/your-username/gjpb-admin-console-web.git
-cd gjpb-admin-console-web
+git clone https://github.com/ganjianping/gjpb-admin-console-web-react-ts-public.git
+cd gjpb-admin-console-web-react-ts-public
 ```
 
 2. Install dependencies:

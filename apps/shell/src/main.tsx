@@ -9,6 +9,7 @@ import '../../shared-lib/src/utils/i18n' // Initialize i18n
 import { store } from './redux/store'
 import ThemeProvider from './theme/ThemeProvider'
 import CSRFInitializer from './components/CSRFInitializer'
+import AppLoading from './components/AppLoading'
 
 // Lazy load the routes for better initial loading performance
 const AppRoutes = lazy(() => import('./routes/AppRoutes'))
@@ -39,7 +40,7 @@ root.render(
       }}>
         <ThemeProvider>
           <CSRFInitializer>
-            <Suspense fallback={<div className="app-loading">Loading application...</div>}>
+            <Suspense fallback={<AppLoading />}>
               <AppRoutes />
             </Suspense>
             <Toaster position="top-right" />
