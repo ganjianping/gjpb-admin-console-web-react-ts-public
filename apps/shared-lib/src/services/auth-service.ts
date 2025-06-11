@@ -62,10 +62,10 @@ class AuthService {
       // Store tokens in HTTP-only cookies
       const { accessToken, refreshToken, tokenType, expiresIn } = authResponse;
       
-      // Store tokens in cookies
-      setCookie(APP_CONFIG.TOKEN.ACCESS_TOKEN_KEY, accessToken, expiresIn);
-      setCookie(APP_CONFIG.TOKEN.REFRESH_TOKEN_KEY, refreshToken);
-      setCookie(APP_CONFIG.TOKEN.TOKEN_TYPE_KEY, tokenType);
+      // Store tokens with explicit SameSite protection
+      setCookie(APP_CONFIG.TOKEN.ACCESS_TOKEN_KEY, accessToken, expiresIn, '/', import.meta.env.PROD, 'Lax');
+      setCookie(APP_CONFIG.TOKEN.REFRESH_TOKEN_KEY, refreshToken, undefined, '/', import.meta.env.PROD, 'Lax');
+      setCookie(APP_CONFIG.TOKEN.TOKEN_TYPE_KEY, tokenType, undefined, '/', import.meta.env.PROD, 'Lax');
       
       // Store user info in localStorage for convenience
       localStorage.setItem('gjpb_user_info', JSON.stringify({
@@ -134,10 +134,10 @@ class AuthService {
       
       const { accessToken, refreshToken: newRefreshToken, tokenType, expiresIn } = tokenResponse;
       
-      // Store new tokens
-      setCookie(APP_CONFIG.TOKEN.ACCESS_TOKEN_KEY, accessToken, expiresIn);
-      setCookie(APP_CONFIG.TOKEN.REFRESH_TOKEN_KEY, newRefreshToken);
-      setCookie(APP_CONFIG.TOKEN.TOKEN_TYPE_KEY, tokenType);
+      // Store new tokens with explicit SameSite protection
+      setCookie(APP_CONFIG.TOKEN.ACCESS_TOKEN_KEY, accessToken, expiresIn, '/', import.meta.env.PROD, 'Lax');
+      setCookie(APP_CONFIG.TOKEN.REFRESH_TOKEN_KEY, newRefreshToken, undefined, '/', import.meta.env.PROD, 'Lax');
+      setCookie(APP_CONFIG.TOKEN.TOKEN_TYPE_KEY, tokenType, undefined, '/', import.meta.env.PROD, 'Lax');
       
       return tokenResponse;
     } catch (error) {
@@ -191,6 +191,54 @@ class AuthService {
     } catch (error) {
       console.error('[AuthService] Get user roles error:', error);
       return [];
+    }
+  }
+
+  /**
+   * Check if access token will expire soon and refresh if needed
+   * @returns Promise that resolves when token is refreshed (if needed)
+   */
+  public async ensureValidToken(): Promise<void> {
+    if (!this.isAuthenticated()) {
+      throw new Error('User not authenticated');
+    }
+
+    try {
+      // Check if token needs proactive refresh
+      if (this.shouldRefreshToken()) {
+        console.info('[AuthService] Token expiring soon, refreshing proactively');
+        await this.refreshToken();
+      }
+    } catch (error) {
+      console.error('[AuthService] Token validation error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Check if token is close to expiring (within TOKEN_EXPIRY_BUFFER)
+   * @returns true if token should be refreshed proactively
+   */
+  public shouldRefreshToken(): boolean {
+    const accessToken = getCookie(APP_CONFIG.TOKEN.ACCESS_TOKEN_KEY);
+    
+    if (!accessToken) {
+      return false;
+    }
+
+    try {
+      // Decode JWT token to check expiry (simple base64 decode)
+      const payload = JSON.parse(atob(accessToken.split('.')[1]));
+      const expiryTime = payload.exp * 1000; // Convert to milliseconds
+      const currentTime = Date.now();
+      const bufferTime = APP_CONFIG.AUTH.TOKEN_EXPIRY_BUFFER * 1000; // Convert to milliseconds
+      
+      // Return true if token expires within the buffer time
+      return (expiryTime - currentTime) <= bufferTime;
+    } catch (error) {
+      console.warn('[AuthService] Could not decode token for expiry check:', error);
+      // If we can't decode the token, assume it needs refresh
+      return true;
     }
   }
 }

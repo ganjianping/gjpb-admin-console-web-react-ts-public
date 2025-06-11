@@ -101,7 +101,7 @@ class HttpClient {
               return Promise.reject(error);
             }
 
-            const response = await this.instance.post<ApiResponse<{
+            const response = await this.instance.put<ApiResponse<{
               accessToken: string;
               refreshToken: string;
               tokenType: string;
@@ -113,10 +113,10 @@ class HttpClient {
 
             const { accessToken, refreshToken: newRefreshToken, tokenType, expiresIn } = response.data.data;
 
-            // Store new tokens
-            setCookie(APP_CONFIG.TOKEN.ACCESS_TOKEN_KEY, accessToken, expiresIn);
-            setCookie(APP_CONFIG.TOKEN.REFRESH_TOKEN_KEY, newRefreshToken);
-            setCookie(APP_CONFIG.TOKEN.TOKEN_TYPE_KEY, tokenType);
+            // Store new tokens with explicit SameSite protection
+            setCookie(APP_CONFIG.TOKEN.ACCESS_TOKEN_KEY, accessToken, expiresIn, '/', import.meta.env.PROD, 'Lax');
+            setCookie(APP_CONFIG.TOKEN.REFRESH_TOKEN_KEY, newRefreshToken, undefined, '/', import.meta.env.PROD, 'Lax');
+            setCookie(APP_CONFIG.TOKEN.TOKEN_TYPE_KEY, tokenType, undefined, '/', import.meta.env.PROD, 'Lax');
 
             // Update authorization header
             originalRequest.headers.Authorization = `${tokenType} ${accessToken}`;
