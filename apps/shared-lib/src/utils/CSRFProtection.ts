@@ -118,6 +118,14 @@ export class CSRFProtection {
   }
 
   static async initializeToken(): Promise<string> {
+    // If CSRF protection is disabled, return a mock token immediately
+    if (!APP_ENV.ENABLE_CSRF_PROTECTION) {
+      console.info('CSRF protection is disabled via configuration');
+      const mockToken = CSRFProtection.createMockToken('disabled');
+      CSRFProtection.setToken(mockToken);
+      return Promise.resolve(mockToken);
+    }
+
     // If we're explicitly set to mock mode via env var, log this
     if (APP_ENV.ENABLE_MOCK_CSRF && !CSRFProtection.mockEnabled) {
       console.info('CSRF mock mode enabled via environment configuration');
@@ -148,7 +156,7 @@ export class CSRFProtection {
       }
 
       // Use VITE_API_BASE_URL from APP_ENV
-      const response = await axios.get(`${APP_ENV.VITE_API_BASE_URL}/csrf-token`, {
+      const response = await axios.get(`${APP_ENV.VITE_API_BASE_URL}/auth/csrf-token`, {
         withCredentials: true,
         timeout: 3000, // Shorter timeout for development
         validateStatus: (status) => status < 500, // Don't reject on 4xx errors, only on 5xx

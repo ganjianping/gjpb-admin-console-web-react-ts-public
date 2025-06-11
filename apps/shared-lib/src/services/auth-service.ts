@@ -120,7 +120,7 @@ class AuthService {
       if (useMockAPI) {
         tokenResponse = await mockApiService.refreshToken(refreshToken) as AuthTokens;
       } else {
-        const response = await apiClient.post<AuthTokens>(
+        const response = await apiClient.put<AuthTokens>(
           APP_CONFIG.AUTH.REFRESH_TOKEN_URL,
           { refreshToken }
         );
@@ -185,7 +185,7 @@ class AuthService {
       const userInfo = localStorage.getItem('gjpb_user_info');
       if (userInfo) {
         const { roleCodes } = JSON.parse(userInfo);
-        return roleCodes || [];
+        return roleCodes ?? [];
       }
       return [];
     } catch (error) {

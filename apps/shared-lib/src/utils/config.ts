@@ -8,6 +8,7 @@ export const APP_ENV = {
   MODE: import.meta.env.MODE ?? 'development',
   VITE_API_BASE_URL: import.meta.env.VITE_API_BASE_URL ?? '/api',
   ENABLE_MOCK_CSRF: import.meta.env.VITE_ENABLE_MOCK_CSRF === 'true',
+  ENABLE_CSRF_PROTECTION: import.meta.env.VITE_ENABLE_CSRF_PROTECTION !== 'false', // Enabled by default, can be disabled
 };
 
 export const APP_CONFIG = {
@@ -34,7 +35,7 @@ export const APP_CONFIG = {
   },
   AUTH: {
     LOGIN_URL: '/v1/auth/tokens',
-    REFRESH_TOKEN_URL: '/v1/auth/tokens/refresh',
+    REFRESH_TOKEN_URL: '/v1/auth/tokens', // Same endpoint, different HTTP method (PUT)
     TOKEN_EXPIRY_BUFFER: 300, // 5 minutes in seconds
   },
 };
