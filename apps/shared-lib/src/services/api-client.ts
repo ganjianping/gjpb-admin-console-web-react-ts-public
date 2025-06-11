@@ -205,6 +205,6 @@ class HttpClient {
 }
 
 // Create and export the API client instance
-export const apiClient = new HttpClient(APP_ENV.API_BASE_URL);
+export const apiClient = new HttpClient(APP_ENV.VITE_API_BASE_URL);
 
 export default apiClient;

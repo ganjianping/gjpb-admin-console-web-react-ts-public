@@ -147,8 +147,8 @@ export class CSRFProtection {
         sessionStorage.setItem('csrf_mock_warning_shown', 'true');
       }
 
-      // Use API_BASE_URL from APP_ENV
-      const response = await axios.get(`${APP_ENV.API_BASE_URL}/csrf-token`, {
+      // Use VITE_API_BASE_URL from APP_ENV
+      const response = await axios.get(`${APP_ENV.VITE_API_BASE_URL}/csrf-token`, {
         withCredentials: true,
         timeout: 3000, // Shorter timeout for development
         validateStatus: (status) => status < 500, // Don't reject on 4xx errors, only on 5xx

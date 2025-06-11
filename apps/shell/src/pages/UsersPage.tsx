@@ -24,6 +24,9 @@ import { Plus, Users as UsersIcon, Shield, Download, Upload } from 'lucide-react
 import { useTranslation } from 'react-i18next';
 import { DataTable, createColumnHelper, createStatusChip } from '../../../shared-lib/src/components/DataTable';
 
+// Firebase Analytics
+import { trackPageView, trackEvent } from '../utils/firebaseAnalytics';
+
 // Redux
 import { useAppDispatch } from '../hooks/useRedux';
 import { setPageTitle } from '../redux/slices/uiSlice';
@@ -167,6 +170,9 @@ const UsersPage = () => {
   // Set page title
   useEffect(() => {
     dispatch(setPageTitle(t('navigation.users')));
+    
+    // Track page view for analytics
+    trackPageView('Users', t('navigation.users'));
   }, [dispatch, t]);
 
   // Handle tab change
@@ -179,18 +185,21 @@ const UsersPage = () => {
     setSelectedUser(user);
     setActionType('view');
     setDialogOpen(true);
+    trackEvent('view_user', { userId: user.id, userRoles: user.roles });
   };
 
   const handleEdit = (user: User) => {
     setSelectedUser(user);
     setActionType('edit');
     setDialogOpen(true);
+    trackEvent('edit_user', { userId: user.id, userRoles: user.roles });
   };
 
   const handleDelete = (user: User) => {
     setSelectedUser(user);
     setActionType('delete');
     setDialogOpen(true);
+    trackEvent('delete_user_attempt', { userId: user.id, userRoles: user.roles });
   };
 
   const handleCloseDialog = () => {

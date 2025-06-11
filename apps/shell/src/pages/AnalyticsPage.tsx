@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Box, 
   Card, 
@@ -35,6 +35,13 @@ import { Line, Bar, Pie } from 'react-chartjs-2';
 // Define DateRange type here instead of importing from date-fns
 type DateRange<T = Date> = [T | null, T | null];
 import { DatePickerRange } from '../../../shared-lib/src/components/DatePickerRange';
+
+// Firebase Analytics
+import { trackPageView } from '../utils/firebaseAnalytics';
+
+// Redux
+import { useAppDispatch } from '../hooks/useRedux';
+import { setPageTitle } from '../redux/slices/uiSlice';
 
 // Register ChartJS components
 ChartJS.register(
@@ -82,12 +89,19 @@ function a11yProps(index: number) {
 const AnalyticsPage = () => {
   const { t } = useTranslation();
   const theme = useTheme();
+  const dispatch = useAppDispatch();
   const [tabValue, setTabValue] = useState(0);
   const [dateRange, setDateRange] = useState<DateRange<Date>>([
     new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1),
     new Date()
   ]);
   const [timeframe, setTimeframe] = useState('week');
+
+  // Set page title and track page view
+  useEffect(() => {
+    dispatch(setPageTitle(t('navigation.analytics')));
+    trackPageView('Analytics', t('navigation.analytics'));
+  }, [dispatch, t]);
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);

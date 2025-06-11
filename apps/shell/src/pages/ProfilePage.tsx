@@ -22,6 +22,9 @@ import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 
+// Firebase Analytics
+import { trackPageView, trackFormSubmission } from '../utils/firebaseAnalytics';
+
 // Redux
 import { useAppSelector, useAppDispatch } from '../hooks/useRedux';
 import { selectCurrentUser } from '../redux/slices/authSlice';
@@ -123,6 +126,9 @@ const ProfilePage = () => {
   // Set page title
   useEffect(() => {
     dispatch(setPageTitle(t('navigation.profile')));
+    
+    // Track page view for analytics
+    trackPageView('Profile', t('navigation.profile'));
   }, [dispatch, t]);
 
   // Handle tab change
@@ -136,10 +142,17 @@ const ProfilePage = () => {
       // In a real app, this would call an API to update the profile
       console.log('Updated profile data:', data);
       
+      // Track form submission
+      trackFormSubmission('profile_update', 'user_profile', true);
+      
       // Show success message
       toast.success(t('profile.updateSuccess'));
     } catch (error) {
       console.error('Profile update error:', error);
+      
+      // Track failed submission
+      trackFormSubmission('profile_update', 'user_profile', false);
+      
       toast.error(t('profile.updateError'));
     }
   };
@@ -149,6 +162,9 @@ const ProfilePage = () => {
     try {
       // In a real app, this would call an API to change the password
       console.log('Password change data:', data);
+      
+      // Track password change success
+      trackFormSubmission('password_change', 'security', true);
       
       // Reset form
       passwordForm.reset({
@@ -161,6 +177,10 @@ const ProfilePage = () => {
       toast.success(t('profile.passwordChangeSuccess'));
     } catch (error) {
       console.error('Password change error:', error);
+      
+      // Track password change failure
+      trackFormSubmission('password_change', 'security', false);
+      
       toast.error(t('profile.passwordChangeError'));
     }
   };

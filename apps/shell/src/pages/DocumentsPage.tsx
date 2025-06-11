@@ -20,6 +20,9 @@ import {
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
+// Firebase Analytics
+import { trackPageView } from '../utils/firebaseAnalytics';
+
 // Redux
 import { useAppDispatch } from '../hooks/useRedux';
 import { setPageTitle } from '../redux/slices/uiSlice';
@@ -112,6 +115,9 @@ const DocumentsPage = () => {
   // Set page title
   useEffect(() => {
     dispatch(setPageTitle(t('navigation.documents')));
+    
+    // Track page view for analytics
+    trackPageView('Documents', t('navigation.documents'));
   }, [dispatch, t]);
 
   // Handle tab change

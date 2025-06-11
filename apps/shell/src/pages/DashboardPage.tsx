@@ -27,6 +27,9 @@ import { format } from 'date-fns';
 // Firebase Performance
 import { useFirebasePerformance } from '../hooks/useFirebasePerformance';
 
+// Firebase Analytics
+import { trackPageView } from '../utils/firebaseAnalytics';
+
 // Redux
 import { useAppSelector, useAppDispatch } from '../hooks/useRedux';
 import { selectCurrentUser } from '../redux/slices/authSlice';
@@ -60,6 +63,9 @@ const DashboardPage = () => {
   useEffect(() => {
     // Update page title
     dispatch(setPageTitle(t('navigation.dashboard')));
+    
+    // Track page view for analytics
+    trackPageView('Dashboard', t('navigation.dashboard'));
   }, [dispatch, t]);
   
   return (

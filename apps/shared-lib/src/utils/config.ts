@@ -6,7 +6,7 @@ export const APP_ENV = {
   DEV: import.meta.env.DEV,
   PROD: import.meta.env.PROD,
   MODE: import.meta.env.MODE ?? 'development',
-  API_BASE_URL: import.meta.env.API_BASE_URL ?? '/api',
+  VITE_API_BASE_URL: import.meta.env.VITE_API_BASE_URL ?? '/api',
   ENABLE_MOCK_CSRF: import.meta.env.VITE_ENABLE_MOCK_CSRF === 'true',
 };
 

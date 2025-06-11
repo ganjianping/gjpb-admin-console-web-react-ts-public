@@ -48,6 +48,9 @@ import { APP_CONFIG } from '../../../shared-lib/src/utils/config';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 
+// Firebase Analytics
+import { trackPageView, trackEvent } from '../utils/firebaseAnalytics';
+
 const SettingsPage = () => {
   const { t, i18n } = useTranslation();
   const theme = useTheme();
@@ -67,12 +70,22 @@ const SettingsPage = () => {
   // Set page title
   useEffect(() => {
     dispatch(setPageTitle(t('navigation.settings')));
+    
+    // Track page view for analytics
+    trackPageView('Settings', t('navigation.settings'));
   }, [dispatch, t]);
   
   // Handle theme change
   const handleThemeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newTheme = event.target.checked ? 'dark' : 'light';
     dispatch(setThemeMode(newTheme as ThemeMode));
+    
+    // Track theme change
+    trackEvent('change_theme', { 
+      newTheme,
+      previousTheme: currentTheme 
+    });
+    
     toast.success(t('settings.themeChanged'));
   };
   
@@ -81,6 +94,13 @@ const SettingsPage = () => {
     const newLang = event.target.value as Language;
     dispatch(setLanguage(newLang));
     i18n.changeLanguage(newLang);
+    
+    // Track language change
+    trackEvent('change_language', { 
+      newLanguage: newLang,
+      previousLanguage: currentLanguage 
+    });
+    
     toast.success(t('settings.languageChanged'));
   };
   

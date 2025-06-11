@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Box, 
   Button, 
@@ -39,6 +39,13 @@ import {
 } from 'lucide-react';
 import { DatePickerRange } from '../../../shared-lib/src/components/DatePickerRange';
 import { Grid } from '../../../shared-lib/src/utils/grid';
+
+// Firebase Analytics
+import { trackPageView, trackEvent } from '../utils/firebaseAnalytics';
+
+// Redux
+import { useAppDispatch } from '../hooks/useRedux';
+import { setPageTitle } from '../redux/slices/uiSlice';
 
 // Define DateRange type locally
 type DateRange<T = Date> = [T | null, T | null];
@@ -183,6 +190,7 @@ const REPORT_HISTORY = [
 
 const ReportsPage = () => {
   const { t } = useTranslation();
+  const dispatch = useAppDispatch();
   const [tabValue, setTabValue] = useState(0);
   const [reportType, setReportType] = useState('');
   const [reportFormat, setReportFormat] = useState('pdf');
@@ -192,6 +200,12 @@ const ReportsPage = () => {
   ]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationSuccess, setGenerationSuccess] = useState<boolean | null>(null);
+
+  // Set page title and track page view
+  useEffect(() => {
+    dispatch(setPageTitle(t('navigation.reports')));
+    trackPageView('Reports', t('navigation.reports'));
+  }, [dispatch, t]);
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
@@ -211,12 +225,26 @@ const ReportsPage = () => {
     setIsGenerating(true);
     setGenerationSuccess(null);
     
+    // Track report generation attempt
+    trackEvent('generate_report', {
+      reportType,
+      reportFormat,
+      dateRangeStart: dateRange[0]?.toISOString(),
+      dateRangeEnd: dateRange[1]?.toISOString()
+    });
+    
     // Simulate API call
     setTimeout(() => {
       setIsGenerating(false);
       // Random success/failure for demonstration
       const success = Math.random() > 0.2;
       setGenerationSuccess(success);
+      
+      // Track report generation result
+      trackEvent(success ? 'generate_report_success' : 'generate_report_failed', {
+        reportType,
+        reportFormat
+      });
       
       // Clear success/error message after 5 seconds
       setTimeout(() => {

@@ -13,6 +13,7 @@ A modern, secure, and responsive admin console for GJPB, built with React.js 19.
 - **Type-safe development** with strict TypeScript configuration
 - **Modern UI components** with accessibility (WCAG 2.1 AA compliance)
 - **Performance optimized** with code splitting and lazy loading
+- **Firebase integration** with Performance Monitoring and Analytics
 - **Code quality assurance** with ESLint, strict TypeScript, and comprehensive testing
 - **Production-ready** with zero linting errors and comprehensive error handling
 
@@ -24,6 +25,7 @@ A modern, secure, and responsive admin console for GJPB, built with React.js 19.
 - **Routing**: React Router v6.30
 - **API**: Axios with automatic token refresh and CSRF protection
 - **Form Handling**: React Hook Form 7.57 + Zod 3.25 validation
+- **Firebase**: Performance Monitoring 11.9.0 + Analytics
 - **Testing**: Vitest + React Testing Library 16.3
 - **Data Visualization**: Chart.js 4.4 with react-chartjs-2
 - **Data Tables**: TanStack Table 8.21
@@ -69,6 +71,7 @@ cp .env.example .env
 3. **Read the security guide**:
    - 📖 See [ENVIRONMENT_SECURITY.md](./ENVIRONMENT_SECURITY.md) for detailed setup instructions
    - 🔒 See [FIREBASE_PERFORMANCE.md](./FIREBASE_PERFORMANCE.md) for Firebase Performance setup
+   - 📊 See [FIREBASE_ANALYTICS_IMPLEMENTATION.md](./FIREBASE_ANALYTICS_IMPLEMENTATION.md) for Firebase Analytics setup
 
 **Never commit your `.env` file!** It contains sensitive credentials.
 
