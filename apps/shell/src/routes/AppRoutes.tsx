@@ -21,19 +21,16 @@ import UnauthorizedPage from '../pages/UnauthorizedPage';
 import ProtectedRoute from '../components/ProtectedRoute';
 
 // Redux
-import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
-import { fetchCurrentUser, selectIsAuthenticated } from '../redux/slices/authSlice';
+import { useAppDispatch } from '../hooks/useRedux';
+import { initializeAuth } from '../redux/slices/authSlice';
 
 const AppRoutes = () => {
   const dispatch = useAppDispatch();
-  const isAuthenticated = useAppSelector(selectIsAuthenticated);
 
-  // Try to fetch current user on app load if we have tokens
+  // Initialize authentication state on app load
   useEffect(() => {
-    if (isAuthenticated) {
-      dispatch(fetchCurrentUser());
-    }
-  }, [dispatch, isAuthenticated]);
+    dispatch(initializeAuth());
+  }, [dispatch]);
 
   return (
     <Routes>

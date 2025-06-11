@@ -77,6 +77,8 @@ class MockApiService {
     
     if (!user) {
       throw new Error('Invalid credentials');
+    } else {
+      console.log('Login successful! Welcome ' + user.username);
     }
     
     // Generate tokens

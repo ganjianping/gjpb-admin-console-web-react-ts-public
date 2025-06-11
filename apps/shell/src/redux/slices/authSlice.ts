@@ -59,6 +59,38 @@ export const logoutUser = createAsyncThunk('auth/logout', async () => {
   return null;
 });
 
+// Initialize auth state on app startup
+export const initializeAuth = createAsyncThunk<
+  { isAuthenticated: boolean; user?: UserInfo },
+  void
+>('auth/initialize', async () => {
+  try {
+    // Check if user has valid authentication tokens
+    const isAuthenticated = authService.isAuthenticated();
+    
+    if (isAuthenticated) {
+      // Try to get user info from localStorage first (faster)
+      const storedUserInfo = localStorage.getItem('gjpb_user_info');
+      if (storedUserInfo) {
+        const user = JSON.parse(storedUserInfo);
+        return { isAuthenticated: true, user };
+      }
+      
+      // If no stored user info, fetch from API
+      const user = await authService.getCurrentUser();
+      if (user) {
+        return { isAuthenticated: true, user };
+      }
+    }
+    
+    return { isAuthenticated: false };
+  } catch (error: unknown) {
+    // If token is invalid or expired, treat as not authenticated
+    console.warn('Auth initialization failed:', error);
+    return { isAuthenticated: false };
+  }
+});
+
 // Auth slice
 const authSlice = createSlice({
   name: 'auth',
@@ -125,7 +157,7 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.payload || 'Login failed';
+        state.error = action.payload ?? 'Login failed';
       });
     
     // Fetch current user
@@ -143,7 +175,7 @@ const authSlice = createSlice({
       })
       .addCase(fetchCurrentUser.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.payload || 'Failed to fetch user';
+        state.error = action.payload ?? 'Failed to fetch user';
       });
     
     // Logout user
@@ -153,6 +185,22 @@ const authSlice = createSlice({
         state.isAuthenticated = false;
         state.roles = [];
         state.error = null;
+      });
+    
+    // Initialize auth
+    builder
+      .addCase(initializeAuth.fulfilled, (state, action) => {
+        if (action.payload.isAuthenticated && action.payload.user) {
+          state.user = action.payload.user;
+          state.isAuthenticated = true;
+          state.roles = action.payload.user.roleCodes || [];
+          state.error = null;
+        } else {
+          state.user = null;
+          state.isAuthenticated = false;
+          state.roles = [];
+        }
+        state.isLoading = false;
       });
   },
 });

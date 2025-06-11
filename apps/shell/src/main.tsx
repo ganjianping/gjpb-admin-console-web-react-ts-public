@@ -15,10 +15,6 @@ import AppLoading from './components/AppLoading'
 // Lazy load the routes for better initial loading performance
 const AppRoutes = lazy(() => import('./routes/AppRoutes'))
 
-// Firebase Performance Monitoring is automatically initialized
-// Web Vitals (CLS, FID, FCP, LCP, TTFB) are automatically tracked
-// No additional code needed - Firebase handles everything!
-
 // Improved mounting with error boundaries
 const rootElement = document.getElementById('root');
 if (!rootElement) throw new Error('Failed to find the root element');

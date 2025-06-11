@@ -5,14 +5,18 @@ import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 
 import LoginForm from '../components/LoginFormWrapper';
-import { authService } from '../../../shared-lib/src/services/auth-service';
 import type { LoginCredentials } from '../../../shared-lib/src/services/auth-service';
 import { APP_CONFIG } from '../../../shared-lib/src/utils/config';
+
+// Redux imports
+import { useAppDispatch } from '../../../shell/src/hooks/useRedux';
+import { loginUser } from '../../../shell/src/redux/slices/authSlice';
 
 const LoginPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useAppDispatch();
   const [loginError, setLoginError] = useState<string | null>(null);
   
   // Get the intended destination from location state
@@ -22,32 +26,25 @@ const LoginPage = () => {
   const handleLogin = async (credentials: LoginCredentials) => {
     try {
       setLoginError(null);
-      const response = await authService.login(credentials);
       
-      // Store user in localStorage or app state management
-      localStorage.setItem('user', JSON.stringify(response));
+      // Use Redux action for login
+      const result = await dispatch(loginUser(credentials));
       
-      // Show success message
-      toast.success(t('login.success', 'Login successful'));
-      
-      // Navigate to the page user was trying to access or home
-      navigate(from, { replace: true });
+      if (loginUser.fulfilled.match(result)) {
+        // Show success message
+        toast.success(t('login.success', 'Login successful'));
+        
+        // Navigate to the page user was trying to access or home
+        navigate(from, { replace: true });
+      } else {
+        // Handle login failure
+        const errorMessage = result.payload ?? 'Login failed. Please try again.';
+        setLoginError(errorMessage);
+      }
       
     } catch (error: unknown) {
       console.error('Login error:', error);
-      
-      // Set appropriate error message based on error type
-      let errorKey = 'login.errors.generalError';
-      
-      if (error instanceof Error && error.message === 'Invalid credentials') {
-        errorKey = 'login.errors.invalidCredentials';
-      } else if (error instanceof Error && error.message === 'Account locked') {
-        errorKey = 'login.errors.accountLocked';
-      }
-      
-      setLoginError(t(errorKey, 'Login failed. Please try again.'));
-      
-      setLoginError(t(errorKey, 'Login failed. Please try again.'));
+      setLoginError(t('login.errors.generalError', 'Login failed. Please try again.'));
     }
   };
 
