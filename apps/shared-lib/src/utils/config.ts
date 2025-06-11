@@ -7,8 +7,6 @@ export const APP_ENV = {
   PROD: import.meta.env.PROD,
   MODE: import.meta.env.MODE ?? 'development',
   VITE_API_BASE_URL: import.meta.env.VITE_API_BASE_URL ?? '/api',
-  ENABLE_MOCK_CSRF: import.meta.env.VITE_ENABLE_MOCK_CSRF === 'true',
-  ENABLE_CSRF_PROTECTION: import.meta.env.VITE_ENABLE_CSRF_PROTECTION !== 'false', // Enabled by default, can be disabled
 };
 
 export const APP_CONFIG = {

@@ -33,19 +33,10 @@ export default defineConfig(({ mode }) => {
             });
             
             // Handle proxy errors
-            proxy.on('error', (err, req, res) => {
+            proxy.on('error', (err, _req, res) => {
               console.error(`Proxy error: ${err.message}`);
               
-              if (isDev && req.url?.includes('/csrf-token') && res.writable) {
-                try {
-                  res.writeHead(200, { 'Content-Type': 'application/json' });
-                  res.end(JSON.stringify({ csrfToken: `mock-csrf-token-${Date.now()}` }));
-                  console.info('Returning mock CSRF token due to proxy error');
-                } catch (e: unknown) {
-                  const errorMsg = e instanceof Error ? e.message : 'Unknown error';
-                  console.warn(`Error sending mock CSRF response: ${errorMsg}`);
-                }
-              } else if (res.writable) {
+              if (res.writable) {
                 try {
                   res.writeHead(502, { 'Content-Type': 'application/json' });
                   res.end(JSON.stringify({ 

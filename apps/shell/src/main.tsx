@@ -9,7 +9,6 @@ import '../../shared-lib/src/utils/i18n' // Initialize i18n
 import './config/firebase' // Initialize Firebase Performance Monitoring
 import { store } from './redux/store'
 import ThemeProvider from './theme/ThemeProvider'
-import CSRFInitializer from './components/CSRFInitializer'
 import AppLoading from './components/AppLoading'
 
 // Lazy load the routes for better initial loading performance
@@ -29,12 +28,10 @@ root.render(
         v7_relativeSplatPath: true
       }}>
         <ThemeProvider>
-          <CSRFInitializer>
-            <Suspense fallback={<AppLoading />}>
-              <AppRoutes />
-            </Suspense>
-            <Toaster position="top-right" />
-          </CSRFInitializer>
+          <Suspense fallback={<AppLoading />}>
+            <AppRoutes />
+          </Suspense>
+          <Toaster position="top-right" />
         </ThemeProvider>
       </BrowserRouter>
     </Provider>

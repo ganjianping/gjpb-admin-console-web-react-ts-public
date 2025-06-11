@@ -2,7 +2,6 @@ import axios from 'axios';
 import type { AxiosInstance, AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { APP_ENV, APP_CONFIG } from '../utils/config';
 import { getCookie, setCookie, removeCookie } from '../utils/cookie';
-import { CSRFProtection } from '../utils/CSRFProtection';
 
 // Response type definition
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -36,7 +35,7 @@ export class ApiError extends Error {
 }
 
 class HttpClient {
-  private instance: AxiosInstance;
+  private readonly instance: AxiosInstance;
   private isRefreshing = false;
   private refreshSubscribers: Array<(token: string) => void> = [];
 
@@ -58,18 +57,10 @@ class HttpClient {
     this.instance.interceptors.request.use(
       (config: InternalAxiosRequestConfig) => {
         const accessToken = getCookie(APP_CONFIG.TOKEN.ACCESS_TOKEN_KEY);
-        const tokenType = getCookie(APP_CONFIG.TOKEN.TOKEN_TYPE_KEY) || 'Bearer';
+        const tokenType = getCookie(APP_CONFIG.TOKEN.TOKEN_TYPE_KEY) ?? 'Bearer';
         
         if (accessToken) {
           config.headers.Authorization = `${tokenType} ${accessToken}`;
-        }
-
-        // Add CSRF token for non-GET requests
-        if (config.method !== 'get') {
-          const csrfToken = CSRFProtection.getToken();
-          if (csrfToken) {
-            config.headers['X-CSRF-Token'] = csrfToken;
-          }
         }
 
         return config;
@@ -137,7 +128,7 @@ class HttpClient {
             return this.instance(originalRequest);
           } catch (refreshError) {
             this.handleAuthError();
-            return Promise.reject(refreshError);
+            return Promise.reject(new Error(refreshError instanceof Error ? refreshError.message : 'Token refresh failed'));
           } finally {
             this.isRefreshing = false;
           }
