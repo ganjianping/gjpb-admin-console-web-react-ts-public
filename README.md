@@ -17,13 +17,30 @@ A modern, secure, and responsive admin console for GJPB, built with React.js 19.
 - **Code quality assurance** with ESLint, strict TypeScript, and comprehensive testing
 - **Production-ready** with zero linting errors and comprehensive error handling
 
+## 🏗️ Architecture
+
+### Core Components
+- **Shell Application**: Main dashboard with navigation and layout
+- **Authentication Microfrontend**: Standalone login system with Module Federation
+- **Shared Library**: Common utilities, services, and components
+- **Firebase Integration**: Performance monitoring & analytics
+- **Backend API Integration**: RESTful API communication with JWT tokens
+
+### Security Features
+- **JWT Authentication**: Secure token-based authentication
+- **HTTP-only Cookies**: Secure token storage with SameSite protection
+- **Automatic Token Refresh**: Seamless user experience with background token renewal
+- **CSRF Protection**: Modern SameSite cookie protection
+- **Role-based Access Control**: Fine-grained permission system
+- **Environment Security**: Secure configuration management
+
 ## Tech Stack
 
 - **Core**: React.js 19.1, TypeScript, Vite 6.3.5
 - **UI**: Material-UI 7.1.0, Emotion, Lucide React, Open Sans
 - **State Management**: Redux Toolkit 2.8
 - **Routing**: React Router v6.30
-- **API**: Axios with automatic token refresh and CSRF protection
+- **API**: Axios with automatic token refresh and CORS handling
 - **Form Handling**: React Hook Form 7.57 + Zod 3.25 validation
 - **Firebase**: Performance Monitoring 11.9.0 + Analytics
 - **Testing**: Vitest + React Testing Library 16.3
@@ -32,7 +49,7 @@ A modern, secure, and responsive admin console for GJPB, built with React.js 19.
 - **Date Handling**: date-fns 4.1
 - **Notifications**: React Hot Toast 2.5
 
-## Project Setup and Running
+## 🛠️ Project Setup
 
 ### Prerequisites
 
@@ -41,12 +58,223 @@ A modern, secure, and responsive admin console for GJPB, built with React.js 19.
 
 ### Installation
 
-1. Clone the repository:
-
+1. **Clone the repository**:
 ```bash
 git clone https://github.com/ganjianping/gjpb-admin-console-web-react-ts-public.git
 cd gjpb-admin-console-web-react-ts-public
 ```
+
+2. **Install dependencies**:
+```bash
+npm install
+```
+
+### 🔒 Environment Setup
+
+⚠️ **Security Notice**: This project requires environment variables for Firebase configuration.
+
+1. **Copy the environment template**:
+```bash
+cp .env.example .env
+```
+
+2. **Configure Firebase credentials**:
+   - Create a Firebase project at [console.firebase.google.com](https://console.firebase.google.com/)
+   - Go to **Project Settings** > **General** > **Your apps**
+   - Click **Add app** > **Web** (</> icon)
+   - Copy the configuration values
+   - Update `.env` with your real Firebase credentials
+
+3. **Important Security Guidelines**:
+   - **NEVER commit your `.env` file!** It contains sensitive credentials
+   - The `.env.example` file shows the required format with placeholder values
+   - Your `.env` file is automatically ignored by git for security
+
+**Example `.env` configuration**:
+```env
+# API Configuration
+VITE_API_BASE_URL=/api/v1
+VITE_USE_MOCK=false
+
+# Firebase Configuration (replace with your actual values)
+VITE_FIREBASE_API_KEY=your-real-api-key-here
+VITE_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your-actual-project-id
+VITE_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=123456789
+VITE_FIREBASE_APP_ID=1:123456789:web:abcdef123456
+VITE_FIREBASE_MEASUREMENT_ID=G-XXXXXXXXXX
+```
+
+### 🚀 Available Scripts
+
+- **Development mode**:
+```bash
+npm run dev
+```
+Runs the app in development mode. Opens [http://localhost:3000](http://localhost:3000) in your browser.
+
+- **Build for production**:
+```bash
+npm run build
+```
+
+- **Preview production build**:
+```bash
+npm run preview
+```
+
+- **Code quality**:
+```bash
+npm run lint          # Run ESLint checks (currently 0 errors, 0 warnings)
+npm run lint:fix      # Auto-fix ESLint issues where possible
+npm run type-check    # Run TypeScript type checking
+```
+
+- **Testing**:
+```bash
+npm run test          # Run all tests once
+npm run test:watch    # Run tests in watch mode
+npm run test:coverage # Run tests with coverage report
+```
+
+## 🔧 Development Modes
+
+### Backend API Mode (Production)
+```env
+VITE_USE_MOCK=false
+VITE_API_BASE_URL=/api/v1
+```
+- Connects to real backend API
+- Requires backend server running on `http://localhost:8081`
+- Full authentication with JWT tokens
+
+### Mock Mode (Development)
+```env
+VITE_USE_MOCK=true
+VITE_API_BASE_URL=/api
+```
+
+**Mock User Accounts**:
+| Username | Email | Password | Role | Mobile |
+|----------|-------|----------|------|---------|
+| `gjpb` | gjpb@gmail.com | `123456` | SUPER_ADMIN | +65 89765432 |
+| `admin` | admin@example.com | `123456` | ADMIN | +65 88887777 |
+| `user` | user@example.com | `123456` | USER | +65 99998888 |
+
+## 🏁 Quick Start
+
+1. **For development with mock data**:
+```bash
+# Set up mock mode
+echo "VITE_USE_MOCK=true" > .env
+echo "VITE_API_BASE_URL=/api" >> .env
+
+# Start development server
+npm run dev
+
+# Login with: gjpb / 123456
+```
+
+2. **For production with real backend**:
+```bash
+# Set up production mode
+echo "VITE_USE_MOCK=false" > .env
+echo "VITE_API_BASE_URL=/api/v1" >> .env
+
+# Add your Firebase config to .env
+# Start your backend server on localhost:8081
+# Start development server
+npm run dev
+```
+
+## 🛡️ Code Quality & Standards
+
+### ✅ ESLint Configuration
+- **Zero linting errors and warnings** - All 44+ ESLint issues resolved
+- **Strict TypeScript rules** with proper error handling using `unknown` type
+- **React hooks best practices** with proper dependency arrays and memoization
+- **Performance optimizations** with `useCallback` and `useMemo` where appropriate
+- **Accessibility compliance** with ESLint accessibility rules
+
+### 🎯 Type Safety
+- **Comprehensive TypeScript coverage** with strict configuration
+- **Type-safe error handling** throughout the application
+- **Proper API response typing** with generic interfaces
+- **Redux state type safety** with TypeScript integration
+
+### 📊 Performance & Monitoring
+- **Firebase Performance Monitoring**: Automatic Core Web Vitals tracking
+- **Firebase Analytics**: User behavior and interaction tracking
+- **Code Splitting**: Optimized bundle loading with React.lazy()
+- **Lazy Loading**: Route-based code splitting for better performance
+
+## 🔧 Backend Integration
+
+### API Endpoints
+- **Authentication**: `POST /api/v1/auth/tokens` (Login)
+- **Token Refresh**: `PUT /api/v1/auth/tokens` (Auto-refresh)
+- **User Management**: Standard CRUD operations
+- **Role-based Access**: Permission-based endpoint access
+
+### CORS Configuration Required
+Your backend needs to allow requests from the frontend:
+
+**Allowed Origins**: `http://localhost:3000`, `http://localhost:3001`  
+**Allowed Methods**: `GET, POST, PUT, DELETE, OPTIONS`  
+**Allowed Headers**: `Content-Type, Authorization, X-Requested-With, Accept`  
+**Credentials**: `true`
+
+### Security Features
+- **JWT Token Management**: Automatic refresh and secure storage
+- **HTTP-only Cookies**: Secure token storage with SameSite=Lax protection
+- **CSRF Protection**: Modern cookie-based CSRF prevention
+- **Error Handling**: Comprehensive error catching and user feedback
+
+## 🏗️ Project Structure
+
+```
+├── apps/
+│   ├── auth-mf/          # Authentication Microfrontend
+│   ├── shared-lib/       # Shared utilities and services
+│   └── shell/            # Main application shell
+├── public/               # Static assets
+├── tools/                # Build and development tools
+├── docker/               # Docker configuration
+├── .env.example          # Environment template
+└── vite.config.ts        # Vite configuration with proxy
+```
+
+## 🚀 Deployment
+
+### Firebase Performance Setup
+1. Create a Firebase project
+2. Enable Performance Monitoring
+3. Add web app to Firebase project
+4. Update environment variables with Firebase config
+5. Deploy to production (Firebase Performance only works in production)
+
+### Production Build
+```bash
+npm run build
+npm run preview  # Test production build locally
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests and linting
+5. Submit a pull request
+
+## 📄 License
+
+This project is proprietary software. All rights reserved.
+
+---
+
+**© 2025 GJPB. All Rights Reserved.**
 
 2. Install dependencies:
 
