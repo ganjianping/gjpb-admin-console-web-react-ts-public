@@ -40,6 +40,7 @@ class HttpClient {
   private refreshSubscribers: Array<(token: string) => void> = [];
 
   constructor(baseURL: string) {
+    console.log('[API Client] Initializing with baseURL:', baseURL);
     this.instance = axios.create({
       baseURL,
       timeout: 30000,
@@ -138,10 +139,30 @@ class HttpClient {
         if (error.response?.data) {
           const { status, meta } = error.response.data;
           throw new ApiError(
-            status.message || error.message,
-            status.code || error.response.status,
-            status.errors,
+            status?.message || error.message || 'An error occurred',
+            status?.code || error.response.status || 500,
+            status?.errors || null,
             meta?.requestId
+          );
+        }
+
+        // Handle network errors or when backend is not available
+        if (!error.response) {
+          // Check if it's a CORS error
+          if (error.message?.includes('CORS') || error.code === 'ERR_NETWORK') {
+            throw new ApiError(
+              'CORS Error: Backend server is not configured to accept requests from this frontend. Please check backend CORS configuration.',
+              0,
+              null,
+              undefined
+            );
+          }
+          
+          throw new ApiError(
+            'Network error: Cannot connect to server. Please check if the backend is running.',
+            0,
+            null,
+            undefined
           );
         }
 
@@ -172,6 +193,7 @@ class HttpClient {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public post<T = any>(url: string, data?: any): Promise<ApiResponse<T>> {
+    console.log('[API Client] POST request:', url, 'Full URL will be:', this.instance.defaults.baseURL + url);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return this.instance.post<any, ApiResponse<T>>(url, data);
   }

@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { authService } from '../../../../shared-lib/src/services/auth-service';
+import { ApiError } from '../../../../shared-lib/src/services/api-client';
 import type { LoginCredentials, UserInfo, AuthResponse } from '../../../../shared-lib/src/services/auth-service';
 import type { RootState } from '../store';
 
@@ -32,8 +33,16 @@ export const loginUser = createAsyncThunk<
     const response = await authService.login(credentials);
     return response;
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : 'Login failed';
-    return rejectWithValue(errorMessage);
+    console.error('[AuthSlice] Login error:', error);
+    
+    if (error instanceof ApiError) {
+      // Handle API errors with detailed information
+      return rejectWithValue(error.message || 'Login failed');
+    } else if (error instanceof Error) {
+      return rejectWithValue(error.message);
+    } else {
+      return rejectWithValue('Login failed: Unknown error occurred');
+    }
   }
 });
 

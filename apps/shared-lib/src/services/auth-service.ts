@@ -50,6 +50,7 @@ class AuthService {
       if (useMockAPI) {
         authResponse = await mockApiService.login(credentials);
       } else {
+        console.log('[AuthService] Making login request to:', APP_CONFIG.AUTH.LOGIN_URL);
         const response = await apiClient.post<AuthResponse>(APP_CONFIG.AUTH.LOGIN_URL, credentials);
         
         if (response.status.code === 200 && response.data) {
