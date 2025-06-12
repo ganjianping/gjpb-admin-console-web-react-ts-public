@@ -48,29 +48,34 @@ const Header = ({ drawerWidth, onDrawerToggle }: HeaderProps) => {
     setAnchorElUser(null);
   };
 
+  const handleLogout = async () => {
+    handleCloseUserMenu();
+    try {
+      await dispatch(logoutUser()).unwrap();
+      navigate(APP_CONFIG.ROUTES.LOGIN);
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+
   const handleThemeToggle = () => {
     dispatch(toggleThemeMode());
   };
 
   const handleLanguageChange = (event: SelectChangeEvent<string>) => {
-    dispatch(setLanguage(event.target.value as 'en' | 'zh'));
-    i18n.changeLanguage(event.target.value);
-  };
-
-  const handleLogout = async () => {
-    handleCloseUserMenu();
-    await dispatch(logoutUser());
-    navigate(APP_CONFIG.ROUTES.LOGIN);
+    const newLanguage = event.target.value as 'en' | 'zh';
+    dispatch(setLanguage(newLanguage));
+    i18n.changeLanguage(newLanguage);
   };
 
   const handleProfileClick = () => {
     handleCloseUserMenu();
-    navigate('/profile');
+    navigate(APP_CONFIG.ROUTES.DASHBOARD + '/profile');
   };
 
   const handleSettingsClick = () => {
     handleCloseUserMenu();
-    navigate('/settings');
+    navigate(APP_CONFIG.ROUTES.DASHBOARD + '/settings');
   };
 
   return (
@@ -151,7 +156,7 @@ const Header = ({ drawerWidth, onDrawerToggle }: HeaderProps) => {
           <Tooltip title={t('common.userMenu')}>
             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
               <Avatar 
-                alt={user?.nickname || user?.username || ''}
+                alt={user?.nickname ?? user?.username ?? ''}
                 src="/static/images/avatar/2.jpg"
                 sx={{ width: 32, height: 32 }}
               />
@@ -175,7 +180,7 @@ const Header = ({ drawerWidth, onDrawerToggle }: HeaderProps) => {
           >
             <Box sx={{ px: 2, py: 1 }}>
               <Typography variant="subtitle1" fontWeight={600}>
-                {user?.nickname || user?.username}
+                {user?.nickname ?? user?.username}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 {user?.email}

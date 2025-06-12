@@ -529,8 +529,12 @@ i18n
   .use(initReactI18next)
   .init({
     resources: {
-      en: enResources,
-      zh: zhResources,
+      en: {
+        translation: enResources,
+      },
+      zh: {
+        translation: zhResources,
+      },
     },
     lng: APP_CONFIG.DEFAULT_LANGUAGE,
     fallbackLng: 'en',
