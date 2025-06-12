@@ -68,11 +68,18 @@ class AuthService {
       setCookie(APP_CONFIG.TOKEN.REFRESH_TOKEN_KEY, refreshToken, undefined, '/', import.meta.env.PROD, 'Lax');
       setCookie(APP_CONFIG.TOKEN.TOKEN_TYPE_KEY, tokenType, undefined, '/', import.meta.env.PROD, 'Lax');
       
-      // Store user info in localStorage for convenience
+      // Store user info in localStorage for convenience (all fields from backend response)
       localStorage.setItem('gjpb_user_info', JSON.stringify({
         username: authResponse.username,
         email: authResponse.email,
+        mobileCountryCode: authResponse.mobileCountryCode,
+        mobileNumber: authResponse.mobileNumber,
         nickname: authResponse.nickname,
+        accountStatus: authResponse.accountStatus,
+        lastLoginAt: authResponse.lastLoginAt,
+        lastLoginIp: authResponse.lastLoginIp,
+        lastFailedLoginAt: authResponse.lastFailedLoginAt,
+        failedLoginAttempts: authResponse.failedLoginAttempts,
         roleCodes: authResponse.roleCodes,
       }));
       
@@ -148,7 +155,7 @@ class AuthService {
   }
 
   /**
-   * Get current user info
+   * Get current user info - now gets data from localStorage (populated during login)
    */
   public async getCurrentUser(): Promise<UserInfo | null> {
     if (!this.isAuthenticated()) {
@@ -156,8 +163,25 @@ class AuthService {
     }
     
     try {
-      const response = await apiClient.get<UserInfo>('/v1/users/me');
-      return response.data;
+      // Get user info from localStorage (stored during login)
+      const userInfo = localStorage.getItem('gjpb_user_info');
+      if (userInfo) {
+        const userData = JSON.parse(userInfo);
+        return {
+          username: userData.username,
+          email: userData.email,
+          mobileCountryCode: userData.mobileCountryCode ?? '',
+          mobileNumber: userData.mobileNumber ?? '',
+          nickname: userData.nickname,
+          accountStatus: userData.accountStatus ?? 'active',
+          lastLoginAt: userData.lastLoginAt ?? '',
+          lastLoginIp: userData.lastLoginIp ?? '',
+          lastFailedLoginAt: userData.lastFailedLoginAt ?? null,
+          failedLoginAttempts: userData.failedLoginAttempts ?? 0,
+          roleCodes: userData.roleCodes ?? []
+        };
+      }
+      return null;
     } catch (error) {
       console.error('[AuthService] Get current user error:', error);
       return null;
