@@ -60,39 +60,40 @@ const LoginPage = () => {
 
   return (
     <Container maxWidth="sm">
+      {/* Theme toggle button - Fixed to top-right of viewport */}
+      <Box sx={{ 
+        position: 'fixed', 
+        top: 24, 
+        right: 24,
+        zIndex: 1000
+      }}>
+        <Tooltip title={isDarkMode ? t('common.lightMode', 'Light Mode') : t('common.darkMode', 'Dark Mode')}>
+          <IconButton 
+            onClick={handleThemeToggle} 
+            color="inherit"
+            sx={{ 
+              color: 'text.primary',
+              border: 1,
+              borderColor: 'divider',
+              backgroundColor: 'background.paper',
+              '&:hover': {
+                backgroundColor: 'action.hover',
+              }
+            }}
+          >
+            {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+          </IconButton>
+        </Tooltip>
+      </Box>
+      
       <Box sx={{ 
         display: 'flex', 
         flexDirection: 'column', 
         alignItems: 'center', 
         justifyContent: 'center',
         minHeight: '100vh',
-        py: 4,
-        position: 'relative'
+        py: 4
       }}>
-        {/* Theme toggle button */}
-        <Box sx={{ 
-          position: 'absolute', 
-          top: 24, 
-          right: 24 
-        }}>
-          <Tooltip title={isDarkMode ? t('common.lightMode', 'Light Mode') : t('common.darkMode', 'Dark Mode')}>
-            <IconButton 
-              onClick={handleThemeToggle} 
-              color="inherit"
-              sx={{ 
-                color: 'text.primary',
-                border: 1,
-                borderColor: 'divider',
-                '&:hover': {
-                  backgroundColor: 'action.hover',
-                }
-              }}
-            >
-              {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
-            </IconButton>
-          </Tooltip>
-        </Box>
-        
         <LoginForm 
           onSubmit={handleLogin}
           error={loginError}
