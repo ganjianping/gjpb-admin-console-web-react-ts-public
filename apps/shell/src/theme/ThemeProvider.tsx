@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { CssBaseline } from '@mui/material';
 import { ThemeProvider as MUIThemeProvider, createTheme } from '@mui/material/styles';
 import { useAppSelector } from '../hooks/useRedux';
-import { selectThemeMode } from '../redux/slices/uiSlice';
+import { selectThemeMode, selectColorTheme } from '../redux/slices/uiSlice';
 import { getThemeOptions } from './theme';
 
 interface ThemeProviderProps {
@@ -12,11 +12,12 @@ interface ThemeProviderProps {
 
 const ThemeProvider = ({ children }: ThemeProviderProps) => {
   const themeMode = useAppSelector(selectThemeMode);
+  const colorTheme = useAppSelector(selectColorTheme);
   
-  // Create theme based on current mode
+  // Create theme based on current mode and color theme
   const theme = useMemo(() => {
-    return createTheme(getThemeOptions(themeMode));
-  }, [themeMode]);
+    return createTheme(getThemeOptions(themeMode, colorTheme));
+  }, [themeMode, colorTheme]);
 
   return (
     <MUIThemeProvider theme={theme}>

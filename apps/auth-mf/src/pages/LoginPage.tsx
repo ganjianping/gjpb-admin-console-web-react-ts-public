@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Box, Container, IconButton, Tooltip } from '@mui/material';
-import { Sun, Moon } from 'lucide-react';
+import { Sun, Moon, Palette } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 
@@ -12,7 +12,8 @@ import { APP_CONFIG } from '../../../shared-lib/src/utils/config';
 // Redux imports
 import { useAppDispatch, useAppSelector } from '../../../shell/src/hooks/useRedux';
 import { loginUser } from '../../../shell/src/redux/slices/authSlice';
-import { toggleThemeMode, selectThemeMode } from '../../../shell/src/redux/slices/uiSlice';
+import { toggleThemeMode, selectThemeMode, selectColorTheme, setColorTheme } from '../../../shell/src/redux/slices/uiSlice';
+import type { ColorTheme } from '../../../shell/src/redux/slices/uiSlice';
 
 const LoginPage = () => {
   const { t } = useTranslation();
@@ -20,9 +21,29 @@ const LoginPage = () => {
   const location = useLocation();
   const dispatch = useAppDispatch();
   const themeMode = useAppSelector(selectThemeMode);
+  const colorTheme = useAppSelector(selectColorTheme);
   const [loginError, setLoginError] = useState<string | null>(null);
+  const [colorDropdownOpen, setColorDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   
   const isDarkMode = themeMode === 'dark';
+  
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setColorDropdownOpen(false);
+      }
+    };
+
+    if (colorDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [colorDropdownOpen]);
   
   // Get the intended destination from location state
   const from = (location.state?.from?.pathname as string) || APP_CONFIG.ROUTES.HOME;
@@ -31,6 +52,21 @@ const LoginPage = () => {
   const handleThemeToggle = () => {
     dispatch(toggleThemeMode());
   };
+
+  // Handle color theme change
+  const handleColorThemeChange = (newColorTheme: ColorTheme) => {
+    dispatch(setColorTheme(newColorTheme));
+    setColorDropdownOpen(false);
+  };
+
+  // Color theme options
+  const colorThemeOptions: { value: ColorTheme; label: string; color: string }[] = [
+    { value: 'blue', label: t('theme.colors.blue', 'Blue'), color: '#1976d2' },
+    { value: 'purple', label: t('theme.colors.purple', 'Purple'), color: '#9c27b0' },
+    { value: 'green', label: t('theme.colors.green', 'Green'), color: '#4caf50' },
+    { value: 'orange', label: t('theme.colors.orange', 'Orange'), color: '#ff9800' },
+    { value: 'red', label: t('theme.colors.red', 'Red'), color: '#f44336' },
+  ];
 
   // Handle login submission
   const handleLogin = async (credentials: LoginCredentials) => {
@@ -85,14 +121,114 @@ const LoginPage = () => {
         }}
       />
 
-      {/* Theme toggle button with cleaner design */}
+      {/* Theme controls with cleaner design */}
       <Box sx={{ 
         position: 'fixed', 
         top: 32, 
         right: 32,
-        zIndex: 1000
+        zIndex: 1000,
+        display: 'flex',
+        gap: 2,
       }}>
-        <Tooltip title={isDarkMode ? t('common.lightMode', 'Light Mode') : t('common.darkMode', 'Dark Mode')}>
+        {/* Color theme dropdown */}
+        <Box sx={{ position: 'relative' }} ref={dropdownRef}>
+          <Tooltip title={t('theme.colorTheme', 'Color theme')}>
+            <IconButton 
+              onClick={() => setColorDropdownOpen(!colorDropdownOpen)}
+              sx={{ 
+                width: 48,
+                height: 48,
+                color: '#ffffff',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                borderRadius: '50%',
+                '&:hover': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                  transform: 'scale(1.1)',
+                  borderColor: 'rgba(255, 255, 255, 0.4)',
+                },
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              }}
+            >
+              <Palette size={22} />
+            </IconButton>
+          </Tooltip>
+          
+          {/* Color dropdown menu */}
+          {colorDropdownOpen && (
+            <Box
+              sx={{
+                position: 'absolute',
+                top: '100%',
+                right: 0,
+                mt: 1,
+                p: 1,
+                minWidth: 200,
+                backgroundColor: isDarkMode
+                  ? 'rgba(30, 41, 59, 0.95)'
+                  : 'rgba(255, 255, 255, 0.95)',
+                backdropFilter: 'blur(20px)',
+                border: '1px solid',
+                borderColor: isDarkMode
+                  ? 'rgba(255, 255, 255, 0.1)'
+                  : 'rgba(255, 255, 255, 0.5)',
+                borderRadius: 2,
+                boxShadow: isDarkMode
+                  ? '0 10px 30px rgba(0, 0, 0, 0.3)'
+                  : '0 10px 30px rgba(102, 126, 234, 0.3)',
+              }}
+            >
+              {colorThemeOptions.map((option) => {
+                const isSelected = colorTheme === option.value;
+                const selectedBgColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)';
+                
+                return (
+                  <Box
+                    key={option.value}
+                    onClick={() => handleColorThemeChange(option.value)}
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 2,
+                      p: 1.5,
+                      borderRadius: 1,
+                      cursor: 'pointer',
+                      backgroundColor: isSelected ? selectedBgColor : 'transparent',
+                      '&:hover': {
+                        backgroundColor: isDarkMode 
+                          ? 'rgba(255, 255, 255, 0.05)' 
+                          : 'rgba(0, 0, 0, 0.03)',
+                      },
+                      transition: 'background-color 0.2s',
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: 20,
+                        height: 20,
+                        borderRadius: '50%',
+                        backgroundColor: option.color,
+                        border: '2px solid',
+                        borderColor: isSelected ? 'white' : 'transparent',
+                      }}
+                    />
+                    <Box sx={{ 
+                      color: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
+                      fontSize: '0.9rem',
+                      fontWeight: isSelected ? 600 : 400,
+                    }}>
+                      {option.label}
+                    </Box>
+                  </Box>
+                );
+              })}
+            </Box>
+          )}
+        </Box>
+
+        {/* Theme mode toggle */}
+        <Tooltip title={isDarkMode ? t('theme.light', 'Light mode') : t('theme.dark', 'Dark mode')}>
           <IconButton 
             onClick={handleThemeToggle} 
             sx={{ 

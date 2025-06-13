@@ -26,7 +26,20 @@ const authResources = {
           generalError: 'Login failed. Please try again.',
         },
         success: 'Login successful',
-      }
+      },
+      theme: {
+        toggle: 'Toggle theme',
+        light: 'Light mode',
+        dark: 'Dark mode',
+        colorTheme: 'Color theme',
+        colors: {
+          blue: 'Blue',
+          purple: 'Purple',
+          green: 'Green',
+          orange: 'Orange',
+          red: 'Red',
+        },
+      },
     }
   },
   zh: {
@@ -53,7 +66,20 @@ const authResources = {
           generalError: '登录失败。请重试。',
         },
         success: '登录成功',
-      }
+      },
+      theme: {
+        toggle: '切换主题',
+        light: '浅色模式',
+        dark: '深色模式',
+        colorTheme: '颜色主题',
+        colors: {
+          blue: '蓝色',
+          purple: '紫色',
+          green: '绿色',
+          orange: '橙色',
+          red: '红色',
+        },
+      },
     }
   }
 };

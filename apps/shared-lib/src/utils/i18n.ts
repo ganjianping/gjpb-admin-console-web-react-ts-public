@@ -234,6 +234,7 @@ const enResources = {
     settingsReset: 'Settings reset to defaults',
     themeChanged: 'Theme changed successfully',
     languageChanged: 'Language changed successfully',
+    colorThemeChanged: 'Color theme changed successfully',
     resetAll: 'Reset All Settings',
     appearance: {
       title: 'Appearance',
@@ -243,6 +244,9 @@ const enResources = {
       language: 'Language',
       languageDescription: 'Select your preferred language',
       selectLanguage: 'Language',
+      colorTheme: 'Color Theme',
+      colorThemeDescription: 'Choose your preferred color scheme',
+      selectColorTheme: 'Select Color',
     },
     notifications: {
       title: 'Notifications',
@@ -494,6 +498,7 @@ const zhResources = {
     settingsReset: '设置重置为默认值',
     themeChanged: '主题更改成功',
     languageChanged: '语言更改成功',
+    colorThemeChanged: '颜色主题更改成功',
     resetAll: '重置所有设置',
     appearance: {
       title: '外观',
@@ -503,6 +508,9 @@ const zhResources = {
       language: '语言',
       languageDescription: '选择您首选的语言',
       selectLanguage: '语言',
+      colorTheme: '颜色主题',
+      colorThemeDescription: '选择您偏好的颜色方案',
+      selectColorTheme: '选择颜色',
     },
     notifications: {
       title: '通知',

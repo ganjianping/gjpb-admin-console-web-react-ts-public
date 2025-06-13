@@ -30,6 +30,7 @@ import {
   Shield,
   Cookie,
   Lock,
+  Palette,
 } from 'lucide-react';
 
 // Redux
@@ -39,9 +40,11 @@ import {
   setThemeMode,
   selectThemeMode,
   selectLanguage,
+  selectColorTheme,
   setLanguage,
+  setColorTheme,
 } from '../redux/slices/uiSlice';
-import type { ThemeMode, Language } from '../redux/slices/uiSlice';
+import type { ThemeMode, Language, ColorTheme } from '../redux/slices/uiSlice';
 
 // Settings sections
 import { APP_CONFIG } from '../../../shared-lib/src/utils/config';
@@ -59,6 +62,7 @@ const SettingsPage = () => {
   // Redux state
   const currentTheme = useAppSelector(selectThemeMode);
   const currentLanguage = useAppSelector(selectLanguage);
+  const currentColorTheme = useAppSelector(selectColorTheme);
   
   // Local state for settings
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
@@ -66,6 +70,29 @@ const SettingsPage = () => {
   const [securityAlerts, setSecurityAlerts] = useState(true);
   const [cookieConsent, setCookieConsent] = useState(true);
   const [autoLogout, setAutoLogout] = useState(true);
+
+  // Helper functions for color theme
+  const getColorThemeColor = (colorTheme: ColorTheme): string => {
+    const colors = {
+      blue: '#1976d2',
+      purple: '#9c27b0',
+      green: '#4caf50',
+      orange: '#ff9800',
+      red: '#f44336',
+    };
+    return colors[colorTheme];
+  };
+
+  const getColorThemeLabel = (colorTheme: ColorTheme): string => {
+    const labels = {
+      blue: t('theme.colors.blue', 'Blue'),
+      purple: t('theme.colors.purple', 'Purple'),
+      green: t('theme.colors.green', 'Green'),
+      orange: t('theme.colors.orange', 'Orange'),
+      red: t('theme.colors.red', 'Red'),
+    };
+    return labels[colorTheme];
+  };
   
   // Set page title
   useEffect(() => {
@@ -103,6 +130,20 @@ const SettingsPage = () => {
     
     toast.success(t('settings.languageChanged'));
   };
+
+  // Handle color theme change
+  const handleColorThemeChange = (event: SelectChangeEvent) => {
+    const newColorTheme = event.target.value as ColorTheme;
+    dispatch(setColorTheme(newColorTheme));
+    
+    // Track color theme change
+    trackEvent('change_color_theme', { 
+      newColorTheme,
+      previousColorTheme: currentColorTheme 
+    });
+    
+    toast.success(t('settings.colorThemeChanged'));
+  };
   
   // Handle notification toggle
   const handleNotificationToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -139,6 +180,9 @@ const SettingsPage = () => {
     // Reset theme
     dispatch(setThemeMode(APP_CONFIG.THEME.DEFAULT_THEME as ThemeMode));
     
+    // Reset color theme
+    dispatch(setColorTheme('blue' as ColorTheme));
+    
     // Reset language
     dispatch(setLanguage(APP_CONFIG.DEFAULT_LANGUAGE as Language));
     i18n.changeLanguage(APP_CONFIG.DEFAULT_LANGUAGE);
@@ -160,7 +204,7 @@ const SettingsPage = () => {
         {t('navigation.settings')}
       </Typography>
       
-      <Typography variant="body1" color="text.secondary" paragraph>
+      <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
         {t('settings.description')}
       </Typography>
       
@@ -294,6 +338,140 @@ const SettingsPage = () => {
                       >
                         <MenuItem value="en">English</MenuItem>
                         <MenuItem value="zh">中文</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Paper>
+                </Grid>
+
+                {/* Color Theme */}
+                <Grid item component="div" xs={12}>
+                  <Paper
+                    elevation={0}
+                    sx={{
+                      p: 2,
+                      border: 1,
+                      borderColor: 'divider',
+                      borderRadius: 2,
+                      display: 'flex',
+                      flexDirection: { xs: 'column', sm: 'row' },
+                      alignItems: { xs: 'flex-start', sm: 'center' },
+                      justifyContent: 'space-between',
+                      gap: 2,
+                    }}
+                  >
+                    <Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                        <Palette size={16} />
+                        <Typography variant="subtitle1" fontWeight={500}>
+                          {t('settings.appearance.colorTheme', 'Color Theme')}
+                        </Typography>
+                      </Box>
+                      <Typography variant="body2" color="text.secondary">
+                        {t('settings.appearance.colorThemeDescription', 'Choose your preferred color scheme')}
+                      </Typography>
+                    </Box>
+                    
+                    <FormControl sx={{ minWidth: 140 }} size="small">
+                      <InputLabel id="color-theme-select-label">
+                        {t('settings.appearance.selectColorTheme', 'Select Color')}
+                      </InputLabel>
+                      <Select
+                        labelId="color-theme-select-label"
+                        id="color-theme-select"
+                        value={currentColorTheme}
+                        label={t('settings.appearance.selectColorTheme', 'Select Color')}
+                        onChange={handleColorThemeChange}
+                        renderValue={(value) => (
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Box
+                              sx={{
+                                width: 16,
+                                height: 16,
+                                borderRadius: '50%',
+                                backgroundColor: getColorThemeColor(value as ColorTheme),
+                                border: '1px solid',
+                                borderColor: 'divider',
+                              }}
+                            />
+                            {getColorThemeLabel(value as ColorTheme)}
+                          </Box>
+                        )}
+                      >
+                        <MenuItem value="blue">
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                            <Box
+                              sx={{
+                                width: 16,
+                                height: 16,
+                                borderRadius: '50%',
+                                backgroundColor: '#1976d2',
+                                border: '1px solid',
+                                borderColor: 'divider',
+                              }}
+                            />
+                            {t('theme.colors.blue', 'Blue')}
+                          </Box>
+                        </MenuItem>
+                        <MenuItem value="purple">
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                            <Box
+                              sx={{
+                                width: 16,
+                                height: 16,
+                                borderRadius: '50%',
+                                backgroundColor: '#9c27b0',
+                                border: '1px solid',
+                                borderColor: 'divider',
+                              }}
+                            />
+                            {t('theme.colors.purple', 'Purple')}
+                          </Box>
+                        </MenuItem>
+                        <MenuItem value="green">
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                            <Box
+                              sx={{
+                                width: 16,
+                                height: 16,
+                                borderRadius: '50%',
+                                backgroundColor: '#4caf50',
+                                border: '1px solid',
+                                borderColor: 'divider',
+                              }}
+                            />
+                            {t('theme.colors.green', 'Green')}
+                          </Box>
+                        </MenuItem>
+                        <MenuItem value="orange">
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                            <Box
+                              sx={{
+                                width: 16,
+                                height: 16,
+                                borderRadius: '50%',
+                                backgroundColor: '#ff9800',
+                                border: '1px solid',
+                                borderColor: 'divider',
+                              }}
+                            />
+                            {t('theme.colors.orange', 'Orange')}
+                          </Box>
+                        </MenuItem>
+                        <MenuItem value="red">
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                            <Box
+                              sx={{
+                                width: 16,
+                                height: 16,
+                                borderRadius: '50%',
+                                backgroundColor: '#f44336',
+                                border: '1px solid',
+                                borderColor: 'divider',
+                              }}
+                            />
+                            {t('theme.colors.red', 'Red')}
+                          </Box>
+                        </MenuItem>
                       </Select>
                     </FormControl>
                   </Paper>

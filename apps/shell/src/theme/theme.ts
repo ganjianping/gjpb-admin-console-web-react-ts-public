@@ -2,18 +2,41 @@ import type { ThemeOptions } from '@mui/material/styles';
 import type { PaletteMode } from '@mui/material';
 import { createTheme as muiCreateTheme } from '@mui/material/styles';
 
+// Color theme type
+export type ColorTheme = 'blue' | 'purple' | 'green' | 'orange' | 'red';
+
+// Color theme palettes
+const colorThemes = {
+  blue: {
+    light: { main: '#1976d2', light: '#42a5f5', dark: '#1565c0' },
+    dark: { main: '#90caf9', light: '#e3f2fd', dark: '#42a5f5' },
+  },
+  purple: {
+    light: { main: '#9c27b0', light: '#ba68c8', dark: '#7b1fa2' },
+    dark: { main: '#ce93d8', light: '#f3e5f5', dark: '#ab47bc' },
+  },
+  green: {
+    light: { main: '#4caf50', light: '#81c784', dark: '#388e3c' },
+    dark: { main: '#66bb6a', light: '#a5d6a7', dark: '#4caf50' },
+  },
+  orange: {
+    light: { main: '#ff9800', light: '#ffb74d', dark: '#f57c00' },
+    dark: { main: '#ffa726', light: '#ffcc02', dark: '#e65100' },
+  },
+  red: {
+    light: { main: '#f44336', light: '#ef5350', dark: '#d32f2f' },
+    dark: { main: '#e57373', light: '#ffcdd2', dark: '#c62828' },
+  },
+};
+
 // Define color palette for light/dark modes
-export const getDesignTokens = (mode: PaletteMode) => ({
+export const getDesignTokens = (mode: PaletteMode, colorTheme: ColorTheme = 'blue') => ({
   palette: {
     mode,
     ...(mode === 'light'
       ? {
           // Light mode palette
-          primary: {
-            main: '#1976d2',
-            light: '#42a5f5',
-            dark: '#1565c0',
-          },
+          primary: colorThemes[colorTheme].light,
           secondary: {
             main: '#9c27b0',
             light: '#ba68c8',
@@ -50,11 +73,7 @@ export const getDesignTokens = (mode: PaletteMode) => ({
         }
       : {
           // Dark mode palette
-          primary: {
-            main: '#90caf9',
-            light: '#e3f2fd',
-            dark: '#42a5f5',
-          },
+          primary: colorThemes[colorTheme].dark,
           secondary: {
             main: '#ce93d8',
             light: '#f3e5f5',
@@ -93,9 +112,9 @@ export const getDesignTokens = (mode: PaletteMode) => ({
 });
 
 // Define theme options
-export const getThemeOptions = (mode: PaletteMode): ThemeOptions => {
+export const getThemeOptions = (mode: PaletteMode, colorTheme: ColorTheme = 'blue'): ThemeOptions => {
   return {
-    ...getDesignTokens(mode),
+    ...getDesignTokens(mode, colorTheme),
     typography: {
       fontFamily: '"Open Sans", "Roboto", "Helvetica", "Arial", sans-serif',
       h1: {
@@ -141,6 +160,6 @@ export const getThemeOptions = (mode: PaletteMode): ThemeOptions => {
 export default getThemeOptions;
 
 // Helper function for tests to create a complete theme
-export const createTheme = (mode: PaletteMode) => {
-  return muiCreateTheme(getThemeOptions(mode));
+export const createTheme = (mode: PaletteMode, colorTheme: ColorTheme = 'blue') => {
+  return muiCreateTheme(getThemeOptions(mode, colorTheme));
 };

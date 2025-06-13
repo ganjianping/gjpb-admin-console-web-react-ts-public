@@ -88,6 +88,7 @@ const createTestStore = (preloadedState = {}) => {
       },
       ui: {
         themeMode: 'light' as const,
+        colorTheme: 'blue' as const,
         language: 'en' as const,
         sidebarOpen: true,
         pageTitle: 'Profile'

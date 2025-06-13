@@ -6,12 +6,16 @@ import { APP_CONFIG } from '../../../../shared-lib/src/utils/config';
 // Theme type
 export type ThemeMode = 'light' | 'dark';
 
+// Color theme type
+export type ColorTheme = 'blue' | 'purple' | 'green' | 'orange' | 'red';
+
 // Language type
 export type Language = 'en' | 'zh';
 
 // UI state interface
 interface UiState {
   themeMode: ThemeMode;
+  colorTheme: ColorTheme;
   language: Language;
   sidebarOpen: boolean;
   pageTitle: string;
@@ -52,9 +56,22 @@ const getInitialLanguage = (): Language => {
   return APP_CONFIG.DEFAULT_LANGUAGE as Language;
 };
 
+// Get initial color theme from localStorage or use default
+const getInitialColorTheme = (): ColorTheme => {
+  if (typeof window === 'undefined') return 'blue';
+  
+  const savedColorTheme = localStorage.getItem('gjpb_color_theme');
+  if (savedColorTheme === 'blue' || savedColorTheme === 'purple' || savedColorTheme === 'green' || savedColorTheme === 'orange' || savedColorTheme === 'red') {
+    return savedColorTheme;
+  }
+  
+  return 'blue';
+};
+
 // Initial state
 const initialState: UiState = {
   themeMode: getInitialTheme(),
+  colorTheme: getInitialColorTheme(),
   language: getInitialLanguage(),
   sidebarOpen: true,
   pageTitle: 'Dashboard',
@@ -87,6 +104,13 @@ const uiSlice = createSlice({
         document.documentElement.setAttribute('lang', action.payload);
       }
     },
+    setColorTheme: (state, action: PayloadAction<ColorTheme>) => {
+      state.colorTheme = action.payload;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('gjpb_color_theme', action.payload);
+        document.documentElement.setAttribute('data-color-theme', action.payload);
+      }
+    },
     toggleSidebar: (state) => {
       state.sidebarOpen = !state.sidebarOpen;
     },
@@ -104,6 +128,7 @@ export const {
   setThemeMode,
   toggleThemeMode,
   setLanguage,
+  setColorTheme,
   toggleSidebar,
   setSidebarOpen,
   setPageTitle,
@@ -111,6 +136,7 @@ export const {
 
 // Custom selectors
 export const selectThemeMode = (state: RootState) => state.ui.themeMode;
+export const selectColorTheme = (state: RootState) => state.ui.colorTheme;
 export const selectIsDarkMode = (state: RootState) => state.ui.themeMode === 'dark';
 export const selectLanguage = (state: RootState) => state.ui.language;
 export const selectSidebarOpen = (state: RootState) => state.ui.sidebarOpen;
