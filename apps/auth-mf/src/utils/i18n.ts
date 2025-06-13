@@ -5,7 +5,7 @@ const authResources = {
   en: {
     translation: {
       login: {
-        title: 'Login to GJPB Admin Console',
+        title: 'GJPB Admin Console',
         tabs: {
           username: 'Username',
           email: 'Email',

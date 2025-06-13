@@ -8,7 +8,6 @@ import {
   TextField, 
   Button,
   Typography, 
-  Paper,
   Tabs,
   Tab,
   IconButton,
@@ -28,7 +27,7 @@ interface TabPanelProps {
   value: number;
 }
 
-function TabPanel(props: TabPanelProps) {
+function TabPanel(props: Readonly<TabPanelProps>) {
   const { children, value, index, ...other } = props;
 
   return (
@@ -46,14 +45,6 @@ function TabPanel(props: TabPanelProps) {
       )}
     </div>
   );
-}
-
-// Tab props
-function a11yProps(index: number) {
-  return {
-    id: `login-tab-${index}`,
-    'aria-controls': `login-tabpanel-${index}`,
-  };
 }
 
 // Schema for username login
@@ -143,26 +134,68 @@ const LoginForm = ({ onSubmit, error, submitText }: LoginFormProps) => {
   
   // Get button text - simplified approach without safeTranslate
   const getButtonText = () => {
-    return isLoading ? <CircularProgress size={24} /> : (submitText || t('login.form.submit', 'Login'));
+    return isLoading ? <CircularProgress size={24} /> : (submitText ?? t('login.form.submit', 'Login'));
   };
   
   return (
-    <Paper elevation={3} sx={{ p: 4, maxWidth: 400, width: '100%' }}>
-      <Typography variant="h5" component="h1" gutterBottom align="center">
-        {t('login.title', 'Login to GJPB Admin Console')}
+    <Box sx={{ width: '100%' }}>
+      <Typography 
+        variant="h4" 
+        component="h1" 
+        align="center"
+        sx={{
+          fontWeight: 600,
+          fontSize: { xs: '1.75rem', sm: '2rem' },
+          color: 'text.primary',
+          mb: 4,
+          fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, sans-serif',
+        }}
+      >
+        {t('login.title')}
       </Typography>
       
       {error && (
-        <Alert severity="error" sx={{ mb: 2 }}>
+        <Alert 
+          severity="error" 
+          sx={{ 
+            mb: 3,
+            borderRadius: 2,
+            backgroundColor: 'error.light',
+            color: 'error.contrastText',
+            '& .MuiAlert-icon': {
+              color: 'error.main',
+            },
+          }}
+        >
           {error}
         </Alert>
       )}
       
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs value={tabIndex} onChange={handleTabChange} aria-label="login methods" centered>
-          <Tab label={t('login.tabs.username', 'Username')} {...a11yProps(0)} />
-          <Tab label={t('login.tabs.email', 'Email')} {...a11yProps(1)} />
-          <Tab label={t('login.tabs.mobile', 'Mobile')} {...a11yProps(2)} />
+      <Box sx={{ mb: 3 }}>
+        <Tabs 
+          value={tabIndex} 
+          onChange={handleTabChange} 
+          variant="fullWidth"
+          sx={{
+            '& .MuiTab-root': {
+              textTransform: 'none',
+              fontWeight: 500,
+              fontSize: '0.9rem',
+              color: 'text.secondary',
+              '&.Mui-selected': {
+                color: 'primary.main',
+                fontWeight: 600,
+              },
+            },
+            '& .MuiTabs-indicator': {
+              height: 2,
+              borderRadius: 1,
+            },
+          }}
+        >
+          <Tab label={t('login.tabs.username', 'Username')} />
+          <Tab label={t('login.tabs.email', 'Email')} />
+          <Tab label={t('login.tabs.mobile', 'Mobile')} />
         </Tabs>
       </Box>
       
@@ -182,10 +215,32 @@ const LoginForm = ({ onSubmit, error, submitText }: LoginFormProps) => {
                 error={!!fieldState.error}
                 helperText={fieldState.error?.message}
                 disabled={isLoading}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: 2,
+                    backgroundColor: 'background.paper',
+                    '& fieldset': {
+                      borderColor: 'divider',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: 'primary.main',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: 'primary.main',
+                      borderWidth: 2,
+                    },
+                  },
+                  '& .MuiInputLabel-root': {
+                    color: 'text.secondary',
+                    '&.Mui-focused': {
+                      color: 'primary.main',
+                    },
+                  },
+                }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <User size={20} />
+                      <User size={20} style={{ color: 'currentColor', opacity: 0.7 }} />
                     </InputAdornment>
                   ),
                 }}
@@ -207,6 +262,28 @@ const LoginForm = ({ onSubmit, error, submitText }: LoginFormProps) => {
                 error={!!fieldState.error}
                 helperText={fieldState.error?.message}
                 disabled={isLoading}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: 2,
+                    backgroundColor: 'background.paper',
+                    '& fieldset': {
+                      borderColor: 'divider',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: 'primary.main',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: 'primary.main',
+                      borderWidth: 2,
+                    },
+                  },
+                  '& .MuiInputLabel-root': {
+                    color: 'text.secondary',
+                    '&.Mui-focused': {
+                      color: 'primary.main',
+                    },
+                  },
+                }}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -214,6 +291,7 @@ const LoginForm = ({ onSubmit, error, submitText }: LoginFormProps) => {
                         aria-label="toggle password visibility"
                         onClick={toggleShowPassword}
                         edge="end"
+                        sx={{ color: 'text.secondary' }}
                       >
                         {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                       </IconButton>
@@ -262,10 +340,32 @@ const LoginForm = ({ onSubmit, error, submitText }: LoginFormProps) => {
                 error={!!fieldState.error}
                 helperText={fieldState.error?.message}
                 disabled={isLoading}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: 2,
+                    backgroundColor: 'background.paper',
+                    '& fieldset': {
+                      borderColor: 'divider',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: 'primary.main',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: 'primary.main',
+                      borderWidth: 2,
+                    },
+                  },
+                  '& .MuiInputLabel-root': {
+                    color: 'text.secondary',
+                    '&.Mui-focused': {
+                      color: 'primary.main',
+                    },
+                  },
+                }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Mail size={20} />
+                      <Mail size={20} style={{ color: 'currentColor', opacity: 0.7 }} />
                     </InputAdornment>
                   ),
                 }}
@@ -287,6 +387,28 @@ const LoginForm = ({ onSubmit, error, submitText }: LoginFormProps) => {
                 error={!!fieldState.error}
                 helperText={fieldState.error?.message}
                 disabled={isLoading}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: 2,
+                    backgroundColor: 'background.paper',
+                    '& fieldset': {
+                      borderColor: 'divider',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: 'primary.main',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: 'primary.main',
+                      borderWidth: 2,
+                    },
+                  },
+                  '& .MuiInputLabel-root': {
+                    color: 'text.secondary',
+                    '&.Mui-focused': {
+                      color: 'primary.main',
+                    },
+                  },
+                }}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -294,6 +416,7 @@ const LoginForm = ({ onSubmit, error, submitText }: LoginFormProps) => {
                         aria-label="toggle password visibility"
                         onClick={toggleShowPassword}
                         edge="end"
+                        sx={{ color: 'text.secondary' }}
                       >
                         {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                       </IconButton>
@@ -338,7 +461,29 @@ const LoginForm = ({ onSubmit, error, submitText }: LoginFormProps) => {
                   {...field}
                   label={t('login.form.countryCode', 'Code')}
                   variant="outlined"
-                  sx={{ width: '30%' }}
+                  sx={{ 
+                    width: '30%',
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 2,
+                      backgroundColor: 'background.paper',
+                      '& fieldset': {
+                        borderColor: 'divider',
+                      },
+                      '&:hover fieldset': {
+                        borderColor: 'primary.main',
+                      },
+                      '&.Mui-focused fieldset': {
+                        borderColor: 'primary.main',
+                        borderWidth: 2,
+                      },
+                    },
+                    '& .MuiInputLabel-root': {
+                      color: 'text.secondary',
+                      '&.Mui-focused': {
+                        color: 'primary.main',
+                      },
+                    },
+                  }}
                   margin="normal"
                   error={!!fieldState.error}
                   disabled={isLoading}
@@ -354,14 +499,36 @@ const LoginForm = ({ onSubmit, error, submitText }: LoginFormProps) => {
                   {...field}
                   label={t('login.form.mobileNumber', 'Mobile Number')}
                   variant="outlined"
-                  sx={{ width: '70%' }}
+                  sx={{ 
+                    width: '70%',
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 2,
+                      backgroundColor: 'background.paper',
+                      '& fieldset': {
+                        borderColor: 'divider',
+                      },
+                      '&:hover fieldset': {
+                        borderColor: 'primary.main',
+                      },
+                      '&.Mui-focused fieldset': {
+                        borderColor: 'primary.main',
+                        borderWidth: 2,
+                      },
+                    },
+                    '& .MuiInputLabel-root': {
+                      color: 'text.secondary',
+                      '&.Mui-focused': {
+                        color: 'primary.main',
+                      },
+                    },
+                  }}
                   margin="normal"
                   error={!!fieldState.error}
                   disabled={isLoading}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Phone size={20} />
+                        <Phone size={20} style={{ color: 'currentColor', opacity: 0.7 }} />
                       </InputAdornment>
                     ),
                   }}
@@ -372,7 +539,7 @@ const LoginForm = ({ onSubmit, error, submitText }: LoginFormProps) => {
           
           {(mobileForm.formState.errors.mobileCountryCode || mobileForm.formState.errors.mobileNumber) && (
             <FormHelperText error>
-              {mobileForm.formState.errors.mobileCountryCode?.message || mobileForm.formState.errors.mobileNumber?.message}
+              {mobileForm.formState.errors.mobileCountryCode?.message ?? mobileForm.formState.errors.mobileNumber?.message}
             </FormHelperText>
           )}
           
@@ -390,6 +557,28 @@ const LoginForm = ({ onSubmit, error, submitText }: LoginFormProps) => {
                 error={!!fieldState.error}
                 helperText={fieldState.error?.message}
                 disabled={isLoading}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: 2,
+                    backgroundColor: 'background.paper',
+                    '& fieldset': {
+                      borderColor: 'divider',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: 'primary.main',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: 'primary.main',
+                      borderWidth: 2,
+                    },
+                  },
+                  '& .MuiInputLabel-root': {
+                    color: 'text.secondary',
+                    '&.Mui-focused': {
+                      color: 'primary.main',
+                    },
+                  },
+                }}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -397,6 +586,7 @@ const LoginForm = ({ onSubmit, error, submitText }: LoginFormProps) => {
                         aria-label="toggle password visibility"
                         onClick={toggleShowPassword}
                         edge="end"
+                        sx={{ color: 'text.secondary' }}
                       >
                         {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                       </IconButton>
@@ -428,7 +618,7 @@ const LoginForm = ({ onSubmit, error, submitText }: LoginFormProps) => {
           </Box>
         </form>
       </TabPanel>
-    </Paper>
+    </Box>
   );
 };
 
