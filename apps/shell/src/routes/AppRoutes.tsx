@@ -19,6 +19,7 @@ import UnauthorizedPage from '../pages/UnauthorizedPage';
 
 // Components
 import ProtectedRoute from '../components/ProtectedRoute';
+import RefreshWarningProvider from '../components/RefreshWarningProvider';
 
 // Redux
 import { useAppDispatch } from '../hooks/useRedux';
@@ -33,39 +34,44 @@ const AppRoutes = () => {
   }, [dispatch]);
 
   return (
-    <Routes>
-      {/* Public routes */}
-      <Route path="/auth/login" element={<LoginPage />} />
-      <Route path="/unauthorized" element={<UnauthorizedPage />} />
+    <>
+      {/* Refresh warning provider for authenticated users */}
+      <RefreshWarningProvider />
       
-      {/* Protected routes */}
-      <Route
-        path="/"
-        element={
-          <ProtectedRoute>
-            <MainLayout />
-          </ProtectedRoute>
-        }
-      >
-        <Route index element={<Navigate to="/dashboard" replace />} />
-        <Route path="dashboard" element={<DashboardPage />} />
-        <Route path="profile" element={<ProfilePage />} />
-        <Route path="settings" element={<SettingsPage />} />
-        <Route path="documents" element={<DocumentsPage />} />
+      <Routes>
+        {/* Public routes */}
+        <Route path="/auth/login" element={<LoginPage />} />
+        <Route path="/unauthorized" element={<UnauthorizedPage />} />
         
-        {/* Analytics and Reports */}
-        <Route path="reports">
-          <Route path="analytics" element={<AnalyticsPage />} />
-          <Route path="exports" element={<ReportsPage />} />
+        {/* Protected routes */}
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <MainLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<Navigate to="/dashboard" replace />} />
+          <Route path="dashboard" element={<DashboardPage />} />
+          <Route path="profile" element={<ProfilePage />} />
+          <Route path="settings" element={<SettingsPage />} />
+          <Route path="documents" element={<DocumentsPage />} />
+          
+          {/* Analytics and Reports */}
+          <Route path="reports">
+            <Route path="analytics" element={<AnalyticsPage />} />
+            <Route path="exports" element={<ReportsPage />} />
+          </Route>
+          
+          {/* Users Management */}
+          <Route path="users" element={<UsersPage />} />
         </Route>
         
-        {/* Users Management */}
-        <Route path="users" element={<UsersPage />} />
-      </Route>
-      
-      {/* Catch-all route */}
-      <Route path="*" element={<NotFoundPage />} />
-    </Routes>
+        {/* Catch-all route */}
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </>
   );
 };
 
