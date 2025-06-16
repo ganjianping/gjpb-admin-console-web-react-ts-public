@@ -17,17 +17,11 @@ import {
 import { 
   LayoutDashboard, 
   Users, 
-  FileText, 
-  Settings, 
   ChevronLeft, 
   ChevronRight,
   ChevronDown,
   ChevronUp,
   ExternalLink,
-  Bell,
-  BarChart3,
-  Files,
-  User,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -93,55 +87,6 @@ const Sidebar = ({ drawerWidth, collapsedWidth, open, onClose, variant }: Sideba
           path: '/users/roles',
         },
       ],
-    },
-    {
-      key: 'reports',
-      title: t('navigation.reports'),
-      icon: BarChart3,
-      children: [
-        {
-          key: 'reports-analytics',
-          title: t('navigation.analytics'),
-          path: '/reports/analytics',
-        },
-        {
-          key: 'reports-exports',
-          title: t('navigation.exports'),
-          path: '/reports/exports',
-        },
-      ],
-    },
-    {
-      key: 'documents',
-      title: t('navigation.documents'),
-      icon: Files,
-      path: '/documents',
-    },
-    {
-      key: 'notifications',
-      title: t('navigation.notifications'),
-      icon: Bell,
-      path: '/notifications',
-    },
-    {
-      key: 'profile',
-      title: t('navigation.profile'),
-      icon: User,
-      path: '/profile',
-      divider: true,
-    },
-    {
-      key: 'settings',
-      title: t('navigation.settings'),
-      icon: Settings,
-      path: '/settings',
-    },
-    {
-      key: 'docs',
-      title: t('navigation.documentation'),
-      icon: FileText,
-      path: 'https://docs.example.com',
-      external: true,
     },
   ], [t]);
 
@@ -405,95 +350,6 @@ const Sidebar = ({ drawerWidth, collapsedWidth, open, onClose, variant }: Sideba
 
   const drawerContent = (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      {/* Logo and title */}
-      <Box 
-        sx={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: open ? 'space-between' : 'center',
-          p: open ? 2 : 1,
-          borderBottom: 1, 
-          borderColor: 'divider',
-          minHeight: 64,
-        }}
-      >
-        {open ? (
-          <Typography 
-            variant="h6" 
-            component={RouterLink} 
-            to="/"
-            sx={{ 
-              textDecoration: 'none', 
-              color: 'primary.main',
-              fontWeight: 700,
-              display: 'flex',
-              alignItems: 'center',
-            }}
-          >
-            {/* You can add a logo image here */}
-            GJPB Admin
-          </Typography>
-        ) : (
-          <Tooltip title="GJPB Admin" placement="right">
-            <Typography 
-              variant="h6" 
-              component={RouterLink} 
-              to="/"
-              sx={{ 
-                textDecoration: 'none', 
-                color: 'primary.main',
-                fontWeight: 700,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: 40,
-                height: 40,
-                borderRadius: 1,
-                bgcolor: 'primary.light',
-                '&:hover': {
-                  bgcolor: 'primary.main',
-                  color: 'white',
-                }
-              }}
-            >
-              G
-            </Typography>
-          </Tooltip>
-        )}
-        
-        {/* Only show toggle button for permanent drawer when expanded */}
-        {variant === 'permanent' && open && (
-          <Tooltip title={t('common.collapseSidebar')}>
-            <IconButton onClick={handleToggleSidebar} size="small">
-              <ChevronLeft />
-            </IconButton>
-          </Tooltip>
-        )}
-
-        {/* Show expand button when collapsed */}
-        {variant === 'permanent' && !open && (
-          <Box sx={{ position: 'absolute', top: 8, right: -12 }}>
-            <Tooltip title={t('common.expandSidebar')}>
-              <IconButton 
-                onClick={handleToggleSidebar} 
-                size="small"
-                sx={{
-                  bgcolor: 'background.paper',
-                  border: 1,
-                  borderColor: 'divider',
-                  '&:hover': {
-                    bgcolor: 'primary.main',
-                    color: 'white',
-                  }
-                }}
-              >
-                <ChevronRight />
-              </IconButton>
-            </Tooltip>
-          </Box>
-        )}
-      </Box>
-      
       {/* Navigation */}
       <List
         sx={{
@@ -501,25 +357,70 @@ const Sidebar = ({ drawerWidth, collapsedWidth, open, onClose, variant }: Sideba
           flexGrow: 1,
           overflow: 'auto',
           p: open ? 1 : 0.5,
+          pt: 2, // Add top padding since we removed header
         }}
       >
         {renderNavItems(navItems)}
       </List>
       
-      {/* App version */}
-      {open && (
-        <Box
-          sx={{
-            p: 2,
-            borderTop: 1,
-            borderColor: 'divider',
-          }}
-        >
-          <Typography variant="caption" color="text.secondary">
-            v1.0.0
-          </Typography>
-        </Box>
-      )}
+      {/* Bottom section with toggle button and version */}
+      <Box
+        sx={{
+          borderTop: 1,
+          borderColor: 'divider',
+          p: 1,
+        }}
+      >
+        {/* Expand/Collapse Button and Version in same row */}
+        {variant === 'permanent' && (
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: 1,
+          }}>
+            {/* App version - always show */}
+            <Box sx={{ 
+              flex: open ? 1 : 0,
+              overflow: 'hidden',
+              opacity: open ? 1 : 0.7,
+              transition: 'all 0.3s ease-in-out',
+            }}>
+              <Typography 
+                variant="caption" 
+                color="text.secondary"
+                sx={{ 
+                  fontSize: open ? '0.75rem' : '0.65rem',
+                  fontWeight: 500,
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {open ? 'v1.0.0' : 'v1.0'}
+              </Typography>
+            </Box>
+
+            {/* Expand/Collapse Button */}
+            <Tooltip title={open ? t('common.collapseSidebar') : t('common.expandSidebar')}>
+              <IconButton 
+                onClick={handleToggleSidebar} 
+                size="small"
+                sx={{
+                  bgcolor: 'background.paper',
+                  border: 1,
+                  borderColor: 'divider',
+                  flexShrink: 0,
+                  '&:hover': {
+                    bgcolor: 'primary.main',
+                    color: 'white',
+                  }
+                }}
+              >
+                {open ? <ChevronLeft /> : <ChevronRight />}
+              </IconButton>
+            </Tooltip>
+          </Box>
+        )}
+      </Box>
     </Box>
   );
 
@@ -558,6 +459,8 @@ const Sidebar = ({ drawerWidth, collapsedWidth, open, onClose, variant }: Sideba
             bgcolor: 'background.paper',
             transition: 'width 0.3s ease-in-out',
             overflowX: 'hidden',
+            top: variant === 'permanent' ? 64 : 0, // Start below header for permanent, full height for temporary
+            height: variant === 'permanent' ? 'calc(100vh - 64px)' : '100vh', // Account for header height
           },
         }}
       >

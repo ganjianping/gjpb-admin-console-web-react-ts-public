@@ -27,9 +27,8 @@ const MainLayout = () => {
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-      {/* Header */}
+      {/* Header - full width */}
       <Header 
-        drawerWidth={DRAWER_WIDTH}
         onDrawerToggle={handleDrawerToggle}
       />
 

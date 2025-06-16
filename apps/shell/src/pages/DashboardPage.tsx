@@ -14,12 +14,8 @@ import {
 } from '@mui/material';
 import { 
   Users, 
-  FileText, 
   Activity, 
-  Layers, 
-  AlertCircle,
   ChevronRight,
-  Download,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
@@ -44,12 +40,10 @@ const recentActivity = [
   { id: 4, action: 'Role updated', user: 'mark.wilson@example.com', date: new Date(2025, 5, 4, 9, 45) },
 ];
 
-// Summary stats
+// Summary stats (removed Documents & System Alerts)
 const summaryStats = [
   { title: 'Total Users', value: '1,245', icon: Users, color: '#1976d2' },
   { title: 'Active Sessions', value: '37', icon: Activity, color: '#2e7d32' },
-  { title: 'Documents', value: '874', icon: FileText, color: '#ed6c02' },
-  { title: 'System Alerts', value: '5', icon: AlertCircle, color: '#d32f2f' },
 ];
 
 const DashboardPage = () => {
@@ -69,52 +63,57 @@ const DashboardPage = () => {
   }, [dispatch, t]);
   
   return (
-    <Box>
+    <Box sx={{ p: { xs: 2, md: 3 } }}>
       {/* Welcome message */}
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
+      <Box sx={{ mb: 6 }}>
+        <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 600 }}>
           {t('dashboard.welcome')}, {user?.nickname ?? user?.username}!
         </Typography>
-        <Typography variant="body1" color="text.secondary">
+        <Typography variant="h6" color="text.secondary" sx={{ fontWeight: 400 }}>
           {format(new Date(), 'EEEE, MMMM d, yyyy')}
         </Typography>
       </Box>
       
       {/* Stats summary */}
-      <Grid container component="div" spacing={3} sx={{ mb: 4 }}>
+      <Grid container component="div" spacing={4} sx={{ mb: 6 }}>
         {summaryStats.map((stat) => {
           const Icon = stat.icon;
           return (
-            <Grid item component="div" xs={12} sm={6} md={3} key={stat.title}>
+            <Grid item component="div" xs={12} sm={6} key={stat.title}>
               <Paper 
                 elevation={0} 
                 sx={{ 
-                  p: 3, 
-                  borderRadius: 2, 
+                  p: 4, 
+                  borderRadius: 3, 
                   display: 'flex', 
                   alignItems: 'center',
                   bgcolor: 'background.paper',
                   border: 1,
                   borderColor: 'divider',
                   height: '100%',
+                  transition: 'all 0.2s ease-in-out',
+                  '&:hover': {
+                    boxShadow: 2,
+                    transform: 'translateY(-2px)',
+                  }
                 }}
               >
                 <Box
                   sx={{
-                    p: 1.5,
-                    borderRadius: 2,
+                    p: 2,
+                    borderRadius: 3,
                     bgcolor: `${stat.color}15`,
                     color: stat.color,
-                    mr: 2,
+                    mr: 3,
                   }}
                 >
-                  <Icon size={24} />
+                  <Icon size={32} />
                 </Box>
                 <Box>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
                     {stat.title}
                   </Typography>
-                  <Typography variant="h5" sx={{ fontWeight: 600 }}>
+                  <Typography variant="h4" sx={{ fontWeight: 700 }}>
                     {stat.value}
                   </Typography>
                 </Box>
@@ -124,87 +123,59 @@ const DashboardPage = () => {
         })}
       </Grid>
       
-      {/* Main dashboard content */}
-      <Grid container component="div" spacing={3}>
-        {/* Recent activity */}
-        <Grid item component="div" xs={12} md={6}>
-          <Card elevation={0} sx={{ borderRadius: 2, border: 1, borderColor: 'divider' }}>
+      {/* Main dashboard content - Recent activity taking full width */}
+      <Grid container component="div" spacing={4}>
+        <Grid item component="div" xs={12}>
+          <Card elevation={0} sx={{ borderRadius: 3, border: 1, borderColor: 'divider', overflow: 'hidden' }}>
             <CardHeader 
-              title={t('dashboard.recentActivity')}
+              title={
+                <Typography variant="h5" sx={{ fontWeight: 600 }}>
+                  {t('dashboard.recentActivity')}
+                </Typography>
+              }
               action={
                 <Button
                   endIcon={<ChevronRight size={16} />}
-                  sx={{ textTransform: 'none' }}
+                  sx={{ textTransform: 'none', fontWeight: 500 }}
+                  variant="outlined"
+                  size="small"
                 >
                   {t('common.viewAll')}
                 </Button>
               }
+              sx={{ pb: 1 }}
             />
             <Divider />
             <CardContent sx={{ p: 0 }}>
-              <List>
+              <List sx={{ py: 0 }}>
                 {recentActivity.map((activity, index) => (
                   <Box key={activity.id}>
-                    <ListItem>
+                    <ListItem 
+                      sx={{ 
+                        py: 3, 
+                        px: 3,
+                        '&:hover': {
+                          bgcolor: 'action.hover',
+                        }
+                      }}
+                    >
                       <ListItemText
-                        primary={activity.action}
-                        secondary={`${activity.user} • ${format(activity.date, 'MMM d, HH:mm')}`}
+                        primary={
+                          <Typography variant="body1" sx={{ fontWeight: 500, mb: 0.5 }}>
+                            {activity.action}
+                          </Typography>
+                        }
+                        secondary={
+                          <Typography variant="body2" color="text.secondary">
+                            {activity.user} • {format(activity.date, 'MMM d, HH:mm')}
+                          </Typography>
+                        }
                       />
                     </ListItem>
                     {index < recentActivity.length - 1 && <Divider />}
                   </Box>
                 ))}
               </List>
-            </CardContent>
-          </Card>
-        </Grid>
-        
-        {/* Quick actions */}
-        <Grid item component="div" xs={12} md={6}>
-          <Card elevation={0} sx={{ borderRadius: 2, border: 1, borderColor: 'divider' }}>
-            <CardHeader title={t('dashboard.quickActions')} />
-            <Divider />
-            <CardContent>
-              <Grid container component="div" spacing={2}>
-                <Grid item component="div" xs={12} sm={6}>
-                  <Button
-                    variant="contained"
-                    startIcon={<Users size={18} />}
-                    fullWidth
-                    sx={{ mb: 2, justifyContent: 'flex-start', py: 1 }}
-                  >
-                    {t('navigation.manageUsers')}
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    startIcon={<FileText size={18} />}
-                    fullWidth
-                    sx={{ mb: 2, justifyContent: 'flex-start', py: 1 }}
-                  >
-                    {t('navigation.createDocument')}
-                  </Button>
-                </Grid>
-                <Grid item component="div" xs={12} sm={6}>
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    startIcon={<Download size={18} />}
-                    fullWidth
-                    sx={{ mb: 2, justifyContent: 'flex-start', py: 1 }}
-                  >
-                    {t('dashboard.downloadReport')}
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    color="info"
-                    startIcon={<Layers size={18} />}
-                    fullWidth
-                    sx={{ mb: 2, justifyContent: 'flex-start', py: 1 }}
-                  >
-                    {t('dashboard.manageSystem')}
-                  </Button>
-                </Grid>
-              </Grid>
             </CardContent>
           </Card>
         </Grid>
