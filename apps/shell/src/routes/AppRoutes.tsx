@@ -10,9 +10,6 @@ import { LoginPage } from '../../../auth-mf/src/exports';
 import DashboardPage from '../pages/DashboardPage';
 import ProfilePage from '../pages/ProfilePage';
 import SettingsPage from '../pages/SettingsPage';
-import DocumentsPage from '../pages/DocumentsPage';
-import AnalyticsPage from '../pages/AnalyticsPage';
-import ReportsPage from '../pages/ReportsPage';
 import UsersPage from '../pages/UsersPage';
 import NotFoundPage from '../pages/NotFoundPage';
 import UnauthorizedPage from '../pages/UnauthorizedPage';
@@ -56,13 +53,6 @@ const AppRoutes = () => {
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="profile" element={<ProfilePage />} />
           <Route path="settings" element={<SettingsPage />} />
-          <Route path="documents" element={<DocumentsPage />} />
-          
-          {/* Analytics and Reports */}
-          <Route path="reports">
-            <Route path="analytics" element={<AnalyticsPage />} />
-            <Route path="exports" element={<ReportsPage />} />
-          </Route>
           
           {/* Users Management */}
           <Route path="users" element={<UsersPage />} />

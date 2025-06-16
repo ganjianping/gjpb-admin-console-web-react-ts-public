@@ -63,9 +63,9 @@ const DashboardPage = () => {
   }, [dispatch, t]);
   
   return (
-    <Box sx={{ p: { xs: 2, md: 3 } }}>
+    <Box sx={{ width: '100%' }}>
       {/* Welcome message */}
-      <Box sx={{ mb: 6 }}>
+      <Box sx={{ mb: 4 }}>
         <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 600 }}>
           {t('dashboard.welcome')}, {user?.nickname ?? user?.username}!
         </Typography>
@@ -75,7 +75,7 @@ const DashboardPage = () => {
       </Box>
       
       {/* Stats summary */}
-      <Grid container component="div" spacing={4} sx={{ mb: 6 }}>
+      <Grid container component="div" spacing={3} sx={{ mb: 4 }}>
         {summaryStats.map((stat) => {
           const Icon = stat.icon;
           return (
@@ -124,7 +124,7 @@ const DashboardPage = () => {
       </Grid>
       
       {/* Main dashboard content - Recent activity taking full width */}
-      <Grid container component="div" spacing={4}>
+      <Grid container component="div" spacing={3}>
         <Grid item component="div" xs={12}>
           <Card elevation={0} sx={{ borderRadius: 3, border: 1, borderColor: 'divider', overflow: 'hidden' }}>
             <CardHeader 

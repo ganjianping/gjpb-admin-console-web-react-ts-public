@@ -133,32 +133,26 @@ const Header = ({ onDrawerToggle }: HeaderProps) => {
         }}>
           <Box
             sx={{
-              width: { xs: 36, sm: 40 },
-              height: { xs: 36, sm: 40 },
-              borderRadius: 2,
-              background: '#1976d2',
+              width: { xs: 32, sm: 36 },
+              height: { xs: 32, sm: 36 },
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 2px 8px rgba(25, 118, 210, 0.2)',
               transition: 'all 0.2s ease',
               '&:hover': {
-                transform: 'scale(1.05)',
-                boxShadow: '0 4px 12px rgba(25, 118, 210, 0.3)',
+                transform: 'scale(1.1)',
               }
             }}
           >
-            <Typography
-              variant="h6"
-              sx={{
-                color: 'white',
-                fontWeight: 700,
-                fontSize: { xs: '1rem', sm: '1.1rem' },
-                fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+            <img
+              src="/favicon.ico"
+              alt="GJPB Logo"
+              style={{
+                width: '32px',
+                height: '32px',
+                transition: 'all 0.2s ease',
               }}
-            >
-              G
-            </Typography>
+            />
           </Box>
           <Typography
             variant="h6"
