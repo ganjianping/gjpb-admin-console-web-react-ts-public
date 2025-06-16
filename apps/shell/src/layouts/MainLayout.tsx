@@ -7,6 +7,7 @@ import { useAppSelector } from '../hooks/useRedux';
 import { selectSidebarOpen } from '../redux/slices/uiSlice';
 
 const DRAWER_WIDTH = 280;
+const COLLAPSED_DRAWER_WIDTH = 72;
 
 const MainLayout = () => {
   const theme = useTheme();
@@ -16,6 +17,12 @@ const MainLayout = () => {
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
+  };
+
+  // Calculate current sidebar width
+  const getCurrentSidebarWidth = () => {
+    if (isMobile) return 0;
+    return sidebarOpen ? DRAWER_WIDTH : COLLAPSED_DRAWER_WIDTH;
   };
 
   return (
@@ -29,6 +36,7 @@ const MainLayout = () => {
       {/* Sidebar */}
       <Sidebar 
         drawerWidth={DRAWER_WIDTH}
+        collapsedWidth={COLLAPSED_DRAWER_WIDTH}
         open={isMobile ? mobileOpen : sidebarOpen}
         onClose={handleDrawerToggle}
         variant={isMobile ? 'temporary' : 'permanent'}
@@ -40,8 +48,8 @@ const MainLayout = () => {
         sx={{
           flexGrow: 1,
           pt: 8,
-          width: { sm: `calc(100% - ${sidebarOpen ? DRAWER_WIDTH : 0}px)` },
-          ml: { sm: sidebarOpen ? `${DRAWER_WIDTH}px` : 0 },
+          width: { sm: `calc(100% - ${getCurrentSidebarWidth()}px)` },
+          ml: { sm: `${getCurrentSidebarWidth()}px` },
           transition: theme.transitions.create(['margin', 'width'], {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.leavingScreen,
