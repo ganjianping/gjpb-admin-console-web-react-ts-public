@@ -186,9 +186,9 @@ class HttpClient {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public get<T = any>(url: string, params?: Record<string, any>): Promise<ApiResponse<T>> {
+  public get<T = any>(url: string, config?: Record<string, any>): Promise<ApiResponse<T>> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return this.instance.get<any, ApiResponse<T>>(url, { params });
+    return this.instance.get<any, ApiResponse<T>>(url, config);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

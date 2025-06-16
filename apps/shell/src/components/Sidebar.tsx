@@ -73,20 +73,16 @@ const Sidebar = ({ drawerWidth, collapsedWidth, open, onClose, variant }: Sideba
     {
       key: 'users',
       title: t('navigation.users'),
+      path: '/users',
       icon: Users,
       roles: ['ADMIN', 'SUPER_ADMIN'],
-      children: [
-        {
-          key: 'users-list',
-          title: t('navigation.usersList'),
-          path: '/users',
-        },
-        {
-          key: 'users-roles',
-          title: t('navigation.roles'),
-          path: '/users/roles',
-        },
-      ],
+    },
+    {
+      key: 'roles',
+      title: t('navigation.roles'),
+      path: '/roles',
+      icon: Users,
+      roles: ['ADMIN', 'SUPER_ADMIN'],
     },
   ], [t]);
 
