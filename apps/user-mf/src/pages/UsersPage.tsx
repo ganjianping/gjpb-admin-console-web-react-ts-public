@@ -125,7 +125,7 @@ const UsersPage = () => {
   
   // Current page and filters
   const [currentPage, setCurrentPage] = useState(0);
-  const [pageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(10);
 
   // Load users data
   const loadUsers = useCallback(async (params?: UserQueryParams) => {
@@ -176,6 +176,16 @@ const UsersPage = () => {
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setTabIndex(newValue);
     setCurrentPage(0); // Reset to first page when changing tabs
+  };
+
+  // Handle pagination changes
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handlePageSizeChange = (newPageSize: number) => {
+    setPageSize(newPageSize);
+    setCurrentPage(0); // Reset to first page when changing page size
   };
 
   // User actions
@@ -609,8 +619,15 @@ const UsersPage = () => {
                 columns={columns}
                 actionMenuItems={actionMenuItems}
                 onRowClick={handleView}
-                showSearch
+                showSearch={false}
                 searchPlaceholder={t('users.searchUsers')}
+                manualPagination={true}
+                pageCount={pagination?.totalPages || 0}
+                currentPage={currentPage}
+                pageSize={pageSize}
+                totalRows={pagination?.totalElements || 0}
+                onPageChange={handlePageChange}
+                onPageSizeChange={handlePageSizeChange}
               />
             </TabPanel>
           ))}

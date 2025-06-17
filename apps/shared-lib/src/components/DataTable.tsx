@@ -52,6 +52,14 @@ export type DataTableProps<T> = {
     divider?: boolean;
     color?: 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning';
   }[];
+  // External pagination props
+  manualPagination?: boolean;
+  pageCount?: number;
+  currentPage?: number;
+  pageSize?: number;
+  totalRows?: number;
+  onPageChange?: (page: number) => void;
+  onPageSizeChange?: (pageSize: number) => void;
 };
 
 export function DataTable<T>({
@@ -66,7 +74,15 @@ export function DataTable<T>({
   searchPlaceholder = 'Search...',
   elevation = 0,
   actionMenuItems,
-}: DataTableProps<T>) {
+  // External pagination props
+  manualPagination = false,
+  pageCount,
+  currentPage = 0,
+  pageSize = 10,
+  totalRows,
+  onPageChange,
+  onPageSizeChange,
+}: Readonly<DataTableProps<T>>) {
   // State
   const [sorting, setSorting] = useState<SortingState>(defaultSort || []);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -135,6 +151,12 @@ export function DataTable<T>({
       columnFilters,
       globalFilter,
       rowSelection,
+      ...(manualPagination && {
+        pagination: {
+          pageIndex: currentPage,
+          pageSize: pageSize,
+        },
+      }),
     },
     enableRowSelection: showSelection,
     onSortingChange: setSorting,
@@ -145,6 +167,21 @@ export function DataTable<T>({
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    ...(manualPagination && {
+      manualPagination: true,
+      pageCount: pageCount ?? Math.ceil((totalRows ?? 0) / pageSize),
+      onPaginationChange: (updater) => {
+        if (typeof updater === 'function') {
+          const newState = updater({ pageIndex: currentPage, pageSize });
+          if (newState.pageIndex !== currentPage && onPageChange) {
+            onPageChange(newState.pageIndex);
+          }
+          if (newState.pageSize !== pageSize && onPageSizeChange) {
+            onPageSizeChange(newState.pageSize);
+          }
+        }
+      },
+    }),
   });
 
   // Handle menu close
@@ -319,11 +356,24 @@ export function DataTable<T>({
         <TablePagination
           component="div"
           rowsPerPageOptions={rowsPerPageOptions}
-          count={table.getFilteredRowModel().rows.length}
+          count={manualPagination ? (totalRows ?? 0) : table.getFilteredRowModel().rows.length}
           rowsPerPage={table.getState().pagination.pageSize}
           page={table.getState().pagination.pageIndex}
-          onPageChange={(_, page) => table.setPageIndex(page)}
-          onRowsPerPageChange={(e) => table.setPageSize(Number(e.target.value))}
+          onPageChange={(_, page) => {
+            if (manualPagination && onPageChange) {
+              onPageChange(page);
+            } else {
+              table.setPageIndex(page);
+            }
+          }}
+          onRowsPerPageChange={(e) => {
+            const newPageSize = Number(e.target.value);
+            if (manualPagination && onPageSizeChange) {
+              onPageSizeChange(newPageSize);
+            } else {
+              table.setPageSize(newPageSize);
+            }
+          }}
           sx={{
             borderTop: 0,
           }}
