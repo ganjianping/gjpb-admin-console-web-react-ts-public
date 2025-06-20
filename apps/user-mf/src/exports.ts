@@ -2,3 +2,4 @@
 // Export the user management components
 export { default as UsersPage } from './pages/UsersPage';
 export { default as RolesPage } from './pages/RolesPage';
+export { default as LanguageSwitcher } from './components/LanguageSwitcher';

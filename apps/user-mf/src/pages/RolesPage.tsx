@@ -22,6 +22,7 @@ import {
 import { Grid } from '../../../shared-lib/src/utils/grid';
 import { Plus, Shield, Settings, Download } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import '../utils/i18n'; // Initialize user-mf translations
 import { DataTable, createColumnHelper, createStatusChip } from '../../../shared-lib/src/components/DataTable';
 
 // Mock role data
@@ -326,100 +327,339 @@ const RolesPage = () => {
       </Card>
 
       {/* Role Dialog */}
-      <Dialog open={dialogOpen} onClose={handleCloseDialog} maxWidth="md" fullWidth>
-        <DialogTitle>{getDialogTitle()}</DialogTitle>
-        <DialogContent>
+      <Dialog 
+        open={dialogOpen} 
+        onClose={handleCloseDialog} 
+        maxWidth="md" 
+        fullWidth
+        slotProps={{
+          paper: {
+            sx: {
+              borderRadius: 3,
+              boxShadow: '0 24px 48px rgba(0, 0, 0, 0.12)',
+            }
+          }
+        }}
+      >
+        <DialogTitle sx={{ 
+          borderBottom: '1px solid', 
+          borderColor: 'divider', 
+          pb: 2,
+          background: 'linear-gradient(145deg, #f8fafc 0%, #e2e8f0 100%)'
+        }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Box 
+              sx={{ 
+                p: 1.5, 
+                borderRadius: 2, 
+                backgroundColor: 'primary.main',
+                color: 'primary.contrastText',
+                display: 'inline-flex'
+              }}
+            >
+              <Shield size={24} />
+            </Box>
+            <Box>
+              <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                {getDialogTitle()}
+              </Typography>
+              {selectedRole && (
+                <Typography variant="body2" sx={{ opacity: 0.9, mt: 0.5 }}>
+                  {(() => {
+                    if (actionType === 'view') return 'View role details and permissions';
+                    if (actionType === 'edit') return 'Modify role information and permissions';
+                    if (actionType === 'delete') return 'Remove role from system';
+                    return 'Add new role to system';
+                  })()}
+                </Typography>
+              )}
+            </Box>
+          </Box>
+        </DialogTitle>
+        
+        <DialogContent sx={{ p: 0 }}>
           {actionType === 'delete' ? (
-            <DialogContentText>
-              {t('roles.deleteConfirmation', { roleName: selectedRole?.name })}
+            <Box sx={{ p: 3 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+                <Box 
+                  sx={{ 
+                    p: 2, 
+                    borderRadius: 2, 
+                    backgroundColor: 'error.light',
+                    color: 'error.contrastText',
+                    display: 'inline-flex'
+                  }}
+                >
+                  <Shield size={24} />
+                </Box>
+                <Box>
+                  <Typography variant="h6" gutterBottom>
+                    Confirm Deletion
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    This action cannot be undone
+                  </Typography>
+                </Box>
+              </Box>
+              <DialogContentText sx={{ fontSize: '1rem' }}>
+                {t('roles.deleteConfirmation', { roleName: selectedRole?.name }) || 
+                 `Are you sure you want to delete role "${selectedRole?.name}"? This action cannot be undone.`}
+              </DialogContentText>
               {selectedRole?.userCount && selectedRole.userCount > 0 && (
                 <Box sx={{ mt: 2, p: 2, bgcolor: 'warning.light', borderRadius: 1 }}>
                   <Typography variant="body2" color="warning.dark">
-                    {t('roles.deleteWarning', { userCount: selectedRole.userCount })}
+                    {t('roles.deleteWarning', { userCount: selectedRole.userCount }) ||
+                     `Warning: This role is assigned to ${selectedRole.userCount} user(s). Deleting it will remove their permissions.`}
                   </Typography>
                 </Box>
               )}
-            </DialogContentText>
+            </Box>
           ) : (
-            <Box sx={{ mt: 2 }}>
-              <Grid container component="div" spacing={3}>
-                <Grid item component="div" xs={12} sm={6}>
-                  <TextField
-                    label={t('roles.name')}
-                    fullWidth
-                    value={formData.name || ''}
-                    onChange={(e) => handleFormChange('name', e.target.value)}
-                    disabled={actionType === 'view'}
-                    required
-                  />
-                </Grid>
-                <Grid item component="div" xs={12} sm={6}>
-                  <FormControl fullWidth>
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={formData.status === 'active'}
-                          onChange={(e) => handleFormChange('status', e.target.checked ? 'active' : 'inactive')}
+            <Box>
+              {/* Form Content */}
+              <Box sx={{ p: 4 }}>
+                {/* Basic Information Section */}
+                <Box 
+                  sx={{ 
+                    p: 3, 
+                    border: '1px solid', 
+                    borderColor: 'divider', 
+                    borderRadius: 3,
+                    mb: 3,
+                    backgroundColor: 'grey.50'
+                  }}
+                >
+                  <Typography 
+                    variant="h6" 
+                    sx={{ 
+                      fontWeight: 600, 
+                      mb: 3, 
+                      color: 'primary.main',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1.5,
+                      fontSize: '1.1rem'
+                    }}
+                  >
+                    <Shield size={20} />
+                    Basic Information
+                  </Typography>
+                  
+                  <Grid container spacing={3} sx={{ width: '100%' }}>
+                    <Grid item xs={12} sx={{ width: '100%', display: 'block' }}>
+                      <TextField
+                        label={`${t('roles.form.roleName') || 'Role Name'} ${actionType !== 'view' ? '*' : ''}`}
+                        fullWidth
+                        size="medium"
+                        value={formData.name ?? ''}
+                        onChange={(e) => handleFormChange('name', e.target.value)}
+                        disabled={actionType === 'view'}
+                        required={actionType !== 'view'}
+                        helperText={actionType !== 'view' ? (t('roles.form.roleNameHelper') || 'Unique name for the role') : ''}
+                        variant="outlined"
+                        sx={{ 
+                          width: '100%',
+                          '& .MuiInputBase-root': { 
+                            height: 48,
+                            width: '100%',
+                            backgroundColor: 'white'
+                          }
+                        }}
+                      />
+                    </Grid>
+                    
+                    <Grid item xs={12} sx={{ width: '100%', display: 'block' }}>
+                      <TextField
+                        label={t('roles.form.description') || 'Description'}
+                        fullWidth
+                        size="medium"
+                        multiline
+                        rows={3}
+                        value={formData.description ?? ''}
+                        onChange={(e) => handleFormChange('description', e.target.value)}
+                        disabled={actionType === 'view'}
+                        helperText={t('roles.form.descriptionHelper') || 'Describe the purpose and scope of this role'}
+                        variant="outlined"
+                        sx={{ 
+                          width: '100%',
+                          '& .MuiInputBase-root': { 
+                            width: '100%',
+                            backgroundColor: 'white'
+                          }
+                        }}
+                      />
+                    </Grid>
+                  </Grid>
+                </Box>
+
+                {/* Permissions Section */}
+                <Box 
+                  sx={{ 
+                    p: 3, 
+                    border: '1px solid', 
+                    borderColor: 'divider', 
+                    borderRadius: 3,
+                    mb: 3,
+                    backgroundColor: 'grey.50'
+                  }}
+                >
+                  <Typography 
+                    variant="h6" 
+                    sx={{ 
+                      fontWeight: 600, 
+                      mb: 3, 
+                      color: 'primary.main',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1.5,
+                      fontSize: '1.1rem'
+                    }}
+                  >
+                    <Settings size={20} />
+                    Permissions
+                  </Typography>
+                  
+                  <Grid container spacing={3} sx={{ width: '100%' }}>
+                    <Grid item xs={12} sx={{ width: '100%', display: 'block' }}>
+                      <FormControl fullWidth size="medium" variant="outlined">
+                        <InputLabel sx={{ backgroundColor: 'white', px: 1 }}>
+                          {t('roles.form.permissions') || 'Permissions'}
+                        </InputLabel>
+                        <Select
+                          multiple
+                          value={formData.permissions ?? []}
+                          label={t('roles.form.permissions') || 'Permissions'}
+                          onChange={(e) => handleFormChange('permissions', e.target.value)}
                           disabled={actionType === 'view'}
-                        />
-                      }
-                      label={t('roles.active')}
-                    />
-                  </FormControl>
-                </Grid>
-                <Grid item component="div" xs={12}>
-                  <TextField
-                    label={t('roles.description')}
-                    fullWidth
-                    multiline
-                    rows={3}
-                    value={formData.description || ''}
-                    onChange={(e) => handleFormChange('description', e.target.value)}
-                    disabled={actionType === 'view'}
-                  />
-                </Grid>
-                <Grid item component="div" xs={12}>
-                  <FormControl fullWidth>
-                    <InputLabel>{t('roles.permissions')}</InputLabel>
-                    <Select
-                      multiple
-                      value={formData.permissions || []}
-                      label={t('roles.permissions')}
-                      onChange={(e) => handleFormChange('permissions', e.target.value)}
-                      disabled={actionType === 'view'}
-                      renderValue={(selected) => (
-                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                          {selected.map((value) => (
-                            <Chip key={value} label={value} size="small" />
+                          renderValue={(selected) => (
+                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                              {selected.map((value) => (
+                                <Chip key={value} label={value} size="small" />
+                              ))}
+                            </Box>
+                          )}
+                          sx={{ 
+                            width: '100%',
+                            backgroundColor: 'white'
+                          }}
+                        >
+                          {availablePermissions.map((permission) => (
+                            <MenuItem key={permission} value={permission}>
+                              {permission}
+                            </MenuItem>
                           ))}
-                        </Box>
-                      )}
-                    >
-                      {availablePermissions.map((permission) => (
-                        <MenuItem key={permission} value={permission}>
-                          {permission}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
-              </Grid>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                  </Grid>
+                </Box>
+
+                {/* Status Section */}
+                <Box 
+                  sx={{ 
+                    p: 3, 
+                    border: '1px solid', 
+                    borderColor: 'divider', 
+                    borderRadius: 3,
+                    backgroundColor: 'grey.50'
+                  }}
+                >
+                  <Typography 
+                    variant="h6" 
+                    sx={{ 
+                      fontWeight: 600, 
+                      mb: 3, 
+                      color: 'primary.main',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1.5,
+                      fontSize: '1.1rem'
+                    }}
+                  >
+                    <Settings size={20} />
+                    Status Settings
+                  </Typography>
+                  
+                  <Grid container spacing={3} sx={{ width: '100%' }}>
+                    <Grid item xs={12} sx={{ width: '100%', display: 'block' }}>
+                      <Box sx={{ 
+                        p: 2, 
+                        border: '1px solid', 
+                        borderColor: 'divider', 
+                        borderRadius: 2,
+                        backgroundColor: 'white'
+                      }}>
+                        <FormControlLabel
+                          control={
+                            <Switch
+                              checked={formData.status === 'active'}
+                              onChange={(e) => handleFormChange('status', e.target.checked ? 'active' : 'inactive')}
+                              disabled={actionType === 'view'}
+                              color="primary"
+                            />
+                          }
+                          label={
+                            <Box>
+                              <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                                {t('roles.form.activeStatus') || 'Active Status'}
+                              </Typography>
+                              <Typography variant="body2" color="text.secondary">
+                                {t('roles.form.activeStatusHelper') || 'Whether this role is available for assignment'}
+                              </Typography>
+                            </Box>
+                          }
+                          sx={{ width: '100%', m: 0 }}
+                        />
+                      </Box>
+                    </Grid>
+                  </Grid>
+                </Box>
+              </Box>
             </Box>
           )}
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog}>{t('common.cancel')}</Button>
-          {actionType === 'delete' ? (
-            <Button variant="contained" color="error" onClick={handleCloseDialog}>
-              {t('common.delete')}
+        
+        <DialogActions sx={{ p: 3, pt: 0, gap: 1 }}>
+          <Button 
+            onClick={handleCloseDialog} 
+            size="large"
+            sx={{ 
+              minWidth: 100, 
+              py: 1,
+              px: 2 
+            }}
+          >
+            {t('common.close') || 'Close'}
+          </Button>
+          
+          {actionType === 'delete' && (
+            <Button 
+              variant="contained" 
+              color="error" 
+              size="large"
+              onClick={handleCloseDialog}
+              sx={{ 
+                minWidth: 100, 
+                py: 1,
+                px: 2 
+              }}
+            >
+              {t('common.delete') || 'Delete'}
             </Button>
-          ) : actionType === 'edit' || actionType === 'create' ? (
-            <Button variant="contained" onClick={handleCloseDialog}>
-              {t('common.save')}
-            </Button>
-          ) : (
-            <Button variant="contained" onClick={handleCloseDialog}>
-              {t('common.close')}
+          )}
+          
+          {(actionType === 'edit' || actionType === 'create') && (
+            <Button 
+              variant="contained" 
+              size="large"
+              onClick={handleCloseDialog}
+              sx={{ 
+                minWidth: 100, 
+                py: 1,
+                px: 2 
+              }}
+            >
+              {t('common.save') || 'Save'}
             </Button>
           )}
         </DialogActions>

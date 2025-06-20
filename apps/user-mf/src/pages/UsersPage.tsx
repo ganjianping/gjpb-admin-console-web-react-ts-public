@@ -21,10 +21,13 @@ import {
   Alert,
   CircularProgress,
   Snackbar,
+  Divider,
+  InputAdornment,
 } from '@mui/material';
 import { Grid } from '../../../shared-lib/src/utils/grid';
-import { Plus, Users as UsersIcon, Shield, Download, Upload } from 'lucide-react';
+import { Plus, Users as UsersIcon, Shield, Download, Upload, User as UserIcon, Mail, Settings } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import '../utils/i18n'; // Initialize user-mf translations
 import { DataTable, createColumnHelper, createStatusChip } from '../../../shared-lib/src/components/DataTable';
 import { 
   userService, 
@@ -36,6 +39,7 @@ import {
   type PaginatedResponse,
   type ApiResponse 
 } from '../services/userService';
+import { ApiError } from '../../../shared-lib/src/services/api-client';
 
 // Map API status to UI status for display
 const statusDisplayMap = {
@@ -123,6 +127,9 @@ const UsersPage = () => {
   // Snackbar for notifications
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' as 'success' | 'error' });
   
+  // Form errors for field-level validation display
+  const [formErrors, setFormErrors] = useState<Record<string, string[] | string>>({});
+  
   // Current page and filters
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
@@ -159,7 +166,7 @@ const UsersPage = () => {
         throw new Error(response.status.message);
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to load users';
+      const errorMessage = err instanceof Error ? err.message : t('users.errors.loadFailed');
       setError(errorMessage);
       setSnackbar({ open: true, message: errorMessage, severity: 'error' });
     } finally {
@@ -250,6 +257,7 @@ const UsersPage = () => {
     setDialogOpen(false);
     setSelectedUser(null);
     setActionType(null);
+    setFormErrors({}); // Clear form errors
     setFormData({
       username: '',
       password: '',
@@ -274,6 +282,7 @@ const UsersPage = () => {
   const handleSave = async () => {
     try {
       setLoading(true);
+      setFormErrors({}); // Clear previous errors
 
       if (actionType === 'create') {
         const createData: CreateUserRequest = {
@@ -290,9 +299,16 @@ const UsersPage = () => {
 
         const response = await userService.createUser(createData);
         if (response.status.code === 200) {
-          setSnackbar({ open: true, message: 'User created successfully', severity: 'success' });
+          setSnackbar({ open: true, message: t('users.userCreatedSuccess'), severity: 'success' });
           handleCloseDialog();
           await loadUsers();
+        } else {
+          // Handle API response errors
+          const errorMessage = response.status.message || t('users.errors.createFailed');
+          setSnackbar({ open: true, message: errorMessage, severity: 'error' });
+          if (response.status.errors) {
+            setFormErrors(response.status.errors);
+          }
         }
       } else if (actionType === 'edit' && selectedUser) {
         const updateData: UpdateUserRequest = {
@@ -308,14 +324,31 @@ const UsersPage = () => {
 
         const response = await userService.patchUser(selectedUser.id, updateData);
         if (response.status.code === 200) {
-          setSnackbar({ open: true, message: 'User updated successfully', severity: 'success' });
+          setSnackbar({ open: true, message: t('users.userUpdatedSuccess'), severity: 'success' });
           handleCloseDialog();
           await loadUsers();
+        } else {
+          // Handle API response errors
+          const errorMessage = response.status.message || t('users.errors.updateFailed');
+          setSnackbar({ open: true, message: errorMessage, severity: 'error' });
+          if (response.status.errors) {
+            setFormErrors(response.status.errors);
+          }
         }
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to save user';
-      setSnackbar({ open: true, message: errorMessage, severity: 'error' });
+      // Handle thrown errors (network errors, API errors, etc.)
+      if (err instanceof ApiError) {
+        // API error with structured response
+        setSnackbar({ open: true, message: err.message, severity: 'error' });
+        if (err.errors) {
+          setFormErrors(err.errors);
+        }
+      } else {
+        // Generic error
+        const errorMessage = err instanceof Error ? err.message : t('users.errors.createFailed');
+        setSnackbar({ open: true, message: errorMessage, severity: 'error' });
+      }
     } finally {
       setLoading(false);
     }
@@ -330,24 +363,44 @@ const UsersPage = () => {
       const response = await userService.deleteUser(selectedUser.id);
       
       if (response.status.code === 200) {
-        setSnackbar({ open: true, message: 'User deleted successfully', severity: 'success' });
+        setSnackbar({ open: true, message: t('users.userDeletedSuccess'), severity: 'success' });
         handleCloseDialog();
         await loadUsers();
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to delete user';
+      const errorMessage = err instanceof Error ? err.message : t('users.errors.deleteFailed');
       setSnackbar({ open: true, message: errorMessage, severity: 'error' });
     } finally {
       setLoading(false);
     }
   };
 
+  // Helper to get field error message
+  const getFieldError = (fieldName: string): string | undefined => {
+    const errors = formErrors[fieldName];
+    if (!errors) return undefined;
+    if (Array.isArray(errors)) {
+      return errors.length > 0 ? errors[0] : undefined;
+    }
+    return typeof errors === 'string' ? errors : undefined;
+  };
+
+  // Helper to check if field has error
+  const hasFieldError = (fieldName: string): boolean => {
+    const errors = formErrors[fieldName];
+    if (!errors) return false;
+    if (Array.isArray(errors)) {
+      return errors.length > 0;
+    }
+    return typeof errors === 'string' && errors.trim().length > 0;
+  };
+
   // Helper to get dialog title
   const getDialogTitle = () => {
-    if (actionType === 'view') return t('users.viewUser');
-    if (actionType === 'edit') return t('users.editUser');
-    if (actionType === 'create') return t('users.createUser');
-    return t('users.deleteUser');
+    if (actionType === 'view') return t('users.viewUser') || 'View User';
+    if (actionType === 'edit') return t('users.editUser') || 'Edit User';
+    if (actionType === 'create') return t('users.createUser') || 'Create User';
+    return t('users.deleteUser') || 'Delete User';
   };
 
   // Helper to render dialog action buttons
@@ -357,10 +410,17 @@ const UsersPage = () => {
         <Button 
           variant="contained" 
           color="error" 
+          size="large"
           onClick={handleConfirmDelete}
           disabled={loading}
+          startIcon={loading ? <CircularProgress size={16} color="inherit" /> : undefined}
+          sx={{ 
+            minWidth: 100, 
+            py: 1,
+            px: 2 
+          }}
         >
-          {loading ? <CircularProgress size={20} /> : t('common.delete')}
+          {loading ? t('users.loading.deleting') : (t('common.delete') || 'Delete')}
         </Button>
       );
     }
@@ -369,17 +429,33 @@ const UsersPage = () => {
       return (
         <Button 
           variant="contained" 
+          size="large"
           onClick={handleSave}
           disabled={loading || !formData.username || (actionType === 'create' && !formData.password)}
+          startIcon={loading ? <CircularProgress size={16} color="inherit" /> : undefined}
+          sx={{ 
+            minWidth: 100, 
+            py: 1,
+            px: 2 
+          }}
         >
-          {loading ? <CircularProgress size={20} /> : t('common.save')}
+          {loading ? t('users.loading.saving') : (t('common.save') || 'Save')}
         </Button>
       );
     }
     
     return (
-      <Button variant="contained" onClick={handleCloseDialog}>
-        {t('common.close')}
+      <Button 
+        variant="contained" 
+        size="large"
+        onClick={handleCloseDialog}
+        sx={{ 
+          minWidth: 100, 
+          py: 1,
+          px: 2 
+        }}
+      >
+        {t('common.close') || 'Close'}
       </Button>
     );
   };
@@ -403,24 +479,24 @@ const UsersPage = () => {
   const columns = useMemo(
     () => [
       columnHelper.accessor('username', {
-        header: t('users.username'),
+        header: t('users.username') || 'Username',
         cell: (info) => info.getValue(),
       }),
       columnHelper.accessor('nickname', {
-        header: t('users.nickname'),
+        header: t('users.nickname') || 'Display Name',
         cell: (info) => info.getValue() ?? '-',
       }),
       columnHelper.accessor('email', {
-        header: t('users.email'),
+        header: t('users.email') || 'Email',
         cell: (info) => info.getValue() ?? '-',
       }),
       columnHelper.accessor('accountStatus', {
-        header: t('users.status'),
+        header: t('users.status') || 'Status',
         cell: (info) => createStatusChip(info.getValue(), statusDisplayMap),
         size: 120,
       }),
       columnHelper.accessor('roles', {
-        header: t('users.roles'),
+        header: t('users.roles') || 'Roles',
         cell: (info) => (
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
             {info.getValue().map((role) => (
@@ -436,14 +512,14 @@ const UsersPage = () => {
         ),
       }),
       columnHelper.accessor('lastLoginAt', {
-        header: t('users.lastLogin'),
+        header: t('users.lastLogin') || 'Last Login',
         cell: (info) => {
           const value = info.getValue();
           return value ? new Date(value).toLocaleString() : 'Never';
         },
       }),
       columnHelper.accessor('active', {
-        header: t('users.active'),
+        header: t('users.active') || 'Active',
         cell: (info) => (
           <Chip
             label={info.getValue() ? 'Yes' : 'No'}
@@ -460,19 +536,19 @@ const UsersPage = () => {
   // Action menu items
   const actionMenuItems = [
     {
-      label: t('users.actions.view'),
+      label: t('users.actions.view') || 'View',
       icon: <UsersIcon size={16} />,
       action: handleView,
       color: 'info' as const,
     },
     {
-      label: t('users.actions.edit'),
+      label: t('users.actions.edit') || 'Edit',
       icon: <Shield size={16} />,
       action: handleEdit,
       color: 'primary' as const,
     },
     {
-      label: t('users.actions.delete'),
+      label: t('users.actions.delete') || 'Delete',
       icon: <Shield size={16} />,
       action: handleDelete,
       color: 'error' as const,
@@ -492,7 +568,7 @@ const UsersPage = () => {
         }}
       >
         <Typography variant="h4" component="h1">
-          {t('navigation.users')}
+          {t('navigation.users') || t('users.pageTitle') || 'User Management'}
         </Typography>
 
         <Box sx={{ display: 'flex', gap: 2 }}>
@@ -501,17 +577,17 @@ const UsersPage = () => {
             startIcon={<Download size={18} />}
             sx={{ display: { xs: 'none', sm: 'flex' } }}
           >
-            {t('users.export')}
+            {t('users.export') || 'Export'}
           </Button>
           <Button
             variant="outlined"
             startIcon={<Upload size={18} />}
             sx={{ display: { xs: 'none', sm: 'flex' } }}
           >
-            {t('users.import')}
+            {t('users.import') || 'Import'}
           </Button>
           <Button variant="contained" startIcon={<Plus size={18} />} onClick={handleCreate}>
-            {t('users.addUser')}
+            {t('users.addUser') || 'Add User'}
           </Button>
         </Box>
       </Box>
@@ -622,10 +698,10 @@ const UsersPage = () => {
                 showSearch={false}
                 searchPlaceholder={t('users.searchUsers')}
                 manualPagination={true}
-                pageCount={pagination?.totalPages || 0}
+                pageCount={pagination?.totalPages ?? 0}
                 currentPage={currentPage}
                 pageSize={pageSize}
-                totalRows={pagination?.totalElements || 0}
+                totalRows={pagination?.totalElements ?? 0}
                 onPageChange={handlePageChange}
                 onPageSizeChange={handlePageSizeChange}
               />
@@ -635,139 +711,484 @@ const UsersPage = () => {
       </Card>
 
       {/* User Dialog */}
-      <Dialog open={dialogOpen} onClose={handleCloseDialog} maxWidth="md" fullWidth>
-        <DialogTitle>
-          {getDialogTitle()}
+      <Dialog 
+        open={dialogOpen} 
+        onClose={handleCloseDialog} 
+        maxWidth="lg" 
+        fullWidth
+        slotProps={{
+          paper: {
+            sx: {
+              borderRadius: 4,
+              maxHeight: '95vh',
+              minHeight: '80vh',
+            }
+          }
+        }}
+      >
+        <DialogTitle 
+          sx={{ 
+            pb: 2, 
+            background: 'linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)',
+            color: 'white',
+            m: 0,
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            <Box 
+              sx={{ 
+                p: 1, 
+                borderRadius: '50%', 
+                backgroundColor: 'rgba(255,255,255,0.2)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <UserIcon size={20} />
+            </Box>
+            <Box>
+              <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                {getDialogTitle()}
+              </Typography>
+              {selectedUser && (
+                <Typography variant="body2" sx={{ opacity: 0.9, mt: 0.5 }}>
+                  {(() => {
+                    if (actionType === 'view') return t('users.form.viewUserDetails') || 'View user details';
+                    if (actionType === 'edit') return t('users.form.modifyUserInfo') || 'Modify user information';
+                    if (actionType === 'delete') return t('users.form.removeUser') || 'Remove user from system';
+                    return t('users.form.addNewUser') || 'Add new user to system';
+                  })()}
+                </Typography>
+              )}
+            </Box>
+          </Box>
         </DialogTitle>
-        <DialogContent>
+        
+        <DialogContent sx={{ p: 0 }}>
           {actionType === 'delete' ? (
-            <DialogContentText>
-              {t('users.deleteConfirmation', { username: selectedUser?.username })}
-            </DialogContentText>
+            <Box sx={{ p: 3 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+                <Box 
+                  sx={{ 
+                    p: 2, 
+                    borderRadius: 2, 
+                    backgroundColor: 'error.light',
+                    color: 'error.contrastText',
+                    display: 'inline-flex'
+                  }}
+                >
+                  <UserIcon size={24} />
+                </Box>
+                <Box>
+                  <Typography variant="h6" gutterBottom>
+                    {t('users.confirmDeletion')}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {t('users.actionCannotBeUndone')}
+                  </Typography>
+                </Box>
+              </Box>
+              <DialogContentText sx={{ fontSize: '1rem' }}>
+                {t('users.deleteConfirmation', { username: selectedUser?.username }) || 
+                 `Are you sure you want to delete user "${selectedUser?.username}"? This action cannot be undone.`}
+              </DialogContentText>
+            </Box>
           ) : (
-            <Box sx={{ mt: 2 }}>
-              <Grid container component="div" spacing={3}>
-                <Grid item component="div" xs={12} sm={6}>
-                  <TextField
-                    label={`${t('users.username')} *`}
-                    fullWidth
-                    value={formData.username}
-                    onChange={(e) => handleFormChange('username', e.target.value)}
-                    disabled={actionType === 'view'}
-                    required
-                  />
-                </Grid>
-                {actionType === 'create' && (
-                  <Grid item component="div" xs={12} sm={6}>
-                    <TextField
-                      label={`${t('users.password')} *`}
-                      type="password"
-                      fullWidth
-                      value={formData.password}
-                      onChange={(e) => handleFormChange('password', e.target.value)}
-                      required
-                    />
+            <Box>
+              {/* General Error Display */}
+              {Object.keys(formErrors).length > 0 && (
+                <Box sx={{ p: 3, pb: 0 }}>
+                  {Object.entries(formErrors).map(([field, errors]) => {
+                    // Handle special validation errors that aren't field-specific
+                    if (field === 'contactMethodProvided' || field === 'general' || field === '_global') {
+                      const errorMessage = Array.isArray(errors) ? errors.join(', ') : errors;
+                      return (
+                        <Alert severity="error" key={field} sx={{ mb: 2 }}>
+                          {errorMessage}
+                        </Alert>
+                      );
+                    }
+                    return null;
+                  })}
+                </Box>
+              )}
+              
+              {/* Form Content */}
+              <Box sx={{ p: 4 }}>
+                {/* Basic Information Section */}
+                <Box 
+                  sx={{ 
+                    p: 3, 
+                    border: '1px solid', 
+                    borderColor: 'divider', 
+                    borderRadius: 3,
+                    mb: 3,
+                    backgroundColor: 'grey.50'
+                  }}
+                >
+                  <Typography 
+                    variant="h6" 
+                    sx={{ 
+                      fontWeight: 600, 
+                      mb: 3, 
+                      color: 'primary.main',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1.5,
+                      fontSize: '1.1rem'
+                    }}
+                  >
+                    <UserIcon size={20} />
+                    {t('users.basicInformation')}
+                  </Typography>
+                  
+                  <Grid container spacing={3} sx={{ width: '100%' }}>
+                    <Grid item xs={12} sx={{ width: '100%', display: 'block' }}>
+                      <TextField
+                        label={`${t('users.form.username')} ${actionType !== 'view' ? '*' : ''}`}
+                        fullWidth
+                        size="medium"
+                        value={formData.username}
+                        onChange={(e) => handleFormChange('username', e.target.value)}
+                        disabled={actionType === 'view'}
+                        required={actionType !== 'view'}
+                        error={actionType !== 'view' && (!formData.username || hasFieldError('username'))}
+                        helperText={(() => {
+                          if (actionType === 'view') return '';
+                          const fieldError = getFieldError('username');
+                          if (fieldError) return fieldError;
+                          if (!formData.username) return t('users.form.usernameRequired');
+                          return t('users.form.usernameHelper');
+                        })()}
+                        variant="outlined"
+                        sx={{ 
+                          width: '100%',
+                          '& .MuiInputBase-root': { 
+                            height: 48,
+                            width: '100%',
+                            backgroundColor: 'white'
+                          }
+                        }}
+                      />
+                    </Grid>
+                    
+                    {actionType === 'create' && (
+                      <Grid item xs={12} sx={{ width: '100%', display: 'block' }}>
+                        <TextField
+                          label={`${t('users.form.password')} *`}
+                          type="password"
+                          fullWidth
+                          size="medium"
+                          value={formData.password}
+                          onChange={(e) => handleFormChange('password', e.target.value)}
+                          required
+                          error={!formData.password || hasFieldError('password')}
+                          helperText={(() => {
+                            const fieldError = getFieldError('password');
+                            if (fieldError) return fieldError;
+                            if (!formData.password) return t('users.form.passwordRequired');
+                            return t('users.form.passwordHelper');
+                          })()}
+                          variant="outlined"
+                          sx={{ 
+                            width: '100%',
+                            '& .MuiInputBase-root': { 
+                              height: 48,
+                              width: '100%',
+                              backgroundColor: 'white'
+                            }
+                          }}
+                        />
+                      </Grid>
+                    )}
+                    
+                    <Grid item xs={12} sx={{ width: '100%', display: 'block' }}>
+                      <TextField
+                        label={t('users.form.displayName')}
+                        fullWidth
+                        size="medium"
+                        value={formData.nickname}
+                        onChange={(e) => handleFormChange('nickname', e.target.value)}
+                        disabled={actionType === 'view'}
+                        error={hasFieldError('nickname')}
+                        helperText={getFieldError('nickname') ?? t('users.form.displayNameHelper')}
+                        variant="outlined"
+                        sx={{ 
+                          width: '100%',
+                          '& .MuiInputBase-root': { 
+                            height: 48,
+                            width: '100%',
+                            backgroundColor: 'white'
+                          }
+                        }}
+                      />
+                    </Grid>
                   </Grid>
-                )}
-                <Grid item component="div" xs={12} sm={6}>
-                  <TextField
-                    label={t('users.nickname')}
-                    fullWidth
-                    value={formData.nickname}
-                    onChange={(e) => handleFormChange('nickname', e.target.value)}
-                    disabled={actionType === 'view'}
-                  />
-                </Grid>
-                <Grid item component="div" xs={12} sm={6}>
-                  <TextField
-                    label={t('users.email')}
-                    type="email"
-                    fullWidth
-                    value={formData.email}
-                    onChange={(e) => handleFormChange('email', e.target.value)}
-                    disabled={actionType === 'view'}
-                  />
-                </Grid>
-                <Grid item component="div" xs={12} sm={6}>
-                  <TextField
-                    label={t('users.mobileCountryCode')}
-                    fullWidth
-                    value={formData.mobileCountryCode}
-                    onChange={(e) => handleFormChange('mobileCountryCode', e.target.value)}
-                    disabled={actionType === 'view'}
-                    placeholder="65"
-                  />
-                </Grid>
-                <Grid item component="div" xs={12} sm={6}>
-                  <TextField
-                    label={t('users.mobileNumber')}
-                    fullWidth
-                    value={formData.mobileNumber}
-                    onChange={(e) => handleFormChange('mobileNumber', e.target.value)}
-                    disabled={actionType === 'view'}
-                  />
-                </Grid>
-                <Grid item component="div" xs={12} sm={6}>
-                  <FormControl fullWidth>
-                    <InputLabel>{t('users.status')}</InputLabel>
-                    <Select
-                      value={formData.accountStatus}
-                      label={t('users.status')}
-                      onChange={(e) => handleFormChange('accountStatus', e.target.value)}
-                      disabled={actionType === 'view'}
-                    >
-                      <MenuItem value="active">{statusDisplayMap.active.label}</MenuItem>
-                      <MenuItem value="locked">{statusDisplayMap.locked.label}</MenuItem>
-                      <MenuItem value="suspend">{statusDisplayMap.suspend.label}</MenuItem>
-                      <MenuItem value="pending_verification">{statusDisplayMap.pending_verification.label}</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item component="div" xs={12} sm={6}>
-                  <FormControl fullWidth>
-                    <InputLabel>{t('users.roles')}</InputLabel>
-                    <Select
-                      multiple
-                      value={formData.roleCodes}
-                      label={t('users.roles')}
-                      onChange={(e) => handleFormChange('roleCodes', e.target.value)}
-                      disabled={actionType === 'view'}
-                      renderValue={(selected) => (
-                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                          {selected.map((value) => (
-                            <Chip key={value} label={value} size="small" />
-                          ))}
-                        </Box>
-                      )}
-                    >
-                      <MenuItem value="USER">USER</MenuItem>
-                      <MenuItem value="ADMIN">ADMIN</MenuItem>
-                      <MenuItem value="EDITOR">EDITOR</MenuItem>
-                      <MenuItem value="MANAGER">MANAGER</MenuItem>
-                      <MenuItem value="ANALYST">ANALYST</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item component="div" xs={12}>
-                  <FormControl fullWidth>
-                    <InputLabel>{t('users.active')}</InputLabel>
-                    <Select
-                      value={formData.active}
-                      label={t('users.active')}
-                      onChange={(e) => handleFormChange('active', e.target.value === 'true')}
-                      disabled={actionType === 'view'}
-                    >
-                      <MenuItem value="true">Yes</MenuItem>
-                      <MenuItem value="false">No</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Grid>
-              </Grid>
+                </Box>
+
+                {/* Contact Information Section */}
+                <Box 
+                  sx={{ 
+                    p: 3, 
+                    border: '1px solid', 
+                    borderColor: 'divider', 
+                    borderRadius: 3,
+                    mb: 3,
+                    backgroundColor: 'grey.50'
+                  }}
+                >
+                  <Typography 
+                    variant="h6" 
+                    sx={{ 
+                      fontWeight: 600, 
+                      mb: 3, 
+                      color: 'primary.main',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1.5,
+                      fontSize: '1.1rem'
+                    }}
+                  >
+                    <Mail size={20} />
+                    {t('users.contactInformation')}
+                  </Typography>
+                  
+                  <Grid container spacing={3} sx={{ width: '100%' }}>
+                    <Grid item xs={12} sx={{ width: '100%', display: 'block' }}>
+                      <TextField
+                        label={t('users.form.emailAddress')}
+                        type="email"
+                        fullWidth
+                        size="medium"
+                        value={formData.email}
+                        onChange={(e) => handleFormChange('email', e.target.value)}
+                        disabled={actionType === 'view'}
+                        error={hasFieldError('email')}
+                        helperText={getFieldError('email') ?? t('users.form.emailHelper')}
+                        variant="outlined"
+                        sx={{ 
+                          width: '100%',
+                          '& .MuiInputBase-root': { 
+                            height: 48,
+                            width: '100%',
+                            backgroundColor: 'white'
+                          }
+                        }}
+                      />
+                    </Grid>
+                    
+                    <Grid item xs={12} sx={{ width: '100%', display: 'block' }}>
+                      <TextField
+                        label={t('users.form.countryCode')}
+                        size="medium"
+                        fullWidth
+                        value={formData.mobileCountryCode}
+                        onChange={(e) => handleFormChange('mobileCountryCode', e.target.value)}
+                        disabled={actionType === 'view'}
+                        placeholder="65"
+                        error={hasFieldError('mobileCountryCode')}
+                        helperText={getFieldError('mobileCountryCode') ?? t('users.form.countryCodeHelper')}
+                        variant="outlined"
+                        sx={{ 
+                          width: '100%',
+                          '& .MuiInputBase-root': { 
+                            height: 48,
+                            width: '100%',
+                            backgroundColor: 'white'
+                          }
+                        }}
+                        slotProps={{
+                          input: {
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                +
+                              </InputAdornment>
+                            ),
+                          },
+                        }}
+                      />
+                    </Grid>
+                    
+                    <Grid item xs={12} sx={{ width: '100%', display: 'block' }}>
+                      <TextField
+                        label={t('users.form.mobileNumber')}
+                        fullWidth
+                        size="medium"
+                        value={formData.mobileNumber}
+                        onChange={(e) => handleFormChange('mobileNumber', e.target.value)}
+                        disabled={actionType === 'view'}
+                        error={hasFieldError('mobileNumber')}
+                        helperText={getFieldError('mobileNumber') ?? t('users.form.mobileNumberHelper')}
+                        variant="outlined"
+                        sx={{ 
+                          width: '100%',
+                          '& .MuiInputBase-root': { 
+                            height: 48,
+                            width: '100%',
+                            backgroundColor: 'white'
+                          }
+                        }}
+                      />
+                    </Grid>
+                  </Grid>
+                </Box>
+
+                {/* Account Settings Section */}
+                <Box 
+                  sx={{ 
+                    p: 3, 
+                    border: '1px solid', 
+                    borderColor: 'divider', 
+                    borderRadius: 3,
+                    backgroundColor: 'grey.50'
+                  }}
+                >
+                  <Typography 
+                    variant="h6" 
+                    sx={{ 
+                      fontWeight: 600, 
+                      mb: 3, 
+                      color: 'primary.main',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1.5,
+                      fontSize: '1.1rem'
+                    }}
+                  >
+                    <Settings size={20} />
+                    Account Settings
+                  </Typography>
+                  
+                  <Grid container spacing={3} sx={{ width: '100%' }}>
+                    <Grid item xs={12} sx={{ width: '100%', display: 'block' }}>
+                      <FormControl fullWidth size="medium" sx={{ width: '100%' }}>
+                        <InputLabel>Account Status</InputLabel>
+                        <Select
+                          value={formData.accountStatus}
+                          label="Account Status"
+                          onChange={(e) => handleFormChange('accountStatus', e.target.value)}
+                          disabled={actionType === 'view'}
+                          sx={{ 
+                            height: 48,
+                            width: '100%',
+                            backgroundColor: 'white'
+                          }}
+                        >
+                          <MenuItem value="active">
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                              <Chip label="Active" size="small" color="success" />
+                              Active
+                            </Box>
+                          </MenuItem>
+                          <MenuItem value="locked">
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                              <Chip label="Locked" size="small" color="error" />
+                              Locked
+                            </Box>
+                          </MenuItem>
+                          <MenuItem value="suspend">
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                              <Chip label="Suspended" size="small" color="error" />
+                              Suspended
+                            </Box>
+                          </MenuItem>
+                          <MenuItem value="pending_verification">
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                              <Chip label="Pending" size="small" color="warning" />
+                              Pending Verification
+                            </Box>
+                          </MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+
+                    <Grid item xs={12} sx={{ width: '100%', display: 'block' }}>
+                      <FormControl fullWidth size="medium" sx={{ width: '100%' }}>
+                        <InputLabel>User Roles</InputLabel>
+                        <Select
+                          multiple
+                          value={formData.roleCodes}
+                          label="User Roles"
+                          onChange={(e) => handleFormChange('roleCodes', e.target.value)}
+                          disabled={actionType === 'view'}
+                          sx={{ 
+                            minHeight: 48,
+                            width: '100%',
+                            backgroundColor: 'white'
+                          }}
+                          renderValue={(selected) => (
+                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                              {selected.map((value) => (
+                                <Chip 
+                                  key={value} 
+                                  label={value} 
+                                  size="small" 
+                                  color="primary" 
+                                  variant="outlined" 
+                                />
+                              ))}
+                            </Box>
+                          )}
+                        >
+                          <MenuItem value="USER">USER</MenuItem>
+                          <MenuItem value="ADMIN">ADMIN</MenuItem>
+                          <MenuItem value="EDITOR">EDITOR</MenuItem>
+                          <MenuItem value="MANAGER">MANAGER</MenuItem>
+                          <MenuItem value="ANALYST">ANALYST</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+
+                    <Grid item xs={12} sx={{ width: '100%', display: 'block' }}>
+                      <FormControl fullWidth size="medium" sx={{ width: '100%' }}>
+                        <InputLabel>Account Active</InputLabel>
+                        <Select
+                          value={formData.active}
+                          label="Account Active"
+                          onChange={(e) => handleFormChange('active', e.target.value === 'true')}
+                          disabled={actionType === 'view'}
+                          sx={{ 
+                            height: 48,
+                            width: '100%',
+                            backgroundColor: 'white'
+                          }}
+                        >
+                          <MenuItem value="true">
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                              <Chip label="Enabled" size="small" color="success" />
+                              Yes - User can login
+                            </Box>
+                          </MenuItem>
+                          <MenuItem value="false">
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                              <Chip label="Disabled" size="small" color="default" />
+                              No - User cannot login
+                            </Box>
+                          </MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                  </Grid>
+                </Box>
+              </Box>
             </Box>
           )}
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog} disabled={loading}>
+        
+        <Divider />
+        <DialogActions sx={{ p: 3, gap: 2, backgroundColor: 'grey.50' }}>
+          <Button 
+            onClick={handleCloseDialog} 
+            disabled={loading} 
+            variant="outlined"
+            size="large"
+            sx={{ 
+              minWidth: 100, 
+              py: 1,
+              px: 2 
+            }}
+          >
             {t('common.cancel')}
           </Button>
           {renderActionButtons()}
