@@ -172,7 +172,7 @@ const UsersPage = () => {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, pageSize, tabIndex]);
+  }, [currentPage, pageSize, tabIndex, t]);
 
   // Load users on component mount and when dependencies change
   useEffect(() => {

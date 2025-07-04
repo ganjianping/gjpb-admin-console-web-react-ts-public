@@ -71,6 +71,11 @@ const userMfResources = {
           
           activeStatus: 'Active Status',
           activeStatusHelper: 'Whether the user account is active',
+          
+          // Dialog subtitles
+          viewUserDetails: 'View user details',
+          modifyUserInfo: 'Modify user information',
+          addNewUser: 'Add new user to system',
         },
         
         // Status values
@@ -264,6 +269,11 @@ const userMfResources = {
           
           activeStatus: '激活状态',
           activeStatusHelper: '用户账户是否处于激活状态',
+          
+          // Dialog subtitles
+          viewUserDetails: '查看用户详情',
+          modifyUserInfo: '修改用户信息',
+          addNewUser: '添加新用户到系统',
         },
         
         // 状态值
