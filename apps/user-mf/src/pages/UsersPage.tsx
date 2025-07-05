@@ -23,7 +23,7 @@ import {
   Divider,
   InputAdornment,
 } from '@mui/material';
-import { Plus, Users as UsersIcon, Shield, Download, Upload, User as UserIcon, Mail, Settings } from 'lucide-react';
+import { Plus, Users as UsersIcon, Shield, Download, Upload, User as UserIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import '../utils/i18n'; // Initialize user-mf translations
 import { DataTable, createColumnHelper, createStatusChip } from '../../../shared-lib/src/components/DataTable';
@@ -817,532 +817,372 @@ const UsersPage = () => {
                 {actionType === 'view' ? (
                   // View Mode - Clean Read-only Display
                   <Box>
-                    {/* Basic Information Section - View Mode */}
-                    <Box 
-                      sx={{ 
-                        mb: 4,
-                      }}
-                    >
-                      <Typography 
-                        variant="h6" 
-                        sx={{ 
-                          fontWeight: 600, 
-                          mb: 3, 
-                          color: 'primary.main',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 1.5,
-                          fontSize: '1.1rem',
-                          borderBottom: '2px solid',
-                          borderColor: 'primary.main',
-                          pb: 1
-                        }}
-                      >
-                        <UserIcon size={20} />
-                        {t('users.basicInformation')}
+                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
+                        {t('users.form.username')}:
                       </Typography>
-                      
-                      <Box sx={{ pl: 2 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
-                          <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
-                            {t('users.form.username')}:
-                          </Typography>
-                          <Typography variant="body1" sx={{ fontWeight: 500, color: 'text.primary' }}>
-                            {formData.username || '-'}
-                          </Typography>
-                        </Box>
-                        
-                        <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
-                          <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
-                            {t('users.form.displayName')}:
-                          </Typography>
-                          <Typography variant="body1" sx={{ color: 'text.primary' }}>
-                            {formData.nickname || '-'}
-                          </Typography>
-                        </Box>
-                      </Box>
+                      <Typography variant="body1" sx={{ fontWeight: 500, color: 'text.primary' }}>
+                        {formData.username || '-'}
+                      </Typography>
+                    </Box>
+                    
+                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
+                        {t('users.form.displayName')}:
+                      </Typography>
+                      <Typography variant="body1" sx={{ color: 'text.primary' }}>
+                        {formData.nickname || '-'}
+                      </Typography>
+                    </Box>
+                    
+                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
+                        {t('users.form.emailAddress')}:
+                      </Typography>
+                      <Typography variant="body1" sx={{ color: 'text.primary' }}>
+                        {formData.email || '-'}
+                      </Typography>
+                    </Box>
+                    
+                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
+                        {t('users.form.countryCode')}:
+                      </Typography>
+                      <Typography variant="body1" sx={{ color: 'text.primary' }}>
+                        {formData.mobileCountryCode ? `+${formData.mobileCountryCode}` : '-'}
+                      </Typography>
+                    </Box>
+                    
+                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
+                        {t('users.form.mobileNumber')}:
+                      </Typography>
+                      <Typography variant="body1" sx={{ color: 'text.primary' }}>
+                        {formData.mobileNumber || '-'}
+                      </Typography>
                     </Box>
 
-                    {/* Contact Information Section - View Mode */}
-                    <Box 
-                      sx={{ 
-                        mb: 4,
-                      }}
-                    >
-                      <Typography 
-                        variant="h6" 
-                        sx={{ 
-                          fontWeight: 600, 
-                          mb: 3, 
-                          color: 'primary.main',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 1.5,
-                          fontSize: '1.1rem',
-                          borderBottom: '2px solid',
-                          borderColor: 'primary.main',
-                          pb: 1
-                        }}
-                      >
-                        <Mail size={20} />
-                        {t('users.contactInformation')}
+                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
+                        Account Status:
                       </Typography>
-                      
-                      <Box sx={{ pl: 2 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
-                          <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
-                            {t('users.form.emailAddress')}:
-                          </Typography>
-                          <Typography variant="body1" sx={{ color: 'text.primary' }}>
-                            {formData.email || '-'}
-                          </Typography>
-                        </Box>
-                        
-                        <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
-                          <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
-                            {t('users.form.countryCode')}:
-                          </Typography>
-                          <Typography variant="body1" sx={{ color: 'text.primary' }}>
-                            {formData.mobileCountryCode ? `+${formData.mobileCountryCode}` : '-'}
-                          </Typography>
-                        </Box>
-                        
-                        <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
-                          <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
-                            {t('users.form.mobileNumber')}:
-                          </Typography>
-                          <Typography variant="body1" sx={{ color: 'text.primary' }}>
-                            {formData.mobileNumber || '-'}
-                          </Typography>
-                        </Box>
-                      </Box>
+                      <Chip 
+                        label={statusDisplayMap[formData.accountStatus]?.label || formData.accountStatus} 
+                        size="medium" 
+                        color={statusDisplayMap[formData.accountStatus]?.color || 'default'}
+                        sx={{ fontWeight: 500 }}
+                      />
                     </Box>
 
-                    {/* Account Settings Section - View Mode */}
-                    <Box>
-                      <Typography 
-                        variant="h6" 
-                        sx={{ 
-                          fontWeight: 600, 
-                          mb: 3, 
-                          color: 'primary.main',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 1.5,
-                          fontSize: '1.1rem',
-                          borderBottom: '2px solid',
-                          borderColor: 'primary.main',
-                          pb: 1
-                        }}
-                      >
-                        <Settings size={20} />
-                        {t('users.accountSettings')}
+                    <Box sx={{ display: 'flex', alignItems: 'flex-start', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500, pt: 0.5 }}>
+                        User Roles:
                       </Typography>
-                      
-                      <Box sx={{ pl: 2 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
-                          <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
-                            Account Status:
-                          </Typography>
-                          <Chip 
-                            label={statusDisplayMap[formData.accountStatus]?.label || formData.accountStatus} 
-                            size="medium" 
-                            color={statusDisplayMap[formData.accountStatus]?.color || 'default'}
-                            sx={{ fontWeight: 500 }}
-                          />
-                        </Box>
-
-                        <Box sx={{ display: 'flex', alignItems: 'flex-start', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
-                          <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500, pt: 0.5 }}>
-                            User Roles:
-                          </Typography>
-                          {formData.roleCodes && formData.roleCodes.length > 0 ? (
-                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                              {formData.roleCodes.map((role) => (
-                                <Chip 
-                                  key={role} 
-                                  label={role} 
-                                  size="small" 
-                                  color="primary" 
-                                  variant="outlined"
-                                  sx={{ fontWeight: 500 }}
-                                />
-                              ))}
-                            </Box>
-                          ) : (
-                            <Typography variant="body1" color="text.secondary" sx={{ fontStyle: 'italic' }}>
-                              No roles assigned
-                            </Typography>
-                          )}
-                        </Box>
-
-                        <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5 }}>
-                          <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
-                            Account Active:
-                          </Typography>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      {formData.roleCodes && formData.roleCodes.length > 0 ? (
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                          {formData.roleCodes.map((role) => (
                             <Chip 
-                              label={formData.active ? 'Enabled' : 'Disabled'} 
-                              size="medium" 
-                              color={formData.active ? 'success' : 'default'}
+                              key={role} 
+                              label={role} 
+                              size="small" 
+                              color="primary" 
+                              variant="outlined"
                               sx={{ fontWeight: 500 }}
                             />
-                            <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
-                              {formData.active ? '(User can login)' : '(User cannot login)'}
-                            </Typography>
-                          </Box>
+                          ))}
                         </Box>
+                      ) : (
+                        <Typography variant="body1" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                          No roles assigned
+                        </Typography>
+                      )}
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5 }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
+                        Account Active:
+                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Chip 
+                          label={formData.active ? 'Enabled' : 'Disabled'} 
+                          size="medium" 
+                          color={formData.active ? 'success' : 'default'}
+                          sx={{ fontWeight: 500 }}
+                        />
+                        <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
+                          {formData.active ? '(User can login)' : '(User cannot login)'}
+                        </Typography>
                       </Box>
                     </Box>
                   </Box>
                 ) : (
                   // Edit/Create Mode - Clean Form Layout
                   <Box>
-                    {/* Basic Information Section - Edit/Create Mode */}
-                    <Box 
-                      sx={{ 
-                        mb: 4,
-                      }}
-                    >
-                      <Typography 
-                        variant="h6" 
-                        sx={{ 
-                          fontWeight: 600, 
-                          mb: 3, 
-                          color: 'primary.main',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 1.5,
-                          fontSize: '1.1rem',
-                          borderBottom: '2px solid',
-                          borderColor: 'primary.main',
-                          pb: 1
-                        }}
-                      >
-                        <UserIcon size={20} />
-                        {t('users.basicInformation')}
+                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
+                        {t('users.form.username')}:
                       </Typography>
-                      
-                      <Box sx={{ pl: 2 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
-                          <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
-                            {t('users.form.username')}:
-                          </Typography>
-                          <Box sx={{ flex: 1, ml: 2 }}>
-                            <TextField
-                              fullWidth
-                              size="small"
-                              value={formData.username}
-                              onChange={(e) => handleFormChange('username', e.target.value)}
-                              required
-                              error={!formData.username || hasFieldError('username')}
-                              helperText={(() => {
-                                const fieldError = getFieldError('username');
-                                if (fieldError) return fieldError;
-                                if (!formData.username) return t('users.form.usernameRequired');
-                                return null;
-                              })()}
-                              variant="outlined"
-                              sx={{ 
-                                '& .MuiInputBase-root': { 
-                                  backgroundColor: 'white'
-                                }
-                              }}
-                            />
-                          </Box>
+                      <Box sx={{ flex: 1, ml: 2 }}>
+                        <TextField
+                          fullWidth
+                          size="small"
+                          value={formData.username}
+                          onChange={(e) => handleFormChange('username', e.target.value)}
+                          required
+                          error={!formData.username || hasFieldError('username')}
+                          helperText={(() => {
+                            const fieldError = getFieldError('username');
+                            if (fieldError) return fieldError;
+                            if (!formData.username) return t('users.form.usernameRequired');
+                            return null;
+                          })()}
+                          variant="outlined"
+                          sx={{ 
+                            '& .MuiInputBase-root': { 
+                              backgroundColor: 'white'
+                            }
+                          }}
+                        />
+                      </Box>
+                    </Box>
+                    
+                    {actionType === 'create' && (
+                      <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                        <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
+                          {t('users.form.password')}:
+                        </Typography>
+                        <Box sx={{ flex: 1, ml: 2 }}>
+                          <TextField
+                            type="password"
+                            fullWidth
+                            size="small"
+                            value={formData.password}
+                            onChange={(e) => handleFormChange('password', e.target.value)}
+                            required
+                            error={!formData.password || hasFieldError('password')}
+                            helperText={(() => {
+                              const fieldError = getFieldError('password');
+                              if (fieldError) return fieldError;
+                              if (!formData.password) return t('users.form.passwordRequired');
+                              return null;
+                            })()}
+                            variant="outlined"
+                            sx={{ 
+                              '& .MuiInputBase-root': { 
+                                backgroundColor: 'white'
+                              }
+                            }}
+                          />
                         </Box>
-                        
-                        {actionType === 'create' && (
-                          <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
-                            <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
-                              {t('users.form.password')}:
-                            </Typography>
-                            <Box sx={{ flex: 1, ml: 2 }}>
-                              <TextField
-                                type="password"
-                                fullWidth
-                                size="small"
-                                value={formData.password}
-                                onChange={(e) => handleFormChange('password', e.target.value)}
-                                required
-                                error={!formData.password || hasFieldError('password')}
-                                helperText={(() => {
-                                  const fieldError = getFieldError('password');
-                                  if (fieldError) return fieldError;
-                                  if (!formData.password) return t('users.form.passwordRequired');
-                                  return null;
-                                })()}
-                                variant="outlined"
-                                sx={{ 
-                                  '& .MuiInputBase-root': { 
-                                    backgroundColor: 'white'
-                                  }
-                                }}
-                              />
-                            </Box>
-                          </Box>
-                        )}
-                        
-                        <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
-                          <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
-                            {t('users.form.displayName')}:
-                          </Typography>
-                          <Box sx={{ flex: 1, ml: 2 }}>
-                            <TextField
-                              fullWidth
-                              size="small"
-                              value={formData.nickname}
-                              onChange={(e) => handleFormChange('nickname', e.target.value)}
-                              error={hasFieldError('nickname')}
-                              helperText={getFieldError('nickname')}
-                              variant="outlined"
-                              sx={{ 
-                                '& .MuiInputBase-root': { 
-                                  backgroundColor: 'white'
-                                }
-                              }}
-                            />
-                          </Box>
-                        </Box>
+                      </Box>
+                    )}
+                    
+                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
+                        {t('users.form.displayName')}:
+                      </Typography>
+                      <Box sx={{ flex: 1, ml: 2 }}>
+                        <TextField
+                          fullWidth
+                          size="small"
+                          value={formData.nickname}
+                          onChange={(e) => handleFormChange('nickname', e.target.value)}
+                          error={hasFieldError('nickname')}
+                          helperText={getFieldError('nickname')}
+                          variant="outlined"
+                          sx={{ 
+                            '& .MuiInputBase-root': { 
+                              backgroundColor: 'white'
+                            }
+                          }}
+                        />
                       </Box>
                     </Box>
 
-                    {/* Contact Information Section - Edit/Create Mode */}
-                    <Box 
-                      sx={{ 
-                        mb: 4,
-                      }}
-                    >
-                      <Typography 
-                        variant="h6" 
-                        sx={{ 
-                          fontWeight: 600, 
-                          mb: 3, 
-                          color: 'primary.main',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 1.5,
-                          fontSize: '1.1rem',
-                          borderBottom: '2px solid',
-                          borderColor: 'primary.main',
-                          pb: 1
-                        }}
-                      >
-                        <Mail size={20} />
-                        {t('users.contactInformation')}
+                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
+                        {t('users.form.emailAddress')}:
                       </Typography>
-                      
-                      <Box sx={{ pl: 2 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
-                          <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
-                            {t('users.form.emailAddress')}:
-                          </Typography>
-                          <Box sx={{ flex: 1, ml: 2 }}>
-                            <TextField
-                              type="email"
-                              fullWidth
-                              size="small"
-                              value={formData.email}
-                              onChange={(e) => handleFormChange('email', e.target.value)}
-                              error={hasFieldError('email')}
-                              helperText={getFieldError('email')}
-                              variant="outlined"
-                              sx={{ 
-                                '& .MuiInputBase-root': { 
-                                  backgroundColor: 'white'
-                                }
-                              }}
-                            />
-                          </Box>
-                        </Box>
-                        
-                        <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
-                          <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
-                            {t('users.form.countryCode')}:
-                          </Typography>
-                          <Box sx={{ flex: 1, ml: 2 }}>
-                            <TextField
-                              fullWidth
-                              size="small"
-                              value={formData.mobileCountryCode}
-                              onChange={(e) => handleFormChange('mobileCountryCode', e.target.value)}
-                              placeholder="65"
-                              error={hasFieldError('mobileCountryCode')}
-                              helperText={getFieldError('mobileCountryCode')}
-                              variant="outlined"
-                              sx={{ 
-                                '& .MuiInputBase-root': { 
-                                  backgroundColor: 'white'
-                                }
-                              }}
-                              slotProps={{
-                                input: {
-                                  startAdornment: (
-                                    <InputAdornment position="start">
-                                      +
-                                    </InputAdornment>
-                                  ),
-                                },
-                              }}
-                            />
-                          </Box>
-                        </Box>
-                        
-                        <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
-                          <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
-                            {t('users.form.mobileNumber')}:
-                          </Typography>
-                          <Box sx={{ flex: 1, ml: 2 }}>
-                            <TextField
-                              fullWidth
-                              size="small"
-                              value={formData.mobileNumber}
-                              onChange={(e) => handleFormChange('mobileNumber', e.target.value)}
-                              error={hasFieldError('mobileNumber')}
-                              helperText={getFieldError('mobileNumber')}
-                              variant="outlined"
-                              sx={{ 
-                                '& .MuiInputBase-root': { 
-                                  backgroundColor: 'white'
-                                }
-                              }}
-                            />
-                          </Box>
-                        </Box>
+                      <Box sx={{ flex: 1, ml: 2 }}>
+                        <TextField
+                          type="email"
+                          fullWidth
+                          size="small"
+                          value={formData.email}
+                          onChange={(e) => handleFormChange('email', e.target.value)}
+                          error={hasFieldError('email')}
+                          helperText={getFieldError('email')}
+                          variant="outlined"
+                          sx={{ 
+                            '& .MuiInputBase-root': { 
+                              backgroundColor: 'white'
+                            }
+                          }}
+                        />
+                      </Box>
+                    </Box>
+                    
+                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
+                        {t('users.form.countryCode')}:
+                      </Typography>
+                      <Box sx={{ flex: 1, ml: 2 }}>
+                        <TextField
+                          fullWidth
+                          size="small"
+                          value={formData.mobileCountryCode}
+                          onChange={(e) => handleFormChange('mobileCountryCode', e.target.value)}
+                          placeholder="65"
+                          error={hasFieldError('mobileCountryCode')}
+                          helperText={getFieldError('mobileCountryCode')}
+                          variant="outlined"
+                          sx={{ 
+                            '& .MuiInputBase-root': { 
+                              backgroundColor: 'white'
+                            }
+                          }}
+                          slotProps={{
+                            input: {
+                              startAdornment: (
+                                <InputAdornment position="start">
+                                  +
+                                </InputAdornment>
+                              ),
+                            },
+                          }}
+                        />
+                      </Box>
+                    </Box>
+                    
+                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
+                        {t('users.form.mobileNumber')}:
+                      </Typography>
+                      <Box sx={{ flex: 1, ml: 2 }}>
+                        <TextField
+                          fullWidth
+                          size="small"
+                          value={formData.mobileNumber}
+                          onChange={(e) => handleFormChange('mobileNumber', e.target.value)}
+                          error={hasFieldError('mobileNumber')}
+                          helperText={getFieldError('mobileNumber')}
+                          variant="outlined"
+                          sx={{ 
+                            '& .MuiInputBase-root': { 
+                              backgroundColor: 'white'
+                            }
+                          }}
+                        />
                       </Box>
                     </Box>
 
-                    {/* Account Settings Section - Edit/Create Mode */}
-                    <Box>
-                      <Typography 
-                        variant="h6" 
-                        sx={{ 
-                          fontWeight: 600, 
-                          mb: 3, 
-                          color: 'primary.main',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 1.5,
-                          fontSize: '1.1rem',
-                          borderBottom: '2px solid',
-                          borderColor: 'primary.main',
-                          pb: 1
-                        }}
-                      >
-                        <Settings size={20} />
-                        {t('users.accountSettings')}
+                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
+                        Account Status:
                       </Typography>
-                      
-                      <Box sx={{ pl: 2 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
-                          <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
-                            Account Status:
-                          </Typography>
-                          <Box sx={{ flex: 1, ml: 2 }}>
-                            <FormControl fullWidth size="small">
-                              <Select
-                                value={formData.accountStatus}
-                                onChange={(e) => handleFormChange('accountStatus', e.target.value)}
-                                sx={{ 
-                                  backgroundColor: 'white'
-                                }}
-                              >
-                                <MenuItem value="active">
-                                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                    <Chip label="Active" size="small" color="success" />
-                                    Active
-                                  </Box>
-                                </MenuItem>
-                                <MenuItem value="locked">
-                                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                    <Chip label="Locked" size="small" color="error" />
-                                    Locked
-                                  </Box>
-                                </MenuItem>
-                                <MenuItem value="suspend">
-                                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                    <Chip label="Suspended" size="small" color="error" />
-                                    Suspended
-                                  </Box>
-                                </MenuItem>
-                                <MenuItem value="pending_verification">
-                                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                    <Chip label="Pending" size="small" color="warning" />
-                                    Pending Verification
-                                  </Box>
-                                </MenuItem>
-                              </Select>
-                            </FormControl>
-                          </Box>
-                        </Box>
+                      <Box sx={{ flex: 1, ml: 2 }}>
+                        <FormControl fullWidth size="small">
+                          <Select
+                            value={formData.accountStatus}
+                            onChange={(e) => handleFormChange('accountStatus', e.target.value)}
+                            sx={{ 
+                              backgroundColor: 'white'
+                            }}
+                          >
+                            <MenuItem value="active">
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                <Chip label="Active" size="small" color="success" />
+                                Active
+                              </Box>
+                            </MenuItem>
+                            <MenuItem value="locked">
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                <Chip label="Locked" size="small" color="error" />
+                                Locked
+                              </Box>
+                            </MenuItem>
+                            <MenuItem value="suspend">
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                <Chip label="Suspended" size="small" color="error" />
+                                Suspended
+                              </Box>
+                            </MenuItem>
+                            <MenuItem value="pending_verification">
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                <Chip label="Pending" size="small" color="warning" />
+                                Pending Verification
+                              </Box>
+                            </MenuItem>
+                          </Select>
+                        </FormControl>
+                      </Box>
+                    </Box>
 
-                        <Box sx={{ display: 'flex', alignItems: 'flex-start', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
-                          <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500, pt: 0.5 }}>
-                            User Roles:
-                          </Typography>
-                          <Box sx={{ flex: 1, ml: 2 }}>
-                            <FormControl fullWidth size="small">
-                              <Select
-                                multiple
-                                value={formData.roleCodes}
-                                onChange={(e) => handleFormChange('roleCodes', e.target.value)}
-                                sx={{ 
-                                  backgroundColor: 'white'
-                                }}
-                                renderValue={(selected) => (
-                                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                    {selected.map((value) => (
-                                      <Chip 
-                                        key={value} 
-                                        label={value} 
-                                        size="small" 
-                                        color="primary" 
-                                        variant="outlined"
-                                        sx={{ fontWeight: 500 }}
-                                      />
-                                    ))}
-                                  </Box>
-                                )}
-                              >
-                                <MenuItem value="USER">USER</MenuItem>
-                                <MenuItem value="ADMIN">ADMIN</MenuItem>
-                                <MenuItem value="EDITOR">EDITOR</MenuItem>
-                                <MenuItem value="MANAGER">MANAGER</MenuItem>
-                                <MenuItem value="ANALYST">ANALYST</MenuItem>
-                              </Select>
-                            </FormControl>
-                          </Box>
-                        </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'flex-start', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500, pt: 0.5 }}>
+                        User Roles:
+                      </Typography>
+                      <Box sx={{ flex: 1, ml: 2 }}>
+                        <FormControl fullWidth size="small">
+                          <Select
+                            multiple
+                            value={formData.roleCodes}
+                            onChange={(e) => handleFormChange('roleCodes', e.target.value)}
+                            sx={{ 
+                              backgroundColor: 'white'
+                            }}
+                            renderValue={(selected) => (
+                              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                {selected.map((value) => (
+                                  <Chip 
+                                    key={value} 
+                                    label={value} 
+                                    size="small" 
+                                    color="primary" 
+                                    variant="outlined"
+                                    sx={{ fontWeight: 500 }}
+                                  />
+                                ))}
+                              </Box>
+                            )}
+                          >
+                            <MenuItem value="USER">USER</MenuItem>
+                            <MenuItem value="ADMIN">ADMIN</MenuItem>
+                            <MenuItem value="EDITOR">EDITOR</MenuItem>
+                            <MenuItem value="MANAGER">MANAGER</MenuItem>
+                            <MenuItem value="ANALYST">ANALYST</MenuItem>
+                          </Select>
+                        </FormControl>
+                      </Box>
+                    </Box>
 
-                        <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5 }}>
-                          <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
-                            Account Active:
-                          </Typography>
-                          <Box sx={{ flex: 1, ml: 2 }}>
-                            <FormControl fullWidth size="small">
-                              <Select
-                                value={formData.active}
-                                onChange={(e) => handleFormChange('active', e.target.value === 'true')}
-                                sx={{ 
-                                  backgroundColor: 'white'
-                                }}
-                              >
-                                <MenuItem value="true">
-                                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                    <Chip label="Enabled" size="small" color="success" />
-                                    Yes - User can login
-                                  </Box>
-                                </MenuItem>
-                                <MenuItem value="false">
-                                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                    <Chip label="Disabled" size="small" color="default" />
-                                    No - User cannot login
-                                  </Box>
-                                </MenuItem>
-                              </Select>
-                            </FormControl>
-                          </Box>
-                        </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5 }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
+                        Account Active:
+                      </Typography>
+                      <Box sx={{ flex: 1, ml: 2 }}>
+                        <FormControl fullWidth size="small">
+                          <Select
+                            value={formData.active}
+                            onChange={(e) => handleFormChange('active', e.target.value === 'true')}
+                            sx={{ 
+                              backgroundColor: 'white'
+                            }}
+                          >
+                            <MenuItem value="true">
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                <Chip label="Enabled" size="small" color="success" />
+                                Yes - User can login
+                              </Box>
+                            </MenuItem>
+                            <MenuItem value="false">
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                <Chip label="Disabled" size="small" color="default" />
+                                No - User cannot login
+                              </Box>
+                            </MenuItem>
+                          </Select>
+                        </FormControl>
                       </Box>
                     </Box>
                   </Box>

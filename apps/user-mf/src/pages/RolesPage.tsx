@@ -419,334 +419,174 @@ const RolesPage = () => {
                 {actionType === 'view' ? (
                   // View Mode - Clean Read-only Display
                   <Box>
-                    {/* Basic Information Section - View Mode */}
-                    <Box 
-                      sx={{ 
-                        mb: 4,
-                      }}
-                    >
-                      <Typography 
-                        variant="h6" 
-                        sx={{ 
-                          fontWeight: 600, 
-                          mb: 3, 
-                          color: 'primary.main',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 1.5,
-                          fontSize: '1.1rem',
-                          borderBottom: '2px solid',
-                          borderColor: 'primary.main',
-                          pb: 1
-                        }}
-                      >
-                        <Shield size={20} />
-                        {t('roles.basicInformation') || 'Basic Information'}
+                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
+                        {t('roles.form.roleName') || 'Role Name'}:
                       </Typography>
-                      
-                      <Box sx={{ pl: 2 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
-                          <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
-                            {t('roles.form.roleName') || 'Role Name'}:
-                          </Typography>
-                          <Typography variant="body1" sx={{ fontWeight: 500, color: 'text.primary' }}>
-                            {formData.name || '-'}
-                          </Typography>
-                        </Box>
-                        
-                        <Box sx={{ display: 'flex', alignItems: 'flex-start', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
-                          <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500, pt: 0.2 }}>
-                            {t('roles.form.description') || 'Description'}:
-                          </Typography>
-                          <Typography variant="body1" sx={{ color: 'text.primary', lineHeight: 1.5 }}>
-                            {formData.description || '-'}
-                          </Typography>
-                        </Box>
-                      </Box>
+                      <Typography variant="body1" sx={{ fontWeight: 500, color: 'text.primary' }}>
+                        {formData.name || '-'}
+                      </Typography>
+                    </Box>
+                    
+                    <Box sx={{ display: 'flex', alignItems: 'flex-start', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500, pt: 0.2 }}>
+                        {t('roles.form.description') || 'Description'}:
+                      </Typography>
+                      <Typography variant="body1" sx={{ color: 'text.primary', lineHeight: 1.5 }}>
+                        {formData.description || '-'}
+                      </Typography>
                     </Box>
 
-                    {/* Permissions Section - View Mode */}
-                    <Box 
-                      sx={{ 
-                        mb: 4,
-                      }}
-                    >
-                      <Typography 
-                        variant="h6" 
-                        sx={{ 
-                          fontWeight: 600, 
-                          mb: 3, 
-                          color: 'primary.main',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 1.5,
-                          fontSize: '1.1rem',
-                          borderBottom: '2px solid',
-                          borderColor: 'primary.main',
-                          pb: 1
-                        }}
-                      >
-                        <Settings size={20} />
-                        {t('roles.permissions') || 'Permissions'}
+                    <Box sx={{ display: 'flex', alignItems: 'flex-start', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500, pt: 0.5 }}>
+                        {t('roles.form.permissions') || 'Permissions'}:
                       </Typography>
-                      
-                      <Box sx={{ pl: 2 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'flex-start', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
-                          <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500, pt: 0.5 }}>
-                            {t('roles.form.permissions') || 'Permissions'}:
-                          </Typography>
-                          {formData.permissions && formData.permissions.length > 0 ? (
-                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                              {formData.permissions.map((permission) => (
-                                <Chip 
-                                  key={permission} 
-                                  label={permission} 
-                                  size="small" 
-                                  color="primary" 
-                                  variant="outlined"
-                                  sx={{ fontWeight: 500 }}
-                                />
-                              ))}
-                            </Box>
-                          ) : (
-                            <Typography variant="body1" color="text.secondary" sx={{ fontStyle: 'italic' }}>
-                              No permissions assigned
-                            </Typography>
-                          )}
-                        </Box>
-                      </Box>
-                    </Box>
-
-                    {/* Status Section - View Mode */}
-                    <Box>
-                      <Typography 
-                        variant="h6" 
-                        sx={{ 
-                          fontWeight: 600, 
-                          mb: 3, 
-                          color: 'primary.main',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 1.5,
-                          fontSize: '1.1rem',
-                          borderBottom: '2px solid',
-                          borderColor: 'primary.main',
-                          pb: 1
-                        }}
-                      >
-                        <Settings size={20} />
-                        {t('roles.statusSettings') || 'Status Settings'}
-                      </Typography>
-                      
-                      <Box sx={{ pl: 2 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5 }}>
-                          <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
-                            {t('roles.form.activeStatus') || 'Active Status'}:
-                          </Typography>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      {formData.permissions && formData.permissions.length > 0 ? (
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                          {formData.permissions.map((permission) => (
                             <Chip 
-                              label={formData.status === 'active' ? 'Active' : 'Inactive'} 
-                              size="medium" 
-                              color={formData.status === 'active' ? 'success' : 'default'}
+                              key={permission} 
+                              label={permission} 
+                              size="small" 
+                              color="primary" 
+                              variant="outlined"
                               sx={{ fontWeight: 500 }}
                             />
-                            <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
-                              {formData.status === 'active' ? '(Available for assignment)' : '(Not available for assignment)'}
-                            </Typography>
-                          </Box>
+                          ))}
                         </Box>
+                      ) : (
+                        <Typography variant="body1" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                          No permissions assigned
+                        </Typography>
+                      )}
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5 }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
+                        {t('roles.form.activeStatus') || 'Active Status'}:
+                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Chip 
+                          label={formData.status === 'active' ? 'Active' : 'Inactive'} 
+                          size="medium" 
+                          color={formData.status === 'active' ? 'success' : 'default'}
+                          sx={{ fontWeight: 500 }}
+                        />
+                        <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
+                          {formData.status === 'active' ? '(Available for assignment)' : '(Not available for assignment)'}
+                        </Typography>
                       </Box>
                     </Box>
                   </Box>
                 ) : (
                   // Edit/Create Mode - Clean Form Layout
                   <Box>
-                    {/* Basic Information Section - Edit/Create Mode */}
-                    <Box 
-                      sx={{ 
-                        mb: 4,
-                      }}
-                    >
-                      <Typography 
-                        variant="h6" 
-                        sx={{ 
-                          fontWeight: 600, 
-                          mb: 3, 
-                          color: 'primary.main',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 1.5,
-                          fontSize: '1.1rem',
-                          borderBottom: '2px solid',
-                          borderColor: 'primary.main',
-                          pb: 1
-                        }}
-                      >
-                        <Shield size={20} />
-                        {t('roles.basicInformation') || 'Basic Information'}
+                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
+                        {t('roles.form.roleName') || 'Role Name'}:
                       </Typography>
-                      
-                      <Box sx={{ pl: 2 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
-                          <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
-                            {t('roles.form.roleName') || 'Role Name'}:
-                          </Typography>
-                          <Box sx={{ flex: 1, ml: 2 }}>
-                            <TextField
-                              fullWidth
-                              size="small"
-                              value={formData.name ?? ''}
-                              onChange={(e) => handleFormChange('name', e.target.value)}
-                              required
-                              variant="outlined"
-                              sx={{ 
-                                '& .MuiInputBase-root': { 
-                                  backgroundColor: 'white'
-                                }
-                              }}
-                            />
-                          </Box>
-                        </Box>
-                        
-                        <Box sx={{ display: 'flex', alignItems: 'flex-start', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
-                          <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500, pt: 1 }}>
-                            {t('roles.form.description') || 'Description'}:
-                          </Typography>
-                          <Box sx={{ flex: 1, ml: 2 }}>
-                            <TextField
-                              fullWidth
-                              size="small"
-                              multiline
-                              rows={3}
-                              value={formData.description ?? ''}
-                              onChange={(e) => handleFormChange('description', e.target.value)}
-                              variant="outlined"
-                              sx={{ 
-                                '& .MuiInputBase-root': { 
-                                  backgroundColor: 'white'
-                                }
-                              }}
-                            />
-                          </Box>
-                        </Box>
+                      <Box sx={{ flex: 1, ml: 2 }}>
+                        <TextField
+                          fullWidth
+                          size="small"
+                          value={formData.name ?? ''}
+                          onChange={(e) => handleFormChange('name', e.target.value)}
+                          required
+                          variant="outlined"
+                          sx={{ 
+                            '& .MuiInputBase-root': { 
+                              backgroundColor: 'white'
+                            }
+                          }}
+                        />
+                      </Box>
+                    </Box>
+                    
+                    <Box sx={{ display: 'flex', alignItems: 'flex-start', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500, pt: 1 }}>
+                        {t('roles.form.description') || 'Description'}:
+                      </Typography>
+                      <Box sx={{ flex: 1, ml: 2 }}>
+                        <TextField
+                          fullWidth
+                          size="small"
+                          multiline
+                          rows={3}
+                          value={formData.description ?? ''}
+                          onChange={(e) => handleFormChange('description', e.target.value)}
+                          variant="outlined"
+                          sx={{ 
+                            '& .MuiInputBase-root': { 
+                              backgroundColor: 'white'
+                            }
+                          }}
+                        />
                       </Box>
                     </Box>
 
-                    {/* Permissions Section - Edit/Create Mode */}
-                    <Box 
-                      sx={{ 
-                        mb: 4,
-                      }}
-                    >
-                      <Typography 
-                        variant="h6" 
-                        sx={{ 
-                          fontWeight: 600, 
-                          mb: 3, 
-                          color: 'primary.main',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 1.5,
-                          fontSize: '1.1rem',
-                          borderBottom: '2px solid',
-                          borderColor: 'primary.main',
-                          pb: 1
-                        }}
-                      >
-                        <Settings size={20} />
-                        {t('roles.permissions') || 'Permissions'}
+                    <Box sx={{ display: 'flex', alignItems: 'flex-start', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500, pt: 0.5 }}>
+                        {t('roles.form.permissions') || 'Permissions'}:
                       </Typography>
-                      
-                      <Box sx={{ pl: 2 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'flex-start', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
-                          <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500, pt: 0.5 }}>
-                            {t('roles.form.permissions') || 'Permissions'}:
-                          </Typography>
-                          <Box sx={{ flex: 1, ml: 2 }}>
-                            <FormControl fullWidth size="small" variant="outlined">
-                              <Select
-                                multiple
-                                value={formData.permissions ?? []}
-                                onChange={(e) => handleFormChange('permissions', e.target.value)}
-                                renderValue={(selected) => (
-                                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                    {selected.map((value) => (
-                                      <Chip 
-                                        key={value} 
-                                        label={value} 
-                                        size="small" 
-                                        color="primary" 
-                                        variant="outlined"
-                                        sx={{ fontWeight: 500 }}
-                                      />
-                                    ))}
-                                  </Box>
-                                )}
-                                sx={{ 
-                                  backgroundColor: 'white'
-                                }}
-                              >
-                                {availablePermissions.map((permission) => (
-                                  <MenuItem key={permission} value={permission}>
-                                    {permission}
-                                  </MenuItem>
+                      <Box sx={{ flex: 1, ml: 2 }}>
+                        <FormControl fullWidth size="small" variant="outlined">
+                          <Select
+                            multiple
+                            value={formData.permissions ?? []}
+                            onChange={(e) => handleFormChange('permissions', e.target.value)}
+                            renderValue={(selected) => (
+                              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                {selected.map((value) => (
+                                  <Chip 
+                                    key={value} 
+                                    label={value} 
+                                    size="small" 
+                                    color="primary" 
+                                    variant="outlined"
+                                    sx={{ fontWeight: 500 }}
+                                  />
                                 ))}
-                              </Select>
-                            </FormControl>
-                          </Box>
-                        </Box>
+                              </Box>
+                            )}
+                            sx={{ 
+                              backgroundColor: 'white'
+                            }}
+                          >
+                            {availablePermissions.map((permission) => (
+                              <MenuItem key={permission} value={permission}>
+                                {permission}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
                       </Box>
                     </Box>
 
-                    {/* Status Section - Edit/Create Mode */}
-                    <Box>
-                      <Typography 
-                        variant="h6" 
-                        sx={{ 
-                          fontWeight: 600, 
-                          mb: 3, 
-                          color: 'primary.main',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 1.5,
-                          fontSize: '1.1rem',
-                          borderBottom: '2px solid',
-                          borderColor: 'primary.main',
-                          pb: 1
-                        }}
-                      >
-                        <Settings size={20} />
-                        {t('roles.statusSettings') || 'Status Settings'}
+                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5 }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
+                        {t('roles.form.activeStatus') || 'Active Status'}:
                       </Typography>
-                      
-                      <Box sx={{ pl: 2 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5 }}>
-                          <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
-                            {t('roles.form.activeStatus') || 'Active Status'}:
-                          </Typography>
-                          <Box sx={{ flex: 1, ml: 2 }}>
-                            <FormControlLabel
-                              control={
-                                <Switch
-                                  checked={formData.status === 'active'}
-                                  onChange={(e) => handleFormChange('status', e.target.checked ? 'active' : 'inactive')}
-                                  color="primary"
-                                />
-                              }
-                              label={
-                                <Box sx={{ ml: 1 }}>
-                                  <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                                    {formData.status === 'active' ? 'Active' : 'Inactive'}
-                                  </Typography>
-                                  <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.75rem' }}>
-                                    {formData.status === 'active' ? 'Available for assignment' : 'Not available for assignment'}
-                                  </Typography>
-                                </Box>
-                              }
-                              sx={{ m: 0 }}
+                      <Box sx={{ flex: 1, ml: 2 }}>
+                        <FormControlLabel
+                          control={
+                            <Switch
+                              checked={formData.status === 'active'}
+                              onChange={(e) => handleFormChange('status', e.target.checked ? 'active' : 'inactive')}
+                              color="primary"
                             />
-                          </Box>
-                        </Box>
+                          }
+                          label={
+                            <Box sx={{ ml: 1 }}>
+                              <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                                {formData.status === 'active' ? 'Active' : 'Inactive'}
+                              </Typography>
+                              <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.75rem' }}>
+                                {formData.status === 'active' ? 'Available for assignment' : 'Not available for assignment'}
+                              </Typography>
+                            </Box>
+                          }
+                          sx={{ m: 0 }}
+                        />
                       </Box>
                     </Box>
                   </Box>
