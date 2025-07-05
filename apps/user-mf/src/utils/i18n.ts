@@ -167,6 +167,10 @@ const userMfResources = {
           delete: 'Delete',
         },
         
+        // Form sections
+        basicInformation: 'Basic Information',
+        statusSettings: 'Status Settings',
+        
         // Role form fields
         form: {
           roleName: 'Role Name',
@@ -179,6 +183,12 @@ const userMfResources = {
           active: 'Active',
           activeStatus: 'Active Status',
           activeStatusHelper: 'Whether this role is available for assignment',
+          
+          // Dialog subtitles
+          viewRoleDetails: 'View role details and permissions',
+          modifyRoleInfo: 'Modify role information and permissions',
+          addNewRole: 'Add new role to system',
+          confirmDeletion: 'Remove role from system',
         },
         
         // Role messages
@@ -365,6 +375,10 @@ const userMfResources = {
           delete: '删除',
         },
         
+        // 表单部分
+        basicInformation: '基本信息',
+        statusSettings: '状态设置',
+        
         // 角色表单字段
         form: {
           roleName: '角色名称',
@@ -377,6 +391,12 @@ const userMfResources = {
           active: '激活',
           activeStatus: '激活状态',
           activeStatusHelper: '此角色是否可用于分配',
+          
+          // 对话框副标题
+          viewRoleDetails: '查看角色详情和权限',
+          modifyRoleInfo: '修改角色信息和权限',
+          addNewRole: '添加新角色到系统',
+          confirmDeletion: '从系统中移除角色',
         },
         
         // 角色消息
