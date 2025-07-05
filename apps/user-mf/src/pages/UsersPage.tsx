@@ -480,10 +480,6 @@ const UsersPage = () => {
         header: t('users.username') || 'Username',
         cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor('nickname', {
-        header: t('users.nickname') || 'Display Name',
-        cell: (info) => info.getValue() ?? '-',
-      }),
       columnHelper.accessor('email', {
         header: t('users.email') || 'Email',
         cell: (info) => info.getValue() ?? '-',
@@ -819,6 +815,15 @@ const UsersPage = () => {
                   <Box>
                     <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
                       <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
+                        {t('users.form.id')}:
+                      </Typography>
+                      <Typography variant="body1" sx={{ fontWeight: 500, color: 'text.primary' }}>
+                        {selectedUser?.id || '-'}
+                      </Typography>
+                    </Box>
+                    
+                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
                         {t('users.form.username')}:
                       </Typography>
                       <Typography variant="body1" sx={{ fontWeight: 500, color: 'text.primary' }}>
@@ -828,7 +833,7 @@ const UsersPage = () => {
                     
                     <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
                       <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
-                        {t('users.form.displayName')}:
+                        {t('users.form.nickName')}:
                       </Typography>
                       <Typography variant="body1" sx={{ color: 'text.primary' }}>
                         {formData.nickname || '-'}
@@ -846,19 +851,13 @@ const UsersPage = () => {
                     
                     <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
                       <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
-                        {t('users.form.countryCode')}:
-                      </Typography>
-                      <Typography variant="body1" sx={{ color: 'text.primary' }}>
-                        {formData.mobileCountryCode ? `+${formData.mobileCountryCode}` : '-'}
-                      </Typography>
-                    </Box>
-                    
-                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
-                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
                         {t('users.form.mobileNumber')}:
                       </Typography>
                       <Typography variant="body1" sx={{ color: 'text.primary' }}>
-                        {formData.mobileNumber || '-'}
+                        {formData.mobileCountryCode && formData.mobileNumber 
+                          ? `+${formData.mobileCountryCode} ${formData.mobileNumber}`
+                          : formData.mobileNumber || '-'
+                        }
                       </Typography>
                     </Box>
 
@@ -898,7 +897,7 @@ const UsersPage = () => {
                       )}
                     </Box>
 
-                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
                       <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
                         Account Active:
                       </Typography>
@@ -913,6 +912,51 @@ const UsersPage = () => {
                           {formData.active ? '(User can login)' : '(User cannot login)'}
                         </Typography>
                       </Box>
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
+                        {t('users.form.lastLoginAt')}:
+                      </Typography>
+                      <Typography variant="body1" sx={{ color: 'text.primary' }}>
+                        {selectedUser?.lastLoginAt ? new Date(selectedUser.lastLoginAt).toLocaleString() : '-'}
+                      </Typography>
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
+                        {t('users.form.lastLoginIp')}:
+                      </Typography>
+                      <Typography variant="body1" sx={{ color: 'text.primary' }}>
+                        {selectedUser?.lastLoginIp || '-'}
+                      </Typography>
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
+                        {t('users.form.passwordChangeAt')}:
+                      </Typography>
+                      <Typography variant="body1" sx={{ color: 'text.primary' }}>
+                        {selectedUser?.passwordChangedAt ? new Date(selectedUser.passwordChangedAt).toLocaleString() : '-'}
+                      </Typography>
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
+                        {t('users.form.createdAt')}:
+                      </Typography>
+                      <Typography variant="body1" sx={{ color: 'text.primary' }}>
+                        {selectedUser?.createdAt ? new Date(selectedUser.createdAt).toLocaleString() : '-'}
+                      </Typography>
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5 }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
+                        {t('users.form.updatedAt')}:
+                      </Typography>
+                      <Typography variant="body1" sx={{ color: 'text.primary' }}>
+                        {selectedUser?.updatedAt ? new Date(selectedUser.updatedAt).toLocaleString() : '-'}
+                      </Typography>
                     </Box>
                   </Box>
                 ) : (
@@ -979,7 +1023,7 @@ const UsersPage = () => {
                     
                     <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
                       <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
-                        {t('users.form.displayName')}:
+                        {t('users.form.nickName')}:
                       </Typography>
                       <Box sx={{ flex: 1, ml: 2 }}>
                         <TextField
@@ -1024,11 +1068,10 @@ const UsersPage = () => {
                     
                     <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
                       <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
-                        {t('users.form.countryCode')}:
+                        {t('users.form.mobileNumber')}:
                       </Typography>
-                      <Box sx={{ flex: 1, ml: 2 }}>
+                      <Box sx={{ flex: 1, ml: 2, display: 'flex', gap: 1 }}>
                         <TextField
-                          fullWidth
                           size="small"
                           value={formData.mobileCountryCode}
                           onChange={(e) => handleFormChange('mobileCountryCode', e.target.value)}
@@ -1037,6 +1080,7 @@ const UsersPage = () => {
                           helperText={getFieldError('mobileCountryCode')}
                           variant="outlined"
                           sx={{ 
+                            width: 100,
                             '& .MuiInputBase-root': { 
                               backgroundColor: 'white'
                             }
@@ -1051,19 +1095,12 @@ const UsersPage = () => {
                             },
                           }}
                         />
-                      </Box>
-                    </Box>
-                    
-                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
-                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
-                        {t('users.form.mobileNumber')}:
-                      </Typography>
-                      <Box sx={{ flex: 1, ml: 2 }}>
                         <TextField
                           fullWidth
                           size="small"
                           value={formData.mobileNumber}
                           onChange={(e) => handleFormChange('mobileNumber', e.target.value)}
+                          placeholder="Mobile number"
                           error={hasFieldError('mobileNumber')}
                           helperText={getFieldError('mobileNumber')}
                           variant="outlined"

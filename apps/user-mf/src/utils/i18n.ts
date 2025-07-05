@@ -54,6 +54,15 @@ const userMfResources = {
           displayName: 'Display Name',
           displayNameHelper: 'Optional display name',
           
+          nickName: 'Nick Name',
+          
+          id: 'User ID',
+          lastLoginAt: 'Last Login Time',
+          lastLoginIp: 'Last Login IP',
+          passwordChangeAt: 'Password Changed At',
+          createdAt: 'Created At',
+          updatedAt: 'Updated At',
+          
           emailAddress: 'Email Address',
           emailHelper: 'For notifications and recovery',
           
@@ -261,6 +270,15 @@ const userMfResources = {
           
           displayName: '显示名称',
           displayNameHelper: '可选的显示名称',
+          
+          nickName: '昵称',
+          
+          id: '用户ID',
+          lastLoginAt: '最后登录时间',
+          lastLoginIp: '最后登录IP',
+          passwordChangeAt: '密码修改时间',
+          createdAt: '创建时间',
+          updatedAt: '更新时间',
           
           emailAddress: '邮箱地址',
           emailHelper: '用于通知和恢复',
