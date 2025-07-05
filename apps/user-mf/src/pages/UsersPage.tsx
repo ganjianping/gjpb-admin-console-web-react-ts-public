@@ -23,7 +23,7 @@ import {
   Divider,
   InputAdornment,
 } from '@mui/material';
-import { Plus, Users as UsersIcon, Shield, Download, Upload, User as UserIcon } from 'lucide-react';
+import { Plus, Users as UsersIcon, Shield, User as UserIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import '../utils/i18n'; // Initialize user-mf translations
 import { DataTable, createColumnHelper, createStatusChip } from '../../../shared-lib/src/components/DataTable';
@@ -429,7 +429,7 @@ const UsersPage = () => {
           variant="contained" 
           size="large"
           onClick={handleSave}
-          disabled={loading || !formData.username || (actionType === 'create' && !formData.password)}
+          disabled={loading}
           startIcon={loading ? <CircularProgress size={16} color="inherit" /> : undefined}
           sx={{ 
             minWidth: 100, 
@@ -566,20 +566,6 @@ const UsersPage = () => {
         </Typography>
 
         <Box sx={{ display: 'flex', gap: 2 }}>
-          <Button
-            variant="outlined"
-            startIcon={<Download size={18} />}
-            sx={{ display: { xs: 'none', sm: 'flex' } }}
-          >
-            {t('users.export') || 'Export'}
-          </Button>
-          <Button
-            variant="outlined"
-            startIcon={<Upload size={18} />}
-            sx={{ display: { xs: 'none', sm: 'flex' } }}
-          >
-            {t('users.import') || 'Import'}
-          </Button>
           <Button variant="contained" startIcon={<Plus size={18} />} onClick={handleCreate}>
             {t('users.addUser') || 'Add User'}
           </Button>
@@ -973,13 +959,8 @@ const UsersPage = () => {
                           value={formData.username}
                           onChange={(e) => handleFormChange('username', e.target.value)}
                           required
-                          error={!formData.username || hasFieldError('username')}
-                          helperText={(() => {
-                            const fieldError = getFieldError('username');
-                            if (fieldError) return fieldError;
-                            if (!formData.username) return t('users.form.usernameRequired');
-                            return null;
-                          })()}
+                          error={hasFieldError('username')}
+                          helperText={getFieldError('username')}
                           variant="outlined"
                           sx={{ 
                             '& .MuiInputBase-root': { 
@@ -1003,13 +984,8 @@ const UsersPage = () => {
                             value={formData.password}
                             onChange={(e) => handleFormChange('password', e.target.value)}
                             required
-                            error={!formData.password || hasFieldError('password')}
-                            helperText={(() => {
-                              const fieldError = getFieldError('password');
-                              if (fieldError) return fieldError;
-                              if (!formData.password) return t('users.form.passwordRequired');
-                              return null;
-                            })()}
+                            error={hasFieldError('password')}
+                            helperText={getFieldError('password')}
                             variant="outlined"
                             sx={{ 
                               '& .MuiInputBase-root': { 
