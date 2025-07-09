@@ -130,7 +130,7 @@ const UsersPage = () => {
   
   // Current page and filters
   const [currentPage, setCurrentPage] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(20);
 
   // Load users data
   const loadUsers = useCallback(async (params?: UserQueryParams) => {
@@ -141,8 +141,8 @@ const UsersPage = () => {
       const queryParams: UserQueryParams = {
         page: currentPage,
         size: pageSize,
-        sort: 'username',
-        direction: 'asc',
+        sort: 'updatedAt',
+        direction: 'desc',
         ...params,
       };
 
