@@ -76,7 +76,8 @@ const UsersPage = () => {
   const { t } = useTranslation();
   
   // State management
-  const [users, setUsers] = useState<User[]>([]);
+  const [allUsers, setAllUsers] = useState<User[]>([]); // Store all users for client-side filtering
+  const [filteredUsers, setFilteredUsers] = useState<User[]>([]); // Store filtered users
   const [pagination, setPagination] = useState<PaginatedResponse<User> | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -136,7 +137,8 @@ const UsersPage = () => {
       const response: ApiResponse<PaginatedResponse<User>> = await userService.getUsers(queryParams);
       
       if (response.status.code === 200) {
-        setUsers(response.data.content);
+        setAllUsers(response.data.content); // Store all users for filtering
+        setFilteredUsers(response.data.content); // Initially show all users
         setPagination(response.data);
       } else {
         throw new Error(response.status.message);
@@ -150,25 +152,85 @@ const UsersPage = () => {
     }
   }, [currentPage, pageSize, t]);
 
+  // Client-side filtering function that can accept custom data
+  const applyClientSideFiltersWithData = useCallback((formData: SearchFormData) => {
+    let filtered = [...allUsers];
+
+    // Filter by username (case-insensitive)
+    if (formData.username) {
+      filtered = filtered.filter(user => 
+        user.username.toLowerCase().includes(formData.username.toLowerCase())
+      );
+    }
+
+    // Filter by email (case-insensitive)
+    if (formData.email) {
+      filtered = filtered.filter(user => 
+        user.email?.toLowerCase().includes(formData.email.toLowerCase())
+      );
+    }
+
+    // Filter by account status
+    if (formData.accountStatus) {
+      filtered = filtered.filter(user => 
+        user.accountStatus === formData.accountStatus
+      );
+    }
+
+    // Filter by role code
+    if (formData.roleCode) {
+      filtered = filtered.filter(user => 
+        user.roles.some(role => role.code === formData.roleCode)
+      );
+    }
+
+    // Filter by active status
+    if (formData.active !== '') {
+      const isActive = formData.active === 'true';
+      filtered = filtered.filter(user => user.active === isActive);
+    }
+
+    setFilteredUsers(filtered);
+  }, [allUsers]);
+
   // Load users on component mount and when dependencies change
   useEffect(() => {
     loadUsers();
   }, [loadUsers]);
+
+  // Apply client-side filtering when search form data changes (debounced for input fields)
+  useEffect(() => {
+    // Debounce the filtering for input fields to improve performance
+    const timeoutId = setTimeout(() => {
+      applyClientSideFiltersWithData(searchFormData);
+    }, 300); // 300ms delay
+
+    return () => clearTimeout(timeoutId);
+  }, [searchFormData, applyClientSideFiltersWithData]);
 
   // Handle search panel toggle
   const handleSearchPanelToggle = () => {
     setSearchPanelOpen(!searchPanelOpen);
   };
 
-  // Handle search form changes
+  // Handle search form changes - triggers client-side filtering
   const handleSearchFormChange = (field: keyof SearchFormData, value: any) => {
-    setSearchFormData(prev => ({
-      ...prev,
+    const newSearchFormData = {
+      ...searchFormData,
       [field]: value,
-    }));
+    };
+    
+    setSearchFormData(newSearchFormData);
+    
+    // For select fields, apply filtering immediately without debouncing
+    if (field === 'accountStatus' || field === 'roleCode' || field === 'active') {
+      // Apply filtering immediately for select fields
+      applyClientSideFiltersWithData(newSearchFormData);
+    }
+    // For input fields (username, email), filtering is handled by debounced useEffect
   };
 
-  // Handle search
+  // Handle search - performs API search
   const handleSearch = () => {
     const searchParams: UserQueryParams = {};
     
@@ -181,10 +243,10 @@ const UsersPage = () => {
     }
     
     setCurrentPage(0); // Reset to first page when searching
-    loadUsers(searchParams);
+    loadUsers(searchParams); // This will update allUsers, users, and trigger client-side filtering
   };
 
-  // Clear search
+  // Clear search - resets both client-side filters and API search
   const handleClearSearch = () => {
     setSearchFormData({
       username: '',
@@ -194,7 +256,7 @@ const UsersPage = () => {
       active: '',
     });
     setCurrentPage(0);
-    loadUsers(); // Load all users without filters
+    loadUsers(); // Load all users without API filters, client-side filtering will show all users
   };
 
   // Handle pagination changes
@@ -548,6 +610,24 @@ const UsersPage = () => {
       divider: true,
     },
   ];
+
+  /**
+   * Enhanced Search Functionality:
+   * 
+   * 1. CLIENT-SIDE FILTERING (Real-time):
+   *    - Input fields (username, email): Debounced filtering (300ms delay)
+   *    - Select fields (status, role, active): Immediate filtering
+   *    - Filters the currently loaded data for instant feedback
+   * 
+   * 2. SERVER-SIDE SEARCH (API call):
+   *    - Triggered by clicking the "Search" button
+   *    - Sends filter parameters to the API for database-level filtering
+   *    - Updates the dataset with API results, then applies client-side filtering
+   * 
+   * 3. CLEAR SEARCH:
+   *    - Resets all filters and loads all users from API
+   *    - Clears both client-side and server-side filters
+   */
 
   return (
     <Box sx={{ py: 3 }}>
@@ -913,7 +993,7 @@ const UsersPage = () => {
       >
         <CardContent>
           <DataTable
-            data={users}
+            data={filteredUsers}
             columns={columns}
             actionMenuItems={actionMenuItems}
             onRowClick={handleView}
@@ -923,7 +1003,7 @@ const UsersPage = () => {
             pageCount={pagination?.totalPages ?? 0}
             currentPage={currentPage}
             pageSize={pageSize}
-            totalRows={pagination?.totalElements ?? 0}
+            totalRows={filteredUsers.length} // Use filtered users count for display
             onPageChange={handlePageChange}
             onPageSizeChange={handlePageSizeChange}
           />
