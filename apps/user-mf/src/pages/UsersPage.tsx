@@ -5,8 +5,6 @@ import {
   Button,
   Card,
   CardContent,
-  Tabs,
-  Tab,
   Chip,
   TextField,
   Dialog,
@@ -22,8 +20,10 @@ import {
   Snackbar,
   Divider,
   InputAdornment,
+  Collapse,
+  FormLabel,
 } from '@mui/material';
-import { Plus, Users as UsersIcon, Shield, User as UserIcon } from 'lucide-react';
+import { Plus, Users as UsersIcon, Shield, User as UserIcon, Search, ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import '../utils/i18n'; // Initialize user-mf translations
 import { DataTable, createColumnHelper, createStatusChip } from '../../../shared-lib/src/components/DataTable';
@@ -50,35 +50,13 @@ const statusDisplayMap = {
 // Column helper
 const columnHelper = createColumnHelper<User>();
 
-// Tab panel interface
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
-
-// Tab panel component
-function TabPanel(props: Readonly<TabPanelProps>) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`users-tabpanel-${index}`}
-      aria-labelledby={`users-tab-${index}`}
-      {...other}
-    >
-      {value === index && <Box sx={{ py: 2 }}>{children}</Box>}
-    </div>
-  );
-}
-
-function a11yProps(index: number) {
-  return {
-    id: `users-tab-${index}`,
-    'aria-controls': `users-tabpanel-${index}`,
-  };
+// Search form data interface
+interface SearchFormData {
+  username: string;
+  email: string;
+  accountStatus: AccountStatus | '';
+  roleCode: string;
+  active: string;
 }
 
 // Form data for create/edit user
@@ -98,11 +76,20 @@ const UsersPage = () => {
   const { t } = useTranslation();
   
   // State management
-  const [tabIndex, setTabIndex] = useState(0);
   const [users, setUsers] = useState<User[]>([]);
   const [pagination, setPagination] = useState<PaginatedResponse<User> | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  // Search panel state
+  const [searchPanelOpen, setSearchPanelOpen] = useState(false);
+  const [searchFormData, setSearchFormData] = useState<SearchFormData>({
+    username: '',
+    email: '',
+    accountStatus: '',
+    roleCode: '',
+    active: '',
+  });
   
   // Dialog states
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -146,15 +133,6 @@ const UsersPage = () => {
         ...params,
       };
 
-      // Add search query if exists
-      // Note: For now, we'll remove the search from API and let DataTable handle it internally
-
-      // Add status filter based on active tab
-      if (tabIndex === 1) queryParams.accountStatus = 'active';
-      else if (tabIndex === 2) queryParams.accountStatus = 'locked';
-      else if (tabIndex === 3) queryParams.accountStatus = 'pending_verification';
-      else if (tabIndex === 4) queryParams.accountStatus = 'suspend';
-
       const response: ApiResponse<PaginatedResponse<User>> = await userService.getUsers(queryParams);
       
       if (response.status.code === 200) {
@@ -170,17 +148,53 @@ const UsersPage = () => {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, pageSize, tabIndex, t]);
+  }, [currentPage, pageSize, t]);
 
   // Load users on component mount and when dependencies change
   useEffect(() => {
     loadUsers();
   }, [loadUsers]);
 
-  // Handle tab change
-  const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
-    setTabIndex(newValue);
-    setCurrentPage(0); // Reset to first page when changing tabs
+  // Handle search panel toggle
+  const handleSearchPanelToggle = () => {
+    setSearchPanelOpen(!searchPanelOpen);
+  };
+
+  // Handle search form changes
+  const handleSearchFormChange = (field: keyof SearchFormData, value: any) => {
+    setSearchFormData(prev => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  // Handle search
+  const handleSearch = () => {
+    const searchParams: UserQueryParams = {};
+    
+    if (searchFormData.username) searchParams.username = searchFormData.username;
+    if (searchFormData.email) searchParams.email = searchFormData.email;
+    if (searchFormData.accountStatus) searchParams.accountStatus = searchFormData.accountStatus as AccountStatus;
+    if (searchFormData.roleCode) searchParams.roleCode = searchFormData.roleCode;
+    if (searchFormData.active !== '') {
+      searchParams.active = searchFormData.active === 'true';
+    }
+    
+    setCurrentPage(0); // Reset to first page when searching
+    loadUsers(searchParams);
+  };
+
+  // Clear search
+  const handleClearSearch = () => {
+    setSearchFormData({
+      username: '',
+      email: '',
+      accountStatus: '',
+      roleCode: '',
+      active: '',
+    });
+    setCurrentPage(0);
+    loadUsers(); // Load all users without filters
   };
 
   // Handle pagination changes
@@ -458,21 +472,6 @@ const UsersPage = () => {
     );
   };
 
-  // Get counts for tabs
-  const getTabCounts = () => {
-    if (!pagination) return { all: 0, active: 0, locked: 0, pending: 0, suspended: 0 };
-    
-    return {
-      all: pagination.totalElements,
-      active: users.filter(u => u.accountStatus === 'active').length,
-      locked: users.filter(u => u.accountStatus === 'locked').length,
-      pending: users.filter(u => u.accountStatus === 'pending_verification').length,
-      suspended: users.filter(u => u.accountStatus === 'suspend').length,
-    };
-  };
-
-  const tabCounts = getTabCounts();
-
   // Table columns
   const columns = useMemo(
     () => [
@@ -565,8 +564,71 @@ const UsersPage = () => {
           {t('navigation.users') || t('users.pageTitle') || 'User Management'}
         </Typography>
 
-        <Box sx={{ display: 'flex', gap: 2 }}>
-          <Button variant="contained" startIcon={<Plus size={18} />} onClick={handleCreate}>
+        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+          <Button 
+            variant="outlined"
+            startIcon={<Search size={16} />}
+            endIcon={searchPanelOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+            onClick={handleSearchPanelToggle}
+            sx={{
+              borderRadius: 2,
+              px: 2.5,
+              py: 1,
+              fontWeight: 600,
+              textTransform: 'none',
+              fontSize: '0.875rem',
+              borderColor: searchPanelOpen ? 'primary.main' : 'primary.main',
+              color: searchPanelOpen ? 'primary.main' : 'primary.main',
+              backgroundColor: searchPanelOpen 
+                ? 'rgba(25, 118, 210, 0.08)' 
+                : 'rgba(255, 255, 255, 0.9)',
+              transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+              boxShadow: searchPanelOpen 
+                ? '0 2px 8px rgba(25, 118, 210, 0.15)' 
+                : '0 1px 4px rgba(0, 0, 0, 0.1)',
+              '&:hover': {
+                backgroundColor: searchPanelOpen 
+                  ? 'rgba(25, 118, 210, 0.12)' 
+                  : 'rgba(25, 118, 210, 0.04)',
+                borderColor: 'primary.main',
+                transform: 'translateY(-1px)',
+                boxShadow: '0 4px 12px rgba(25, 118, 210, 0.2)',
+              },
+              '& .MuiButton-endIcon': {
+                marginLeft: 1,
+                transition: 'transform 0.2s ease',
+                transform: searchPanelOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+              },
+            }}
+          >
+            {searchPanelOpen ? 'Hide Search' : 'Search'}
+          </Button>
+          <Button 
+            variant="contained" 
+            startIcon={<Plus size={16} />} 
+            onClick={handleCreate}
+            sx={{
+              borderRadius: 2,
+              px: 3,
+              py: 1,
+              fontWeight: 600,
+              textTransform: 'none',
+              fontSize: '0.875rem',
+              backgroundColor: 'primary.main',
+              color: 'white',
+              boxShadow: '0 2px 8px rgba(25, 118, 210, 0.25)',
+              transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+              '&:hover': {
+                backgroundColor: 'primary.dark',
+                transform: 'translateY(-1px)',
+                boxShadow: '0 4px 12px rgba(25, 118, 210, 0.35)',
+              },
+              '&:active': {
+                backgroundColor: 'primary.dark',
+                transform: 'translateY(0px)',
+              },
+            }}
+          >
             {t('users.addUser') || 'Add User'}
           </Button>
         </Box>
@@ -579,114 +641,292 @@ const UsersPage = () => {
         </Alert>
       )}
 
-      {/* Users Card */}
-      <Card elevation={0} sx={{ borderRadius: 2, border: 1, borderColor: 'divider' }}>
-        {/* Tabs */}
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <Tabs
-            value={tabIndex}
-            onChange={handleTabChange}
-            aria-label="user tabs"
-            sx={{
-              px: 2,
-              '& .MuiTab-root': {
-                py: 2,
-                minHeight: 48,
+      {/* Search Panel */}
+      <Collapse in={searchPanelOpen}>
+        <Card 
+          elevation={0} 
+          sx={{ 
+            borderRadius: 3, 
+            background: 'rgba(25, 118, 210, 0.02)',
+            border: '1px solid',
+            borderColor: 'rgba(25, 118, 210, 0.12)',
+            mb: 2,
+            position: 'relative',
+            overflow: 'hidden',
+            boxShadow: '0 2px 8px rgba(25, 118, 210, 0.08)',
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '3px',
+              background: 'linear-gradient(90deg, #1976d2 0%, #42a5f5 100%)',
+              zIndex: 1,
+            }
+          }}
+        >
+          <CardContent sx={{ position: 'relative', zIndex: 2, p: 3 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+              <Typography 
+                variant="subtitle1" 
+                sx={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: 1,
+                  fontWeight: 600,
+                  color: 'primary.main',
+                  fontSize: '1rem',
+                  '& svg': {
+                    color: 'primary.main',
+                  }
+                }}
+              >
+                <Search size={18} />
+                Search Filters
+              </Typography>
+              
+              <Box sx={{ display: 'flex', gap: 1.5 }}>
+                <Button 
+                  variant="contained" 
+                  startIcon={<Search size={16} />}
+                  onClick={handleSearch}
+                  disabled={loading}
+                  size="small"
+                  sx={{
+                    borderRadius: 2,
+                    px: 3,
+                    py: 0.8,
+                    fontWeight: 600,
+                    textTransform: 'none',
+                    backgroundColor: 'primary.main',
+                    color: 'white',
+                    boxShadow: '0 2px 8px rgba(25, 118, 210, 0.3)',
+                    transition: 'all 0.2s ease',
+                    '&:hover': {
+                      backgroundColor: 'primary.dark',
+                      transform: 'translateY(-1px)',
+                      boxShadow: '0 4px 12px rgba(25, 118, 210, 0.4)',
+                    },
+                    '&:active': {
+                      backgroundColor: 'primary.dark',
+                      transform: 'translateY(0px)',
+                    },
+                    '&:disabled': {
+                      backgroundColor: 'grey.400',
+                      color: 'white',
+                      transform: 'none',
+                      boxShadow: 'none',
+                    },
+                  }}
+                >
+                  {loading ? 'Searching...' : 'Search'}
+                </Button>
+                <Button 
+                  variant="outlined" 
+                  onClick={handleClearSearch}
+                  disabled={loading}
+                  size="small"
+                  sx={{
+                    borderRadius: 2,
+                    px: 3,
+                    py: 0.8,
+                    fontWeight: 600,
+                    textTransform: 'none',
+                    borderColor: 'primary.main',
+                    color: 'primary.main',
+                    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                    backdropFilter: 'blur(4px)',
+                    transition: 'all 0.2s ease',
+                    '&:hover': {
+                      borderColor: 'primary.dark',
+                      backgroundColor: 'rgba(25, 118, 210, 0.04)',
+                      transform: 'translateY(-1px)',
+                      boxShadow: '0 2px 8px rgba(25, 118, 210, 0.15)',
+                    },
+                    '&:disabled': {
+                      borderColor: 'grey.300',
+                      color: 'grey.400',
+                      transform: 'none',
+                    },
+                  }}
+                >
+                  Clear
+                </Button>
+              </Box>
+            </Box>
+            <Box sx={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', 
+              gap: 2, 
+              mt: 1,
+              '& .MuiFormLabel-root': {
+                fontWeight: 500,
+                color: 'text.primary',
+                fontSize: '0.875rem',
+                mb: 0.8,
+                display: 'block',
               },
-            }}
-          >
-            <Tab
-              label={
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <span>{t('users.tabs.all')}</span>
-                  <Chip
-                    label={tabCounts.all}
-                    size="small"
-                    sx={{ height: 20, fontSize: '0.75rem' }}
-                  />
-                </Box>
-              }
-              {...a11yProps(0)}
-            />
-            <Tab
-              label={
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <span>{t('users.tabs.active')}</span>
-                  <Chip
-                    label={tabCounts.active}
-                    size="small"
-                    color="success"
-                    sx={{ height: 20, fontSize: '0.75rem' }}
-                  />
-                </Box>
-              }
-              {...a11yProps(1)}
-            />
-            <Tab
-              label={
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <span>{t('users.tabs.locked')}</span>
-                  <Chip
-                    label={tabCounts.locked}
-                    size="small"
-                    color="error"
-                    sx={{ height: 20, fontSize: '0.75rem' }}
-                  />
-                </Box>
-              }
-              {...a11yProps(2)}
-            />
-            <Tab
-              label={
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <span>{t('users.tabs.pending')}</span>
-                  <Chip
-                    label={tabCounts.pending}
-                    size="small"
-                    color="warning"
-                    sx={{ height: 20, fontSize: '0.75rem' }}
-                  />
-                </Box>
-              }
-              {...a11yProps(3)}
-            />
-            <Tab
-              label={
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <span>{t('users.tabs.suspended')}</span>
-                  <Chip
-                    label={tabCounts.suspended}
-                    size="small"
-                    color="error"
-                    sx={{ height: 20, fontSize: '0.75rem' }}
-                  />
-                </Box>
-              }
-              {...a11yProps(4)}
-            />
-          </Tabs>
-        </Box>
+              '& .MuiTextField-root': {
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 2,
+                  backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                  backdropFilter: 'blur(4px)',
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: 'primary.main',
+                      borderWidth: 2,
+                    },
+                  },
+                  '&.Mui-focused': {
+                    backgroundColor: 'rgba(255, 255, 255, 1)',
+                    boxShadow: '0 0 0 3px rgba(25, 118, 210, 0.1)',
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: 'primary.main',
+                      borderWidth: 2,
+                    },
+                  },
+                },
+              },
+            }}>
+              <Box>
+                <FormLabel>Username</FormLabel>
+                <TextField
+                  fullWidth
+                  size="small"
+                  placeholder="Search by username"
+                  value={searchFormData.username}
+                  onChange={(e) => handleSearchFormChange('username', e.target.value)}
+                />
+              </Box>
+              <Box>
+                <FormLabel>Email</FormLabel>
+                <TextField
+                  fullWidth
+                  size="small"
+                  placeholder="Search by email"
+                  value={searchFormData.email}
+                  onChange={(e) => handleSearchFormChange('email', e.target.value)}
+                />
+              </Box>
+              <Box>
+                <FormLabel>Status</FormLabel>
+                <FormControl fullWidth size="small">
+                  <Select
+                    value={searchFormData.accountStatus}
+                    onChange={(e) => handleSearchFormChange('accountStatus', e.target.value)}
+                    displayEmpty
+                    sx={{
+                      borderRadius: 2,
+                      backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                      backdropFilter: 'blur(4px)',
+                      '&:hover': {
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                      },
+                      '&.Mui-focused': {
+                        backgroundColor: 'rgba(255, 255, 255, 1)',
+                        boxShadow: '0 0 0 3px rgba(25, 118, 210, 0.1)',
+                      },
+                    }}
+                  >
+                    <MenuItem value="">All Status</MenuItem>
+                    <MenuItem value="active">Active</MenuItem>
+                    <MenuItem value="locked">Locked</MenuItem>
+                    <MenuItem value="suspend">Suspended</MenuItem>
+                    <MenuItem value="pending_verification">Pending Verification</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
+              <Box>
+                <FormLabel>Role</FormLabel>
+                <FormControl fullWidth size="small">
+                  <Select
+                    value={searchFormData.roleCode}
+                    onChange={(e) => handleSearchFormChange('roleCode', e.target.value)}
+                    displayEmpty
+                    sx={{
+                      borderRadius: 2,
+                      backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                      backdropFilter: 'blur(4px)',
+                      '&:hover': {
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                      },
+                      '&.Mui-focused': {
+                        backgroundColor: 'rgba(255, 255, 255, 1)',
+                        boxShadow: '0 0 0 3px rgba(25, 118, 210, 0.1)',
+                      },
+                    }}
+                  >
+                    <MenuItem value="">All Roles</MenuItem>
+                    <MenuItem value="USER">USER</MenuItem>
+                    <MenuItem value="ADMIN">ADMIN</MenuItem>
+                    <MenuItem value="EDITOR">EDITOR</MenuItem>
+                    <MenuItem value="MANAGER">MANAGER</MenuItem>
+                    <MenuItem value="ANALYST">ANALYST</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
+              <Box>
+                <FormLabel>Active</FormLabel>
+                <FormControl fullWidth size="small">
+                  <Select
+                    value={searchFormData.active}
+                    onChange={(e) => handleSearchFormChange('active', e.target.value)}
+                    displayEmpty
+                    sx={{
+                      borderRadius: 2,
+                      backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                      backdropFilter: 'blur(4px)',
+                      '&:hover': {
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                      },
+                      '&.Mui-focused': {
+                        backgroundColor: 'rgba(255, 255, 255, 1)',
+                        boxShadow: '0 0 0 3px rgba(25, 118, 210, 0.1)',
+                      },
+                    }}
+                  >
+                    <MenuItem value="">All</MenuItem>
+                    <MenuItem value="true">Yes</MenuItem>
+                    <MenuItem value="false">No</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
+            </Box>
+          </CardContent>
+        </Card>
+      </Collapse>
 
+      {/* Users Card */}
+      <Card 
+        elevation={0} 
+        sx={{ 
+          borderRadius: 4, 
+          border: '2px solid',
+          borderColor: 'rgba(0, 0, 0, 0.06)',
+          background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 249, 250, 0.9) 100%)',
+          backdropFilter: 'blur(10px)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.04)',
+        }}
+      >
         <CardContent>
-          {[0, 1, 2, 3, 4].map((index) => (
-            <TabPanel key={index} value={tabIndex} index={index}>
-              <DataTable
-                data={users}
-                columns={columns}
-                actionMenuItems={actionMenuItems}
-                onRowClick={handleView}
-                showSearch={false}
-                searchPlaceholder={t('users.searchUsers')}
-                manualPagination={true}
-                pageCount={pagination?.totalPages ?? 0}
-                currentPage={currentPage}
-                pageSize={pageSize}
-                totalRows={pagination?.totalElements ?? 0}
-                onPageChange={handlePageChange}
-                onPageSizeChange={handlePageSizeChange}
-              />
-            </TabPanel>
-          ))}
+          <DataTable
+            data={users}
+            columns={columns}
+            actionMenuItems={actionMenuItems}
+            onRowClick={handleView}
+            showSearch={false}
+            searchPlaceholder={t('users.searchUsers')}
+            manualPagination={true}
+            pageCount={pagination?.totalPages ?? 0}
+            currentPage={currentPage}
+            pageSize={pageSize}
+            totalRows={pagination?.totalElements ?? 0}
+            onPageChange={handlePageChange}
+            onPageSizeChange={handlePageSizeChange}
+          />
         </CardContent>
       </Card>
 
