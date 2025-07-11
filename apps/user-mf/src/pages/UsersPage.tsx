@@ -727,13 +727,14 @@ const UsersPage = () => {
           elevation={0} 
           sx={{ 
             borderRadius: 3, 
-            background: 'rgba(25, 118, 210, 0.02)',
+            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.98) 50%, rgba(241, 245, 249, 0.95) 100%)',
+            backdropFilter: 'blur(10px)',
             border: '1px solid',
-            borderColor: 'rgba(25, 118, 210, 0.12)',
+            borderColor: 'rgba(25, 118, 210, 0.15)',
             mb: 2,
             position: 'relative',
             overflow: 'hidden',
-            boxShadow: '0 2px 8px rgba(25, 118, 210, 0.08)',
+            boxShadow: '0 4px 20px rgba(25, 118, 210, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04)',
             '&::before': {
               content: '""',
               position: 'absolute',
@@ -741,8 +742,19 @@ const UsersPage = () => {
               left: 0,
               right: 0,
               height: '3px',
-              background: 'linear-gradient(90deg, #1976d2 0%, #42a5f5 100%)',
+              backgroundColor: 'primary.main',
               zIndex: 1,
+            },
+            '&::after': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'radial-gradient(circle at 20% 20%, rgba(25, 118, 210, 0.03) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(66, 165, 245, 0.02) 0%, transparent 50%)',
+              zIndex: 0,
+              pointerEvents: 'none',
             }
           }}
         >
