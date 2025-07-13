@@ -1,53 +1,6 @@
 /* User Management Micro-Frontend styles */
 
-/* Users page styles */
-.user-management-container {
-  padding: 24px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.user-table-container {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-}
-
-.user-filters {
-  display: flex;
-  gap: 16px;
-  margin-bottom: 24px;
-  flex-wrap: wrap;
-}
-
-.user-actions {
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
-  margin-bottom: 16px;
-}
-
-.role-chip {
-  margin: 2px;
-}
-
-.status-active {
-  background-color: #4caf50;
-  color: white;
-}
-
-.status-inactive {
-  background-color: #f44336;
-  color: white;
-}
-
-.status-suspended {
-  background-color: #ff9800;
-  color: white;
-}
-
-.status-pending {
-  background-color: #2196f3;
-  color: white;
-}
+/* 
+ * All styling is now handled through Material-UI's sx prop system
+ * in the component files for better theme integration and maintainability.
+ */

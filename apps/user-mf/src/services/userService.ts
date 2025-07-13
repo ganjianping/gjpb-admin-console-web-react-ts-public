@@ -112,6 +112,7 @@ export interface CreateUserRequest {
 // Update user request (for PATCH/PUT)
 export interface UpdateUserRequest {
   username?: string;
+  password?: string;
   nickname?: string;
   email?: string;
   mobileCountryCode?: string;

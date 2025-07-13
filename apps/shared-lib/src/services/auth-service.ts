@@ -2,6 +2,7 @@ import { APP_CONFIG, APP_ENV } from '../utils/config';
 import { apiClient } from './api-client';
 import { setCookie, getCookie, removeCookie } from '../utils/cookie';
 import { mockApiService } from './mock-api-service';
+import { clearAllCaches } from '../utils/cache-manager';
 
 // Auth Types
 export interface LoginCredentials {
@@ -45,6 +46,9 @@ class AuthService {
   public async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
       let authResponse: AuthResponse;
+      
+      // Clear all caches on login (fresh start)
+      clearAllCaches();
       
       // Use mock API in development mode
       if (useMockAPI) {
@@ -99,6 +103,9 @@ class AuthService {
       removeCookie(APP_CONFIG.TOKEN.ACCESS_TOKEN_KEY);
       removeCookie(APP_CONFIG.TOKEN.REFRESH_TOKEN_KEY);
       removeCookie(APP_CONFIG.TOKEN.TOKEN_TYPE_KEY);
+      
+      // Clear all application caches
+      clearAllCaches();
     } catch (error) {
       console.error('[AuthService] Logout error:', error);
     }

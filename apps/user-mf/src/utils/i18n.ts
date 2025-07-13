@@ -23,17 +23,38 @@ const userMfResources = {
         lastLogin: 'Last Login',
         active: 'Active',
         mobile: 'Mobile',
+        updatedAt: 'Updated',
         
         // Action buttons
         addUser: 'Add User',
         export: 'Export',
         import: 'Import',
+        showSearch: 'Search',
+        hideSearch: 'Hide Search',
         
         // Action menu items
         actions: {
           view: 'View',
           edit: 'Edit',
           delete: 'Delete',
+          createUser: 'Create User',
+          viewUser: 'View User',
+          editUser: 'Edit User',
+        },
+        
+        // Form field labels
+        fields: {
+          username: 'Username',
+          password: 'Password',
+          newPassword: 'New Password',
+          newPasswordHint: 'Leave blank to keep current password',
+          nickname: 'Display Name',
+          email: 'Email',
+          mobileCountryCode: 'Country Code',
+          mobileNumber: 'Mobile Number',
+          accountStatus: 'Account Status',
+          active: 'Active Status',
+          roles: 'Roles',
         },
         
         // Form sections
@@ -106,6 +127,7 @@ const userMfResources = {
         
         // Messages
         deleteConfirmation: 'Are you sure you want to delete user "{{username}}"? This action cannot be undone.',
+        noUsersFound: 'No users found',
         userCreatedSuccess: 'User created successfully',
         userUpdatedSuccess: 'User updated successfully',
         userDeletedSuccess: 'User deleted successfully',
@@ -117,6 +139,14 @@ const userMfResources = {
           updateFailed: 'Failed to update user',
           deleteFailed: 'Failed to delete user',
           validationError: 'Validation error',
+          contactMethodProvided: 'Please provide either email or mobile number',
+          usernameRequired: 'Username is required',
+          passwordRequired: 'Password is required',
+          emailInvalid: 'Please enter a valid email address',
+          mobileNumberInvalid: 'Please enter a valid mobile number',
+          usernameExists: 'Username already exists',
+          emailExists: 'Email already exists',
+          mobileExists: 'Mobile number already exists',
         },
         
         // Loading states
@@ -135,7 +165,6 @@ const userMfResources = {
         noUsersDescription: 'Get started by creating your first user',
         
         // Filters and search
-        searchPlaceholder: 'Search users...',
         filterBy: 'Filter by',
         sortBy: 'Sort by',
         
@@ -217,6 +246,32 @@ const userMfResources = {
           deleteFailed: 'Failed to delete role',
         },
       },
+      
+      // Common translations
+      common: {
+        active: 'Active',
+        inactive: 'Inactive',
+        yes: 'Yes',
+        no: 'No',
+        all: 'All',
+        status: 'Status',
+        actions: 'Actions',
+        search: 'Search',
+        clear: 'Clear',
+        cancel: 'Cancel',
+        confirm: 'Confirm',
+        save: 'Save',
+        edit: 'Edit',
+        delete: 'Delete',
+        view: 'View',
+        create: 'Create',
+        update: 'Update',
+        loading: 'Loading...',
+        success: 'Success',
+        error: 'Error',
+        warning: 'Warning',
+        info: 'Info',
+      },
     }
   },
   zh: {
@@ -240,17 +295,38 @@ const userMfResources = {
         lastLogin: '最后登录',
         active: '激活',
         mobile: '手机',
+        updatedAt: '更新时间',
         
         // 操作按钮
         addUser: '添加用户',
         export: '导出',
         import: '导入',
+        showSearch: '搜索',
+        hideSearch: '隐藏搜索',
         
         // 操作菜单项
         actions: {
           view: '查看',
           edit: '编辑',
           delete: '删除',
+          createUser: '创建用户',
+          viewUser: '查看用户',
+          editUser: '编辑用户',
+        },
+        
+        // 表单字段标签
+        fields: {
+          username: '用户名',
+          password: '密码',
+          newPassword: '新密码',
+          newPasswordHint: '留空以保持当前密码',
+          nickname: '显示名称',
+          email: '邮箱',
+          mobileCountryCode: '国家代码',
+          mobileNumber: '手机号码',
+          accountStatus: '账户状态',
+          active: '激活状态',
+          roles: '角色',
         },
         
         // 表单部分
@@ -323,6 +399,7 @@ const userMfResources = {
         
         // 消息
         deleteConfirmation: '您确定要删除用户"{{username}}"吗？此操作无法撤销。',
+        noUsersFound: '未找到用户',
         userCreatedSuccess: '用户创建成功',
         userUpdatedSuccess: '用户更新成功',
         userDeletedSuccess: '用户删除成功',
@@ -334,6 +411,14 @@ const userMfResources = {
           updateFailed: '更新用户失败',
           deleteFailed: '删除用户失败',
           validationError: '验证错误',
+          contactMethodProvided: '请提供邮箱或手机号',
+          usernameRequired: '用户名为必填项',
+          passwordRequired: '密码为必填项',
+          emailInvalid: '请输入有效的邮箱地址',
+          mobileNumberInvalid: '请输入有效的手机号',
+          usernameExists: '用户名已存在',
+          emailExists: '邮箱已存在',
+          mobileExists: '手机号已存在',
         },
         
         // 加载状态
@@ -352,7 +437,6 @@ const userMfResources = {
         noUsersDescription: '通过创建您的第一个用户开始',
         
         // 过滤器和搜索
-        searchPlaceholder: '搜索用户...',
         filterBy: '筛选条件',
         sortBy: '排序方式',
         
@@ -433,6 +517,32 @@ const userMfResources = {
           updateFailed: '更新角色失败',
           deleteFailed: '删除角色失败',
         },
+      },
+      
+      // 通用翻译
+      common: {
+        active: '激活',
+        inactive: '未激活',
+        yes: '是',
+        no: '否',
+        all: '全部',
+        status: '状态',
+        actions: '操作',
+        search: '搜索',
+        clear: '清空',
+        cancel: '取消',
+        confirm: '确认',
+        save: '保存',
+        edit: '编辑',
+        delete: '删除',
+        view: '查看',
+        create: '创建',
+        update: '更新',
+        loading: '加载中...',
+        success: '成功',
+        error: '错误',
+        warning: '警告',
+        info: '信息',
       },
     }
   }
