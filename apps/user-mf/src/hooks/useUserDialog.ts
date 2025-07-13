@@ -81,7 +81,7 @@ export const useUserDialog = () => {
   const handleDelete = (user: User) => {
     setSelectedUser(user);
     setActionType('delete');
-    setDialogOpen(true);
+    // Don't set dialogOpen(true) for delete - DeleteUserDialog has its own condition
   };
 
   const handleCloseDialog = () => {

@@ -205,7 +205,7 @@ const UsersPage = () => {
 
       {/* User Dialog (Create/Edit/View) */}
       <UserDialog
-        open={dialogOpen}
+        open={dialogOpen && actionType !== 'delete'}
         onClose={handleCloseDialog}
         user={selectedUser}
         actionType={actionType}
