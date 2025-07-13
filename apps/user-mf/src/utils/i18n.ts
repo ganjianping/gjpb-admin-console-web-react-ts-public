@@ -40,6 +40,7 @@ const userMfResources = {
           createUser: 'Create User',
           viewUser: 'View User',
           editUser: 'Edit User',
+          deleteUser: 'Delete User',
         },
         
         // Form field labels
@@ -127,7 +128,9 @@ const userMfResources = {
         
         // Messages
         deleteConfirmation: 'Are you sure you want to delete user "{{username}}"? This action cannot be undone.',
+        deleteWarning: 'This action will permanently delete the user account and all associated data.',
         noUsersFound: 'No users found',
+        noEmail: 'No email provided',
         userCreatedSuccess: 'User created successfully',
         userUpdatedSuccess: 'User updated successfully',
         userDeletedSuccess: 'User deleted successfully',
@@ -312,6 +315,7 @@ const userMfResources = {
           createUser: '创建用户',
           viewUser: '查看用户',
           editUser: '编辑用户',
+          deleteUser: '删除用户',
         },
         
         // 表单字段标签
@@ -399,7 +403,9 @@ const userMfResources = {
         
         // 消息
         deleteConfirmation: '您确定要删除用户"{{username}}"吗？此操作无法撤销。',
+        deleteWarning: '此操作将永久删除用户账户和所有相关数据。',
         noUsersFound: '未找到用户',
+        noEmail: '未提供邮箱',
         userCreatedSuccess: '用户创建成功',
         userUpdatedSuccess: '用户更新成功',
         userDeletedSuccess: '用户删除成功',
