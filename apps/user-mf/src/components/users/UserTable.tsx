@@ -1,5 +1,5 @@
 import { Box, Chip, CircularProgress, Typography } from '@mui/material';
-import { Users as UsersIcon, Shield, User as UserIcon } from 'lucide-react';
+import { Users as UsersIcon, Shield, User as UserIcon, Eye, Edit, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { DataTable, createColumnHelper, createStatusChip } from '../../../../shared-lib/src/components/DataTable';
 import type { User } from '../../services/userService';
@@ -135,9 +135,9 @@ export const UserTable = ({
       onPageChange={onPageChange}
       onPageSizeChange={onPageSizeChange}
       actionMenuItems={[
-        { label: t('common.view'), icon: <UserIcon size={16} />, action: (user: User) => onUserAction(user, 'view') },
-        { label: t('common.edit'), icon: <UserIcon size={16} />, action: (user: User) => onUserAction(user, 'edit') },
-        { label: t('common.delete'), icon: <UserIcon size={16} />, action: (user: User) => onUserAction(user, 'delete') },
+        { label: t('common.view'), icon: <Eye size={16} />, action: (user: User) => onUserAction(user, 'view') },
+        { label: t('common.edit'), icon: <Edit size={16} />, action: (user: User) => onUserAction(user, 'edit') },
+        { label: t('common.delete'), icon: <Trash2 size={16} />, action: (user: User) => onUserAction(user, 'delete') },
       ]}
     />
   );
