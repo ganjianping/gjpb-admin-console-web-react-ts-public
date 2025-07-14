@@ -3,6 +3,7 @@ import { Users as UsersIcon, Shield, User as UserIcon, Eye, Edit, Trash2 } from 
 import { useTranslation } from 'react-i18next';
 import { DataTable, createColumnHelper, createStatusChip } from '../../../../shared-lib/src/components/DataTable';
 import type { User } from '../services/userService';
+import { getRoleNameByCode } from '../utils/roleUtils';
 
 interface UserTableProps {
   users: User[];
@@ -54,7 +55,7 @@ export const UserTable = ({
       cell: (info) => {
         const mobile = info.getValue();
         const countryCode = info.row.original.mobileCountryCode;
-        return mobile && countryCode ? `${countryCode} ${mobile}` : '-';
+        return mobile && countryCode ? `+${countryCode} - ${mobile}` : '-';
       },
     }),
     columnHelper.accessor('accountStatus', {
@@ -71,7 +72,7 @@ export const UserTable = ({
           {info.getValue()?.map((role: any) => (
             <Chip
               key={role.code}
-              label={role.code}
+              label={getRoleNameByCode(role.code)}
               size="small"
               variant="outlined"
               icon={<Shield size={12} />}
@@ -127,6 +128,7 @@ export const UserTable = ({
       data={users}
       columns={columns}
       showSearch={false}
+      onRowDoubleClick={(user: User) => onUserAction(user, 'view')}
       manualPagination={true}
       pageCount={pagination?.totalPages || 0}
       currentPage={pagination?.page || 0}

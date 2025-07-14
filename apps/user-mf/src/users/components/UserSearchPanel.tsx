@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import { Search } from 'lucide-react';
 import type { SearchFormData } from '../types/user.types';
+import { rolesService } from '../../roles/services/rolesCacheService';
 
 interface UserSearchPanelProps {
   searchFormData: SearchFormData;
@@ -31,6 +32,9 @@ export const UserSearchPanel: React.FC<UserSearchPanelProps> = ({
   onClear,
 }) => {
   const { t } = useTranslation();
+  
+  // Get cached roles for the roles dropdown
+  const cachedRoles = rolesService.getCachedRoles();
   
   return (
     <Card 
@@ -268,11 +272,11 @@ export const UserSearchPanel: React.FC<UserSearchPanelProps> = ({
                     }}
                   >
                     <MenuItem value="">All Roles</MenuItem>
-                    <MenuItem value="USER">USER</MenuItem>
-                    <MenuItem value="ADMIN">ADMIN</MenuItem>
-                    <MenuItem value="EDITOR">EDITOR</MenuItem>
-                    <MenuItem value="MANAGER">MANAGER</MenuItem>
-                    <MenuItem value="ANALYST">ANALYST</MenuItem>
+                    {cachedRoles.map((role) => (
+                      <MenuItem key={role.code} value={role.code}>
+                        {role.name}
+                      </MenuItem>
+                    ))}
                   </Select>
                 </FormControl>
               </Box>

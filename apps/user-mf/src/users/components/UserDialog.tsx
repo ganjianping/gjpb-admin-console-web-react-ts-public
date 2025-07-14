@@ -23,6 +23,7 @@ import { useState } from 'react';
 import type { User, AccountStatus } from '../services/userService';
 import type { UserFormData, UserActionType } from '../types/user.types';
 import { useRoles } from '../../roles/hooks/useRoles';
+import { getRoleNameByCode } from '../utils/roleUtils';
 
 interface UserDialogProps {
   open: boolean;
@@ -282,7 +283,7 @@ export const UserDialog = ({
                   user.roles.map((role) => (
                     <Chip
                       key={role.code}
-                      label={role.code}
+                      label={getRoleNameByCode(role.code)}
                       size="small"
                       variant="outlined"
                       icon={<Shield size={12} />}

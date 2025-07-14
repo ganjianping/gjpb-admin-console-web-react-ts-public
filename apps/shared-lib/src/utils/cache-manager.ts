@@ -2,7 +2,7 @@
  * Cache management utilities for clearing all application caches
  */
 
-import { rolesService } from '../../../user-mf/src/services/rolesCacheService';
+import { rolesService } from '../../../user-mf/src/roles/services/rolesCacheService';
 
 /**
  * Clear all application caches

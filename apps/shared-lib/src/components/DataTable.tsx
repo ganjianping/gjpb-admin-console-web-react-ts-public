@@ -38,6 +38,7 @@ export type DataTableProps<T> = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   columns: ColumnDef<T, any>[];
   onRowClick?: (row: T) => void;
+  onRowDoubleClick?: (row: T) => void;
   showSearch?: boolean;
   showSelection?: boolean;
   showPagination?: boolean;
@@ -66,6 +67,7 @@ export function DataTable<T>({
   data,
   columns,
   onRowClick,
+  onRowDoubleClick,
   showSearch = true,
   showSelection = false,
   showPagination = true,
@@ -318,8 +320,9 @@ export function DataTable<T>({
                   key={row.id}
                   hover
                   onClick={() => onRowClick && onRowClick(row.original)}
+                  onDoubleClick={() => onRowDoubleClick && onRowDoubleClick(row.original)}
                   sx={{
-                    cursor: onRowClick ? 'pointer' : 'default',
+                    cursor: onRowClick || onRowDoubleClick ? 'pointer' : 'default',
                     '&.Mui-selected': {
                       backgroundColor: 'action.selected',
                     },
