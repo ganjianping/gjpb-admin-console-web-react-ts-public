@@ -1,5 +1,5 @@
 // User Service - handles user management API calls based on API spec
-import { apiClient } from '../../../shared-lib/src/services/api-client';
+import { apiClient } from '../../../../shared-lib/src/services/api-client';
 
 // API Response types
 export interface ApiResponse<T> {

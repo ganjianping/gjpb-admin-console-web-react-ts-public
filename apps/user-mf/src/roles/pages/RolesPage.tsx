@@ -20,8 +20,8 @@ import {
 } from '@mui/material';
 import { Plus, Shield, Settings, Download } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import '../utils/i18n'; // Initialize user-mf translations
-import { DataTable, createColumnHelper, createStatusChip } from '../../../shared-lib/src/components/DataTable';
+import '../../shared/utils/i18n'; // Initialize user-mf translations
+import { DataTable, createColumnHelper, createStatusChip } from '../../../../shared-lib/src/components/DataTable';
 
 // Mock role data
 type Role = {

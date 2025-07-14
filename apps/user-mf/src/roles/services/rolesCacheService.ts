@@ -4,7 +4,7 @@
  */
 
 import { rolesCache, type CachedRole } from '../utils/rolesCache';
-import { apiClient } from '../../../shared-lib/src/services/api-client';
+import { apiClient } from '../../../../shared-lib/src/services/api-client';
 
 class RolesService {
   private static instance: RolesService | null = null;

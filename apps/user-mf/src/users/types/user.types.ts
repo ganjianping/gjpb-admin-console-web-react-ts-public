@@ -25,18 +25,3 @@ export interface UserFormData {
 
 // Dialog action types
 export type UserActionType = 'view' | 'edit' | 'create' | 'delete' | null;
-
-// Snackbar state
-export interface SnackbarState {
-  open: boolean;
-  message: string;
-  severity: 'success' | 'error';
-}
-
-// Status display mapping
-export interface StatusDisplayMap {
-  [key: string]: {
-    label: string;
-    color: 'success' | 'error' | 'warning' | 'default';
-  };
-}

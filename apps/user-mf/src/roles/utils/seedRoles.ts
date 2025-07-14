@@ -1,5 +1,13 @@
 /**
  * Utility to seed localStorage with roles data for development/testing
+ * 
+ * IMPORTANT: This is for development/testing purposes only.
+ * In production, roles should always be loaded from the API.
+ * 
+ * Usage from browser console:
+ * - window.seedRoles()     - Add roles to localStorage
+ * - window.checkRoles()    - Check current roles in localStorage  
+ * - window.clearRoles()    - Clear roles from localStorage
  */
 
 import type { CachedRole } from './rolesCache';

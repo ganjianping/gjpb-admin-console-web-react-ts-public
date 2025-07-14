@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 
 // Import i18n configuration
-import './utils/i18n';
+import './shared/utils/i18n';
 
 // Import our components through the barrel exports
 import { UsersPage } from './exports';

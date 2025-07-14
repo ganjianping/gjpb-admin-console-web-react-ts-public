@@ -20,9 +20,9 @@ import {
 import { useTranslation } from 'react-i18next';
 import { Shield, User as UserIcon, Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
-import type { User, AccountStatus } from '../../services/userService';
-import type { UserFormData, UserActionType } from '../../types/user.types';
-import { useRoles } from '../../hooks/useRoles';
+import type { User, AccountStatus } from '../services/userService';
+import type { UserFormData, UserActionType } from '../types/user.types';
+import { useRoles } from '../../roles/hooks/useRoles';
 
 interface UserDialogProps {
   open: boolean;

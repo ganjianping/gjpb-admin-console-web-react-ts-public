@@ -1,6 +1,6 @@
 import { Box, Alert, Card, CardContent, Collapse } from '@mui/material';
 import { useEffect } from 'react';
-import '../utils/i18n'; // Initialize user-mf translations
+import '../../shared/utils/i18n'; // Initialize user-mf translations
 
 // Import all the refactored components and hooks
 import {
@@ -10,18 +10,21 @@ import {
   UserDialog,
   DeleteUserDialog,
   NotificationSnackbar,
-} from '../components/users';
+} from '../components';
 
 import {
   useUsers,
   useUserSearch,
   useUserDialog,
-  useNotification,
-  useRoles,
 } from '../hooks';
 
-import { rolesService } from '../services/rolesCacheService';
-import { seedRolesToLocalStorage, checkRolesInLocalStorage } from '../utils/seedRoles';
+import {
+  useNotification,
+} from '../../shared/hooks';
+
+import { useRoles } from '../../roles/hooks';
+
+import { rolesService } from '../../roles/services/rolesCacheService';
 
 const UsersPage = () => {
   // Initialize notification system
@@ -71,20 +74,15 @@ const UsersPage = () => {
     handleConfirmDelete,
   } = useUserDialog();
 
-  // Load roles once when Users page is accessed (only if not cached in localStorage)
+  // Load roles once when Users page is accessed
   useEffect(() => {
     // Check if roles are already cached in localStorage
     const isRolesCached = rolesService.isRolesLoaded();
     
     if (!isRolesCached) {
-      // Check if we should seed with test data or load from API
-      if (!checkRolesInLocalStorage()) {
-        console.log('=== UsersPage: Seeding roles to localStorage for development ===');
-        seedRolesToLocalStorage();
-      } else {
-        console.log('=== UsersPage: Loading roles from API ===');
-        loadRoles();
-      }
+      // Always load roles from API on first visit
+      console.log('=== UsersPage: Loading roles from API ===');
+      loadRoles();
     }
   }, []); // Empty dependency array to run only once on mount
 

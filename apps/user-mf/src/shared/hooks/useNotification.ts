@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import type { SnackbarState } from '../types/user.types';
+import type { SnackbarState } from '../types';
 
 export const useNotification = () => {
   const [snackbar, setSnackbar] = useState<SnackbarState>({

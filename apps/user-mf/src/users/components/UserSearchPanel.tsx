@@ -13,7 +13,7 @@ import {
   Typography,
 } from '@mui/material';
 import { Search } from 'lucide-react';
-import type { SearchFormData } from '../../types/user.types';
+import type { SearchFormData } from '../types/user.types';
 
 interface UserSearchPanelProps {
   searchFormData: SearchFormData;

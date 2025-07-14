@@ -1,4 +1,4 @@
-import i18n from '../../../shared-lib/src/utils/i18n';
+import i18n from '../../../../shared-lib/src/utils/i18n';
 
 // User management specific translations
 const userMfResources = {

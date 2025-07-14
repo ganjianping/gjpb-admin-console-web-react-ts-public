@@ -1,5 +1,5 @@
 import { Snackbar, Alert } from '@mui/material';
-import type { SnackbarState } from '../../types/user.types';
+import type { SnackbarState } from '../../shared/types';
 
 interface NotificationSnackbarProps {
   snackbar: SnackbarState;
