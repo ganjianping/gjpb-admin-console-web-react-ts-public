@@ -1,6 +1,6 @@
 import { Box, Alert, Card, CardContent, Collapse } from '@mui/material';
 import { useEffect } from 'react';
-import '../../shared/utils/i18n'; // Initialize user-mf translations
+import '../utils/i18n'; // Initialize user translations
 
 // Import all the refactored components and hooks
 import {

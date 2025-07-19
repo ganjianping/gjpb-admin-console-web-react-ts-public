@@ -10,6 +10,7 @@ import {
   CircularProgress,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import '../utils/i18n'; // Initialize user translations
 import { AlertTriangle, User as UserIcon } from 'lucide-react';
 import type { User } from '../services/userService';
 

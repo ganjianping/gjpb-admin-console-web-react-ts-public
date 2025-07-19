@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import '../utils/i18n'; // Initialize user translations
 import type { User, UserQueryParams, PaginatedResponse } from '../services/userService';
 import { userService } from '../services/userService';
 

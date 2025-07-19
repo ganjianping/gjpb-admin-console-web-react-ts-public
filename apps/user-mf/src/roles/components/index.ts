@@ -1,2 +1,2 @@
 // Role components exports
-// TODO: Add role components when they are implemented
+export { RoleSearchPanel } from './RoleSearchPanel';

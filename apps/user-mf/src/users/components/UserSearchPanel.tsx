@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import '../utils/i18n'; // Initialize user translations
 import {
   Box,
   Button,

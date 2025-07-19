@@ -18,6 +18,7 @@ import {
   InputLabel,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import '../utils/i18n'; // Initialize user translations
 import { Shield, User as UserIcon, Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import type { User, AccountStatus } from '../services/userService';

@@ -17,23 +17,15 @@ import {
   MenuItem,
   FormControlLabel,
   Switch,
+  Collapse,
 } from '@mui/material';
-import { Plus, Shield, Settings, Download } from 'lucide-react';
+import { Plus, Shield, Settings, Search, ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import '../../shared/utils/i18n'; // Initialize user-mf translations
+import '../utils/i18n'; // Initialize role translations
 import { DataTable, createColumnHelper, createStatusChip } from '../../../../shared-lib/src/components/DataTable';
-
-// Mock role data
-type Role = {
-  id: string;
-  name: string;
-  description: string;
-  permissions: string[];
-  status: 'active' | 'inactive';
-  userCount: number;
-  createdAt: string;
-  updatedAt: string;
-};
+import { RoleSearchPanel } from '../components';
+import { useRoleSearch } from '../hooks';
+import type { Role } from '../types/role.types';
 
 // Mock roles data
 const mockRoles: Role[] = [
@@ -125,6 +117,21 @@ const RolesPage = () => {
     permissions: [],
     status: 'active',
   });
+
+  // Search functionality
+  const {
+    searchPanelOpen,
+    searchFormData,
+    applyClientSideFiltersWithData,
+    handleSearchPanelToggle,
+    handleSearchFormChange,
+    handleClearSearch,
+  } = useRoleSearch(mockRoles);
+
+  // Apply search filters
+  const filteredRoles = useMemo(() => {
+    return applyClientSideFiltersWithData(searchFormData);
+  }, [searchFormData, applyClientSideFiltersWithData]);
 
   // Role actions
   const handleView = (role: Role) => {
@@ -293,16 +300,47 @@ const RolesPage = () => {
         }}
       >
         <Typography variant="h4" component="h1">
-          {t('navigation.roles')}
+          {t('roles.pageTitle')}
         </Typography>
 
         <Box sx={{ display: 'flex', gap: 2 }}>
           <Button
             variant="outlined"
-            startIcon={<Download size={18} />}
-            sx={{ display: { xs: 'none', sm: 'flex' } }}
+            startIcon={<Search size={16} />}
+            endIcon={searchPanelOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+            onClick={handleSearchPanelToggle}
+            sx={{
+              borderRadius: 2,
+              px: 2.5,
+              py: 1,
+              fontWeight: 600,
+              textTransform: 'none',
+              fontSize: '0.875rem',
+              borderColor: 'primary.main',
+              color: 'primary.main',
+              backgroundColor: searchPanelOpen 
+                ? 'rgba(25, 118, 210, 0.08)' 
+                : 'rgba(255, 255, 255, 0.9)',
+              transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+              boxShadow: searchPanelOpen 
+                ? '0 2px 8px rgba(25, 118, 210, 0.15)' 
+                : '0 1px 4px rgba(0, 0, 0, 0.1)',
+              '&:hover': {
+                backgroundColor: searchPanelOpen 
+                  ? 'rgba(25, 118, 210, 0.12)' 
+                  : 'rgba(25, 118, 210, 0.04)',
+                borderColor: 'primary.main',
+                transform: 'translateY(-1px)',
+                boxShadow: '0 4px 12px rgba(25, 118, 210, 0.2)',
+              },
+              '& .MuiButton-endIcon': {
+                marginLeft: 1,
+                transition: 'transform 0.2s ease',
+                transform: searchPanelOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+              },
+            }}
           >
-            {t('roles.export')}
+            {searchPanelOpen ? t('roles.hideSearch') : t('roles.showSearch')}
           </Button>
           <Button variant="contained" startIcon={<Plus size={18} />} onClick={handleCreate}>
             {t('roles.addRole')}
@@ -310,16 +348,28 @@ const RolesPage = () => {
         </Box>
       </Box>
 
+      {/* Search Panel */}
+      <Box sx={{ mb: 2 }}>
+        <Collapse in={searchPanelOpen}>
+          <RoleSearchPanel
+            searchFormData={searchFormData}
+            loading={false}
+            onFormChange={handleSearchFormChange}
+            onSearch={() => {}}
+            onClear={handleClearSearch}
+          />
+        </Collapse>
+      </Box>
+
       {/* Roles Card */}
       <Card elevation={0} sx={{ borderRadius: 2, border: 1, borderColor: 'divider' }}>
         <CardContent>
           <DataTable
-            data={mockRoles}
+            data={filteredRoles}
             columns={columns}
             actionMenuItems={actionMenuItems}
             onRowClick={handleView}
-            showSearch
-            searchPlaceholder={t('roles.searchRoles')}
+            showSearch={false}
           />
         </CardContent>
       </Card>
@@ -392,10 +442,10 @@ const RolesPage = () => {
                 </Box>
                 <Box>
                   <Typography variant="h6" gutterBottom>
-                    {t('users.confirmDeletion') || 'Confirm Deletion'}
+                    {t('roles.confirmDeletion') || 'Confirm Deletion'}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    {t('users.actionCannotBeUndone') || 'This action cannot be undone'}
+                    {t('roles.actionCannotBeUndone') || 'This action cannot be undone'}
                   </Typography>
                 </Box>
               </Box>

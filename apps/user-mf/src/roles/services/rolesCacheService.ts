@@ -4,7 +4,7 @@
  */
 
 import { rolesCache, type CachedRole } from '../utils/rolesCache';
-import { apiClient } from '../../../../shared-lib/src/services/api-client';
+import { roleService } from './roleService';
 
 class RolesService {
   private static instance: RolesService | null = null;
@@ -73,25 +73,7 @@ class RolesService {
     // Let the rolesCache handle all caching logic
     return rolesCache.getRoles(async () => {
       try {
-        const response = await apiClient.get<{
-          status: { code: number; message: string; errors: any };
-          data: Array<{
-            id: string;
-            code: string;
-            name: string;
-            description: string;
-            active: boolean;
-            sortOrder: number;
-            level: number;
-            parentRoleId: string | null;
-            systemRole: boolean;
-            createdAt: string;
-            updatedAt: string;
-            createdBy: string | null;
-            updatedBy: string | null;
-          }>;
-          meta: { serverDateTime: string; requestId?: string; sessionId?: string };
-        }>('/v1/roles');
+        const response = await roleService.getRoles();
 
         // Parse the response and extract roles data
         const rolesData = this.parseApiResponse(response);

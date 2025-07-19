@@ -1,6 +1,7 @@
 import { Box, Typography, Button } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { Plus, Search, ChevronDown, ChevronUp } from 'lucide-react';
+import '../utils/i18n'; // Initialize user translations
 
 interface UserPageHeaderProps {
   onCreateUser: () => void;
