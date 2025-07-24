@@ -17,6 +17,9 @@ const roleTranslations = {
       // Table column headers
       name: 'Role Name',
       description: 'Description', 
+      code: 'Code',
+      level: 'Level',
+      systemRole: 'System Role',
       permissions: 'Permissions',
       userCount: 'Users',
       status: 'Status',
@@ -55,6 +58,10 @@ const roleTranslations = {
         roleName: 'Role Name',
         roleNameHelper: 'Unique name for the role',
         roleCode: 'Role Code',
+        level: 'Level',
+        sortOrder: 'Sort Order',
+        parentRole: 'Parent Role',
+        systemRole: 'System Role',
         description: 'Description',
         descriptionHelper: 'Describe the purpose and scope of this role',
         permissions: 'Permissions',
@@ -77,10 +84,23 @@ const roleTranslations = {
       deleteConfirmation: 'Are you sure you want to delete role "{{roleName}}"?',
       deleteWarning: 'Warning: This role is assigned to {{userCount}} user(s). Deleting it will remove their permissions.',
       
+      // Success and error messages
+      messages: {
+        createSuccess: 'Role created successfully',
+        updateSuccess: 'Role updated successfully',
+        deleteSuccess: 'Role deleted successfully',
+        createError: 'Failed to create role',
+        updateError: 'Failed to update role',
+        deleteError: 'Failed to delete role',
+        validationError: 'Please correct the errors below',
+      },
+      
       // Search and filters
       searchRoles: 'Search roles...',
       filterBy: 'Filter by',
       sortBy: 'Sort by',
+      systemRoleOnly: 'System Roles Only',
+      customRoleOnly: 'Custom Roles Only',
       
       // Empty states
       noRoles: 'No roles found',
@@ -126,6 +146,9 @@ const roleTranslations = {
       // 表格列标题
       name: '角色名称',
       description: '描述',
+      code: '代码',
+      level: '级别',
+      systemRole: '系统角色',
       permissions: '权限',
       userCount: '用户数',
       status: '状态',
@@ -164,6 +187,10 @@ const roleTranslations = {
         roleName: '角色名称',
         roleNameHelper: '角色的唯一名称',
         roleCode: '角色代码',
+        level: '级别',
+        sortOrder: '排序',
+        parentRole: '父角色',
+        systemRole: '系统角色',
         description: '描述',
         descriptionHelper: '描述此角色的目的和范围',
         permissions: '权限',
@@ -186,10 +213,23 @@ const roleTranslations = {
       deleteConfirmation: '您确定要删除角色"{{roleName}}"吗？',
       deleteWarning: '警告：此角色已分配给{{userCount}}个用户。删除它将移除他们的权限。',
       
+      // 成功和错误消息
+      messages: {
+        createSuccess: '角色创建成功',
+        updateSuccess: '角色更新成功',
+        deleteSuccess: '角色删除成功',
+        createError: '创建角色失败',
+        updateError: '更新角色失败',
+        deleteError: '删除角色失败',
+        validationError: '请修正以下错误',
+      },
+      
       // 搜索和过滤
       searchRoles: '搜索角色...',
       filterBy: '过滤条件',
       sortBy: '排序方式',
+      systemRoleOnly: '仅系统角色',
+      customRoleOnly: '仅自定义角色',
       
       // 空状态
       noRoles: '未找到角色',

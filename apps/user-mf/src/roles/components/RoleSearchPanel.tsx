@@ -12,8 +12,6 @@ import {
   Select,
   TextField,
   Typography,
-  Chip,
-  OutlinedInput,
 } from '@mui/material';
 import { Search } from 'lucide-react';
 import type { RoleSearchFormData } from '../types/role.types';
@@ -25,18 +23,6 @@ interface RoleSearchPanelProps {
   onSearch: () => void;
   onClear: () => void;
 }
-
-// Common permissions for roles
-const availablePermissions = [
-  'READ_USERS',
-  'WRITE_USERS', 
-  'DELETE_USERS',
-  'MANAGE_ROLES',
-  'SYSTEM_CONFIG',
-  'VIEW_REPORTS',
-  'MANAGE_SETTINGS',
-  'AUDIT_LOGS',
-];
 
 export const RoleSearchPanel: React.FC<RoleSearchPanelProps> = ({
   searchFormData,
@@ -115,15 +101,16 @@ export const RoleSearchPanel: React.FC<RoleSearchPanelProps> = ({
                 fontWeight: 500,
                 px: 2.5,
                 py: 0.8,
-                background: 'linear-gradient(145deg, #1976d2 0%, #42a5f5 100%)',
-                boxShadow: '0 4px 12px rgba(25, 118, 210, 0.3)',
+                backgroundColor: 'primary.main',
+                boxShadow: (theme) => `0 4px 12px ${theme.palette.primary.main}30`,
                 '&:hover': {
-                  background: 'linear-gradient(145deg, #1565c0 0%, #1976d2 100%)',
-                  boxShadow: '0 6px 16px rgba(25, 118, 210, 0.4)',
+                  backgroundColor: 'primary.dark',
+                  boxShadow: (theme) => `0 6px 16px ${theme.palette.primary.main}40`,
                   transform: 'translateY(-1px)',
                 },
                 '&:disabled': {
-                  background: 'rgba(25, 118, 210, 0.3)',
+                  backgroundColor: 'primary.main',
+                  opacity: 0.3,
                   boxShadow: 'none',
                   transform: 'none',
                 }
@@ -185,31 +172,27 @@ export const RoleSearchPanel: React.FC<RoleSearchPanelProps> = ({
             />
           </FormControl>
 
-          {/* Permissions Field */}
+          {/* System Role Field */}
           <FormControl>
             <FormLabel sx={{ mb: 1, fontWeight: 500, color: 'text.primary' }}>
-              {t('roles.permissions')}
+              {t('roles.systemRole')}
             </FormLabel>
             <Select
-              multiple
               size="small"
-              value={searchFormData.permissions}
-              onChange={(e) => onFormChange('permissions', e.target.value)}
-              input={<OutlinedInput />}
-              renderValue={(selected) => (
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                  {selected.map((value) => (
-                    <Chip 
-                      key={value} 
-                      label={value} 
-                      size="small" 
-                      color="primary" 
-                      variant="outlined"
-                      sx={{ fontWeight: 500 }}
-                    />
-                  ))}
-                </Box>
-              )}
+              value={searchFormData.systemRole ?? ''}
+              onChange={(e) => {
+                const value = e.target.value;
+                let systemRole: boolean | undefined;
+                if (value === 'true') {
+                  systemRole = true;
+                } else if (value === 'false') {
+                  systemRole = false;
+                } else {
+                  systemRole = undefined;
+                }
+                onFormChange('systemRole', systemRole);
+              }}
+              displayEmpty
               sx={{
                 borderRadius: 2,
                 backgroundColor: 'rgba(255, 255, 255, 0.8)',
@@ -221,11 +204,11 @@ export const RoleSearchPanel: React.FC<RoleSearchPanelProps> = ({
                 }
               }}
             >
-              {availablePermissions.map((permission) => (
-                <MenuItem key={permission} value={permission}>
-                  {permission}
-                </MenuItem>
-              ))}
+              <MenuItem value="">
+                <Typography color="textSecondary">{t('common.all')}</Typography>
+              </MenuItem>
+              <MenuItem value="true">{t('roles.systemRoleOnly')}</MenuItem>
+              <MenuItem value="false">{t('roles.customRoleOnly')}</MenuItem>
             </Select>
           </FormControl>
 

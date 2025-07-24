@@ -12,90 +12,20 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  FormControl,
-  Select,
-  MenuItem,
   FormControlLabel,
   Switch,
   Collapse,
+  Alert,
+  Snackbar,
 } from '@mui/material';
-import { Plus, Shield, Settings, Search, ChevronDown, ChevronUp } from 'lucide-react';
+import { Plus, Shield, Settings, Search, ChevronDown, ChevronUp, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import '../utils/i18n'; // Initialize role translations
 import { DataTable, createColumnHelper, createStatusChip } from '../../../../shared-lib/src/components/DataTable';
 import { RoleSearchPanel } from '../components';
 import { useRoleSearch } from '../hooks';
+import { roleService } from '../services';
 import type { Role } from '../types/role.types';
-
-// Mock roles data
-const mockRoles: Role[] = [
-  {
-    id: '1',
-    name: 'ADMIN',
-    description: 'Full system administrator with all permissions',
-    permissions: ['READ_USERS', 'WRITE_USERS', 'DELETE_USERS', 'MANAGE_ROLES', 'SYSTEM_CONFIG'],
-    status: 'active',
-    userCount: 2,
-    createdAt: '2024-01-10T09:00:00Z',
-    updatedAt: '2024-01-10T09:00:00Z',
-  },
-  {
-    id: '2',
-    name: 'MANAGER',
-    description: 'Team manager with user management permissions',
-    permissions: ['READ_USERS', 'WRITE_USERS', 'MANAGE_TEAM'],
-    status: 'active',
-    userCount: 3,
-    createdAt: '2024-02-15T10:30:00Z',
-    updatedAt: '2024-02-15T10:30:00Z',
-  },
-  {
-    id: '3',
-    name: 'EDITOR',
-    description: 'Content editor with content management permissions',
-    permissions: ['READ_CONTENT', 'WRITE_CONTENT', 'PUBLISH_CONTENT'],
-    status: 'active',
-    userCount: 5,
-    createdAt: '2024-03-01T14:20:00Z',
-    updatedAt: '2024-03-01T14:20:00Z',
-  },
-  {
-    id: '4',
-    name: 'USER',
-    description: 'Basic user with read-only permissions',
-    permissions: ['READ_CONTENT'],
-    status: 'active',
-    userCount: 12,
-    createdAt: '2024-01-10T09:00:00Z',
-    updatedAt: '2024-01-10T09:00:00Z',
-  },
-  {
-    id: '5',
-    name: 'ANALYST',
-    description: 'Data analyst with reporting permissions',
-    permissions: ['READ_DATA', 'GENERATE_REPORTS', 'VIEW_ANALYTICS'],
-    status: 'inactive',
-    userCount: 0,
-    createdAt: '2024-04-05T11:15:00Z',
-    updatedAt: '2024-04-05T11:15:00Z',
-  },
-];
-
-// Available permissions
-const availablePermissions = [
-  'READ_USERS',
-  'WRITE_USERS',
-  'DELETE_USERS',
-  'MANAGE_ROLES',
-  'SYSTEM_CONFIG',
-  'READ_CONTENT',
-  'WRITE_CONTENT',
-  'PUBLISH_CONTENT',
-  'READ_DATA',
-  'GENERATE_REPORTS',
-  'VIEW_ANALYTICS',
-  'MANAGE_TEAM',
-];
 
 // Column helper
 const columnHelper = createColumnHelper<Role>();
@@ -114,24 +44,40 @@ const RolesPage = () => {
   const [formData, setFormData] = useState<Partial<Role>>({
     name: '',
     description: '',
-    permissions: [],
     status: 'active',
+    code: '',
+    sortOrder: 0,
+    level: 1,
+    parentRoleId: null,
+    systemRole: false,
   });
+  
+  // Error handling state
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [showErrorSnackbar, setShowErrorSnackbar] = useState(false);
+  const [showSuccessSnackbar, setShowSuccessSnackbar] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string>('');
+  const [formErrors, setFormErrors] = useState<Record<string, string[] | string>>({});
+  const [dialogErrorMessage, setDialogErrorMessage] = useState<string>('');
 
-  // Search functionality
+  // Search functionality using API with pagination
   const {
+    roles,
+    loading,
     searchPanelOpen,
     searchFormData,
-    applyClientSideFiltersWithData,
+    currentPage,
+    pageSize,
+    totalElements,
+    totalPages,
     handleSearchPanelToggle,
     handleSearchFormChange,
+    handleSearch,
     handleClearSearch,
-  } = useRoleSearch(mockRoles);
-
-  // Apply search filters
-  const filteredRoles = useMemo(() => {
-    return applyClientSideFiltersWithData(searchFormData);
-  }, [searchFormData, applyClientSideFiltersWithData]);
+    handlePageChange,
+    handlePageSizeChange,
+    toggleRoleExpand,
+  } = useRoleSearch();
 
   // Role actions
   const handleView = (role: Role) => {
@@ -159,8 +105,28 @@ const RolesPage = () => {
     setFormData({
       name: '',
       description: '',
-      permissions: [],
       status: 'active',
+      code: '',
+      sortOrder: 0,
+      level: 1,
+      parentRoleId: null,
+      systemRole: false,
+    });
+    setActionType('create');
+    setDialogOpen(true);
+  };
+
+  const handleAddChildRole = (parentRole: Role) => {
+    setSelectedRole(null);
+    setFormData({
+      name: '',
+      description: '',
+      status: 'active',
+      code: '',
+      sortOrder: 0,
+      level: (parentRole.level || 1) + 1,
+      parentRoleId: parentRole.id,
+      systemRole: false,
     });
     setActionType('create');
     setDialogOpen(true);
@@ -171,15 +137,264 @@ const RolesPage = () => {
     setSelectedRole(null);
     setActionType(null);
     setFormData({
+      code: '',
       name: '',
       description: '',
-      permissions: [],
-      status: 'active',
+      level: 1,
+      sortOrder: 0,
+      systemRole: false,
+      parentRoleId: null,
     });
+    setFormErrors({});
+    setDialogErrorMessage('');
   };
 
   const handleFormChange = (field: keyof Role, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+    
+    // Clear field error when user starts typing
+    if (formErrors[field]) {
+      setFormErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[field];
+        return newErrors;
+      });
+    }
+  };
+
+  // Helper functions for error handling (similar to UserDialog)
+  const getErrorMessage = (field: string) => {
+    const error = formErrors[field];
+    if (Array.isArray(error)) {
+      return error.join(', ');
+    } else if (error) {
+      return String(error);
+    }
+    return '';
+  };
+
+  const hasError = (field: string) => {
+    return Boolean(formErrors[field]);
+  };
+
+  // Get general errors that don't map to specific fields
+  const getGeneralErrors = () => {
+    const generalErrors = [];
+    
+    // Check for general error
+    if (formErrors.general) {
+      generalErrors.push(formErrors.general);
+    }
+    
+    // Check for any other general errors that don't have field mapping
+    const fieldNames = ['code', 'name', 'description', 'level', 'sortOrder', 'parentRoleId', 'general'];
+    Object.keys(formErrors).forEach(key => {
+      if (!fieldNames.includes(key)) {
+        generalErrors.push(formErrors[key]);
+      }
+    });
+    
+    return generalErrors;
+  };
+
+  // Helper function to process API errors (similar to UserDialog)
+  const processApiErrors = (apiErrors: any): Record<string, string | string[]> => {
+    console.log('Processing Role API errors - raw input:', JSON.stringify(apiErrors, null, 2));
+    const formattedErrors: Record<string, string | string[]> = {};
+    
+    if (apiErrors && typeof apiErrors === 'object') {
+      // Handle the errors object directly (as shown in the API response)
+      Object.keys(apiErrors).forEach(key => {
+        const value = apiErrors[key];
+        console.log(`Processing role error for key "${key}":`, value);
+        
+        // Map field-specific errors directly for all role fields
+        if (['code', 'name', 'description', 'level', 'sortOrder', 'parentRoleId'].includes(key)) {
+          formattedErrors[key] = Array.isArray(value) ? value : String(value);
+          console.log(`✅ Mapped role field error: ${key} -> ${formattedErrors[key]}`);
+        } else {
+          // For non-field-specific errors, add as general error
+          formattedErrors.general = Array.isArray(value) ? value : String(value);
+          console.log(`⚠️ Mapped role general error: ${key} -> ${formattedErrors.general}`);
+        }
+      });
+    }
+    
+    console.log('Final formatted role errors:', formattedErrors);
+    return formattedErrors;
+  };
+
+  const handleSave = async () => {
+    try {
+      // Clear previous errors
+      setFormErrors({});
+      setDialogErrorMessage('');
+      
+      if (actionType === 'create') {
+        // Create new role
+        const createData = {
+          code: formData.code || '',
+          name: formData.name || '',
+          description: formData.description || '',
+          sortOrder: formData.sortOrder || 0,
+          level: formData.level || 1,
+          parentRoleId: formData.parentRoleId || undefined,
+          active: formData.status === 'active',
+        };
+        
+        // Call the role service to create the role
+        console.log('🚀 Creating role:', createData);
+        const response = await roleService.createRole(createData);
+        console.log('🚀 API Response received:', response);
+        console.log('🚀 Response status code:', response.status.code);
+        console.log('🚀 Response status errors:', response.status.errors);
+        
+        if (response.status.code === 201) {
+          // After successful creation, refresh the roles list and close dialog
+          setSuccessMessage(t('roles.messages.createSuccess') || 'Role created successfully');
+          setShowSuccessSnackbar(true);
+          await handleSearch(); // Refresh the list
+          handleCloseDialog();
+        } else {
+          // Handle API errors
+          console.log('🚨 API Error Response - Full Response:', JSON.stringify(response, null, 2));
+          let errorMsg = response.status.message || 'Failed to create role';
+          console.log('🚨 Error message:', errorMsg);
+          
+          // Extract field-specific validation errors using processApiErrors
+          if (response.status.errors && typeof response.status.errors === 'object') {
+            console.log('🚨 API errors received:', response.status.errors); // Debug log
+            console.log('🚨 Type of status.errors:', typeof response.status.errors);
+            console.log('🚨 Processing errors with processApiErrors...');
+            const processedErrors = processApiErrors(response.status.errors);
+            console.log('🚨 Processed errors result:', processedErrors);
+            
+            if (Object.keys(processedErrors).length > 0) {
+              console.log('🚨 Setting form errors:', processedErrors);
+              setFormErrors(processedErrors);
+              // Show general validation error in dialog if there are field errors
+              setDialogErrorMessage(t('roles.messages.validationError') || 'Please correct the errors below');
+            } else {
+              console.log('🚨 No processed errors, showing general error');
+              // If no field-specific errors, show general error
+              setErrorMessage(errorMsg);
+              setShowErrorSnackbar(true);
+            }
+          } else {
+            console.log('🚨 No status.errors found, showing general error');
+            // Handle non-validation errors (like duplicate code)
+            console.error('Failed to create role:', errorMsg);
+            setErrorMessage(errorMsg);
+            setShowErrorSnackbar(true);
+          }
+        }
+        
+      } else if (actionType === 'edit' && selectedRole) {
+        // Update existing role
+        const updateData = {
+          code: formData.code || '',
+          name: formData.name || '',
+          description: formData.description || '',
+          sortOrder: formData.sortOrder || 0,
+          level: formData.level || 1,
+          parentRoleId: formData.parentRoleId || undefined,
+          active: formData.status === 'active',
+        };
+        
+        // Call the role service to update the role
+        console.log('Updating role:', selectedRole.id, updateData);
+        const response = await roleService.updateRole(selectedRole.id, updateData);
+        
+        if (response.status.code === 200) {
+          // After successful update, refresh the roles list and close dialog
+          setSuccessMessage(t('roles.messages.updateSuccess') || 'Role updated successfully');
+          setShowSuccessSnackbar(true);
+          await handleSearch(); // Refresh the list
+          handleCloseDialog();
+        } else {
+          // Handle API errors
+          let errorMsg = response.status.message || 'Failed to update role';
+          
+          // Extract field-specific validation errors using processApiErrors
+          if (response.status.errors && typeof response.status.errors === 'object') {
+            console.log('API errors received for update:', response.status.errors); // Debug log
+            const processedErrors = processApiErrors(response.status.errors);
+            
+            if (Object.keys(processedErrors).length > 0) {
+              setFormErrors(processedErrors);
+              // Show general validation error in dialog if there are field errors
+              setDialogErrorMessage(t('roles.messages.validationError') || 'Please correct the errors below');
+            } else {
+              // If no field-specific errors, show general error
+              setErrorMessage(errorMsg);
+              setShowErrorSnackbar(true);
+            }
+          } else {
+            // Handle non-validation errors
+            console.error('Failed to update role:', errorMsg);
+            setErrorMessage(errorMsg);
+            setShowErrorSnackbar(true);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('🚨 Caught error in handleSave:', error);
+      console.log('🚨 Error type:', typeof error);
+      console.log('🚨 Error instanceof Error:', error instanceof Error);
+      
+      // Check if this is an ApiError with validation errors (from the api-client interceptor)
+      if (error && typeof error === 'object' && 'errors' in error && 'code' in error) {
+        const apiError = error as any;
+        console.log('🚨 Found ApiError with validation errors:', apiError.errors);
+        console.log('🚨 ApiError code:', apiError.code);
+        console.log('🚨 ApiError message:', apiError.message);
+        
+        if (apiError.errors && typeof apiError.errors === 'object') {
+          console.log('🚨 Processing ApiError validation errors:', apiError.errors);
+          const processedErrors = processApiErrors(apiError.errors);
+          console.log('🚨 Processed ApiError errors:', processedErrors);
+          
+          if (Object.keys(processedErrors).length > 0) {
+            setFormErrors(processedErrors);
+            setDialogErrorMessage(t('roles.messages.validationError') || 'Please correct the errors below');
+            return; // Don't show general error if we have field errors
+          }
+        }
+      }
+      
+      // Check if this is an Axios error with API validation response (legacy fallback)
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as any;
+        console.log('🚨 Axios error response:', axiosError.response);
+        console.log('🚨 Axios error response data:', axiosError.response?.data);
+        
+        if (axiosError.response?.data?.status?.errors) {
+          console.log('🚨 Found validation errors in axios error:', axiosError.response.data.status.errors);
+          const processedErrors = processApiErrors(axiosError.response.data.status.errors);
+          console.log('🚨 Processed axios errors:', processedErrors);
+          
+          if (Object.keys(processedErrors).length > 0) {
+            setFormErrors(processedErrors);
+            setDialogErrorMessage(t('roles.messages.validationError') || 'Please correct the errors below');
+            return; // Don't show general error if we have field errors
+          }
+        }
+      }
+      
+      // Fallback to general error
+      const errorMsg = error instanceof Error ? error.message : 'An unexpected error occurred';
+      setErrorMessage(errorMsg);
+      setShowErrorSnackbar(true);
+    }
+  };
+
+  // Handle row click - expand/collapse if has children, otherwise show view dialog
+  const handleRowClick = (role: Role) => {
+    if (role.hasChildren) {
+      toggleRoleExpand(role.id);
+    } else {
+      handleView(role);
+    }
   };
 
   // Table columns
@@ -187,59 +402,70 @@ const RolesPage = () => {
     () => [
       columnHelper.accessor('name', {
         header: t('roles.name'),
-        cell: (info) => (
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Shield size={16} />
-            <Typography variant="body2" fontWeight="medium">
-              {info.getValue()}
-            </Typography>
-          </Box>
-        ),
+        cell: (info) => {
+          const role = info.row.original;
+          const indentLevel = (role.displayLevel || 0) * 20; // 20px per display level
+          return (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, pl: `${indentLevel}px` }}>
+              {role.hasChildren ? (
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: 16,
+                    height: 16,
+                    color: 'primary.main',
+                  }}
+                >
+                  {role.expanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                </Box>
+              ) : (
+                <Box sx={{ width: 16 }} /> // Spacer for alignment
+              )}
+              <Shield size={16} />
+              <Typography variant="body2" fontWeight="medium">
+                {info.getValue()}
+              </Typography>
+            </Box>
+          );
+        },
       }),
-      columnHelper.accessor('description', {
-        header: t('roles.description'),
-        cell: (info) => (
-          <Typography variant="body2" color="text.secondary">
-            {info.getValue()}
-          </Typography>
-        ),
-      }),
-      columnHelper.accessor('permissions', {
-        header: t('roles.permissions'),
-        cell: (info) => (
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, maxWidth: 300 }}>
-            {info.getValue().slice(0, 3).map((permission) => (
-              <Chip
-                key={permission}
-                label={permission}
-                size="small"
-                variant="outlined"
-                sx={{ fontWeight: 500, fontSize: '0.7rem' }}
-              />
-            ))}
-            {info.getValue().length > 3 && (
-              <Chip
-                label={`+${info.getValue().length - 3} more`}
-                size="small"
-                variant="outlined"
-                color="primary"
-                sx={{ fontSize: '0.7rem' }}
-              />
-            )}
-          </Box>
-        ),
-      }),
-      columnHelper.accessor('userCount', {
-        header: t('roles.userCount'),
+      columnHelper.accessor('code', {
+        header: t('roles.code'),
         cell: (info) => (
           <Chip
             label={info.getValue()}
             size="small"
-            color={info.getValue() > 0 ? 'primary' : 'default'}
+            variant="outlined"
+            sx={{ fontWeight: 500, fontSize: '0.7rem' }}
+          />
+        ),
+        size: 120,
+      }),
+      columnHelper.accessor('level', {
+        header: t('roles.level'),
+        cell: (info) => (
+          <Chip
+            label={`Level ${info.getValue()}`}
+            size="small"
+            color="primary"
             sx={{ fontWeight: 500 }}
           />
         ),
         size: 100,
+      }),
+      columnHelper.accessor('systemRole', {
+        header: t('roles.systemRole'),
+        cell: (info) => (
+          <Chip
+            label={info.getValue() ? 'System' : 'Custom'}
+            size="small"
+            color={info.getValue() ? 'error' : 'default'}
+            sx={{ fontWeight: 500 }}
+          />
+        ),
+        size: 120,
       }),
       columnHelper.accessor('status', {
         header: t('roles.status'),
@@ -268,6 +494,12 @@ const RolesPage = () => {
       icon: <Settings size={16} />,
       action: handleEdit,
       color: 'primary' as const,
+    },
+    {
+      label: t('common.add'),
+      icon: <Plus size={16} />,
+      action: handleAddChildRole,
+      color: 'success' as const,
     },
     {
       label: t('roles.actions.delete'),
@@ -353,9 +585,9 @@ const RolesPage = () => {
         <Collapse in={searchPanelOpen}>
           <RoleSearchPanel
             searchFormData={searchFormData}
-            loading={false}
+            loading={loading}
             onFormChange={handleSearchFormChange}
-            onSearch={() => {}}
+            onSearch={handleSearch}
             onClear={handleClearSearch}
           />
         </Collapse>
@@ -365,11 +597,20 @@ const RolesPage = () => {
       <Card elevation={0} sx={{ borderRadius: 2, border: 1, borderColor: 'divider' }}>
         <CardContent>
           <DataTable
-            data={filteredRoles}
+            data={roles}
             columns={columns}
             actionMenuItems={actionMenuItems}
-            onRowClick={handleView}
+            onRowClick={handleRowClick}
             showSearch={false}
+            showPagination={true}
+            manualPagination={true}
+            currentPage={currentPage}
+            pageSize={pageSize}
+            pageCount={totalPages}
+            totalRows={totalElements}
+            onPageChange={handlePageChange}
+            onPageSizeChange={handlePageSizeChange}
+            rowsPerPageOptions={[10, 20, 50, 100]}
           />
         </CardContent>
       </Card>
@@ -453,19 +694,27 @@ const RolesPage = () => {
                 {t('roles.deleteConfirmation', { roleName: selectedRole?.name }) || 
                  `Are you sure you want to delete role "${selectedRole?.name}"? This action cannot be undone.`}
               </DialogContentText>
-              {selectedRole?.userCount && selectedRole.userCount > 0 && (
-                <Box sx={{ mt: 2, p: 2, bgcolor: 'warning.light', borderRadius: 1 }}>
-                  <Typography variant="body2" color="warning.dark">
-                    {t('roles.deleteWarning', { userCount: selectedRole.userCount }) ||
-                     `Warning: This role is assigned to ${selectedRole.userCount} user(s). Deleting it will remove their permissions.`}
-                  </Typography>
-                </Box>
-              )}
             </Box>
           ) : (
             <Box>
               {/* Form Content */}
               <Box sx={{ p: 4 }}>
+                {/* Dialog Error Message */}
+                {dialogErrorMessage && (
+                  <Alert severity="error" sx={{ mb: 3 }}>
+                    {dialogErrorMessage}
+                  </Alert>
+                )}
+                
+                {/* General Errors */}
+                {getGeneralErrors().length > 0 && (
+                  <Alert severity="error" sx={{ mb: 2 }}>
+                    {getGeneralErrors().map((error, index) => (
+                      <div key={`error-${index}-${error}`}>{error}</div>
+                    ))}
+                  </Alert>
+                )}
+                
                 {actionType === 'view' ? (
                   // View Mode - Clean Read-only Display
                   <Box>
@@ -489,29 +738,41 @@ const RolesPage = () => {
 
                     <Box sx={{ display: 'flex', alignItems: 'flex-start', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
                       <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500, pt: 0.5 }}>
-                        {t('roles.form.permissions') || 'Permissions'}:
+                        {t('roles.form.roleCode') || 'Role Code'}:
                       </Typography>
-                      {formData.permissions && formData.permissions.length > 0 ? (
-                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                          {formData.permissions.map((permission) => (
-                            <Chip 
-                              key={permission} 
-                              label={permission} 
-                              size="small" 
-                              color="primary" 
-                              variant="outlined"
-                              sx={{ fontWeight: 500 }}
-                            />
-                          ))}
-                        </Box>
-                      ) : (
-                        <Typography variant="body1" color="text.secondary" sx={{ fontStyle: 'italic' }}>
-                          No permissions assigned
-                        </Typography>
-                      )}
+                      <Chip 
+                        label={formData.code || '-'} 
+                        size="small" 
+                        variant="outlined"
+                        sx={{ fontWeight: 500 }}
+                      />
                     </Box>
 
-                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
+                        {t('roles.form.level') || 'Level'}:
+                      </Typography>
+                      <Chip 
+                        label={`Level ${formData.level || 1}`} 
+                        size="small" 
+                        color="primary"
+                        sx={{ fontWeight: 500 }}
+                      />
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
+                        {t('roles.form.systemRole') || 'System Role'}:
+                      </Typography>
+                      <Chip 
+                        label={formData.systemRole ? 'System Role' : 'Custom Role'} 
+                        size="small" 
+                        color={formData.systemRole ? 'error' : 'default'}
+                        sx={{ fontWeight: 500 }}
+                      />
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
                       <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
                         {t('roles.form.activeStatus') || 'Active Status'}:
                       </Typography>
@@ -527,12 +788,78 @@ const RolesPage = () => {
                         </Typography>
                       </Box>
                     </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
+                        ID:
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontFamily: 'monospace', color: 'text.primary' }}>
+                        {formData.id || '-'}
+                      </Typography>
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
+                        {t('roles.form.sortOrder') || 'Sort Order'}:
+                      </Typography>
+                      <Chip 
+                        label={formData.sortOrder || 0} 
+                        size="small" 
+                        variant="outlined"
+                        sx={{ fontWeight: 500 }}
+                      />
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
+                        {t('roles.form.parentRole') || 'Parent Role'}:
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontFamily: 'monospace', color: 'text.primary' }}>
+                        {formData.parentRoleId || '-'}
+                      </Typography>
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
+                        {t('common.createdAt') || 'Created At'}:
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: 'text.primary' }}>
+                        {formData.createdAt ? new Date(formData.createdAt).toLocaleString() : '-'}
+                      </Typography>
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
+                        {t('common.updatedAt') || 'Updated At'}:
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: 'text.primary' }}>
+                        {formData.updatedAt ? new Date(formData.updatedAt).toLocaleString() : '-'}
+                      </Typography>
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
+                        {t('common.createdBy') || 'Created By'}:
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: 'text.primary' }}>
+                        {formData.createdBy || '-'}
+                      </Typography>
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5 }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
+                        {t('common.updatedBy') || 'Updated By'}:
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: 'text.primary' }}>
+                        {formData.updatedBy || '-'}
+                      </Typography>
+                    </Box>
                   </Box>
                 ) : (
                   // Edit/Create Mode - Clean Form Layout
                   <Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
-                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'flex-start', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500, pt: 1 }}>
                         {t('roles.form.roleName') || 'Role Name'}:
                       </Typography>
                       <Box sx={{ flex: 1, ml: 2 }}>
@@ -543,6 +870,8 @@ const RolesPage = () => {
                           onChange={(e) => handleFormChange('name', e.target.value)}
                           required
                           variant="outlined"
+                          error={hasError('name')}
+                          helperText={getErrorMessage('name')}
                           sx={{ 
                             '& .MuiInputBase-root': { 
                               backgroundColor: 'white'
@@ -565,6 +894,8 @@ const RolesPage = () => {
                           value={formData.description ?? ''}
                           onChange={(e) => handleFormChange('description', e.target.value)}
                           variant="outlined"
+                          error={hasError('description')}
+                          helperText={getErrorMessage('description')}
                           sx={{ 
                             '& .MuiInputBase-root': { 
                               backgroundColor: 'white'
@@ -575,40 +906,125 @@ const RolesPage = () => {
                     </Box>
 
                     <Box sx={{ display: 'flex', alignItems: 'flex-start', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
-                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500, pt: 0.5 }}>
-                        {t('roles.form.permissions') || 'Permissions'}:
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500, pt: 1 }}>
+                        {t('roles.form.roleCode') || 'Role Code'}:
                       </Typography>
                       <Box sx={{ flex: 1, ml: 2 }}>
-                        <FormControl fullWidth size="small" variant="outlined">
-                          <Select
-                            multiple
-                            value={formData.permissions ?? []}
-                            onChange={(e) => handleFormChange('permissions', e.target.value)}
-                            renderValue={(selected) => (
-                              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                {selected.map((value) => (
-                                  <Chip 
-                                    key={value} 
-                                    label={value} 
-                                    size="small" 
-                                    color="primary" 
-                                    variant="outlined"
-                                    sx={{ fontWeight: 500 }}
-                                  />
-                                ))}
-                              </Box>
-                            )}
-                            sx={{ 
+                        <TextField
+                          fullWidth
+                          size="small"
+                          value={formData.code ?? ''}
+                          onChange={(e) => handleFormChange('code', e.target.value)}
+                          required
+                          variant="outlined"
+                          error={hasError('code')}
+                          helperText={getErrorMessage('code')}
+                          sx={{ 
+                            '& .MuiInputBase-root': { 
                               backgroundColor: 'white'
-                            }}
-                          >
-                            {availablePermissions.map((permission) => (
-                              <MenuItem key={permission} value={permission}>
-                                {permission}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
+                            }
+                          }}
+                        />
+                      </Box>
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'flex-start', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500, pt: 1 }}>
+                        {t('roles.form.level') || 'Level'}:
+                      </Typography>
+                      <Box sx={{ flex: 1, ml: 2 }}>
+                        <TextField
+                          fullWidth
+                          size="small"
+                          type="number"
+                          value={formData.level ?? 1}
+                          onChange={(e) => handleFormChange('level', parseInt(e.target.value) || 1)}
+                          required
+                          variant="outlined"
+                          error={hasError('level')}
+                          helperText={getErrorMessage('level')}
+                          slotProps={{ htmlInput: { min: 1, max: 10 } }}
+                          sx={{ 
+                            '& .MuiInputBase-root': { 
+                              backgroundColor: 'white'
+                            }
+                          }}
+                        />
+                      </Box>
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'flex-start', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500, pt: 1 }}>
+                        {t('roles.form.sortOrder') || 'Sort Order'}:
+                      </Typography>
+                      <Box sx={{ flex: 1, ml: 2 }}>
+                        <TextField
+                          fullWidth
+                          size="small"
+                          type="number"
+                          value={formData.sortOrder ?? 0}
+                          onChange={(e) => handleFormChange('sortOrder', parseInt(e.target.value) || 0)}
+                          variant="outlined"
+                          error={hasError('sortOrder')}
+                          helperText={getErrorMessage('sortOrder')}
+                          slotProps={{ htmlInput: { min: 0 } }}
+                          sx={{ 
+                            '& .MuiInputBase-root': { 
+                              backgroundColor: 'white'
+                            }
+                          }}
+                        />
+                      </Box>
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'flex-start', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500, pt: 1 }}>
+                        {t('roles.form.parentRole') || 'Parent Role'}:
+                      </Typography>
+                      <Box sx={{ flex: 1, ml: 2 }}>
+                        <TextField
+                          fullWidth
+                          size="small"
+                          value={formData.parentRoleId ?? ''}
+                          onChange={(e) => handleFormChange('parentRoleId', e.target.value || null)}
+                          variant="outlined"
+                          placeholder="Enter parent role ID (optional)"
+                          error={hasError('parentRoleId')}
+                          helperText={getErrorMessage('parentRoleId')}
+                          sx={{ 
+                            '& .MuiInputBase-root': { 
+                              backgroundColor: 'white'
+                            }
+                          }}
+                        />
+                      </Box>
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140, fontWeight: 500 }}>
+                        {t('roles.form.systemRole') || 'System Role'}:
+                      </Typography>
+                      <Box sx={{ flex: 1, ml: 2 }}>
+                        <FormControlLabel
+                          control={
+                            <Switch
+                              checked={formData.systemRole ?? false}
+                              onChange={(e) => handleFormChange('systemRole', e.target.checked)}
+                              color="error"
+                            />
+                          }
+                          label={
+                            <Box sx={{ ml: 1 }}>
+                              <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                                {formData.systemRole ? 'System Role' : 'Custom Role'}
+                              </Typography>
+                              <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.75rem' }}>
+                                {formData.systemRole ? 'Built-in system role' : 'User-defined custom role'}
+                              </Typography>
+                            </Box>
+                          }
+                          sx={{ m: 0 }}
+                        />
                       </Box>
                     </Box>
 
@@ -679,7 +1095,7 @@ const RolesPage = () => {
             <Button 
               variant="contained" 
               size="large"
-              onClick={handleCloseDialog}
+              onClick={handleSave}
               sx={{ 
                 minWidth: 100, 
                 py: 1,
@@ -691,6 +1107,38 @@ const RolesPage = () => {
           )}
         </DialogActions>
       </Dialog>
+
+      {/* Success Snackbar */}
+      <Snackbar
+        open={showSuccessSnackbar}
+        autoHideDuration={4000}
+        onClose={() => setShowSuccessSnackbar(false)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert 
+          onClose={() => setShowSuccessSnackbar(false)} 
+          severity="success" 
+          sx={{ width: '100%' }}
+        >
+          {successMessage}
+        </Alert>
+      </Snackbar>
+
+      {/* Error Snackbar */}
+      <Snackbar
+        open={showErrorSnackbar}
+        autoHideDuration={6000}
+        onClose={() => setShowErrorSnackbar(false)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert 
+          onClose={() => setShowErrorSnackbar(false)} 
+          severity="error" 
+          sx={{ width: '100%' }}
+        >
+          {errorMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

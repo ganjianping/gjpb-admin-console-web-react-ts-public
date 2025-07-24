@@ -87,7 +87,7 @@ class RoleService {
   private readonly baseUrl = '/v1/roles';
 
   /**
-   * Get all roles
+   * Get all roles with pagination support
    */
   async getRoles(params?: RoleQueryParams): Promise<ApiResponse<Role[]>> {
     const searchParams = new URLSearchParams();
@@ -105,6 +105,27 @@ class RoleService {
       : this.baseUrl;
 
     return apiClient.get<Role[]>(url);
+  }
+
+  /**
+   * Get paginated roles (if API supports pagination response)
+   */
+  async getRolesPaginated(params?: RoleQueryParams): Promise<ApiResponse<PaginatedRoleResponse>> {
+    const searchParams = new URLSearchParams();
+    
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+          searchParams.append(key, String(value));
+        }
+      });
+    }
+
+    const url = searchParams.toString() 
+      ? `${this.baseUrl}/paginated?${searchParams}` 
+      : `${this.baseUrl}/paginated`;
+
+    return apiClient.get<PaginatedRoleResponse>(url);
   }
 
   /**
