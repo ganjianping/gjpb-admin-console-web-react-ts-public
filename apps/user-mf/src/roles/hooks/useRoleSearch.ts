@@ -24,8 +24,8 @@ const transformApiRoleToUIRole = (apiRole: ApiRole): Role => {
   };
 };
 
-// Build hierarchical tree structure from flat role list
-const buildRoleTree = (roles: Role[]): Role[] => {
+// Build hierarchical tree structure from flat role list with priority parent support
+const buildRoleTree = (roles: Role[], priorityParentId?: string | null): Role[] => {
   const roleMap = new Map<string, Role>();
   const rootRoles: Role[] = [];
 
@@ -47,16 +47,47 @@ const buildRoleTree = (roles: Role[]): Role[] => {
     }
   });
 
-  // Sort children by sortOrder
+  // Calculate the latest updatedAt for each role (including children's updatedAt)
+  const getLatestUpdatedAt = (role: Role): Date => {
+    let latestDate = new Date(role.updatedAt);
+    
+    if (role.children && role.children.length > 0) {
+      role.children.forEach(child => {
+        const childLatestDate = getLatestUpdatedAt(child);
+        if (childLatestDate > latestDate) {
+          latestDate = childLatestDate;
+        }
+      });
+    }
+    
+    return latestDate;
+  };
+
+  // Sort children by updatedAt (most recently updated first)
   const sortChildren = (role: Role) => {
     if (role.children && role.children.length > 0) {
-      role.children.sort((a, b) => a.sortOrder - b.sortOrder);
+      role.children.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
       role.children.forEach(sortChildren);
     }
   };
 
   rootRoles.forEach(sortChildren);
-  return rootRoles.sort((a, b) => a.sortOrder - b.sortOrder);
+  
+  // Sort root roles with priority parent logic and latest updatedAt consideration
+  const sortedRootRoles = [...rootRoles];
+  sortedRootRoles.sort((a, b) => {
+    // If we have a priority parent, put it first
+    if (priorityParentId) {
+      if (a.id === priorityParentId) return -1;
+      if (b.id === priorityParentId) return 1;
+    }
+    // Otherwise sort by latest updatedAt (considering children) - most recently updated first
+    const aLatestDate = getLatestUpdatedAt(a);
+    const bLatestDate = getLatestUpdatedAt(b);
+    return bLatestDate.getTime() - aLatestDate.getTime();
+  });
+  
+  return sortedRootRoles;
 };
 
 // Flatten tree structure for table display based on expanded state
@@ -86,7 +117,7 @@ const mockRoles: Role[] = [
     name: 'System Administrator',
     description: 'Full system administrator with all permissions',
     sortOrder: 1,
-    level: 1,
+    level: 0,
     parentRoleId: null,
     systemRole: true,
     status: 'active',
@@ -101,7 +132,7 @@ const mockRoles: Role[] = [
     name: 'Team Manager',
     description: 'Team manager with user management permissions',
     sortOrder: 2,
-    level: 2,
+    level: 1,
     parentRoleId: '1',
     systemRole: false,
     status: 'active',
@@ -163,6 +194,7 @@ export const useRoleSearch = () => {
   const [rolesTree, setRolesTree] = useState<Role[]>([]);
   const [displayRoles, setDisplayRoles] = useState<Role[]>([]);
   const [loading, setLoading] = useState(false);
+  const [priorityParentId, setPriorityParentId] = useState<string | null>(null); // Track parent to prioritize
   const [searchFormData, setSearchFormData] = useState<RoleSearchFormData>({
     name: '',
     status: '',
@@ -179,6 +211,10 @@ export const useRoleSearch = () => {
 
   const handleSearchPanelToggle = () => {
     setSearchPanelOpen(!searchPanelOpen);
+  };
+
+  const handleSearchPanelClose = () => {
+    setSearchPanelOpen(false);
   };
 
   const handleSearchFormChange = (field: keyof RoleSearchFormData, value: any) => {
@@ -218,12 +254,12 @@ export const useRoleSearch = () => {
       const response = await roleService.getRoles({
         page,
         size: pageSize,
-        sort: 'name',
-        direction: 'asc'
+        sort: 'updatedAt',
+        direction: 'desc'
       });
       if (response.status.code === 200) {
         const transformedRoles = response.data.map(transformApiRoleToUIRole);
-        const tree = buildRoleTree(transformedRoles);
+        const tree = buildRoleTree(transformedRoles, priorityParentId);
         setRolesTree(tree);
         const flattened = flattenRolesForDisplay(tree);
         setDisplayRoles(flattened);
@@ -236,7 +272,7 @@ export const useRoleSearch = () => {
     } catch (error) {
       console.error('Failed to load roles:', error);
       // Fallback to mock data for development with pagination
-      const tree = buildRoleTree(mockRoles);
+      const tree = buildRoleTree(mockRoles, priorityParentId);
       setRolesTree(tree);
       const flattened = flattenRolesForDisplay(tree);
       setDisplayRoles(flattened);
@@ -259,8 +295,8 @@ export const useRoleSearch = () => {
       const searchParams: any = {
         page,
         size: pageSize,
-        sort: 'name',
-        direction: 'asc'
+        sort: 'updatedAt',
+        direction: 'desc'
       };
       
       if (searchFormData.name?.trim()) {
@@ -279,7 +315,7 @@ export const useRoleSearch = () => {
       const response = await roleService.getRoles(searchParams);
       if (response.status.code === 200) {
         const transformedRoles = response.data.map(transformApiRoleToUIRole);
-        const tree = buildRoleTree(transformedRoles);
+        const tree = buildRoleTree(transformedRoles, priorityParentId);
         setRolesTree(tree);
         const flattened = flattenRolesForDisplay(tree);
         setDisplayRoles(flattened);
@@ -313,7 +349,7 @@ export const useRoleSearch = () => {
         );
       }
       
-      const tree = buildRoleTree(filteredMockRoles);
+      const tree = buildRoleTree(filteredMockRoles, priorityParentId);
       setRolesTree(tree);
       const flattened = flattenRolesForDisplay(tree);
       setDisplayRoles(flattened);
@@ -358,7 +394,7 @@ export const useRoleSearch = () => {
       });
       if (response.status.code === 200) {
         const transformedRoles = response.data.map(transformApiRoleToUIRole);
-        const tree = buildRoleTree(transformedRoles);
+        const tree = buildRoleTree(transformedRoles, priorityParentId);
         setRolesTree(tree);
         const flattened = flattenRolesForDisplay(tree);
         setDisplayRoles(flattened);
@@ -370,7 +406,7 @@ export const useRoleSearch = () => {
     } catch (error) {
       console.error('Failed to load roles with new page size:', error);
       // Fallback to mock data
-      const tree = buildRoleTree(mockRoles);
+      const tree = buildRoleTree(mockRoles, priorityParentId);
       setRolesTree(tree);
       const flattened = flattenRolesForDisplay(tree);
       setDisplayRoles(flattened);
@@ -391,6 +427,16 @@ export const useRoleSearch = () => {
     }
   }, []); // Only run once on mount
 
+  // Function to set priority parent (for when child roles are created/updated)
+  const setPriorityParent = useCallback((parentId: string | null) => {
+    setPriorityParentId(parentId);
+  }, []);
+
+  // Function to clear priority parent (reset to normal sorting)
+  const clearPriorityParent = useCallback(() => {
+    setPriorityParentId(null);
+  }, []);
+
   return {
     roles,
     rolesTree,
@@ -405,6 +451,7 @@ export const useRoleSearch = () => {
     totalPages,
     // Handlers
     handleSearchPanelToggle,
+    handleSearchPanelClose,
     handleSearchFormChange,
     handleSearch,
     handleClearSearch,
@@ -413,5 +460,8 @@ export const useRoleSearch = () => {
     loadRoles,
     // Hierarchical functionality
     toggleRoleExpand,
+    // Priority parent functionality
+    setPriorityParent,
+    clearPriorityParent,
   };
 };

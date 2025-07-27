@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -18,7 +18,7 @@ import {
   Alert,
   Snackbar,
 } from '@mui/material';
-import { Plus, Shield, Settings, Search, ChevronDown, ChevronUp, ChevronRight } from 'lucide-react';
+import { Plus, Shield, Settings, Search, ChevronDown, ChevronUp, ChevronRight, AlertTriangle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import '../utils/i18n'; // Initialize role translations
 import { DataTable, createColumnHelper, createStatusChip } from '../../../../shared-lib/src/components/DataTable';
@@ -47,7 +47,7 @@ const RolesPage = () => {
     status: 'active',
     code: '',
     sortOrder: 0,
-    level: 1,
+    level: 0,
     parentRoleId: null,
     systemRole: false,
   });
@@ -60,6 +60,11 @@ const RolesPage = () => {
   const [formErrors, setFormErrors] = useState<Record<string, string[] | string>>({});
   const [dialogErrorMessage, setDialogErrorMessage] = useState<string>('');
 
+  // Debug dialog state changes
+  useEffect(() => {
+    console.log('🔍 Dialog state changed:', { dialogOpen, actionType });
+  }, [dialogOpen, actionType]);
+
   // Search functionality using API with pagination
   const {
     roles,
@@ -71,12 +76,15 @@ const RolesPage = () => {
     totalElements,
     totalPages,
     handleSearchPanelToggle,
+    handleSearchPanelClose,
     handleSearchFormChange,
     handleSearch,
     handleClearSearch,
     handlePageChange,
     handlePageSizeChange,
     toggleRoleExpand,
+    setPriorityParent,
+    clearPriorityParent,
   } = useRoleSearch();
 
   // Role actions
@@ -108,7 +116,7 @@ const RolesPage = () => {
       status: 'active',
       code: '',
       sortOrder: 0,
-      level: 1,
+      level: 0,
       parentRoleId: null,
       systemRole: false,
     });
@@ -124,7 +132,7 @@ const RolesPage = () => {
       status: 'active',
       code: '',
       sortOrder: 0,
-      level: (parentRole.level || 1) + 1,
+      level: (parentRole.level || 0) + 1,
       parentRoleId: parentRole.id,
       systemRole: false,
     });
@@ -133,6 +141,7 @@ const RolesPage = () => {
   };
 
   const handleCloseDialog = () => {
+    console.log('🔒 Closing dialog, current state:', { dialogOpen, actionType });
     setDialogOpen(false);
     setSelectedRole(null);
     setActionType(null);
@@ -140,13 +149,15 @@ const RolesPage = () => {
       code: '',
       name: '',
       description: '',
-      level: 1,
+      status: 'active',
+      level: 0,
       sortOrder: 0,
       systemRole: false,
       parentRoleId: null,
     });
     setFormErrors({});
     setDialogErrorMessage('');
+    console.log('🔒 Dialog close function completed');
   };
 
   const handleFormChange = (field: keyof Role, value: any) => {
@@ -237,7 +248,7 @@ const RolesPage = () => {
           name: formData.name || '',
           description: formData.description || '',
           sortOrder: formData.sortOrder || 0,
-          level: formData.level || 1,
+          level: formData.level || 0,
           parentRoleId: formData.parentRoleId || undefined,
           active: formData.status === 'active',
         };
@@ -249,12 +260,58 @@ const RolesPage = () => {
         console.log('🚀 Response status code:', response.status.code);
         console.log('🚀 Response status errors:', response.status.errors);
         
-        if (response.status.code === 201) {
-          // After successful creation, refresh the roles list and close dialog
+        if (response.status.code === 200 || response.status.code === 201) {
+          console.log('✅ Create success - closing dialog immediately');
+          
+          // If creating a child role, prioritize the parent in the list
+          if (formData.parentRoleId) {
+            console.log('🔼 Setting priority parent:', formData.parentRoleId);
+            setPriorityParent(formData.parentRoleId);
+          }
+          
+          // Show success message first
           setSuccessMessage(t('roles.messages.createSuccess') || 'Role created successfully');
           setShowSuccessSnackbar(true);
-          await handleSearch(); // Refresh the list
-          handleCloseDialog();
+          
+          // Close dialog with setTimeout to ensure it works
+          setTimeout(() => {
+            console.log('🔒 Closing dialog after timeout');
+            setDialogOpen(false);
+            setSelectedRole(null);
+            setActionType(null);
+            setFormData({
+              code: '',
+              name: '',
+              description: '',
+              status: 'active',
+              level: 0,
+              sortOrder: 0,
+              systemRole: false,
+              parentRoleId: null,
+            });
+            setFormErrors({});
+            setDialogErrorMessage('');
+            handleSearchPanelClose();
+          }, 10);
+          
+          // Refresh the list after a longer delay
+          setTimeout(async () => {
+            try {
+              await handleSearch(0);
+              // Clear priority parent after refresh to return to normal sorting
+              if (formData.parentRoleId) {
+                setTimeout(() => {
+                  console.log('🔽 Clearing priority parent after refresh');
+                  clearPriorityParent();
+                }, 1000);
+              }
+            } catch (error) {
+              console.error('Error refreshing roles after create:', error);
+            }
+          }, 500);
+          
+          // Early return to avoid any further processing
+          return;
         } else {
           // Handle API errors
           console.log('🚨 API Error Response - Full Response:', JSON.stringify(response, null, 2));
@@ -296,7 +353,7 @@ const RolesPage = () => {
           name: formData.name || '',
           description: formData.description || '',
           sortOrder: formData.sortOrder || 0,
-          level: formData.level || 1,
+          level: formData.level || 0,
           parentRoleId: formData.parentRoleId || undefined,
           active: formData.status === 'active',
         };
@@ -306,11 +363,31 @@ const RolesPage = () => {
         const response = await roleService.updateRole(selectedRole.id, updateData);
         
         if (response.status.code === 200) {
-          // After successful update, refresh the roles list and close dialog
+          // If updating a child role, prioritize the parent in the list
+          if (formData.parentRoleId) {
+            console.log('🔼 Setting priority parent for update:', formData.parentRoleId);
+            setPriorityParent(formData.parentRoleId);
+          }
+          
+          // After successful update, close dialog first, then refresh the roles list
+          handleCloseDialog();
+          handleSearchPanelClose(); // Close the search panel to show role list
           setSuccessMessage(t('roles.messages.updateSuccess') || 'Role updated successfully');
           setShowSuccessSnackbar(true);
-          await handleSearch(); // Refresh the list
-          handleCloseDialog();
+          
+          // Refresh the list from page 0
+          try {
+            await handleSearch(0);
+            // Clear priority parent after refresh to return to normal sorting
+            if (formData.parentRoleId) {
+              setTimeout(() => {
+                console.log('🔽 Clearing priority parent after update refresh');
+                clearPriorityParent();
+              }, 1000);
+            }
+          } catch (error) {
+            console.error('Error refreshing roles after update:', error);
+          }
         } else {
           // Handle API errors
           let errorMsg = response.status.message || 'Failed to update role';
@@ -335,6 +412,31 @@ const RolesPage = () => {
             setErrorMessage(errorMsg);
             setShowErrorSnackbar(true);
           }
+        }
+      } else if (actionType === 'delete' && selectedRole) {
+        // Delete existing role
+        console.log('Deleting role:', selectedRole.id);
+        const response = await roleService.deleteRole(selectedRole.id);
+        
+        if (response.status.code === 200 || response.status.code === 204) {
+          // After successful deletion, close dialog first, then refresh the roles list
+          handleCloseDialog();
+          handleSearchPanelClose(); // Close the search panel to show role list
+          setSuccessMessage(t('roles.messages.deleteSuccess') || 'Role deleted successfully');
+          setShowSuccessSnackbar(true);
+          
+          // Refresh the list from page 0
+          try {
+            await handleSearch(0);
+          } catch (error) {
+            console.error('Error refreshing roles after delete:', error);
+          }
+        } else {
+          // Handle delete error
+          let errorMsg = response.status.message || 'Failed to delete role';
+          console.error('Failed to delete role:', errorMsg);
+          setErrorMessage(errorMsg);
+          setShowErrorSnackbar(true);
         }
       }
     } catch (error) {
@@ -619,7 +721,7 @@ const RolesPage = () => {
       <Dialog 
         open={dialogOpen} 
         onClose={handleCloseDialog} 
-        maxWidth="md" 
+        maxWidth={actionType === 'delete' ? 'sm' : 'md'} 
         fullWidth
         slotProps={{
           paper: {
@@ -634,19 +736,21 @@ const RolesPage = () => {
           borderBottom: '1px solid', 
           borderColor: 'divider', 
           pb: 2,
-          background: 'linear-gradient(145deg, #f8fafc 0%, #e2e8f0 100%)'
+          background: actionType === 'delete' 
+            ? 'linear-gradient(145deg, #fef2f2 0%, #fee2e2 100%)'
+            : 'linear-gradient(145deg, #f8fafc 0%, #e2e8f0 100%)'
         }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <Box 
               sx={{ 
                 p: 1.5, 
                 borderRadius: 2, 
-                backgroundColor: 'primary.main',
-                color: 'primary.contrastText',
+                backgroundColor: actionType === 'delete' ? 'error.main' : 'primary.main',
+                color: actionType === 'delete' ? 'error.contrastText' : 'primary.contrastText',
                 display: 'inline-flex'
               }}
             >
-              <Shield size={24} />
+              {actionType === 'delete' ? <AlertTriangle size={24} /> : <Shield size={24} />}
             </Box>
             <Box>
               <Typography variant="h6" sx={{ fontWeight: 600 }}>
@@ -668,32 +772,23 @@ const RolesPage = () => {
         
         <DialogContent sx={{ p: 0 }}>
           {actionType === 'delete' ? (
-            <Box sx={{ p: 3 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-                <Box 
-                  sx={{ 
-                    p: 2, 
-                    borderRadius: 2, 
-                    backgroundColor: 'error.light',
-                    color: 'error.contrastText',
-                    display: 'inline-flex'
-                  }}
-                >
-                  <Shield size={24} />
-                </Box>
-                <Box>
-                  <Typography variant="h6" gutterBottom>
-                    {t('roles.confirmDeletion') || 'Confirm Deletion'}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {t('roles.actionCannotBeUndone') || 'This action cannot be undone'}
-                  </Typography>
-                </Box>
-              </Box>
-              <DialogContentText sx={{ fontSize: '1rem' }}>
+            <Box sx={{ p: 4 }}>
+              <DialogContentText sx={{ 
+                fontSize: '1.1rem', 
+                color: 'text.primary',
+                textAlign: 'center',
+                mb: 2
+              }}>
                 {t('roles.deleteConfirmation', { roleName: selectedRole?.name }) || 
-                 `Are you sure you want to delete role "${selectedRole?.name}"? This action cannot be undone.`}
+                 `Are you sure you want to delete role "${selectedRole?.name}"?`}
               </DialogContentText>
+              <Typography 
+                variant="body2" 
+                color="text.secondary" 
+                sx={{ textAlign: 'center' }}
+              >
+                {t('roles.actionCannotBeUndone') || 'This action cannot be undone.'}
+              </Typography>
             </Box>
           ) : (
             <Box>
@@ -753,7 +848,7 @@ const RolesPage = () => {
                         {t('roles.form.level') || 'Level'}:
                       </Typography>
                       <Chip 
-                        label={`Level ${formData.level || 1}`} 
+                        label={`Level ${formData.level ?? 0}`} 
                         size="small" 
                         color="primary"
                         sx={{ fontWeight: 500 }}
@@ -937,13 +1032,13 @@ const RolesPage = () => {
                           fullWidth
                           size="small"
                           type="number"
-                          value={formData.level ?? 1}
-                          onChange={(e) => handleFormChange('level', parseInt(e.target.value) || 1)}
+                          value={formData.level ?? 0}
+                          onChange={(e) => handleFormChange('level', parseInt(e.target.value) || 0)}
                           required
                           variant="outlined"
                           error={hasError('level')}
                           helperText={getErrorMessage('level')}
-                          slotProps={{ htmlInput: { min: 1, max: 10 } }}
+                          slotProps={{ htmlInput: { min: 0, max: 10 } }}
                           sx={{ 
                             '& .MuiInputBase-root': { 
                               backgroundColor: 'white'
@@ -1080,7 +1175,7 @@ const RolesPage = () => {
               variant="contained" 
               color="error" 
               size="large"
-              onClick={handleCloseDialog}
+              onClick={handleSave}
               sx={{ 
                 minWidth: 100, 
                 py: 1,

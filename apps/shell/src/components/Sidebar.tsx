@@ -17,6 +17,7 @@ import {
 import { 
   LayoutDashboard, 
   Users, 
+  Shield,
   ChevronLeft, 
   ChevronRight,
   ChevronDown,
@@ -81,7 +82,7 @@ const Sidebar = ({ drawerWidth, collapsedWidth, open, onClose, variant }: Sideba
       key: 'roles',
       title: t('navigation.roles'),
       path: '/roles',
-      icon: Users,
+      icon: Shield,
       roles: ['ADMIN', 'SUPER_ADMIN'],
     },
   ], [t]);
