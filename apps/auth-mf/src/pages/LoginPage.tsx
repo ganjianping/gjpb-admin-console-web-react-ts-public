@@ -106,7 +106,7 @@ const LoginPage = () => {
           bottom: 0,
           background: isDarkMode
             ? 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'
-            : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            : 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%)',
           '&::before': {
             content: '""',
             position: 'absolute',
@@ -116,7 +116,7 @@ const LoginPage = () => {
             bottom: 0,
             background: isDarkMode
               ? 'radial-gradient(circle at 30% 30%, rgba(102, 126, 234, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.1) 0%, transparent 50%)'
-              : 'radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%)',
+              : 'radial-gradient(circle at 30% 30%, rgba(148, 163, 184, 0.05) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(100, 116, 139, 0.05) 0%, transparent 50%)',
           },
         }}
       />
@@ -136,22 +136,37 @@ const LoginPage = () => {
             <IconButton 
               onClick={() => setColorDropdownOpen(!colorDropdownOpen)}
               sx={{ 
-                width: 48,
-                height: 48,
-                color: '#ffffff',
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                width: 52,
+                height: 52,
+                color: isDarkMode ? '#ffffff' : '#475569',
+                backgroundColor: isDarkMode 
+                  ? 'rgba(255, 255, 255, 0.1)' 
+                  : 'rgba(255, 255, 255, 0.9)',
                 backdropFilter: 'blur(10px)',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                borderRadius: '50%',
+                border: '2px solid',
+                borderColor: isDarkMode 
+                  ? 'rgba(255, 255, 255, 0.2)' 
+                  : 'rgba(148, 163, 184, 0.3)',
+                borderRadius: '16px',
+                boxShadow: isDarkMode
+                  ? '0 8px 24px rgba(0, 0, 0, 0.3)'
+                  : '0 8px 24px rgba(148, 163, 184, 0.25)',
                 '&:hover': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                  transform: 'scale(1.1)',
-                  borderColor: 'rgba(255, 255, 255, 0.4)',
+                  backgroundColor: isDarkMode 
+                    ? 'rgba(255, 255, 255, 0.2)' 
+                    : 'rgba(255, 255, 255, 1)',
+                  transform: 'scale(1.05)',
+                  borderColor: isDarkMode 
+                    ? 'rgba(255, 255, 255, 0.4)' 
+                    : 'rgba(99, 102, 241, 0.5)',
+                  boxShadow: isDarkMode
+                    ? '0 12px 32px rgba(0, 0, 0, 0.4)'
+                    : '0 12px 32px rgba(99, 102, 241, 0.3)',
                 },
                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
               }}
             >
-              <Palette size={22} />
+              <Palette size={24} />
             </IconButton>
           </Tooltip>
           
@@ -167,16 +182,16 @@ const LoginPage = () => {
                 minWidth: 200,
                 backgroundColor: isDarkMode
                   ? 'rgba(30, 41, 59, 0.95)'
-                  : 'rgba(255, 255, 255, 0.95)',
-                backdropFilter: 'blur(20px)',
+                  : '#ffffff',
+                backdropFilter: isDarkMode ? 'blur(20px)' : 'none',
                 border: '1px solid',
                 borderColor: isDarkMode
                   ? 'rgba(255, 255, 255, 0.1)'
-                  : 'rgba(255, 255, 255, 0.5)',
+                  : 'rgba(226, 232, 240, 0.8)',
                 borderRadius: 2,
                 boxShadow: isDarkMode
                   ? '0 10px 30px rgba(0, 0, 0, 0.3)'
-                  : '0 10px 30px rgba(102, 126, 234, 0.3)',
+                  : '0 10px 30px rgba(148, 163, 184, 0.2)',
               }}
             >
               {colorThemeOptions.map((option) => {
@@ -232,22 +247,37 @@ const LoginPage = () => {
           <IconButton 
             onClick={handleThemeToggle} 
             sx={{ 
-              width: 48,
-              height: 48,
-              color: '#ffffff',
-              backgroundColor: 'rgba(255, 255, 255, 0.1)',
+              width: 52,
+              height: 52,
+              color: isDarkMode ? '#ffffff' : '#475569',
+              backgroundColor: isDarkMode 
+                ? 'rgba(255, 255, 255, 0.1)' 
+                : 'rgba(255, 255, 255, 0.9)',
               backdropFilter: 'blur(10px)',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              borderRadius: '50%',
+              border: '2px solid',
+              borderColor: isDarkMode 
+                ? 'rgba(255, 255, 255, 0.2)' 
+                : 'rgba(148, 163, 184, 0.3)',
+              borderRadius: '16px',
+              boxShadow: isDarkMode
+                ? '0 8px 24px rgba(0, 0, 0, 0.3)'
+                : '0 8px 24px rgba(148, 163, 184, 0.25)',
               '&:hover': {
-                backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                transform: 'scale(1.1)',
-                borderColor: 'rgba(255, 255, 255, 0.4)',
+                backgroundColor: isDarkMode 
+                  ? 'rgba(255, 255, 255, 0.2)' 
+                  : 'rgba(255, 255, 255, 1)',
+                transform: 'scale(1.05)',
+                borderColor: isDarkMode 
+                  ? 'rgba(255, 255, 255, 0.4)' 
+                  : 'rgba(99, 102, 241, 0.5)',
+                boxShadow: isDarkMode
+                  ? '0 12px 32px rgba(0, 0, 0, 0.4)'
+                  : '0 12px 32px rgba(99, 102, 241, 0.3)',
               },
               transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
             }}
           >
-            {isDarkMode ? <Sun size={22} /> : <Moon size={22} />}
+            {isDarkMode ? <Sun size={24} /> : <Moon size={24} />}
           </IconButton>
         </Tooltip>
       </Box>
@@ -272,15 +302,15 @@ const LoginPage = () => {
               borderRadius: '20px',
               background: isDarkMode
                 ? 'rgba(30, 41, 59, 0.8)'
-                : 'rgba(255, 255, 255, 0.9)',
-              backdropFilter: 'blur(20px)',
+                : '#ffffff',
+              backdropFilter: isDarkMode ? 'blur(20px)' : 'none',
               border: '1px solid',
               borderColor: isDarkMode
                 ? 'rgba(255, 255, 255, 0.1)'
-                : 'rgba(255, 255, 255, 0.5)',
+                : 'rgba(226, 232, 240, 0.8)',
               boxShadow: isDarkMode
                 ? '0 20px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.05)'
-                : '0 20px 40px rgba(102, 126, 234, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.6)',
+                : '0 20px 40px rgba(148, 163, 184, 0.15), 0 0 0 1px rgba(226, 232, 240, 0.6)',
               position: 'relative',
             }}
           >
