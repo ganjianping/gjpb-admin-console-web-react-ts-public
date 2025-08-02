@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Box, 
   Typography, 
@@ -9,12 +10,15 @@ import {
   List, 
   ListItem, 
   ListItemText, 
+  ListItemAvatar,
+  Avatar,
   Divider,
   Button,
   Alert,
   Skeleton,
   IconButton,
-  Tooltip,
+  useTheme,
+  alpha,
 } from '@mui/material';
 import { 
   Users, 
@@ -39,7 +43,6 @@ import { trackPageView } from '../utils/firebaseAnalytics';
 import { useAppSelector, useAppDispatch } from '../hooks/useRedux';
 import { selectCurrentUser } from '../redux/slices/authSlice';
 import { setPageTitle } from '../redux/slices/uiSlice';
-import { Grid } from '../../../shared-lib/src/utils/grid';
 
 // Dashboard service
 import dashboardService, { type DashboardStats } from '../services/dashboardService';
@@ -59,12 +62,13 @@ const DashboardPage = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const user = useAppSelector(selectCurrentUser);
+  const theme = useTheme();
+  const navigate = useNavigate();
   
   // State for dashboard data
   const [dashboardStats, setDashboardStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [serverDateTime, setServerDateTime] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   
   // Use ref to prevent duplicate API calls
@@ -119,10 +123,9 @@ const DashboardPage = () => {
       const cachedData = getCachedData();
       if (cachedData) {
         setDashboardStats(cachedData.stats);
-        setServerDateTime(cachedData.serverDateTime);
         setLastUpdated(new Date(cachedData.lastUpdated));
         setLoading(false);
-        console.log('� Loaded data from cache');
+        console.log('📦 Loaded data from cache');
         return;
       }
     }
@@ -151,7 +154,6 @@ const DashboardPage = () => {
         
         // Extract server date time from meta or use current time
         const serverTime = apiResponse.meta?.serverDateTime || new Date().toISOString();
-        setServerDateTime(serverTime);
         setLastUpdated(new Date());
         
         // Cache the data
@@ -200,6 +202,31 @@ const DashboardPage = () => {
     fetchDashboardStats();
   }, []); // Empty dependency array to prevent multiple calls
   
+  // Navigation handlers for stats cards
+  const handleStatsCardClick = (statTitle: string) => {
+    switch (statTitle) {
+      case 'Total Users':
+        navigate('/users');
+        break;
+      case 'Active Users':
+        navigate('/users?accountStatus=active');
+        break;
+      case 'Locked Users':
+        navigate('/users?accountStatus=locked');
+        break;
+      case 'Suspended Users':
+        navigate('/users?accountStatus=suspend');
+        break;
+      case 'Pending Verification':
+        navigate('/users?accountStatus=pending_verification');
+        break;
+      default:
+        // For other stats like Active Sessions, we might not have specific pages yet
+        console.log(`Clicked on ${statTitle} - no navigation configured`);
+        break;
+    }
+  };
+
   // Create summary stats from API data
   const getSummaryStats = () => {
     console.log('🔍 getSummaryStats called with dashboardStats:', dashboardStats);
@@ -209,12 +236,60 @@ const DashboardPage = () => {
     if (!dashboardStats) {
       console.log('📭 No dashboard stats, returning default values');
       return [
-        { title: 'Total Users', value: loading ? '-' : '0', icon: Users, color: '#1976d2' },
-        { title: 'Active Sessions', value: loading ? '-' : '0', icon: Activity, color: '#2e7d32' },
-        { title: 'Active Users', value: loading ? '-' : '0', icon: UserCheck, color: '#388e3c' },
-        { title: 'Locked Users', value: loading ? '-' : '0', icon: Lock, color: '#f57c00' },
-        { title: 'Suspended Users', value: loading ? '-' : '0', icon: UserX, color: '#d32f2f' },
-        { title: 'Pending Verification', value: loading ? '-' : '0', icon: Clock, color: '#7b1fa2' },
+        { 
+          title: 'Total Users', 
+          value: loading ? '-' : '0', 
+          icon: Users, 
+          color: theme.palette.primary.main,
+          gradient: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`,
+          bgColor: alpha(theme.palette.primary.main, 0.1),
+          navigable: true,
+        },
+        { 
+          title: 'Active Sessions', 
+          value: loading ? '-' : '0', 
+          icon: Activity, 
+          color: theme.palette.success.main,
+          gradient: `linear-gradient(135deg, ${theme.palette.success.main} 0%, ${theme.palette.success.light} 100%)`,
+          bgColor: alpha(theme.palette.success.main, 0.1),
+          navigable: false,
+        },
+        { 
+          title: 'Active Users', 
+          value: loading ? '-' : '0', 
+          icon: UserCheck, 
+          color: theme.palette.success.dark,
+          gradient: `linear-gradient(135deg, ${theme.palette.success.dark} 0%, ${theme.palette.success.main} 100%)`,
+          bgColor: alpha(theme.palette.success.dark, 0.1),
+          navigable: true,
+        },
+        { 
+          title: 'Locked Users', 
+          value: loading ? '-' : '0', 
+          icon: Lock, 
+          color: theme.palette.warning.main,
+          gradient: `linear-gradient(135deg, ${theme.palette.warning.main} 0%, ${theme.palette.warning.light} 100%)`,
+          bgColor: alpha(theme.palette.warning.main, 0.1),
+          navigable: true,
+        },
+        { 
+          title: 'Suspended Users', 
+          value: loading ? '-' : '0', 
+          icon: UserX, 
+          color: theme.palette.error.main,
+          gradient: `linear-gradient(135deg, ${theme.palette.error.main} 0%, ${theme.palette.error.light} 100%)`,
+          bgColor: alpha(theme.palette.error.main, 0.1),
+          navigable: true,
+        },
+        { 
+          title: 'Pending Verification', 
+          value: loading ? '-' : '0', 
+          icon: Clock, 
+          color: theme.palette.secondary.main,
+          gradient: `linear-gradient(135deg, ${theme.palette.secondary.main} 0%, ${theme.palette.secondary.light} 100%)`,
+          bgColor: alpha(theme.palette.secondary.main, 0.1),
+          navigable: true,
+        },
       ];
     }
     
@@ -226,37 +301,55 @@ const DashboardPage = () => {
         title: 'Total Users', 
         value: (dashboardStats.totalUsers ?? 0).toString(), 
         icon: Users, 
-        color: '#1976d2' 
+        color: theme.palette.primary.main,
+        gradient: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`,
+        bgColor: alpha(theme.palette.primary.main, 0.1),
+        navigable: true,
       },
       { 
         title: 'Active Sessions', 
         value: (dashboardStats.activeSessions ?? 0).toString(), 
         icon: Activity, 
-        color: '#2e7d32' 
+        color: theme.palette.success.main,
+        gradient: `linear-gradient(135deg, ${theme.palette.success.main} 0%, ${theme.palette.success.light} 100%)`,
+        bgColor: alpha(theme.palette.success.main, 0.1),
+        navigable: false,
       },
       { 
         title: 'Active Users', 
         value: (dashboardStats.activeUsers ?? 0).toString(), 
         icon: UserCheck, 
-        color: '#388e3c' 
+        color: theme.palette.success.dark,
+        gradient: `linear-gradient(135deg, ${theme.palette.success.dark} 0%, ${theme.palette.success.main} 100%)`,
+        bgColor: alpha(theme.palette.success.dark, 0.1),
+        navigable: true,
       },
       { 
         title: 'Locked Users', 
         value: (dashboardStats.lockedUsers ?? 0).toString(), 
         icon: Lock, 
-        color: '#f57c00' 
+        color: theme.palette.warning.main,
+        gradient: `linear-gradient(135deg, ${theme.palette.warning.main} 0%, ${theme.palette.warning.light} 100%)`,
+        bgColor: alpha(theme.palette.warning.main, 0.1),
+        navigable: true,
       },
       { 
         title: 'Suspended Users', 
         value: (dashboardStats.suspendedUsers ?? 0).toString(), 
         icon: UserX, 
-        color: '#d32f2f' 
+        color: theme.palette.error.main,
+        gradient: `linear-gradient(135deg, ${theme.palette.error.main} 0%, ${theme.palette.error.light} 100%)`,
+        bgColor: alpha(theme.palette.error.main, 0.1),
+        navigable: true,
       },
       { 
         title: 'Pending Verification', 
         value: (dashboardStats.pendingVerificationUsers ?? 0).toString(), 
         icon: Clock, 
-        color: '#7b1fa2' 
+        color: theme.palette.secondary.main,
+        gradient: `linear-gradient(135deg, ${theme.palette.secondary.main} 0%, ${theme.palette.secondary.light} 100%)`,
+        bgColor: alpha(theme.palette.secondary.main, 0.1),
+        navigable: true,
       },
     ];
     
@@ -267,191 +360,700 @@ const DashboardPage = () => {
   const summaryStats = getSummaryStats();
   
   return (
-    <Box sx={{ width: '100%' }}>
-      {/* Add CSS keyframes for spin animation */}
+    <Box sx={{ 
+      width: '100%', 
+      bgcolor: theme.palette.background.default, 
+      minHeight: '100vh', 
+      display: 'flex', 
+      flexDirection: 'column',
+      overflow: 'hidden',
+    }}>
+      {/* Add CSS keyframes for animations */}
       <style>
         {`
           @keyframes spin {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
           }
+          
+          @keyframes fadeInUp {
+            from {
+              opacity: 0;
+              transform: translateY(40px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+          
+          @keyframes pulse {
+            0%, 100% {
+              transform: scale(1);
+            }
+            50% {
+              transform: scale(1.05);
+            }
+          }
+          
+          @keyframes slideInLeft {
+            from {
+              opacity: 0;
+              transform: translateX(-40px);
+            }
+            to {
+              opacity: 1;
+              transform: translateX(0);
+            }
+          }
+
+          @keyframes glow {
+            0%, 100% {
+              box-shadow: 0 8px 25px rgba(25, 118, 210, 0.3);
+            }
+            50% {
+              box-shadow: 0 12px 35px rgba(25, 118, 210, 0.5);
+            }
+          }
+
+          @keyframes glow {
+            0%, 100% {
+              box-shadow: 0 8px 25px rgba(25, 118, 210, 0.3);
+            }
+            50% {
+              box-shadow: 0 12px 35px rgba(25, 118, 210, 0.5);
+            }
+          }
         `}
       </style>
       
-      {/* Error handling */}
-      {error && (
-        <Alert severity="error" sx={{ mb: 3 }}>
-          {error}
-        </Alert>
-      )}
-      
-      {/* Welcome message */}
-      <Box sx={{ mb: 4 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-          <Typography variant="h3" component="h1" sx={{ fontWeight: 600 }}>
-            {t('dashboard.welcome')}, {user?.nickname ?? user?.username}!
-          </Typography>
-          <Tooltip title="Refresh Dashboard Data">
-            <IconButton 
-              onClick={() => fetchDashboardStats(true)}
-              disabled={loading}
-              sx={{ 
-                ml: 2,
-                color: 'primary.main',
-                '&:hover': {
-                  backgroundColor: 'primary.light',
-                  color: 'primary.contrastText',
-                },
-                '&:disabled': {
-                  color: 'action.disabled',
-                }
-              }}
-            >
-              <RefreshCw 
-                size={20} 
-                style={{ 
-                  animation: loading ? 'spin 1s linear infinite' : undefined,
-                  transformOrigin: 'center'
-                }} 
-              />
-            </IconButton>
-          </Tooltip>
-        </Box>
-        <Typography variant="h6" color="text.secondary" sx={{ fontWeight: 400 }}>
-          {format(new Date(), 'EEEE, MMMM d, yyyy')}
-        </Typography>
-        
-        {/* Server DateTime and Last Updated */}
-        {(serverDateTime || lastUpdated) && (
-          <Box sx={{ mt: 1, display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-            {lastUpdated && (
-              <Typography variant="caption" color="text.secondary">
-                Last Updated: {format(lastUpdated, 'MMM d, yyyy HH:mm:ss')}
-              </Typography>
-            )}
-          </Box>
+      <Box sx={{ 
+        flex: 1,
+        maxWidth: { xs: '100%', sm: '100%', md: '1200px', lg: '1400px', xl: '1600px' }, 
+        mx: 'auto', 
+        p: { xs: 1, sm: 2, md: 3, lg: 4 },
+        display: 'flex',
+        flexDirection: 'column',
+        gap: { xs: 2, sm: 3, md: 4 },
+        width: '100%',
+        overflow: 'auto',
+      }}>
+        {/* Error handling */}
+        {error && (
+          <Alert 
+            severity="error" 
+            sx={{ 
+              borderRadius: { xs: 2, sm: 3 },
+              border: 1,
+              borderColor: 'error.light',
+              animation: 'slideInLeft 0.5s ease-out',
+            }}
+          >
+            {error}
+          </Alert>
         )}
-      </Box>
       
-      {/* Stats summary */}
-      <Grid container component="div" spacing={3} sx={{ mb: 4 }}>
-        {summaryStats.map((stat) => {
-          const Icon = stat.icon;
-          return (
-            <Grid item component="div" xs={12} sm={6} md={4} lg={2} key={stat.title}>
-              <Paper 
-                elevation={0} 
+        {/* Welcome Hero Section */}
+        <Box sx={{ animation: 'fadeInUp 0.6s ease-out' }}>
+          <Box 
+            sx={{ 
+              background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+              borderRadius: { xs: 2, sm: 3, md: 4 },
+              p: { xs: 2, sm: 3, md: 4 },
+              color: 'white',
+              position: 'relative',
+              overflow: 'hidden',
+              boxShadow: {
+                xs: '0 4px 16px rgba(0,0,0,0.08)',
+                sm: '0 6px 24px rgba(0,0,0,0.1)',
+                md: '0 8px 32px rgba(0,0,0,0.12)',
+              },
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: '-30%',
+                right: '-10%',
+                width: { xs: '120px', sm: '180px', md: '240px' },
+                height: { xs: '120px', sm: '180px', md: '240px' },
+                background: `radial-gradient(circle, ${alpha(theme.palette.common.white, 0.08)} 0%, transparent 70%)`,
+                borderRadius: '50%',
+              },
+              '&::after': {
+                content: '""',
+                position: 'absolute',
+                bottom: '-20%',
+                left: '-5%',
+                width: { xs: '100px', sm: '140px', md: '180px' },
+                height: { xs: '100px', sm: '140px', md: '180px' },
+                background: `radial-gradient(circle, ${alpha(theme.palette.common.white, 0.06)} 0%, transparent 70%)`,
+                borderRadius: '50%',
+              }
+            }}
+          >
+            <Box sx={{ position: 'relative', zIndex: 2 }}>
+              {/* Main greeting */}
+              <Typography 
+                variant="h3" 
+                component="h1" 
                 sx={{ 
-                  p: 3, 
-                  borderRadius: 3, 
-                  display: 'flex', 
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  textAlign: 'center',
-                  bgcolor: 'background.paper',
-                  border: 1,
-                  borderColor: 'divider',
-                  height: '100%',
-                  minHeight: 140,
-                  transition: 'all 0.2s ease-in-out',
-                  '&:hover': {
-                    boxShadow: 2,
-                    transform: 'translateY(-2px)',
-                  }
+                  fontWeight: 700, 
+                  mb: { xs: 1, sm: 1.5 },
+                  fontSize: { 
+                    xs: '1.5rem', 
+                    sm: '1.75rem', 
+                    md: '2.25rem', 
+                    lg: '2.5rem'
+                  },
+                  lineHeight: { xs: 1.3, sm: 1.4 },
+                  background: 'linear-gradient(45deg, #fff 30%, rgba(255,255,255,0.9) 100%)',
+                  backgroundClip: 'text',
+                  WebkitBackgroundClip: 'text',
+                  color: 'transparent',
+                  textShadow: '0 1px 2px rgba(0,0,0,0.1)',
                 }}
               >
-                {loading ? (
-                  <>
-                    <Skeleton variant="circular" width={48} height={48} sx={{ mb: 2 }} />
-                    <Skeleton variant="text" width="80%" height={20} sx={{ mb: 1 }} />
-                    <Skeleton variant="text" width="60%" height={32} />
-                  </>
-                ) : (
-                  <>
-                    <Box
+                {t('dashboard.welcome')}, {user?.nickname ?? user?.username}! 👋
+              </Typography>
+              
+              {/* Date and status row */}
+              <Box sx={{ 
+                display: 'flex', 
+                flexDirection: { xs: 'column', sm: 'row' },
+                justifyContent: 'space-between',
+                alignItems: { xs: 'flex-start', sm: 'center' },
+                gap: { xs: 1.5, sm: 2 },
+                flexWrap: 'wrap',
+              }}>
+                <Typography 
+                  variant="h6" 
+                  sx={{ 
+                    fontWeight: 400, 
+                    opacity: 0.9, 
+                    fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 0.5,
+                  }}
+                >
+                  📅 {format(new Date(), 'EEEE, MMMM d, yyyy')}
+                </Typography>
+                
+                {/* Update status */}
+                {lastUpdated && (
+                  <Box sx={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: 1,
+                    backgroundColor: alpha(theme.palette.common.white, 0.12),
+                    borderRadius: 2,
+                    px: 1.5,
+                    py: 0.5,
+                    backdropFilter: 'blur(8px)',
+                  }}>
+                    <IconButton
+                      size="small"
+                      onClick={() => fetchDashboardStats(true)}
+                      disabled={loading}
                       sx={{
-                        p: 1.5,
-                        borderRadius: 2,
-                        bgcolor: `${stat.color}15`,
-                        color: stat.color,
-                        mb: 2,
+                        color: 'rgba(255, 255, 255, 0.9)',
+                        backgroundColor: alpha(theme.palette.common.white, 0.1),
+                        '&:hover': {
+                          backgroundColor: alpha(theme.palette.common.white, 0.2),
+                        },
+                        '&:disabled': {
+                          color: alpha(theme.palette.common.white, 0.5),
+                        },
+                        width: 28,
+                        height: 28,
                       }}
                     >
-                      <Icon size={28} />
-                    </Box>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1, fontSize: '0.875rem' }}>
-                      {stat.title}
+                      <RefreshCw 
+                        size={14} 
+                        style={{ 
+                          animation: loading ? 'spin 1s linear infinite' : undefined,
+                          transformOrigin: 'center'
+                        }} 
+                      />
+                    </IconButton>
+                    <Typography 
+                      variant="body2" 
+                      sx={{ 
+                        opacity: 0.9,
+                        fontSize: { xs: '0.7rem', sm: '0.75rem' },
+                        fontWeight: 500,
+                      }}
+                    >
+                      Updated: {format(lastUpdated, 'HH:mm, MMM d, yyyy')}
                     </Typography>
-                    <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                      {stat.value}
-                    </Typography>
-                  </>
+                  </Box>
                 )}
-              </Paper>
-            </Grid>
-          );
-        })}
-      </Grid>
+              </Box>
+            </Box>
+          </Box>
+        </Box>
       
-      {/* Main dashboard content - Recent activity taking full width */}
-      <Grid container component="div" spacing={3}>
-        <Grid item component="div" xs={12}>
-          <Card elevation={0} sx={{ borderRadius: 3, border: 1, borderColor: 'divider', overflow: 'hidden' }}>
+        {/* Stats Grid - Responsive Design */}
+        <Box sx={{ animation: 'fadeInUp 0.8s ease-out 0.2s both' }}>
+          <Typography 
+            variant="h4" 
+            sx={{ 
+              mb: { xs: 2, sm: 3 },
+              fontWeight: 700,
+              color: 'text.primary',
+              fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' },
+            }}
+          >
+            📊 Dashboard Overview
+          </Typography>
+          
+          <Box 
+            sx={{ 
+              display: 'grid',
+              gridTemplateColumns: {
+                xs: 'repeat(2, 1fr)',
+                sm: 'repeat(3, 1fr)',
+                md: 'repeat(6, 1fr)',
+                lg: 'repeat(6, 1fr)',
+              },
+              gap: { xs: 2, sm: 3, md: 4 },
+              mb: { xs: 3, sm: 4 },
+            }}
+          >
+            {summaryStats.map((stat, index) => {
+              const Icon = stat.icon;
+              return (
+                <Paper 
+                  key={stat.title}
+                  elevation={0} 
+                  onClick={() => stat.navigable ? handleStatsCardClick(stat.title) : undefined}
+                  sx={{ 
+                    p: { xs: 2, sm: 3, md: 4 }, 
+                    borderRadius: { xs: 3, sm: 4 }, 
+                    display: 'flex', 
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    textAlign: 'center',
+                    background: `linear-gradient(135deg, ${stat.bgColor} 0%, ${alpha(stat.color, 0.05)} 100%)`,
+                    border: `2px solid ${alpha(stat.color, 0.1)}`,
+                    position: 'relative',
+                    overflow: 'hidden',
+                    minHeight: { xs: 140, sm: 160, md: 180 },
+                    transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                    cursor: stat.navigable ? 'pointer' : 'default',
+                    '&:hover': {
+                      transform: stat.navigable ? 'translateY(-8px) scale(1.02)' : 'translateY(-4px) scale(1.01)',
+                      boxShadow: `0 20px 40px ${alpha(stat.color, 0.25)}`,
+                      borderColor: stat.color,
+                      background: `linear-gradient(135deg, ${alpha(stat.color, 0.15)} 0%, ${alpha(stat.color, 0.08)} 100%)`,
+                      '& .stat-icon': {
+                        transform: 'scale(1.15) rotate(10deg)',
+                        boxShadow: `0 10px 30px ${alpha(stat.color, 0.4)}`,
+                      },
+                      '& .stat-value': {
+                        transform: 'scale(1.1)',
+                        color: stat.color,
+                      },
+                      '& .stat-glow': {
+                        opacity: 1,
+                      },
+                      '& .nav-indicator': {
+                        opacity: stat.navigable ? 1 : 0,
+                        transform: 'translateX(0)',
+                      }
+                    },
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      height: { xs: '4px', sm: '5px' },
+                      background: `linear-gradient(90deg, ${stat.color} 0%, ${stat.color}80 100%)`,
+                    },
+                    animation: `fadeInUp 0.6s ease-out ${index * 0.15}s both`,
+                  }}
+                >
+                  {/* Glow effect */}
+                  <Box
+                    className="stat-glow"
+                    sx={{
+                      position: 'absolute',
+                      top: '50%',
+                      left: '50%',
+                      transform: 'translate(-50%, -50%)',
+                      width: '200%',
+                      height: '200%',
+                      background: `radial-gradient(circle, ${alpha(stat.color, 0.1)} 0%, transparent 70%)`,
+                      opacity: 0,
+                      transition: 'opacity 0.4s ease',
+                      pointerEvents: 'none',
+                    }}
+                  />
+
+                  {/* Navigation indicator for clickable cards */}
+                  {stat.navigable && (
+                    <Box
+                      className="nav-indicator"
+                      sx={{
+                        position: 'absolute',
+                        top: { xs: 8, sm: 12 },
+                        right: { xs: 8, sm: 12 },
+                        opacity: 0,
+                        transform: 'translateX(10px)',
+                        transition: 'all 0.3s ease',
+                        color: stat.color,
+                        fontSize: '1.2rem',
+                        pointerEvents: 'none',
+                      }}
+                    >
+                      →
+                    </Box>
+                  )}
+                  
+                  {loading ? (
+                    <>
+                      <Skeleton 
+                        variant="circular" 
+                        sx={{ 
+                          width: { xs: 48, sm: 56, md: 64 },
+                          height: { xs: 48, sm: 56, md: 64 },
+                          mb: 2,
+                        }} 
+                      />
+                      <Skeleton 
+                        variant="text" 
+                        width="80%" 
+                        sx={{ height: 20, mb: 1 }}
+                      />
+                      <Skeleton 
+                        variant="text" 
+                        width="60%" 
+                        sx={{ height: 32 }}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <Box
+                        className="stat-icon"
+                        sx={{
+                          p: { xs: 2, sm: 2.5, md: 3 },
+                          borderRadius: { xs: 3, sm: 4 },
+                          background: `linear-gradient(135deg, ${stat.color} 0%, ${stat.color}CC 100%)`,
+                          color: 'white',
+                          mb: { xs: 2, sm: 3 },
+                          transition: 'all 0.4s ease',
+                          boxShadow: `0 8px 25px ${alpha(stat.color, 0.3)}`,
+                          position: 'relative',
+                          zIndex: 2,
+                        }}
+                      >
+                        <Icon 
+                          size={24} 
+                          style={{ 
+                            fontSize: 'clamp(20px, 5vw, 32px)',
+                            width: 'clamp(20px, 5vw, 32px)',
+                            height: 'clamp(20px, 5vw, 32px)',
+                          }} 
+                        />
+                      </Box>
+                      
+                      <Typography 
+                        variant="body2" 
+                        color="text.secondary" 
+                        sx={{ 
+                          mb: 1, 
+                          fontSize: { xs: '0.7rem', sm: '0.75rem', md: '0.8rem' },
+                          fontWeight: 600,
+                          textTransform: 'uppercase',
+                          letterSpacing: '1px',
+                          lineHeight: 1.2,
+                          textAlign: 'center',
+                          position: 'relative',
+                          zIndex: 2,
+                        }}
+                      >
+                        {stat.title}
+                      </Typography>
+                      
+                      <Typography 
+                        className="stat-value"
+                        variant="h3" 
+                        sx={{ 
+                          fontWeight: 900,
+                          fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' },
+                          transition: 'all 0.4s ease',
+                          background: `linear-gradient(135deg, ${stat.color} 0%, ${stat.color}80 100%)`,
+                          backgroundClip: 'text',
+                          WebkitBackgroundClip: 'text',
+                          color: 'transparent',
+                          lineHeight: 1,
+                          position: 'relative',
+                          zIndex: 2,
+                        }}
+                      >
+                        {stat.value}
+                      </Typography>
+                    </>
+                  )}
+                </Paper>
+              );
+            })}
+          </Box>
+        </Box>
+      
+        {/* Activity Section - Modern Design */}
+        <Box sx={{ animation: 'fadeInUp 1s ease-out 0.4s both' }}>
+          <Typography 
+            variant="h4" 
+            sx={{ 
+              mb: { xs: 2, sm: 3 },
+              fontWeight: 700,
+              color: 'text.primary',
+              fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' },
+            }}
+          >
+            🚀 Recent Activity
+          </Typography>
+          
+          <Card 
+            elevation={0} 
+            sx={{ 
+              borderRadius: { xs: 3, sm: 4, md: 5 }, 
+              border: `2px solid ${alpha(theme.palette.divider, 0.1)}`,
+              overflow: 'hidden',
+              background: `linear-gradient(145deg, 
+                ${theme.palette.background.paper} 0%, 
+                ${alpha(theme.palette.background.default, 0.5)} 100%)`,
+              backdropFilter: 'blur(10px)',
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                borderColor: alpha(theme.palette.primary.main, 0.3),
+                boxShadow: { 
+                  xs: '0 8px 30px rgba(0,0,0,0.08)', 
+                  sm: '0 12px 40px rgba(0,0,0,0.1)', 
+                  md: '0 16px 50px rgba(0,0,0,0.12)' 
+                },
+              }
+            }}
+          >
             <CardHeader 
               title={
-                <Typography variant="h5" sx={{ fontWeight: 600 }}>
-                  {t('dashboard.recentActivity')}
-                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1.5, sm: 2 } }}>
+                  <Box 
+                    sx={{ 
+                      p: { xs: 1.5, sm: 2 },
+                      borderRadius: { xs: 2, sm: 3 },
+                      background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+                      color: 'white',
+                      boxShadow: `0 8px 25px ${alpha(theme.palette.primary.main, 0.3)}`,
+                    }}
+                  >
+                    <Activity 
+                      size={20} 
+                      style={{ 
+                        fontSize: 'clamp(16px, 4vw, 24px)',
+                        width: 'clamp(16px, 4vw, 24px)',
+                        height: 'clamp(16px, 4vw, 24px)',
+                      }} 
+                    />
+                  </Box>
+                  <Typography 
+                    variant="h5" 
+                    sx={{ 
+                      fontWeight: 700,
+                      fontSize: { xs: '1.2rem', sm: '1.4rem', md: '1.6rem' },
+                      background: `linear-gradient(135deg, ${theme.palette.text.primary} 0%, ${theme.palette.text.secondary} 100%)`,
+                      backgroundClip: 'text',
+                      WebkitBackgroundClip: 'text',
+                      color: 'transparent',
+                    }}
+                  >
+                    Activity Feed
+                  </Typography>
+                </Box>
               }
               action={
                 <Button
-                  endIcon={<ChevronRight size={16} />}
-                  sx={{ textTransform: 'none', fontWeight: 500 }}
+                  endIcon={
+                    <ChevronRight 
+                      size={16} 
+                      style={{ 
+                        fontSize: 'clamp(14px, 3vw, 18px)',
+                        width: 'clamp(14px, 3vw, 18px)',
+                        height: 'clamp(14px, 3vw, 18px)',
+                      }} 
+                    />
+                  }
+                  sx={{ 
+                    textTransform: 'none', 
+                    fontWeight: 600,
+                    borderRadius: { xs: 2, sm: 3 },
+                    fontSize: { xs: '0.8rem', sm: '0.9rem' },
+                    px: { xs: 2, sm: 3 },
+                    py: { xs: 1, sm: 1.5 },
+                    background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.1)} 0%, ${alpha(theme.palette.primary.main, 0.05)} 100%)`,
+                    color: theme.palette.primary.main,
+                    border: `2px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+                    '&:hover': {
+                      background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.15)} 0%, ${alpha(theme.palette.primary.main, 0.1)} 100%)`,
+                      borderColor: theme.palette.primary.main,
+                      transform: 'translateX(4px)',
+                      boxShadow: `0 4px 15px ${alpha(theme.palette.primary.main, 0.25)}`,
+                    },
+                    transition: 'all 0.3s ease',
+                  }}
                   variant="outlined"
                   size="small"
                 >
-                  {t('common.viewAll')}
+                  View All
                 </Button>
               }
-              sx={{ pb: 1 }}
+              sx={{ 
+                pb: { xs: 1, sm: 2 }, 
+                px: { xs: 3, sm: 4, md: 5 },
+                pt: { xs: 3, sm: 4, md: 5 },
+              }}
             />
-            <Divider />
+            
+            <Divider sx={{ mx: { xs: 3, sm: 4, md: 5 } }} />
+            
             <CardContent sx={{ p: 0 }}>
               <List sx={{ py: 0 }}>
                 {recentActivity.map((activity, index) => (
                   <Box key={activity.id}>
                     <ListItem 
                       sx={{ 
-                        py: 3, 
-                        px: 3,
+                        py: { xs: 2, sm: 3, md: 4 }, 
+                        px: { xs: 3, sm: 4, md: 5 },
+                        position: 'relative',
+                        cursor: 'pointer',
                         '&:hover': {
-                          bgcolor: 'action.hover',
-                        }
+                          bgcolor: alpha(theme.palette.primary.main, 0.04),
+                          '&::before': {
+                            opacity: 1,
+                            width: { xs: '4px', sm: '6px' },
+                          },
+                          '& .activity-avatar': {
+                            transform: 'scale(1.1)',
+                            boxShadow: `0 8px 25px ${alpha(theme.palette.primary.main, 0.4)}`,
+                          },
+                          '& .activity-content': {
+                            transform: 'translateX(8px)',
+                          }
+                        },
+                        '&::before': {
+                          content: '""',
+                          position: 'absolute',
+                          left: 0,
+                          top: 0,
+                          bottom: 0,
+                          width: { xs: '3px', sm: '4px' },
+                          background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+                          opacity: 0,
+                          transition: 'all 0.3s ease',
+                        },
+                        transition: 'all 0.3s ease',
                       }}
                     >
+                      <ListItemAvatar sx={{ mr: { xs: 2, sm: 3 } }}>
+                        <Avatar
+                          className="activity-avatar"
+                          sx={{
+                            bgcolor: 'transparent',
+                            background: index % 2 === 0 
+                              ? `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`
+                              : `linear-gradient(135deg, ${theme.palette.secondary.main} 0%, ${theme.palette.secondary.dark} 100%)`,
+                            width: { xs: 40, sm: 48, md: 56 },
+                            height: { xs: 40, sm: 48, md: 56 },
+                            fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
+                            fontWeight: 700,
+                            color: 'white',
+                            border: `3px solid ${theme.palette.background.paper}`,
+                            boxShadow: `0 4px 15px ${alpha(theme.palette.text.primary, 0.15)}`,
+                            transition: 'all 0.3s ease',
+                          }}
+                        >
+                          {activity.user.charAt(0).toUpperCase()}
+                        </Avatar>
+                      </ListItemAvatar>
+                      
                       <ListItemText
+                        className="activity-content"
+                        sx={{ transition: 'transform 0.3s ease' }}
                         primary={
-                          <Typography variant="body1" sx={{ fontWeight: 500, mb: 0.5 }}>
+                          <Typography 
+                            variant="h6" 
+                            sx={{ 
+                              fontWeight: 700, 
+                              color: theme.palette.text.primary,
+                              fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
+                              lineHeight: 1.4,
+                              mb: 0.5,
+                            }}
+                          >
                             {activity.action}
                           </Typography>
                         }
                         secondary={
-                          <Typography variant="body2" color="text.secondary">
-                            {activity.user} • {format(activity.date, 'MMM d, HH:mm')}
-                          </Typography>
+                          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                            <Typography 
+                              variant="body2" 
+                              sx={{ 
+                                color: theme.palette.text.secondary,
+                                fontSize: { xs: '0.8rem', sm: '0.85rem', md: '0.9rem' },
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 1,
+                                flexWrap: { xs: 'wrap', sm: 'nowrap' },
+                              }}
+                            >
+                              <Users 
+                                size={14} 
+                                style={{ 
+                                  flexShrink: 0,
+                                  opacity: 0.7,
+                                }} 
+                              />
+                              <Box component="span" sx={{ fontWeight: 500 }}>
+                                {activity.user}
+                              </Box>
+                            </Typography>
+                            
+                            <Typography 
+                              variant="body2" 
+                              sx={{ 
+                                color: theme.palette.text.secondary,
+                                fontSize: { xs: '0.75rem', sm: '0.8rem' },
+                                opacity: 0.8,
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 1,
+                              }}
+                            >
+                              🕒 {format(activity.date, 'MMM d, yyyy • HH:mm')}
+                            </Typography>
+                          </Box>
                         }
                       />
                     </ListItem>
-                    {index < recentActivity.length - 1 && <Divider />}
+                    
+                    {index < recentActivity.length - 1 && (
+                      <Divider 
+                        variant="inset" 
+                        component="li" 
+                        sx={{ 
+                          ml: { xs: 7, sm: 8, md: 9 },
+                          borderColor: alpha(theme.palette.divider, 0.3),
+                        }} 
+                      />
+                    )}
                   </Box>
                 ))}
               </List>
             </CardContent>
           </Card>
-        </Grid>
-      </Grid>
+        </Box>
+      </Box>
     </Box>
   );
-};
-
-export default DashboardPage;
+};export default DashboardPage;
