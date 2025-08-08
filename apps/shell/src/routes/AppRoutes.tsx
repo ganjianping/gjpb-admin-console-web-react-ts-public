@@ -11,6 +11,7 @@ import { UsersPage, RolesPage } from '../../../user-mf/src/exports';
 import DashboardPage from '../pages/DashboardPage';
 import ProfilePage from '../pages/ProfilePage';
 import SettingsPage from '../pages/SettingsPage';
+import AuditLogPage from '../pages/AuditLogPage';
 import NotFoundPage from '../pages/NotFoundPage';
 import UnauthorizedPage from '../pages/UnauthorizedPage';
 
@@ -57,6 +58,9 @@ const AppRoutes = () => {
           {/* Users Management */}
           <Route path="users" element={<UsersPage />} />
           <Route path="roles" element={<RolesPage />} />
+          
+          {/* Audit Logs */}
+          <Route path="audit-logs" element={<AuditLogPage />} />
         </Route>
         
         {/* Catch-all route */}

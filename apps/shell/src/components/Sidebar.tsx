@@ -18,6 +18,7 @@ import {
   LayoutDashboard, 
   Users, 
   Shield,
+  Activity,
   ChevronLeft, 
   ChevronRight,
   ChevronDown,
@@ -83,6 +84,13 @@ const Sidebar = ({ drawerWidth, collapsedWidth, open, onClose, variant }: Sideba
       title: t('navigation.roles'),
       path: '/roles',
       icon: Shield,
+      roles: ['ADMIN', 'SUPER_ADMIN'],
+    },
+    {
+      key: 'audit-logs',
+      title: 'Audit Logs',
+      path: '/audit-logs',
+      icon: Activity,
       roles: ['ADMIN', 'SUPER_ADMIN'],
     },
   ], [t]);

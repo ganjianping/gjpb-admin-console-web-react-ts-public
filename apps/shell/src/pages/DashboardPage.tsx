@@ -884,6 +884,7 @@ const DashboardPage = () => {
                       }} 
                     />
                   }
+                  onClick={() => navigate('/audit-logs')}
                   sx={{ 
                     textTransform: 'none', 
                     fontWeight: 600,
