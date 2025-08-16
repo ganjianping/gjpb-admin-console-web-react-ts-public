@@ -102,8 +102,8 @@ const enResources = {
     welcome: 'Welcome back',
     summary: 'Summary',
     updated: 'Updated',
-    recentActivity: {
-      title: 'Recent Activity',
+    recentLoginActivity: {
+      title: 'Recent Login',
       viewAll: 'View All',
     },
     stats: {
@@ -362,8 +362,8 @@ const zhResources = {
     welcome: '欢迎回来',
     summary: '摘要',
     updated: '更新时间',
-    recentActivity: {
-      title: '最近活动',
+    recentLoginActivity: {
+      title: '最近登陆',
       viewAll: '查看全部',
     },
     stats: {
