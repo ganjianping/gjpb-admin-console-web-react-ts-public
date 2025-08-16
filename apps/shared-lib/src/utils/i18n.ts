@@ -5,6 +5,9 @@ import { APP_CONFIG } from './config';
 
 // English translations
 const enResources = {
+  app: {
+    title: 'GJPB Admin Console',
+  },
   common: {
     loading: 'Loading...',
     error: 'An error occurred',
@@ -95,9 +98,44 @@ const enResources = {
     unauthorizedMessage: 'If you believe you should have access to this page, please contact your administrator.',
   },
   dashboard: {
+    title: '📊 Dashboard Overview',
     welcome: 'Welcome back',
     summary: 'Summary',
-    recentActivity: 'Recent Activity',
+    updated: 'Updated',
+    recentActivity: {
+      title: 'Recent Activity',
+      viewAll: 'View All',
+    },
+    stats: {
+      totalUsers: 'Total Users',
+      activeSessions: 'Active Sessions',
+      activeUsers: 'Active Users',
+      lockedUsers: 'Locked Users',
+      suspendedUsers: 'Suspended Users',
+      pendingVerification: 'Pending Verification',
+    },
+    actions: {
+      tokenAuth: 'Token Authentication',
+      tokenRevoke: 'Token Revocation',
+      tokenValidate: 'Token Validation',
+      userCreate: 'User Created',
+      userUpdate: 'User Updated',
+      userDelete: 'User Deleted',
+      userAction: 'User Action',
+      userLogin: 'User Login',
+      userLogout: 'User Logout',
+      passwordReset: 'Password Reset',
+      roleManagement: 'Role Management',
+      auditAccess: 'Audit Log Access',
+      dashboardAccess: 'Dashboard Access',
+      apiAccess: 'API Access',
+    },
+    errors: {
+      fetchFailed: 'Failed to fetch dashboard statistics',
+      loadFailed: 'Failed to load dashboard statistics',
+      tryAgain: 'Please try again later.',
+    },
+    unknownUser: 'Unknown User',
   },
   profile: {
     noEmailProvided: 'No email provided',
@@ -227,6 +265,9 @@ const enResources = {
 
 // Chinese translations
 const zhResources = {
+  app: {
+    title: 'GJPB 管理控制台',
+  },
   common: {
     loading: '加载中...',
     error: '发生错误',
@@ -317,9 +358,44 @@ const zhResources = {
     unauthorizedMessage: '如果您认为自己应该有权访问此页面，请联系管理员。',
   },
   dashboard: {
+    title: '📊 仪表板总览',
     welcome: '欢迎回来',
     summary: '摘要',
-    recentActivity: '最近活动',
+    updated: '更新时间',
+    recentActivity: {
+      title: '最近活动',
+      viewAll: '查看全部',
+    },
+    stats: {
+      totalUsers: '总用户数',
+      activeSessions: '活跃会话',
+      activeUsers: '活跃用户',
+      lockedUsers: '锁定用户',
+      suspendedUsers: '暂停用户',
+      pendingVerification: '待验证用户',
+    },
+    actions: {
+      tokenAuth: '令牌认证',
+      tokenRevoke: '令牌撤销',
+      tokenValidate: '令牌验证',
+      userCreate: '用户创建',
+      userUpdate: '用户更新',
+      userDelete: '用户删除',
+      userAction: '用户操作',
+      userLogin: '用户登录',
+      userLogout: '用户登出',
+      passwordReset: '密码重置',
+      roleManagement: '角色管理',
+      auditAccess: '审计日志访问',
+      dashboardAccess: '仪表板访问',
+      apiAccess: 'API访问',
+    },
+    errors: {
+      fetchFailed: '获取仪表板统计信息失败',
+      loadFailed: '加载仪表板统计信息失败',
+      tryAgain: '请稍后重试。',
+    },
+    unknownUser: '未知用户',
   },
   profile: {
     noEmailProvided: '未提供电子邮件',

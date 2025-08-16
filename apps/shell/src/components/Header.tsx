@@ -192,7 +192,7 @@ const Header = ({ onDrawerToggle }: HeaderProps) => {
               transition: 'all 0.2s ease',
             }}
           >
-            GJPB Admin Console
+            {t('app.title')}
           </Typography>
         </Box>
 

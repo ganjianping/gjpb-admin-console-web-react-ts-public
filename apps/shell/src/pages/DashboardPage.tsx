@@ -32,6 +32,7 @@ import {
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
+import { enUS, zhCN } from 'date-fns/locale';
 
 // Firebase Performance
 import { useFirebasePerformance } from '../hooks/useFirebasePerformance';
@@ -65,7 +66,7 @@ interface RecentActivityItem {
 }
 
 const DashboardPage = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const dispatch = useAppDispatch();
   const user = useAppSelector(selectCurrentUser);
   const theme = useTheme();
@@ -89,6 +90,11 @@ const DashboardPage = () => {
   // Firebase Performance tracking for dashboard page
   useFirebasePerformance('dashboard', user?.username);
   
+  // Helper function to get date-fns locale based on current language
+  const getDateLocale = () => {
+    return i18n.language.startsWith('zh') ? zhCN : enUS;
+  };
+
   // Cache management helpers
   const getCachedData = () => {
     try {
@@ -214,13 +220,13 @@ const DashboardPage = () => {
         
         console.log('✨ Dashboard stats successfully set in state');
       } else {
-        const errorMsg = apiResponse?.status?.message || 'Failed to fetch dashboard statistics';
+        const errorMsg = apiResponse?.status?.message || t('dashboard.errors.fetchFailed');
         console.error('❌ API error - status code:', apiResponse?.status?.code);
         setError(errorMsg);
       }
     } catch (err: any) {
       console.error('💥 Error fetching dashboard stats:', err);
-      setError(`Failed to load dashboard statistics: ${err?.message || 'Please try again later.'}`);
+      setError(`${t('dashboard.errors.loadFailed')}: ${err?.message || t('dashboard.errors.tryAgain')}`);
     } finally {
       setLoading(false);
       isApiCallInProgress.current = false;
@@ -258,7 +264,7 @@ const DashboardPage = () => {
         const activities: RecentActivityItem[] = response.data.content.map((entry: AuditLogEntry) => ({
           id: entry.id,
           action: getActionDescription(entry),
-          user: entry.username || 'Unknown User',
+          user: entry.username || t('dashboard.unknownUser'),
           date: new Date(entry.timestamp),
           endpoint: entry.endpoint,
           result: entry.result,
@@ -281,16 +287,16 @@ const DashboardPage = () => {
   
   // Helper functions for action descriptions
   const getAuthAction = (method: string): string => {
-    if (method === 'POST') return 'Token Authentication';
-    if (method === 'DELETE') return 'Token Revocation';
-    return 'Token Validation';
+    if (method === 'POST') return t('dashboard.actions.tokenAuth');
+    if (method === 'DELETE') return t('dashboard.actions.tokenRevoke');
+    return t('dashboard.actions.tokenValidate');
   };
   
   const getUserAction = (method: string): string => {
-    if (method === 'POST') return 'User Created';
-    if (method === 'PUT') return 'User Updated';
-    if (method === 'DELETE') return 'User Deleted';
-    return 'User Action';
+    if (method === 'POST') return t('dashboard.actions.userCreate');
+    if (method === 'PUT') return t('dashboard.actions.userUpdate');
+    if (method === 'DELETE') return t('dashboard.actions.userDelete');
+    return t('dashboard.actions.userAction');
   };
 
   // Helper function to get human-readable action description
@@ -299,11 +305,11 @@ const DashboardPage = () => {
     const endpoint = entry.endpoint || '';
     
     if (endpoint.includes('/auth/tokens')) return getAuthAction(method);
-    if (endpoint.includes('/auth/login')) return 'User Login';
-    if (endpoint.includes('/auth/logout')) return 'User Logout';
+    if (endpoint.includes('/auth/login')) return t('dashboard.actions.userLogin');
+    if (endpoint.includes('/auth/logout')) return t('dashboard.actions.userLogout');
     if (endpoint.includes('/users')) return getUserAction(method);
-    if (endpoint.includes('/password')) return 'Password Reset';
-    if (endpoint.includes('/roles')) return 'Role Management';
+    if (endpoint.includes('/password')) return t('dashboard.actions.passwordReset');
+    if (endpoint.includes('/roles')) return t('dashboard.actions.roleManagement');
     
     return `${method} ${endpoint}`;
   };
@@ -390,19 +396,19 @@ const DashboardPage = () => {
   // Navigation handlers for stats cards
   const handleStatsCardClick = (statTitle: string) => {
     switch (statTitle) {
-      case 'Total Users':
+      case t('dashboard.stats.totalUsers'):
         navigate('/users');
         break;
-      case 'Active Users':
+      case t('dashboard.stats.activeUsers'):
         navigate('/users?accountStatus=active');
         break;
-      case 'Locked Users':
+      case t('dashboard.stats.lockedUsers'):
         navigate('/users?accountStatus=locked');
         break;
-      case 'Suspended Users':
+      case t('dashboard.stats.suspendedUsers'):
         navigate('/users?accountStatus=suspend');
         break;
-      case 'Pending Verification':
+      case t('dashboard.stats.pendingVerification'):
         navigate('/users?accountStatus=pending_verification');
         break;
       default:
@@ -422,7 +428,7 @@ const DashboardPage = () => {
       console.log('📭 No dashboard stats, returning default values');
       return [
         { 
-          title: 'Total Users', 
+          title: t('dashboard.stats.totalUsers'), 
           value: loading ? '-' : '0', 
           icon: Users, 
           color: theme.palette.primary.main,
@@ -431,7 +437,7 @@ const DashboardPage = () => {
           navigable: true,
         },
         { 
-          title: 'Active Sessions', 
+          title: t('dashboard.stats.activeSessions'), 
           value: loading ? '-' : '0', 
           icon: Activity, 
           color: theme.palette.success.main,
@@ -440,7 +446,7 @@ const DashboardPage = () => {
           navigable: false,
         },
         { 
-          title: 'Active Users', 
+          title: t('dashboard.stats.activeUsers'), 
           value: loading ? '-' : '0', 
           icon: UserCheck, 
           color: theme.palette.success.dark,
@@ -449,7 +455,7 @@ const DashboardPage = () => {
           navigable: true,
         },
         { 
-          title: 'Locked Users', 
+          title: t('dashboard.stats.lockedUsers'), 
           value: loading ? '-' : '0', 
           icon: Lock, 
           color: theme.palette.warning.main,
@@ -458,7 +464,7 @@ const DashboardPage = () => {
           navigable: true,
         },
         { 
-          title: 'Suspended Users', 
+          title: t('dashboard.stats.suspendedUsers'), 
           value: loading ? '-' : '0', 
           icon: UserX, 
           color: theme.palette.error.main,
@@ -467,7 +473,7 @@ const DashboardPage = () => {
           navigable: true,
         },
         { 
-          title: 'Pending Verification', 
+          title: t('dashboard.stats.pendingVerification'), 
           value: loading ? '-' : '0', 
           icon: Clock, 
           color: theme.palette.secondary.main,
@@ -483,7 +489,7 @@ const DashboardPage = () => {
     // Handle the actual API response structure
     const stats = [
       { 
-        title: 'Total Users', 
+        title: t('dashboard.stats.totalUsers'), 
         value: (dashboardStats.totalUsers ?? 0).toString(), 
         icon: Users, 
         color: theme.palette.primary.main,
@@ -492,7 +498,7 @@ const DashboardPage = () => {
         navigable: true,
       },
       { 
-        title: 'Active Sessions', 
+        title: t('dashboard.stats.activeSessions'), 
         value: (dashboardStats.activeSessions ?? 0).toString(), 
         icon: Activity, 
         color: theme.palette.success.main,
@@ -501,7 +507,7 @@ const DashboardPage = () => {
         navigable: false,
       },
       { 
-        title: 'Active Users', 
+        title: t('dashboard.stats.activeUsers'), 
         value: (dashboardStats.activeUsers ?? 0).toString(), 
         icon: UserCheck, 
         color: theme.palette.success.dark,
@@ -510,7 +516,7 @@ const DashboardPage = () => {
         navigable: true,
       },
       { 
-        title: 'Locked Users', 
+        title: t('dashboard.stats.lockedUsers'), 
         value: (dashboardStats.lockedUsers ?? 0).toString(), 
         icon: Lock, 
         color: theme.palette.warning.main,
@@ -519,7 +525,7 @@ const DashboardPage = () => {
         navigable: true,
       },
       { 
-        title: 'Suspended Users', 
+        title: t('dashboard.stats.suspendedUsers'), 
         value: (dashboardStats.suspendedUsers ?? 0).toString(), 
         icon: UserX, 
         color: theme.palette.error.main,
@@ -528,7 +534,7 @@ const DashboardPage = () => {
         navigable: true,
       },
       { 
-        title: 'Pending Verification', 
+        title: t('dashboard.stats.pendingVerification'), 
         value: (dashboardStats.pendingVerificationUsers ?? 0).toString(), 
         icon: Clock, 
         color: theme.palette.secondary.main,
@@ -720,7 +726,7 @@ const DashboardPage = () => {
                     gap: 0.5,
                   }}
                 >
-                  📅 {format(new Date(), 'EEEE, MMMM d, yyyy')}
+                  📅 {format(new Date(), 'EEEE, MMMM d, yyyy', { locale: getDateLocale() })}
                 </Typography>
                 
                 {/* Update status */}
@@ -771,7 +777,7 @@ const DashboardPage = () => {
                         fontWeight: 500,
                       }}
                     >
-                      Updated: {format(lastUpdated, 'HH:mm, MMM d, yyyy')}
+                      {t('dashboard.updated')}: {format(lastUpdated, 'HH:mm, MMM d, yyyy', { locale: getDateLocale() })}
                     </Typography>
                   </Box>
                 )}
@@ -791,7 +797,7 @@ const DashboardPage = () => {
               fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' },
             }}
           >
-            📊 Dashboard Overview
+            {t('dashboard.title')}
           </Typography>
           
           <Box 
@@ -1056,7 +1062,7 @@ const DashboardPage = () => {
                       color: 'transparent',
                     }}
                   >
-                    Login
+                    {t('dashboard.recentActivity.title')}
                   </Typography>
                 </Box>
               }
@@ -1094,7 +1100,7 @@ const DashboardPage = () => {
                   variant="outlined"
                   size="small"
                 >
-                  View All
+                  {t('dashboard.recentActivity.viewAll')}
                 </Button>
               }
               sx={{ 
@@ -1183,7 +1189,7 @@ const DashboardPage = () => {
                               gap: 1,
                             }}
                           >
-                            🕒 {format(activity.date, 'MMM d, yyyy • HH:mm')}
+                            🕒 {format(activity.date, 'MMM d, yyyy • HH:mm', { locale: getDateLocale() })}
                           </Typography>
                         }
                         secondary={
