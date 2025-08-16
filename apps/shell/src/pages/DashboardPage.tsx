@@ -47,16 +47,22 @@ import { setPageTitle } from '../redux/slices/uiSlice';
 // Dashboard service
 import dashboardService, { type DashboardStats } from '../services/dashboardService';
 
+// Audit log service
+import auditLogService, { type AuditLogEntry } from '../services/auditLogService';
+
 // Custom hooks
 import { useSingletonEffect } from '../hooks/useSingletonEffect';
 
-// Mock data for dashboard
-const recentActivity = [
-  { id: 1, action: 'User login', user: 'admin@example.com', date: new Date(2025, 5, 6, 14, 25) },
-  { id: 2, action: 'User created', user: 'john.doe@example.com', date: new Date(2025, 5, 5, 16, 10) },
-  { id: 3, action: 'Password reset', user: 'jane.smith@example.com', date: new Date(2025, 5, 5, 11, 32) },
-  { id: 4, action: 'Role updated', user: 'mark.wilson@example.com', date: new Date(2025, 5, 4, 9, 45) },
-];
+// Interface for recent activity item
+interface RecentActivityItem {
+  id: string;
+  action: string;
+  user: string;
+  date: Date;
+  endpoint?: string;
+  result?: 'SUCCESS' | 'ERROR';
+  httpMethod?: string;
+}
 
 const DashboardPage = () => {
   const { t } = useTranslation();
@@ -67,6 +73,7 @@ const DashboardPage = () => {
   
   // State for dashboard data
   const [dashboardStats, setDashboardStats] = useState<DashboardStats | null>(null);
+  const [recentActivity, setRecentActivity] = useState<RecentActivityItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
@@ -74,8 +81,9 @@ const DashboardPage = () => {
   // Use ref to prevent duplicate API calls
   const isApiCallInProgress = useRef(false);
   
-  // Cache key for localStorage
+  // Cache keys for localStorage
   const CACHE_KEY = 'dashboard_stats_cache';
+  const RECENT_ACTIVITY_CACHE_KEY = 'recent_activity_cache';
   const CACHE_EXPIRY_MS = 5 * 60 * 1000; // 5 minutes
   
   // Firebase Performance tracking for dashboard page
@@ -113,6 +121,46 @@ const DashboardPage = () => {
       console.log('💾 Data cached successfully');
     } catch (error) {
       console.error('❌ Error caching data:', error);
+    }
+  };
+  
+  // Recent Activity Cache management helpers
+  const getCachedRecentActivity = () => {
+    try {
+      const cached = localStorage.getItem(RECENT_ACTIVITY_CACHE_KEY);
+      if (cached) {
+        const parsedCache = JSON.parse(cached);
+        // For recent activity, we don't expire by time but only update on login
+        console.log('📦 Using cached recent activity data');
+        return parsedCache.data;
+      }
+    } catch (error) {
+      console.error('❌ Error reading recent activity cache:', error);
+      localStorage.removeItem(RECENT_ACTIVITY_CACHE_KEY);
+    }
+    return null;
+  };
+  
+  const setCachedRecentActivity = (data: RecentActivityItem[]) => {
+    try {
+      const cacheData = {
+        data,
+        timestamp: new Date().getTime(),
+        username: user?.username, // Track which user's data this is
+      };
+      localStorage.setItem(RECENT_ACTIVITY_CACHE_KEY, JSON.stringify(cacheData));
+      console.log('💾 Recent activity cached successfully for user:', user?.username);
+    } catch (error) {
+      console.error('❌ Error caching recent activity:', error);
+    }
+  };
+  
+  const clearRecentActivityCache = () => {
+    try {
+      localStorage.removeItem(RECENT_ACTIVITY_CACHE_KEY);
+      console.log('🗑️ Recent activity cache cleared');
+    } catch (error) {
+      console.error('❌ Error clearing recent activity cache:', error);
     }
   };
   
@@ -180,6 +228,100 @@ const DashboardPage = () => {
     }
   };
   
+  // Fetch recent activity from audit logs
+  const fetchRecentActivity = async (forceRefresh = false) => {
+    // If not forcing refresh, check cache first
+    if (!forceRefresh) {
+      const cachedActivity = getCachedRecentActivity();
+      if (cachedActivity) {
+        setRecentActivity(cachedActivity);
+        console.log('� Loaded recent activity from cache');
+        return;
+      }
+    }
+    
+    try {
+      console.log('�🔄 Fetching recent activity from audit logs...', forceRefresh ? '(forced refresh)' : '');
+      
+      // Get the current user's username or fallback to 'gjpb_user_info'
+      const currentUsername = user?.username || 'gjpb_user_info';
+      
+      const response = await auditLogService.getAuditLogs({
+        endpoint: '/api/v1/auth/tokens',
+        username: currentUsername,
+        size: 5, // Limit to 5 recent activities
+        sort: 'timestamp,desc'
+      });
+      
+      if (response.status.code === 200 && response.data?.content) {
+        // Transform audit log entries to recent activity items
+        const activities: RecentActivityItem[] = response.data.content.map((entry: AuditLogEntry) => ({
+          id: entry.id,
+          action: getActionDescription(entry),
+          user: entry.username || 'Unknown User',
+          date: new Date(entry.timestamp),
+          endpoint: entry.endpoint,
+          result: entry.result,
+          httpMethod: entry.httpMethod
+        }));
+        
+        setRecentActivity(activities);
+        setCachedRecentActivity(activities); // Cache the data
+        console.log('✅ Recent activity successfully loaded and cached:', activities.length, 'items');
+      } else {
+        console.warn('⚠️ No recent activity data found');
+        setRecentActivity([]);
+      }
+    } catch (error: any) {
+      console.error('💥 Error fetching recent activity:', error);
+      // Keep existing activities or set empty array
+      setRecentActivity([]);
+    }
+  };
+  
+  // Helper functions for action descriptions
+  const getAuthAction = (method: string): string => {
+    if (method === 'POST') return 'Token Authentication';
+    if (method === 'DELETE') return 'Token Revocation';
+    return 'Token Validation';
+  };
+  
+  const getUserAction = (method: string): string => {
+    if (method === 'POST') return 'User Created';
+    if (method === 'PUT') return 'User Updated';
+    if (method === 'DELETE') return 'User Deleted';
+    return 'User Action';
+  };
+
+  // Helper function to get human-readable action description
+  const getActionDescription = (entry: AuditLogEntry): string => {
+    const method = entry.httpMethod?.toUpperCase() || '';
+    const endpoint = entry.endpoint || '';
+    
+    if (endpoint.includes('/auth/tokens')) return getAuthAction(method);
+    if (endpoint.includes('/auth/login')) return 'User Login';
+    if (endpoint.includes('/auth/logout')) return 'User Logout';
+    if (endpoint.includes('/users')) return getUserAction(method);
+    if (endpoint.includes('/password')) return 'Password Reset';
+    if (endpoint.includes('/roles')) return 'Role Management';
+    
+    return `${method} ${endpoint}`;
+  };
+  
+  // Public function to update recent activity cache after login
+  // This can be called from auth service or login components
+  const updateRecentActivityAfterLogin = async () => {
+    console.log('🔐 Login detected, updating recent activity cache');
+    clearRecentActivityCache(); // Clear old cache
+    await fetchRecentActivity(true); // Fetch fresh data
+  };
+  
+  // Expose function for external use (e.g., from auth service)
+  // You can call this after successful login: window.updateDashboardRecentActivity?.()
+  if (typeof window !== 'undefined') {
+    (window as any).updateDashboardRecentActivity = updateRecentActivityAfterLogin;
+  }
+  
   // Use a different approach: combine useRef with useEffect to prevent duplicate calls
   const hasMounted = useRef(false);
   
@@ -200,7 +342,50 @@ const DashboardPage = () => {
     
     // Fetch dashboard data
     fetchDashboardStats();
+    
+    // Load recent activity from cache first, don't fetch fresh data on component mount
+    const cachedActivity = getCachedRecentActivity();
+    if (cachedActivity) {
+      setRecentActivity(cachedActivity);
+      console.log('📦 Loaded recent activity from cache on mount');
+    } else {
+      // Only fetch fresh data if no cache exists
+      fetchRecentActivity();
+    }
   }, []); // Empty dependency array to prevent multiple calls
+  
+  // Function to refresh recent activity after login
+  const refreshRecentActivityAfterLogin = async () => {
+    console.log('🔄 Refreshing recent activity after user login');
+    await fetchRecentActivity(true); // Force refresh
+  };
+  
+  // Watch for user changes (login/logout) to update recent activity
+  useSingletonEffect(() => {
+    if (user?.username) {
+      console.log('👤 User detected, checking if recent activity needs refresh');
+      
+      // Check if cached data is for a different user
+      try {
+        const cached = localStorage.getItem(RECENT_ACTIVITY_CACHE_KEY);
+        if (cached) {
+          const parsedCache = JSON.parse(cached);
+          if (parsedCache.username !== user.username) {
+            console.log('🔄 User changed, refreshing recent activity');
+            clearRecentActivityCache();
+            refreshRecentActivityAfterLogin();
+          }
+        } else {
+          // No cache exists, fetch data for the logged-in user
+          console.log('📭 No cached data, fetching recent activity for logged-in user');
+          refreshRecentActivityAfterLogin();
+        }
+      } catch (error) {
+        console.error('❌ Error checking user cache:', error);
+        refreshRecentActivityAfterLogin();
+      }
+    }
+  }, [user?.username]); // Depend on username to trigger when user changes
   
   // Navigation handlers for stats cards
   const handleStatsCardClick = (statTitle: string) => {
@@ -552,7 +737,10 @@ const DashboardPage = () => {
                   }}>
                     <IconButton
                       size="small"
-                      onClick={() => fetchDashboardStats(true)}
+                      onClick={() => {
+                        fetchDashboardStats(true);
+                        // Note: Recent activity cache only updates on user login, not on manual refresh
+                      }}
                       disabled={loading}
                       sx={{
                         color: 'rgba(255, 255, 255, 0.9)',
@@ -868,7 +1056,7 @@ const DashboardPage = () => {
                       color: 'transparent',
                     }}
                   >
-                    Activity Feed
+                    Login
                   </Typography>
                 </Box>
               }
@@ -990,13 +1178,28 @@ const DashboardPage = () => {
                               fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
                               lineHeight: 1.4,
                               mb: 0.5,
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 1,
                             }}
                           >
-                            {activity.action}
+                            🕒 {format(activity.date, 'MMM d, yyyy • HH:mm')}
                           </Typography>
                         }
                         secondary={
                           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                            <Typography 
+                              variant="body2" 
+                              sx={{ 
+                                color: theme.palette.text.secondary,
+                                fontSize: { xs: '0.8rem', sm: '0.85rem', md: '0.9rem' },
+                                fontWeight: 500,
+                                mb: 0.5,
+                              }}
+                            >
+                              {activity.action}
+                            </Typography>
+                            
                             <Typography 
                               variant="body2" 
                               sx={{ 
@@ -1018,20 +1221,6 @@ const DashboardPage = () => {
                               <Box component="span" sx={{ fontWeight: 500 }}>
                                 {activity.user}
                               </Box>
-                            </Typography>
-                            
-                            <Typography 
-                              variant="body2" 
-                              sx={{ 
-                                color: theme.palette.text.secondary,
-                                fontSize: { xs: '0.75rem', sm: '0.8rem' },
-                                opacity: 0.8,
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 1,
-                              }}
-                            >
-                              🕒 {format(activity.date, 'MMM d, yyyy • HH:mm')}
                             </Typography>
                           </Box>
                         }
