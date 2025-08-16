@@ -16,21 +16,22 @@ import {
   useTheme,
   CircularProgress,
   Modal,
-  Divider,
+  Tooltip,
 } from '@mui/material';
 import {
   Search,
   Filter,
   Eye,
-  Clock,
   User,
-  Globe,
   Activity,
   RefreshCw,
   ChevronDown,
   ChevronUp,
   Calendar,
   X,
+  CheckCircle,
+  XCircle,
+  Info,
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 
@@ -57,6 +58,7 @@ const AuditLogPage = () => {
 
   // State management
   const [auditLogs, setAuditLogs] = useState<AuditLogData | null>(null);
+  const [originalAuditLogs, setOriginalAuditLogs] = useState<AuditLogData | null>(null); // Store original data for frontend filtering
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchPanelExpanded, setSearchPanelExpanded] = useState(false);
@@ -74,11 +76,121 @@ const AuditLogPage = () => {
   const [endpointFilter, setEndpointFilter] = useState('');
   const [resultFilter, setResultFilter] = useState('');
   const [ipAddressFilter, setIpAddressFilter] = useState('');
+  const [responseTimeFilter, setResponseTimeFilter] = useState(''); // Response time filter in ms
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
 
   // Column helper for DataTable
   const columnHelper = createColumnHelper<AuditLogEntry>();
+
+  // Frontend filtering function
+  const applyFrontendFilters = (data: AuditLogData): AuditLogData => {
+    if (!data?.content) return data;
+
+    let filteredContent = [...data.content];
+
+    // Apply username filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.trim().toLowerCase();
+      filteredContent = filteredContent.filter(log => 
+        log.username?.toLowerCase().includes(query) ||
+        log.userId?.toLowerCase().includes(query)
+      );
+    }
+
+    // Apply endpoint filter
+    if (endpointFilter.trim()) {
+      const query = endpointFilter.trim().toLowerCase();
+      filteredContent = filteredContent.filter(log => 
+        log.endpoint?.toLowerCase().includes(query)
+      );
+    }
+
+    // Apply HTTP method filter
+    if (httpMethodFilter) {
+      filteredContent = filteredContent.filter(log => 
+        log.httpMethod === httpMethodFilter
+      );
+    }
+
+    // Apply result filter
+    if (resultFilter) {
+      const query = resultFilter.toLowerCase();
+      filteredContent = filteredContent.filter(log => {
+        const result = log.result?.toLowerCase() || '';
+        return result.includes(query) || 
+               (query === 'success' && result === 'success') ||
+               (query === 'error' && (result === 'error' || result.includes('fail')));
+      });
+    }
+
+    // Apply IP address filter
+    if (ipAddressFilter.trim()) {
+      const query = ipAddressFilter.trim().toLowerCase();
+      filteredContent = filteredContent.filter(log => 
+        log.ipAddress?.toLowerCase().includes(query)
+      );
+    }
+
+    // Apply response time filter
+    if (responseTimeFilter.trim()) {
+      const minResponseTime = parseInt(responseTimeFilter.trim());
+      if (!isNaN(minResponseTime)) {
+        filteredContent = filteredContent.filter(log => 
+          log.durationMs >= minResponseTime
+        );
+      }
+    }
+
+    // Apply date range filter
+    if (startDate || endDate) {
+      filteredContent = filteredContent.filter(log => {
+        const logDate = new Date(log.timestamp);
+        const start = startDate ? new Date(startDate) : null;
+        const end = endDate ? new Date(endDate + 'T23:59:59') : null;
+        
+        if (start && logDate < start) return false;
+        if (end && logDate > end) return false;
+        return true;
+      });
+    }
+
+    return {
+      ...data,
+      content: filteredContent,
+      totalElements: filteredContent.length,
+      totalPages: Math.ceil(filteredContent.length / data.size),
+      size: data.size,
+      number: 0, // Reset to first page when filtering
+    };
+  };
+
+  // Watch for filter changes and apply frontend filtering
+  useEffect(() => {
+    if (originalAuditLogs) {
+      const filtered = applyFrontendFilters(originalAuditLogs);
+      // Apply client-side pagination
+      const startIndex = page * rowsPerPage;
+      const endIndex = startIndex + rowsPerPage;
+      const paginatedContent = filtered.content.slice(startIndex, endIndex);
+      
+      const paginatedData = {
+        ...filtered,
+        content: paginatedContent,
+        totalElements: filtered.content.length, // Total filtered items
+        totalPages: Math.ceil(filtered.content.length / rowsPerPage),
+        size: rowsPerPage,
+        number: page,
+      };
+      
+      setAuditLogs(paginatedData);
+    }
+  }, [searchQuery, endpointFilter, httpMethodFilter, resultFilter, ipAddressFilter, responseTimeFilter, startDate, endDate, originalAuditLogs, page, rowsPerPage]);
+
+  // Reset to first page when filters change (but not page/rowsPerPage)
+  useEffect(() => {
+    setPage(0);
+  }, [searchQuery, endpointFilter, httpMethodFilter, resultFilter, ipAddressFilter, responseTimeFilter, startDate, endDate]);
 
   // Map result status to UI status for display
   const resultStatusMap = {
@@ -89,16 +201,149 @@ const AuditLogPage = () => {
   // Define table columns
   const columns = [
     columnHelper.accessor('timestamp', {
-      header: 'Timestamp',
+      header: 'Date & Time',
       cell: (info) => (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Clock size={16} />
-          <span>{format(parseISO(info.getValue()), 'MMM dd, yyyy HH:mm:ss')}</span>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+          <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.875rem' }}>
+            {format(parseISO(info.getValue()), 'MMM dd, yyyy')}
+          </Typography>
+          <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.75rem' }}>
+            {format(parseISO(info.getValue()), 'HH:mm:ss')}
+          </Typography>
         </Box>
       ),
     }),
+    columnHelper.accessor('endpoint', {
+      header: 'Request',
+      cell: (info) => {
+        const row = info.row.original;
+        const method = row.httpMethod;
+        const endpoint = info.getValue();
+        
+        return (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, py: 0.5 }}>
+            <Chip 
+              label={method} 
+              size="small" 
+              variant="outlined"
+              color={
+                method === 'GET' ? 'primary' :
+                method === 'POST' ? 'success' :
+                method === 'PUT' ? 'warning' : 
+                method === 'DELETE' ? 'error' : 'default'
+              }
+              sx={{ 
+                minWidth: 42, 
+                height: 20,
+                fontSize: '0.625rem',
+                fontWeight: 600,
+                '& .MuiChip-label': {
+                  px: 0.5,
+                  py: 0
+                }
+              }}
+            />
+            <Typography 
+              variant="body2" 
+              sx={{ 
+                color: 'text.primary',
+                fontSize: '0.875rem',
+                fontWeight: 500,
+                maxWidth: '320px',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                display: 'block',
+                lineHeight: 1.4
+              }}
+              title={endpoint || '-'}
+            >
+              {endpoint || '-'}
+            </Typography>
+          </Box>
+        );
+      },
+    }),
+    columnHelper.accessor('durationMs', {
+      header: 'Response Time',
+      cell: (info) => {
+        const duration = info.getValue();
+        if (!duration) return '-';
+        
+        const durationNum = Number(duration);
+        let color: string;
+        
+        // Color coding for response times
+        if (durationNum > 2000) {
+          color = '#d32f2f'; // Red for > 2s
+        } else if (durationNum > 1000) {
+          color = '#f57c00'; // Orange for > 1s
+        } else if (durationNum > 500) {
+          color = '#1976d2'; // Blue for > 500ms
+        } else {
+          color = '#2e7d32'; // Green for <= 500ms
+        }
+        
+        return (
+          <Typography variant="body2" sx={{ color, fontWeight: 500 }}>
+            {duration}ms
+          </Typography>
+        );
+      },
+    }),
+    columnHelper.accessor('result', {
+      header: 'Result',
+      cell: (info) => {
+        const result = info.getValue();
+        const resultStr = String(result || '').toLowerCase();
+        
+        // Check for success patterns
+        const isSuccess = result === 'SUCCESS' || 
+                         resultStr.includes('success') ||
+                         resultStr.includes('successful');
+        
+        // Check for error/failure patterns
+        const isError = result === 'ERROR' || 
+                       resultStr.includes('error') ||
+                       resultStr.includes('fail') ||
+                       resultStr.includes('failed');
+        
+        if (isSuccess) {
+          return (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <CheckCircle size={16} style={{ color: '#2e7d32' }} />
+              <Typography variant="body2" sx={{ color: '#2e7d32', fontWeight: 500 }}>
+                Success
+              </Typography>
+            </Box>
+          );
+        } else if (isError) {
+          return (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <XCircle size={16} style={{ color: '#d32f2f' }} />
+              <Typography variant="body2" sx={{ color: '#d32f2f', fontWeight: 500 }}>
+                Failed
+              </Typography>
+            </Box>
+          );
+        } else {
+          // For unknown status, show as chip with original logic
+          const statusConfig = resultStatusMap[result as keyof typeof resultStatusMap];
+          return (
+            <Chip 
+              label={statusConfig?.label || String(result)}
+              size="small"
+              color={statusConfig?.color || 'default'}
+              sx={{ 
+                fontWeight: 500,
+              }}
+            />
+          );
+        }
+      },
+    }),
     columnHelper.accessor('username', {
-      header: 'Username',
+      header: 'User',
       cell: (info) => (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <User size={16} />
@@ -106,68 +351,30 @@ const AuditLogPage = () => {
         </Box>
       ),
     }),
-    columnHelper.accessor('httpMethod', {
-      header: 'HTTP Method',
-      cell: (info) => (
-        <Chip 
-          label={info.getValue()} 
-          size="small" 
-          variant="outlined"
-          sx={{ minWidth: 60, fontSize: '0.75rem' }}
-        />
-      ),
-    }),
-    columnHelper.accessor('endpoint', {
-      header: 'Endpoint',
-      cell: (info) => (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Globe size={16} />
-          <span>{info.getValue() || '-'}</span>
-        </Box>
-      ),
-    }),
-    columnHelper.accessor('result', {
-      header: 'Result',
-      cell: (info) => {
-        const result = info.getValue();
-        const statusConfig = resultStatusMap[result];
-        const customTextColor = result === 'SUCCESS' ? '#1b5e20' : undefined;
-        return (
-          <Chip 
-            label={statusConfig?.label || result}
-            size="small"
-            color={statusConfig?.color || 'default'}
-            sx={{ 
-              fontWeight: 500,
-              ...(customTextColor && {
-                color: customTextColor,
-                '& .MuiChip-label': {
-                  color: customTextColor,
-                }
-              })
-            }}
-          />
-        );
-      },
-    }),
     columnHelper.accessor('ipAddress', {
-      header: 'IP Address',
-      cell: (info) => info.getValue() || '-',
-    }),
-    columnHelper.accessor('durationMs', {
-      header: 'Duration (ms)',
-      cell: (info) => {
-        const duration = info.getValue();
-        return duration ? `${duration}ms` : '-';
-      },
+      header: 'Client IP',
+      cell: (info) => (
+        <Typography 
+          variant="body2" 
+          sx={{ 
+            fontFamily: 'monospace',
+            fontSize: '0.813rem'
+          }}
+        >
+          {info.getValue() || '-'}
+        </Typography>
+      ),
     }),
   ];
 
   // Fetch audit logs - similar pattern to Users page
   const fetchAuditLogsInternal = async (searchParams?: {
     username?: string;
-    result?: string;
+    endpoint?: string;
     httpMethod?: string;
+    result?: string;
+    ipAddress?: string;
+    minDurationMs?: number;
     startDate?: string;
     endDate?: string;
   }, customPageSize?: number, customPage?: number) => {
@@ -181,18 +388,24 @@ const AuditLogPage = () => {
         sort: 'timestamp,desc',
       };
 
-      // Add search parameters if provided (only those supported by the API)
+      // Add search parameters if provided
       if (searchParams?.username) {
         params.username = searchParams.username;
       }
-      if (searchParams?.result) {
-        // Only pass to API if it's a valid enum value
-        if (searchParams.result === 'SUCCESS' || searchParams.result === 'ERROR') {
-          params.result = searchParams.result;
-        }
+      if (searchParams?.endpoint) {
+        params.endpoint = searchParams.endpoint;
       }
       if (searchParams?.httpMethod) {
         params.httpMethod = searchParams.httpMethod;
+      }
+      if (searchParams?.result) {
+        params.result = searchParams.result;
+      }
+      if (searchParams?.ipAddress) {
+        params.ipAddress = searchParams.ipAddress;
+      }
+      if (searchParams?.minDurationMs) {
+        params.minDurationMs = searchParams.minDurationMs;
       }
       if (searchParams?.startDate) {
         params.startDate = searchParams.startDate;
@@ -205,6 +418,10 @@ const AuditLogPage = () => {
       const response = await auditLogService.getAuditLogs(params);
       
       if (response.status.code === 200) {
+        // Store original data for frontend filtering
+        setOriginalAuditLogs(response.data);
+        // Initially set the audit logs to the original data
+        // Frontend filtering will be applied by the useEffect
         setAuditLogs(response.data);
         console.log('✅ Audit logs loaded successfully:', response.data);
       } else {
@@ -230,48 +447,17 @@ const AuditLogPage = () => {
     }
   }, []); // NO dependencies - only run once on mount
 
-  // Handle pagination change for DataTable - call API
+  // Handle pagination change for frontend filtering
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
-    
-    // Call API to get data for the new page
-    const searchParams = {
-      username: searchQuery.trim() || undefined,
-      result: resultFilter.trim() || undefined,
-      httpMethod: httpMethodFilter || undefined,
-      startDate: startDate || undefined,
-      endDate: endDate || undefined,
-    };
-    
-    // Remove undefined values
-    const cleanParams = Object.fromEntries(
-      Object.entries(searchParams).filter(([_, value]) => value !== undefined)
-    );
-    
-    fetchAuditLogsInternal(cleanParams);
+    // Frontend pagination will be handled by the useEffect above
   };
 
-  // Handle page size change for DataTable - refresh data from API
+  // Handle page size change for frontend filtering
   const handlePageSizeChange = (newPageSize: number) => {
     setRowsPerPage(newPageSize);
-    setPage(0);
-    
-    // Call API to refresh data with current filter values and new page size
-    const searchParams = {
-      username: searchQuery.trim() || undefined,
-      result: resultFilter.trim() || undefined,
-      httpMethod: httpMethodFilter || undefined,
-      startDate: startDate || undefined,
-      endDate: endDate || undefined,
-    };
-    
-    // Remove undefined values
-    const cleanParams = Object.fromEntries(
-      Object.entries(searchParams).filter(([_, value]) => value !== undefined)
-    );
-    
-    // Pass the new page size directly to the fetch function
-    fetchAuditLogsInternal(cleanParams, newPageSize, 0);
+    setPage(0); // Reset to first page when changing page size
+    // Frontend pagination will be handled by the useEffect above
   };
 
   // Handle search and filters - API search on button click
@@ -282,11 +468,14 @@ const AuditLogPage = () => {
   const handleSearch = () => {
     setPage(0); // Reset to first page when searching
     
-    // Call API with current filter values (only those supported by API)
+    // Call API with ALL current filter values
     const searchParams = {
       username: searchQuery.trim() || undefined,
-      result: resultFilter.trim() || undefined,
+      endpoint: endpointFilter.trim() || undefined,
       httpMethod: httpMethodFilter || undefined,
+      result: resultFilter.trim() || undefined,
+      ipAddress: ipAddressFilter.trim() || undefined,
+      minDurationMs: responseTimeFilter.trim() ? parseInt(responseTimeFilter.trim()) : undefined,
       startDate: startDate || undefined,
       endDate: endDate || undefined,
     };
@@ -296,11 +485,16 @@ const AuditLogPage = () => {
       Object.entries(searchParams).filter(([_, value]) => value !== undefined)
     );
     
+    console.log('🔍 Applying search filters:', cleanParams);
     fetchAuditLogsInternal(cleanParams);
   };
 
   const handleClearAll = () => {
     clearFilters();
+    // Automatically trigger search after clearing filters
+    setTimeout(() => {
+      fetchAuditLogsInternal();
+    }, 100);
   };
 
   const handleKeyPress = (event: React.KeyboardEvent) => {
@@ -315,11 +509,15 @@ const AuditLogPage = () => {
     setEndpointFilter('');
     setResultFilter('');
     setIpAddressFilter('');
+    setResponseTimeFilter('');
     setHttpMethodFilter('');
     setStartDate('');
     setEndDate('');
     setPage(0);
-    // Don't call API - just clear the form fields
+    // When clearing filters, reset to original data without frontend filtering
+    if (originalAuditLogs) {
+      setAuditLogs(originalAuditLogs);
+    }
   };
 
   // Filter handlers - update state only (no real-time API calls)
@@ -333,6 +531,10 @@ const AuditLogPage = () => {
 
   const handleIpAddressFilterChange = (value: string) => {
     setIpAddressFilter(value);
+  };
+
+  const handleResponseTimeFilterChange = (value: string) => {
+    setResponseTimeFilter(value);
   };
 
   const handleHttpMethodFilterChange = (value: string) => {
@@ -412,6 +614,38 @@ const AuditLogPage = () => {
             >
               {searchPanelExpanded ? 'Hide Filters' : 'Show Filters'}
             </Typography>
+            {(() => {
+              const activeFilters = [
+                searchQuery,
+                endpointFilter,
+                resultFilter,
+                ipAddressFilter,
+                responseTimeFilter,
+                httpMethodFilter,
+                startDate,
+                endDate
+              ].filter(Boolean).length;
+              
+              return activeFilters > 0 ? (
+                <Box
+                  sx={{
+                    backgroundColor: 'error.main',
+                    color: 'white',
+                    borderRadius: '50%',
+                    width: 18,
+                    height: 18,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '0.75rem',
+                    fontWeight: 600,
+                    ml: 0.5
+                  }}
+                >
+                  {activeFilters}
+                </Box>
+              ) : null;
+            })()}
             {searchPanelExpanded ? (
               <ChevronUp size={18} style={{ color: theme.palette.primary.main }} />
             ) : (
@@ -450,21 +684,82 @@ const AuditLogPage = () => {
                 >
                   Search Filters
                 </Typography>
+                <Tooltip 
+                  title="Smart Filtering: Filters work instantly as you type for quick results. Use 'Search' button for server-side filtering with fresh data."
+                  placement="top"
+                  arrow
+                >
+                  <IconButton size="small" sx={{ ml: 0.5 }}>
+                    <Info size={16} style={{ color: theme.palette.primary.main, opacity: 0.7 }} />
+                  </IconButton>
+                </Tooltip>
+                {(() => {
+                  const activeFilters = [
+                    searchQuery,
+                    endpointFilter,
+                    resultFilter,
+                    ipAddressFilter,
+                    responseTimeFilter,
+                    httpMethodFilter,
+                    startDate,
+                    endDate
+                  ].filter(Boolean).length;
+                  
+                  return activeFilters > 0 ? (
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        backgroundColor: 'primary.main',
+                        color: 'white',
+                        px: 1,
+                        py: 0.3,
+                        borderRadius: 1,
+                        fontSize: '0.7rem',
+                        fontWeight: 500,
+                        ml: 1
+                      }}
+                    >
+                      {activeFilters} active
+                    </Typography>
+                  ) : null;
+                })()}
               </Box>
               
               <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                <Button
-                  variant="outlined"
-                  size="small"
-                  onClick={handleClearAll}
-                  sx={{
-                    borderRadius: 2,
-                    textTransform: 'none',
-                    fontWeight: 500,
-                  }}
-                >
-                  Clear All
-                </Button>
+                {(() => {
+                  const hasActiveFilters = [
+                    searchQuery,
+                    endpointFilter,
+                    resultFilter,
+                    ipAddressFilter,
+                    responseTimeFilter,
+                    httpMethodFilter,
+                    startDate,
+                    endDate
+                  ].filter(Boolean).length > 0;
+                  
+                  return hasActiveFilters ? (
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      onClick={handleClearAll}
+                      startIcon={<X size={14} />}
+                      sx={{
+                        borderRadius: 2,
+                        textTransform: 'none',
+                        fontWeight: 500,
+                        borderColor: 'warning.main',
+                        color: 'warning.main',
+                        '&:hover': {
+                          borderColor: 'warning.dark',
+                          backgroundColor: 'warning.light',
+                        },
+                      }}
+                    >
+                      Clear All
+                    </Button>
+                  ) : null;
+                })()}
                 
                 <Button
                   variant="contained"
@@ -515,7 +810,7 @@ const AuditLogPage = () => {
               display: 'grid', 
               gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', 
               gap: 2, 
-              mt: 1,
+              mt: 2,
             }}>
               {/* Search by username */}
               <Box>
@@ -537,7 +832,7 @@ const AuditLogPage = () => {
                   onKeyDown={handleKeyPress}
                   size="small"
                   fullWidth
-                  placeholder="Enter username..."
+                  placeholder="Enter username (filters instantly)"
                   slotProps={{
                     input: {
                       startAdornment: (
@@ -567,14 +862,15 @@ const AuditLogPage = () => {
                 <TextField
                   value={endpointFilter}
                   onChange={(e) => handleEndpointFilterChange(e.target.value)}
+                  onKeyDown={handleKeyPress}
                   size="small"
                   fullWidth
-                  placeholder="Enter endpoint..."
+                  placeholder="Enter endpoint (filters instantly)"
                   slotProps={{
                     input: {
                       startAdornment: (
                         <InputAdornment position="start">
-                          <Globe size={16} style={{ opacity: 0.6 }} />
+                          <Search size={16} style={{ opacity: 0.6 }} />
                         </InputAdornment>
                       ),
                     }
@@ -625,22 +921,22 @@ const AuditLogPage = () => {
                 >
                   Result
                 </Typography>
-                <TextField
-                  value={resultFilter}
-                  onChange={(e) => handleResultFilterChange(e.target.value)}
-                  size="small"
-                  fullWidth
-                  placeholder="Enter result..."
-                  slotProps={{
-                    input: {
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Activity size={16} style={{ opacity: 0.6 }} />
-                        </InputAdornment>
-                      ),
+                <FormControl size="small" fullWidth>
+                  <Select
+                    value={resultFilter}
+                    onChange={(e) => handleResultFilterChange(e.target.value)}
+                    displayEmpty
+                    startAdornment={
+                      <InputAdornment position="start">
+                        <Activity size={16} style={{ opacity: 0.6 }} />
+                      </InputAdornment>
                     }
-                  }}
-                />
+                  >
+                    <MenuItem value="">All Results</MenuItem>
+                    <MenuItem value="SUCCESS">Success</MenuItem>
+                    <MenuItem value="FAILED">Failed</MenuItem>
+                  </Select>
+                </FormControl>
               </Box>
 
               {/* IP Address filter */}
@@ -660,6 +956,7 @@ const AuditLogPage = () => {
                 <TextField
                   value={ipAddressFilter}
                   onChange={(e) => handleIpAddressFilterChange(e.target.value)}
+                  onKeyDown={handleKeyPress}
                   size="small"
                   fullWidth
                   placeholder="Enter IP address..."
@@ -667,7 +964,41 @@ const AuditLogPage = () => {
                     input: {
                       startAdornment: (
                         <InputAdornment position="start">
-                          <Globe size={16} style={{ opacity: 0.6 }} />
+                          <Search size={16} style={{ opacity: 0.6 }} />
+                        </InputAdornment>
+                      ),
+                    }
+                  }}
+                />
+              </Box>
+
+              {/* Response Time filter */}
+              <Box>
+                <Typography 
+                  component="label" 
+                  sx={{ 
+                    fontWeight: 500,
+                    color: 'text.primary',
+                    fontSize: '0.875rem',
+                    mb: 0.8,
+                    display: 'block',
+                  }}
+                >
+                  Response Time (ms)
+                </Typography>
+                <TextField
+                  value={responseTimeFilter}
+                  onChange={(e) => handleResponseTimeFilterChange(e.target.value)}
+                  onKeyDown={handleKeyPress}
+                  size="small"
+                  fullWidth
+                  type="number"
+                  placeholder="Min response time in ms"
+                  slotProps={{
+                    input: {
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Activity size={16} style={{ opacity: 0.6 }} />
                         </InputAdornment>
                       ),
                     }
@@ -765,29 +1096,49 @@ const AuditLogPage = () => {
           }}
         >
           <CardContent sx={{ p: 0 }}>
-            <DataTable
-              data={auditLogs?.content || []}
-              columns={columns}
-              showSearch={false}
-              onRowDoubleClick={handleRowDoubleClick}
-              manualPagination={true}
-              pageCount={auditLogs?.totalPages || 0}
-              currentPage={page}
-              pageSize={rowsPerPage}
-              totalRows={auditLogs?.totalElements || 0}
-              onPageChange={handlePageChange}
-              onPageSizeChange={handlePageSizeChange}
-              rowsPerPageOptions={[10, 20, 50, 100]}
-              actionMenuItems={[
-                { 
-                  label: 'View Details', 
-                  icon: <Eye size={16} />, 
-                  action: (log: AuditLogEntry) => {
-                    handleRowDoubleClick(log);
-                  }
+            <Box
+              sx={{
+                '& .MuiTableHead-root': {
+                  backgroundColor: '#f8fafc',
                 },
-              ]}
-            />
+                '& .MuiTableHead-root .MuiTableCell-head': {
+                  backgroundColor: '#f8fafc',
+                  borderBottom: '2px solid #e2e8f0',
+                  fontWeight: 700,
+                  fontSize: '0.875rem',
+                  color: '#475569',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.025em',
+                },
+                '& .MuiTableHead-root .MuiTableCell-head:hover': {
+                  backgroundColor: '#f1f5f9',
+                },
+              }}
+            >
+              <DataTable
+                data={auditLogs?.content || []}
+                columns={columns}
+                showSearch={false}
+                onRowDoubleClick={handleRowDoubleClick}
+                manualPagination={true}
+                pageCount={auditLogs?.totalPages || 0}
+                currentPage={page}
+                pageSize={rowsPerPage}
+                totalRows={auditLogs?.totalElements || 0}
+                onPageChange={handlePageChange}
+                onPageSizeChange={handlePageSizeChange}
+                rowsPerPageOptions={[10, 20, 50, 100]}
+                actionMenuItems={[
+                  { 
+                    label: 'View Details', 
+                    icon: <Eye size={16} />, 
+                    action: (log: AuditLogEntry) => {
+                      handleRowDoubleClick(log);
+                    }
+                  },
+                ]}
+              />
+            </Box>
           </CardContent>
         </Card>
       )}

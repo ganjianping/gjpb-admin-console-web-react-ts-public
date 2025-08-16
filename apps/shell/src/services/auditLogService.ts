@@ -77,13 +77,23 @@ export interface AuditLogQueryParams {
   page?: number;
   size?: number;
   sort?: string;
+  userId?: string;
   username?: string;
-  action?: string;
-  resourceType?: string;
-  result?: 'SUCCESS' | 'ERROR';
+  httpMethod?: string;
+  endpoint?: string;
+  result?: string;
+  statusCode?: number;
+  ipAddress?: string;
+  minDurationMs?: number;
+  maxDurationMs?: number;
+  resultPattern?: string;
+  endpointPattern?: string;
+  startTime?: string;
+  endTime?: string;
   startDate?: string;
   endDate?: string;
-  httpMethod?: string;
+  action?: string;
+  resourceType?: string;
 }
 
 // Helper function to build query parameters
