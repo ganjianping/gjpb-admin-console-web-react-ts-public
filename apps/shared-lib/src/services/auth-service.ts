@@ -86,6 +86,23 @@ class AuthService {
         failedLoginAttempts: authResponse.failedLoginAttempts,
         roleCodes: authResponse.roleCodes,
       }));
+
+      // Notify dashboard component to refresh cache after successful login
+      try {
+        console.log('[AuthService] Notifying dashboard to refresh after login for user:', authResponse.username);
+        
+        // Use a small delay to ensure the dashboard component is mounted
+        setTimeout(() => {
+          if (typeof window !== 'undefined' && (window as any).updateDashboardAfterLogin) {
+            (window as any).updateDashboardAfterLogin();
+            console.log('[AuthService] Dashboard refresh notification sent successfully');
+          } else {
+            console.warn('[AuthService] Dashboard refresh function not available');
+          }
+        }, 100);
+      } catch (error) {
+        console.warn('[AuthService] Error notifying dashboard refresh:', error);
+      }
       
       return authResponse;
     } catch (error) {

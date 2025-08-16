@@ -46,10 +46,10 @@ import { selectCurrentUser } from '../redux/slices/authSlice';
 import { setPageTitle } from '../redux/slices/uiSlice';
 
 // Dashboard service
-import dashboardService, { type DashboardStats } from '../services/dashboardService';
+import { type DashboardStats } from '../services/dashboardService';
 
-// Audit log service
-import auditLogService, { type AuditLogEntry } from '../services/auditLogService';
+// Dashboard cache service
+import { dashboardCacheService } from '../../../shared-lib/src/services/dashboard-cache-service';
 
 // Custom hooks
 import { useSingletonEffect } from '../hooks/useSingletonEffect';
@@ -82,11 +82,6 @@ const DashboardPage = () => {
   // Use ref to prevent duplicate API calls
   const isApiCallInProgress = useRef(false);
   
-  // Cache keys for localStorage
-  const CACHE_KEY = 'dashboard_stats_cache';
-  const RECENT_ACTIVITY_CACHE_KEY = 'recent_activity_cache';
-  const CACHE_EXPIRY_MS = 5 * 60 * 1000; // 5 minutes
-  
   // Firebase Performance tracking for dashboard page
   useFirebasePerformance('dashboard', user?.username);
   
@@ -95,95 +90,8 @@ const DashboardPage = () => {
     return i18n.language.startsWith('zh') ? zhCN : enUS;
   };
 
-  // Cache management helpers
-  const getCachedData = () => {
-    try {
-      const cached = localStorage.getItem(CACHE_KEY);
-      if (cached) {
-        const parsedCache = JSON.parse(cached);
-        const now = new Date().getTime();
-        if (now - parsedCache.timestamp < CACHE_EXPIRY_MS) {
-          console.log('📦 Using cached dashboard data');
-          return parsedCache.data;
-        } else {
-          console.log('⏰ Cache expired, removing old data');
-          localStorage.removeItem(CACHE_KEY);
-        }
-      }
-    } catch (error) {
-      console.error('❌ Error reading cache:', error);
-      localStorage.removeItem(CACHE_KEY);
-    }
-    return null;
-  };
-  
-  const setCachedData = (data: any) => {
-    try {
-      const cacheData = {
-        data,
-        timestamp: new Date().getTime(),
-      };
-      localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
-      console.log('💾 Data cached successfully');
-    } catch (error) {
-      console.error('❌ Error caching data:', error);
-    }
-  };
-  
-  // Recent Activity Cache management helpers
-  const getCachedRecentLoginActivity = () => {
-    try {
-      const cached = localStorage.getItem(RECENT_ACTIVITY_CACHE_KEY);
-      if (cached) {
-        const parsedCache = JSON.parse(cached);
-        // For recent activity, we don't expire by time but only update on login
-        console.log('📦 Using cached recent activity data');
-        return parsedCache.data;
-      }
-    } catch (error) {
-      console.error('❌ Error reading recent activity cache:', error);
-      localStorage.removeItem(RECENT_ACTIVITY_CACHE_KEY);
-    }
-    return null;
-  };
-  
-  const setCachedRecentLoginActivity = (data: RecentLoginActivityItem[]) => {
-    try {
-      const cacheData = {
-        data,
-        timestamp: new Date().getTime(),
-        username: user?.username, // Track which user's data this is
-      };
-      localStorage.setItem(RECENT_ACTIVITY_CACHE_KEY, JSON.stringify(cacheData));
-      console.log('💾 Recent activity cached successfully for user:', user?.username);
-    } catch (error) {
-      console.error('❌ Error caching recent activity:', error);
-    }
-  };
-  
-  const clearRecentLoginActivityCache = () => {
-    try {
-      localStorage.removeItem(RECENT_ACTIVITY_CACHE_KEY);
-      console.log('🗑️ Recent activity cache cleared');
-    } catch (error) {
-      console.error('❌ Error clearing recent activity cache:', error);
-    }
-  };
-  
-  // Fetch dashboard statistics
+  // Fetch dashboard statistics using cache service
   const fetchDashboardStats = async (forceRefresh = false) => {
-    // If not forcing refresh, check cache first
-    if (!forceRefresh) {
-      const cachedData = getCachedData();
-      if (cachedData) {
-        setDashboardStats(cachedData.stats);
-        setLastUpdated(new Date(cachedData.lastUpdated));
-        setLoading(false);
-        console.log('📦 Loaded data from cache');
-        return;
-      }
-    }
-    
     // Prevent duplicate calls using ref
     if (isApiCallInProgress.current) {
       console.log('🔄 API call already in progress, skipping duplicate request');
@@ -198,30 +106,16 @@ const DashboardPage = () => {
       setError(null);
       console.log('🔄 Fetching dashboard stats...', forceRefresh ? '(forced refresh)' : '');
       
-      const apiResponse = await dashboardService.getDashboardStats();
-      console.log('✅ API Response received:', apiResponse);
+      const stats = await dashboardCacheService.fetchAndCacheDashboardStats(forceRefresh);
       
-      // Now we should have the correct structure: apiResponse.data contains the dashboard stats
-      if (apiResponse?.status?.code === 200 && apiResponse.data) {
-        console.log('📊 Setting dashboard stats:', apiResponse.data);
-        setDashboardStats(apiResponse.data);
-        
-        // Extract server date time from meta or use current time
-        const serverTime = apiResponse.meta?.serverDateTime || new Date().toISOString();
+      if (stats) {
+        console.log('📊 Setting dashboard stats:', stats);
+        setDashboardStats(stats);
         setLastUpdated(new Date());
-        
-        // Cache the data
-        const dataToCache = {
-          stats: apiResponse.data,
-          serverDateTime: serverTime,
-          lastUpdated: new Date().toISOString(),
-        };
-        setCachedData(dataToCache);
-        
         console.log('✨ Dashboard stats successfully set in state');
       } else {
-        const errorMsg = apiResponse?.status?.message || t('dashboard.errors.fetchFailed');
-        console.error('❌ API error - status code:', apiResponse?.status?.code);
+        const errorMsg = t('dashboard.errors.fetchFailed');
+        console.error('❌ Failed to fetch dashboard stats');
         setError(errorMsg);
       }
     } catch (err: any) {
@@ -234,50 +128,18 @@ const DashboardPage = () => {
     }
   };
   
-  // Fetch recent activity from audit logs
+  // Fetch recent activity from audit logs using cache service
   const fetchRecentLoginActivity = async (forceRefresh = false) => {
-    // If not forcing refresh, check cache first
-    if (!forceRefresh) {
-      const cachedActivity = getCachedRecentLoginActivity();
-      if (cachedActivity) {
-        setRecentLoginActivity(cachedActivity);
-        console.log('� Loaded recent activity from cache');
-        return;
-      }
-    }
-    
     try {
-      console.log('�🔄 Fetching recent activity from audit logs...', forceRefresh ? '(forced refresh)' : '');
+      console.log('🔄 Fetching recent activity from audit logs...', forceRefresh ? '(forced refresh)' : '');
       
       // Get the current user's username or fallback to 'gjpb_user_info'
       const currentUsername = user?.username || 'gjpb_user_info';
       
-      const response = await auditLogService.getAuditLogs({
-        endpoint: '/api/v1/auth/tokens',
-        username: currentUsername,
-        size: 5, // Limit to 5 recent activities
-        sort: 'timestamp,desc'
-      });
+      const activities = await dashboardCacheService.fetchAndCacheRecentActivity(currentUsername, forceRefresh);
+      setRecentLoginActivity(activities);
+      console.log('✅ Recent activity successfully loaded and cached:', activities.length, 'items');
       
-      if (response.status.code === 200 && response.data?.content) {
-        // Transform audit log entries to recent activity items
-        const activities: RecentLoginActivityItem[] = response.data.content.map((entry: AuditLogEntry) => ({
-          id: entry.id,
-          action: getActionDescription(entry),
-          user: entry.username || t('dashboard.unknownUser'),
-          date: new Date(entry.timestamp),
-          endpoint: entry.endpoint,
-          result: entry.result,
-          httpMethod: entry.httpMethod
-        }));
-        
-        setRecentLoginActivity(activities);
-        setCachedRecentLoginActivity(activities); // Cache the data
-        console.log('✅ Recent activity successfully loaded and cached:', activities.length, 'items');
-      } else {
-        console.warn('⚠️ No recent activity data found');
-        setRecentLoginActivity([]);
-      }
     } catch (error: any) {
       console.error('💥 Error fetching recent activity:', error);
       // Keep existing activities or set empty array
@@ -285,46 +147,50 @@ const DashboardPage = () => {
     }
   };
   
-  // Helper functions for action descriptions
-  const getAuthAction = (method: string): string => {
-    if (method === 'POST') return t('dashboard.actions.tokenAuth');
-    if (method === 'DELETE') return t('dashboard.actions.tokenRevoke');
-    return t('dashboard.actions.tokenValidate');
-  };
-  
-  const getUserAction = (method: string): string => {
-    if (method === 'POST') return t('dashboard.actions.userCreate');
-    if (method === 'PUT') return t('dashboard.actions.userUpdate');
-    if (method === 'DELETE') return t('dashboard.actions.userDelete');
-    return t('dashboard.actions.userAction');
-  };
-
-  // Helper function to get human-readable action description
-  const getActionDescription = (entry: AuditLogEntry): string => {
-    const method = entry.httpMethod?.toUpperCase() || '';
-    const endpoint = entry.endpoint || '';
-    
-    if (endpoint.includes('/auth/tokens')) return getAuthAction(method);
-    if (endpoint.includes('/auth/login')) return t('dashboard.actions.userLogin');
-    if (endpoint.includes('/auth/logout')) return t('dashboard.actions.userLogout');
-    if (endpoint.includes('/users')) return getUserAction(method);
-    if (endpoint.includes('/password')) return t('dashboard.actions.passwordReset');
-    if (endpoint.includes('/roles')) return t('dashboard.actions.roleManagement');
-    
-    return `${method} ${endpoint}`;
-  };
-  
-  // Public function to update recent activity cache after login
+  // Public function to refresh all dashboard data after login
   // This can be called from auth service or login components
-  const updateRecentLoginActivityAfterLogin = async () => {
-    console.log('🔐 Login detected, updating recent activity cache');
-    clearRecentLoginActivityCache(); // Clear old cache
-    await fetchRecentLoginActivity(true); // Fetch fresh data
+  const updateDashboardAfterLogin = async () => {
+    console.log('🔐 Login detected, refreshing all dashboard data');
+    
+    try {
+      // Set loading state while refreshing
+      setLoading(true);
+      setError(null);
+      
+      // Get current user info
+      const currentUsername = user?.username || 'gjpb_user_info';
+      
+      // Use dashboard cache service to refresh all data
+      const { dashboardStats, recentActivity } = await dashboardCacheService.refreshDashboardAfterLogin(currentUsername);
+      
+      // Update component state with fresh data
+      if (dashboardStats) {
+        setDashboardStats(dashboardStats);
+        setLastUpdated(new Date());
+      }
+      
+      setRecentLoginActivity(recentActivity);
+      
+      console.log('✅ Dashboard data refreshed successfully after login');
+    } catch (error) {
+      console.error('❌ Error refreshing dashboard data after login:', error);
+      setError(`${t('dashboard.errors.loadFailed')}: ${error instanceof Error ? error.message : t('dashboard.errors.tryAgain')}`);
+    } finally {
+      setLoading(false);
+    }
   };
   
-  // Expose function for external use (e.g., from auth service)
-  // You can call this after successful login: window.updateDashboardRecentLoginActivity?.()
+  // Legacy function for backward compatibility
+  const updateRecentLoginActivityAfterLogin = async () => {
+    console.log('🔐 Login detected, updating recent activity cache (legacy)');
+    await updateDashboardAfterLogin(); // Use the new comprehensive function
+  };
+  
+  // Expose functions for external use (e.g., from auth service)
   if (typeof window !== 'undefined') {
+    // New comprehensive function
+    (window as any).updateDashboardAfterLogin = updateDashboardAfterLogin;
+    // Legacy function for backward compatibility
     (window as any).updateDashboardRecentLoginActivity = updateRecentLoginActivityAfterLogin;
   }
   
@@ -346,52 +212,30 @@ const DashboardPage = () => {
     // Track page view for analytics
     trackPageView('Dashboard', t('navigation.dashboard'));
     
-    // Fetch dashboard data
-    fetchDashboardStats();
-    
-    // Load recent activity from cache first, don't fetch fresh data on component mount
-    const cachedActivity = getCachedRecentLoginActivity();
-    if (cachedActivity) {
-      setRecentLoginActivity(cachedActivity);
+    // Load cached data immediately for better UX
+    const cachedData = dashboardCacheService.getCachedData();
+    if (cachedData.dashboardStats) {
+      setDashboardStats(cachedData.dashboardStats);
+      setLastUpdated(new Date());
+      setLoading(false);
+      console.log('📦 Loaded dashboard stats from cache on mount');
+    }
+    if (cachedData.recentActivity) {
+      setRecentLoginActivity(cachedData.recentActivity);
       console.log('📦 Loaded recent activity from cache on mount');
-    } else {
-      // Only fetch fresh data if no cache exists
+    }
+    
+    // Fetch fresh dashboard data if no cache or in background
+    if (!cachedData.dashboardStats) {
+      fetchDashboardStats();
+    }
+    
+    // Fetch fresh recent activity data if no cache
+    if (!cachedData.recentActivity) {
       fetchRecentLoginActivity();
     }
   }, []); // Empty dependency array to prevent multiple calls
   
-  // Function to refresh recent activity after login
-  const refreshRecentLoginActivityAfterLogin = async () => {
-    console.log('🔄 Refreshing recent activity after user login');
-    await fetchRecentLoginActivity(true); // Force refresh
-  };
-  
-  // Watch for user changes (login/logout) to update recent activity
-  useSingletonEffect(() => {
-    if (user?.username) {
-      console.log('👤 User detected, checking if recent activity needs refresh');
-      
-      // Check if cached data is for a different user
-      try {
-        const cached = localStorage.getItem(RECENT_ACTIVITY_CACHE_KEY);
-        if (cached) {
-          const parsedCache = JSON.parse(cached);
-          if (parsedCache.username !== user.username) {
-            console.log('🔄 User changed, refreshing recent activity');
-            clearRecentLoginActivityCache();
-            refreshRecentLoginActivityAfterLogin();
-          }
-        } else {
-          // No cache exists, fetch data for the logged-in user
-          console.log('📭 No cached data, fetching recent activity for logged-in user');
-          refreshRecentLoginActivityAfterLogin();
-        }
-      } catch (error) {
-        console.error('❌ Error checking user cache:', error);
-        refreshRecentLoginActivityAfterLogin();
-      }
-    }
-  }, [user?.username]); // Depend on username to trigger when user changes
   
   // Navigation handlers for stats cards
   const handleStatsCardClick = (statTitle: string) => {
