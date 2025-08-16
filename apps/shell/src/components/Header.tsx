@@ -11,18 +11,17 @@ import {
   Avatar, 
   Tooltip, 
   Divider,
-  Badge,
   Select,
   FormControl,
 } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material';
-import { Menu as MenuIcon, Bell, Sun, Moon, User, LogOut, Settings, Globe } from 'lucide-react';
+import { Menu as MenuIcon, Sun, Moon, User, LogOut, Settings, Globe, Palette } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 // Redux
 import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
 import { logoutUser, selectCurrentUser } from '../redux/slices/authSlice';
-import { toggleThemeMode, selectThemeMode, setLanguage } from '../redux/slices/uiSlice';
+import { toggleThemeMode, selectThemeMode, setLanguage, setColorTheme, selectColorTheme } from '../redux/slices/uiSlice';
 import { APP_CONFIG } from '../../../shared-lib/src/utils/config';
 
 interface HeaderProps {
@@ -35,9 +34,11 @@ const Header = ({ onDrawerToggle }: HeaderProps) => {
   const navigate = useNavigate();
   const user = useAppSelector(selectCurrentUser);
   const themeMode = useAppSelector(selectThemeMode);
+  const colorTheme = useAppSelector(selectColorTheme);
   const isDarkMode = themeMode === 'dark';
 
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
+  const [anchorElColorTheme, setAnchorElColorTheme] = useState<null | HTMLElement>(null);
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -59,6 +60,30 @@ const Header = ({ onDrawerToggle }: HeaderProps) => {
 
   const handleThemeToggle = () => {
     dispatch(toggleThemeMode());
+  };
+
+  const handleOpenColorThemeMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElColorTheme(event.currentTarget);
+  };
+
+  const handleCloseColorThemeMenu = () => {
+    setAnchorElColorTheme(null);
+  };
+
+  const handleColorThemeChange = (theme: 'blue' | 'purple' | 'green' | 'orange' | 'red') => {
+    dispatch(setColorTheme(theme));
+    handleCloseColorThemeMenu();
+  };
+
+  const getColorThemeIcon = () => {
+    const colors = {
+      blue: '#2196F3',
+      purple: '#9C27B0', 
+      green: '#4CAF50',
+      orange: '#FF9800',
+      red: '#F44336'
+    };
+    return colors[colorTheme];
   };
 
   const handleLanguageChange = (event: SelectChangeEvent<string>) => {
@@ -177,23 +202,6 @@ const Header = ({ onDrawerToggle }: HeaderProps) => {
           alignItems: 'center', 
           gap: { xs: 0.5, sm: 1 } 
         }}>
-          {/* Theme toggle */}
-          <Tooltip title={isDarkMode ? t('common.lightMode') : t('common.darkMode')}>
-            <IconButton 
-              onClick={handleThemeToggle} 
-              color="inherit"
-              sx={{ 
-                borderRadius: 2,
-                transition: 'all 0.2s ease',
-                '&:hover': {
-                  backgroundColor: 'action.hover',
-                }
-              }}
-            >
-              {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
-            </IconButton>
-          </Tooltip>
-
           {/* Language selector */}
           <FormControl size="small" sx={{ minWidth: 100 }}>
             <Select
@@ -237,32 +245,141 @@ const Header = ({ onDrawerToggle }: HeaderProps) => {
             </Select>
           </FormControl>
 
-          {/* Notifications */}
-          <Tooltip title={t('common.notifications')}>
-            <IconButton 
-              color="inherit"
-              sx={{ 
-                borderRadius: 2,
-                transition: 'all 0.2s ease',
-                '&:hover': {
-                  backgroundColor: 'action.hover',
-                }
-              }}
-            >
-              <Badge 
-                badgeContent={3} 
-                color="error"
-                sx={{
-                  '& .MuiBadge-badge': {
-                    fontSize: '0.75rem',
-                    fontWeight: 600,
+          {/* Theme Toggle - Only visible after login */}
+          {user && (
+            <Tooltip title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}>
+              <IconButton 
+                color="inherit"
+                onClick={handleThemeToggle}
+                sx={{ 
+                  borderRadius: 2,
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
+                    backgroundColor: 'action.hover',
+                    transform: 'scale(1.05)',
                   }
                 }}
               >
-                <Bell size={20} />
-              </Badge>
-            </IconButton>
-          </Tooltip>
+                {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+              </IconButton>
+            </Tooltip>
+          )}
+
+          {/* Color Theme Picker - Only visible after login */}
+          {user && (
+            <Tooltip title="Change Color Theme">
+              <IconButton 
+                color="inherit"
+                onClick={handleOpenColorThemeMenu}
+                sx={{ 
+                  borderRadius: 2,
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
+                    backgroundColor: 'action.hover',
+                    transform: 'scale(1.05)',
+                  }
+                }}
+              >
+                <Palette size={20} style={{ color: getColorThemeIcon() }} />
+              </IconButton>
+            </Tooltip>
+          )}
+
+          {/* Color Theme Menu */}
+          <Menu
+            id="color-theme-menu"
+            anchorEl={anchorElColorTheme}
+            open={Boolean(anchorElColorTheme)}
+            onClose={handleCloseColorThemeMenu}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'right',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            sx={{
+              '& .MuiPaper-root': {
+                borderRadius: 3,
+                minWidth: 160,
+                boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+                border: '1px solid',
+                borderColor: 'divider',
+              }
+            }}
+          >
+            <MenuItem 
+              onClick={() => handleColorThemeChange('blue')}
+              sx={{ 
+                py: 1.5, 
+                px: 2,
+                bgcolor: colorTheme === 'blue' ? 'action.selected' : 'transparent',
+                '&:hover': { backgroundColor: 'action.hover' }
+              }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Box sx={{ width: 16, height: 16, bgcolor: '#2196F3', borderRadius: '50%' }} />
+                <Typography>Blue</Typography>
+              </Box>
+            </MenuItem>
+            <MenuItem 
+              onClick={() => handleColorThemeChange('purple')}
+              sx={{ 
+                py: 1.5, 
+                px: 2,
+                bgcolor: colorTheme === 'purple' ? 'action.selected' : 'transparent',
+                '&:hover': { backgroundColor: 'action.hover' }
+              }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Box sx={{ width: 16, height: 16, bgcolor: '#9C27B0', borderRadius: '50%' }} />
+                <Typography>Purple</Typography>
+              </Box>
+            </MenuItem>
+            <MenuItem 
+              onClick={() => handleColorThemeChange('green')}
+              sx={{ 
+                py: 1.5, 
+                px: 2,
+                bgcolor: colorTheme === 'green' ? 'action.selected' : 'transparent',
+                '&:hover': { backgroundColor: 'action.hover' }
+              }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Box sx={{ width: 16, height: 16, bgcolor: '#4CAF50', borderRadius: '50%' }} />
+                <Typography>Green</Typography>
+              </Box>
+            </MenuItem>
+            <MenuItem 
+              onClick={() => handleColorThemeChange('orange')}
+              sx={{ 
+                py: 1.5, 
+                px: 2,
+                bgcolor: colorTheme === 'orange' ? 'action.selected' : 'transparent',
+                '&:hover': { backgroundColor: 'action.hover' }
+              }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Box sx={{ width: 16, height: 16, bgcolor: '#FF9800', borderRadius: '50%' }} />
+                <Typography>Orange</Typography>
+              </Box>
+            </MenuItem>
+            <MenuItem 
+              onClick={() => handleColorThemeChange('red')}
+              sx={{ 
+                py: 1.5, 
+                px: 2,
+                bgcolor: colorTheme === 'red' ? 'action.selected' : 'transparent',
+                '&:hover': { backgroundColor: 'action.hover' }
+              }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Box sx={{ width: 16, height: 16, bgcolor: '#F44336', borderRadius: '50%' }} />
+                <Typography>Red</Typography>
+              </Box>
+            </MenuItem>
+          </Menu>
 
           {/* User menu */}
           <Box sx={{ ml: 1 }}>
