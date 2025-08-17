@@ -119,6 +119,27 @@ const userTranslations = {
         pending_verification: 'Pending Verification',
       },
       
+      // Search placeholders
+      placeholders: {
+        searchByUsername: 'Search by username',
+        searchByEmail: 'Search by email',
+        searchByMobile: 'Search by mobile number',
+      },
+      
+      // Status filter options
+      statusOptions: {
+        all: 'All Status',
+        active: 'Active',
+        locked: 'Locked',
+        suspended: 'Suspended',
+        pendingVerification: 'Pending Verification',
+      },
+      
+      // Role filter options
+      roleOptions: {
+        all: 'All Roles',
+      },
+      
       // Tab labels
       tabs: {
         all: 'All Users',
@@ -294,6 +315,27 @@ const userTranslations = {
         locked: '锁定',
         suspended: '暂停',
         pending_verification: '待验证',
+      },
+      
+      // 搜索占位符
+      placeholders: {
+        searchByUsername: '按用户名搜索',
+        searchByEmail: '按邮箱搜索',
+        searchByMobile: '按手机号搜索',
+      },
+      
+      // 状态筛选选项
+      statusOptions: {
+        all: '所有状态',
+        active: '激活',
+        locked: '锁定',
+        suspended: '暂停',
+        pendingVerification: '待验证',
+      },
+      
+      // 角色筛选选项
+      roleOptions: {
+        all: '所有角色',
       },
       
       // 标签页标签

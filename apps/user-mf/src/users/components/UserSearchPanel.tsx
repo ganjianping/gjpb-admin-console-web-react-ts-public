@@ -90,7 +90,7 @@ export const UserSearchPanel: React.FC<UserSearchPanelProps> = ({
                 }}
               >
                 <Search size={18} />
-                Search Filters
+                {t('common.searchFilters')}
               </Typography>
               
               <Box sx={{ display: 'flex', gap: 1.5 }}>
@@ -123,7 +123,7 @@ export const UserSearchPanel: React.FC<UserSearchPanelProps> = ({
                     },
                   }}
                 >
-                  {loading ? 'Searching...' : 'Search'}
+                  {loading ? t('common.searching') : t('common.search')}
                 </Button>
                 <Button 
                   variant="outlined" 
@@ -154,7 +154,7 @@ export const UserSearchPanel: React.FC<UserSearchPanelProps> = ({
                     },
                   }}
                 >
-                  Clear
+                  {t('common.clear')}
                 </Button>
               </Box>
             </Box>
@@ -199,7 +199,7 @@ export const UserSearchPanel: React.FC<UserSearchPanelProps> = ({
                 <TextField
                   fullWidth
                   size="small"
-                  placeholder="Search by username"
+                  placeholder={t('users.placeholders.searchByUsername')}
                   value={searchFormData.username}
                   onChange={(e) => onFormChange('username', e.target.value)}
                 />
@@ -209,7 +209,7 @@ export const UserSearchPanel: React.FC<UserSearchPanelProps> = ({
                 <TextField
                   fullWidth
                   size="small"
-                  placeholder="Search by email"
+                  placeholder={t('users.placeholders.searchByEmail')}
                   value={searchFormData.email}
                   onChange={(e) => onFormChange('email', e.target.value)}
                 />
@@ -219,7 +219,7 @@ export const UserSearchPanel: React.FC<UserSearchPanelProps> = ({
                 <TextField
                   fullWidth
                   size="small"
-                  placeholder="Search by mobile number"
+                  placeholder={t('users.placeholders.searchByMobile')}
                   value={searchFormData.mobile}
                   onChange={(e) => onFormChange('mobile', e.target.value)}
                 />
@@ -244,11 +244,11 @@ export const UserSearchPanel: React.FC<UserSearchPanelProps> = ({
                       },
                     }}
                   >
-                    <MenuItem value="">All Status</MenuItem>
-                    <MenuItem value="active">Active</MenuItem>
-                    <MenuItem value="locked">Locked</MenuItem>
-                    <MenuItem value="suspend">Suspended</MenuItem>
-                    <MenuItem value="pending_verification">Pending Verification</MenuItem>
+                    <MenuItem value="">{t('users.statusOptions.all')}</MenuItem>
+                    <MenuItem value="active">{t('users.statusOptions.active')}</MenuItem>
+                    <MenuItem value="locked">{t('users.statusOptions.locked')}</MenuItem>
+                    <MenuItem value="suspend">{t('users.statusOptions.suspended')}</MenuItem>
+                    <MenuItem value="pending_verification">{t('users.statusOptions.pendingVerification')}</MenuItem>
                   </Select>
                 </FormControl>
               </Box>
@@ -272,7 +272,7 @@ export const UserSearchPanel: React.FC<UserSearchPanelProps> = ({
                       },
                     }}
                   >
-                    <MenuItem value="">All Roles</MenuItem>
+                    <MenuItem value="">{t('users.roleOptions.all')}</MenuItem>
                     {cachedRoles.map((role) => (
                       <MenuItem key={role.code} value={role.code}>
                         {role.name}
@@ -301,9 +301,9 @@ export const UserSearchPanel: React.FC<UserSearchPanelProps> = ({
                       },
                     }}
                   >
-                    <MenuItem value="">All</MenuItem>
-                    <MenuItem value="true">Yes</MenuItem>
-                    <MenuItem value="false">No</MenuItem>
+                    <MenuItem value="">{t('common.all')}</MenuItem>
+                    <MenuItem value="true">{t('common.yes')}</MenuItem>
+                    <MenuItem value="false">{t('common.no')}</MenuItem>
                   </Select>
                 </FormControl>
               </Box>
