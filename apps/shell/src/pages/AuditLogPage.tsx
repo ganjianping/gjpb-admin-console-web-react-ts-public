@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Typography,
@@ -53,8 +54,13 @@ import { DataTable, createColumnHelper } from '../../../shared-lib/src/component
 import { trackPageView } from '../utils/firebaseAnalytics';
 
 const AuditLogPage = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const theme = useTheme();
+
+  useEffect(() => {
+    dispatch(setPageTitle(t('auditLogs.title')));
+  }, [dispatch, t]);
 
   // State management
   const [auditLogs, setAuditLogs] = useState<AuditLogData | null>(null);
@@ -201,7 +207,7 @@ const AuditLogPage = () => {
   // Define table columns
   const columns = [
     columnHelper.accessor('timestamp', {
-      header: 'Date & Time',
+      header: t('auditLogs.columns.dateTime'),
       cell: (info) => (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
           <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.875rem' }}>
@@ -214,7 +220,7 @@ const AuditLogPage = () => {
       ),
     }),
     columnHelper.accessor('endpoint', {
-      header: 'Request',
+      header: t('auditLogs.columns.request'),
       cell: (info) => {
         const row = info.row.original;
         const method = row.httpMethod;
@@ -265,7 +271,7 @@ const AuditLogPage = () => {
       },
     }),
     columnHelper.accessor('durationMs', {
-      header: 'Response Time',
+      header: t('auditLogs.columns.responseTime'),
       cell: (info) => {
         const duration = info.getValue();
         if (!duration) return '-';
@@ -292,7 +298,7 @@ const AuditLogPage = () => {
       },
     }),
     columnHelper.accessor('result', {
-      header: 'Result',
+      header: t('auditLogs.columns.result'),
       cell: (info) => {
         const result = info.getValue();
         const resultStr = String(result || '').toLowerCase();
@@ -343,7 +349,7 @@ const AuditLogPage = () => {
       },
     }),
     columnHelper.accessor('username', {
-      header: 'User',
+      header: t('auditLogs.columns.username'),
       cell: (info) => (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <User size={16} />
@@ -352,7 +358,7 @@ const AuditLogPage = () => {
       ),
     }),
     columnHelper.accessor('ipAddress', {
-      header: 'Client IP',
+      header: t('auditLogs.columns.ipAddress'),
       cell: (info) => (
         <Typography 
           variant="body2" 
@@ -441,8 +447,8 @@ const AuditLogPage = () => {
   useEffect(() => {
     if (!hasInitiallyLoaded.current) {
       hasInitiallyLoaded.current = true;
-      dispatch(setPageTitle('Audit Logs'));
-      trackPageView('Audit Logs', 'Audit Logs');
+      dispatch(setPageTitle(t('auditLogs.title')));
+      trackPageView(t('auditLogs.title'), t('auditLogs.title'));
       fetchAuditLogsInternal();
     }
   }, []); // NO dependencies - only run once on mount
@@ -576,7 +582,7 @@ const AuditLogPage = () => {
               fontWeight: 700,
             }}
           >
-            Audit Logs
+            {t('auditLogs.title')}
           </Typography>
           
           {/* Search Panel Toggle Button */}
@@ -612,7 +618,7 @@ const AuditLogPage = () => {
                 fontSize: '0.875rem',
               }}
             >
-              {searchPanelExpanded ? 'Hide Filters' : 'Show Filters'}
+              {searchPanelExpanded ? t('auditLogs.hideFilters') : t('auditLogs.showFilters')}
             </Typography>
             {(() => {
               const activeFilters = [
@@ -682,10 +688,10 @@ const AuditLogPage = () => {
                     color: 'primary.main',
                   }}
                 >
-                  Search Filters
+                  {t('common.searchFilters')}
                 </Typography>
                 <Tooltip 
-                  title="Smart Filtering: Filters work instantly as you type for quick results. Use 'Search' button for server-side filtering with fresh data."
+                  title={t('auditLogs.smartFilteringTooltip')}
                   placement="top"
                   arrow
                 >
@@ -719,7 +725,7 @@ const AuditLogPage = () => {
                         ml: 1
                       }}
                     >
-                      {activeFilters} active
+                      {activeFilters} {t('auditLogs.active')}
                     </Typography>
                   ) : null;
                 })()}
@@ -756,7 +762,7 @@ const AuditLogPage = () => {
                         },
                       }}
                     >
-                      Clear All
+                      {t('common.clearAll')}
                     </Button>
                   ) : null;
                 })()}
@@ -777,7 +783,7 @@ const AuditLogPage = () => {
                     },
                   }}
                 >
-                  Search
+                  {t('common.search')}
                 </Button>
 
                 <IconButton
@@ -824,7 +830,7 @@ const AuditLogPage = () => {
                     display: 'block',
                   }}
                 >
-                  Username
+                  {t('auditLogs.columns.username')}
                 </Typography>
                 <TextField
                   value={searchQuery}
@@ -832,7 +838,7 @@ const AuditLogPage = () => {
                   onKeyDown={handleKeyPress}
                   size="small"
                   fullWidth
-                  placeholder="Enter username (filters instantly)"
+                  placeholder={t('auditLogs.filters.searchByUsername')}
                   slotProps={{
                     input: {
                       startAdornment: (
@@ -857,7 +863,7 @@ const AuditLogPage = () => {
                     display: 'block',
                   }}
                 >
-                  Endpoint
+                  {t('auditLogs.columns.endpoint')}
                 </Typography>
                 <TextField
                   value={endpointFilter}
@@ -865,7 +871,7 @@ const AuditLogPage = () => {
                   onKeyDown={handleKeyPress}
                   size="small"
                   fullWidth
-                  placeholder="Enter endpoint (filters instantly)"
+                  placeholder={t('auditLogs.filters.endpoint')}
                   slotProps={{
                     input: {
                       startAdornment: (
@@ -890,7 +896,7 @@ const AuditLogPage = () => {
                     display: 'block',
                   }}
                 >
-                  HTTP Method
+                  {t('auditLogs.filters.httpMethod')}
                 </Typography>
                 <FormControl size="small" fullWidth>
                   <Select
@@ -898,11 +904,11 @@ const AuditLogPage = () => {
                     onChange={(e) => handleHttpMethodFilterChange(e.target.value)}
                     displayEmpty
                   >
-                    <MenuItem value="">All Methods</MenuItem>
-                    <MenuItem value="GET">GET</MenuItem>
-                    <MenuItem value="POST">POST</MenuItem>
-                    <MenuItem value="PUT">PUT</MenuItem>
-                    <MenuItem value="DELETE">DELETE</MenuItem>
+                    <MenuItem value="">{t('auditLogs.methods.all', 'All Methods')}</MenuItem>
+                    <MenuItem value="GET">{t('auditLogs.methods.get')}</MenuItem>
+                    <MenuItem value="POST">{t('auditLogs.methods.post')}</MenuItem>
+                    <MenuItem value="PUT">{t('auditLogs.methods.put')}</MenuItem>
+                    <MenuItem value="DELETE">{t('auditLogs.methods.delete')}</MenuItem>
                   </Select>
                 </FormControl>
               </Box>
@@ -919,7 +925,7 @@ const AuditLogPage = () => {
                     display: 'block',
                   }}
                 >
-                  Result
+                  {t('auditLogs.columns.result')}
                 </Typography>
                 <FormControl size="small" fullWidth>
                   <Select
@@ -932,9 +938,9 @@ const AuditLogPage = () => {
                       </InputAdornment>
                     }
                   >
-                    <MenuItem value="">All Results</MenuItem>
-                    <MenuItem value="SUCCESS">Success</MenuItem>
-                    <MenuItem value="FAILED">Failed</MenuItem>
+                    <MenuItem value="">{t('auditLogs.status.all', 'All Results')}</MenuItem>
+                    <MenuItem value="SUCCESS">{t('auditLogs.status.success')}</MenuItem>
+                    <MenuItem value="FAILED">{t('auditLogs.status.failed')}</MenuItem>
                   </Select>
                 </FormControl>
               </Box>
@@ -951,7 +957,7 @@ const AuditLogPage = () => {
                     display: 'block',
                   }}
                 >
-                  IP Address
+                  {t('auditLogs.columns.ipAddress')}
                 </Typography>
                 <TextField
                   value={ipAddressFilter}
@@ -959,7 +965,7 @@ const AuditLogPage = () => {
                   onKeyDown={handleKeyPress}
                   size="small"
                   fullWidth
-                  placeholder="Enter IP address..."
+                  placeholder={t('auditLogs.filters.ipAddress')}
                   slotProps={{
                     input: {
                       startAdornment: (
@@ -984,7 +990,7 @@ const AuditLogPage = () => {
                     display: 'block',
                   }}
                 >
-                  Response Time (ms)
+                  {t('auditLogs.filters.responseTime')}
                 </Typography>
                 <TextField
                   value={responseTimeFilter}
@@ -993,7 +999,7 @@ const AuditLogPage = () => {
                   size="small"
                   fullWidth
                   type="number"
-                  placeholder="Min response time in ms"
+                  placeholder={t('auditLogs.filters.responseTime')}
                   slotProps={{
                     input: {
                       startAdornment: (
@@ -1130,7 +1136,7 @@ const AuditLogPage = () => {
                 rowsPerPageOptions={[10, 20, 50, 100]}
                 actionMenuItems={[
                   { 
-                    label: 'View Details', 
+                    label: t('auditLogs.viewDetails'), 
                     icon: <Eye size={16} />, 
                     action: (log: AuditLogEntry) => {
                       handleRowDoubleClick(log);
@@ -1185,7 +1191,7 @@ const AuditLogPage = () => {
                   component="h2"
                   sx={{ fontWeight: 600 }}
                 >
-                  Audit Log Details
+                  {t('auditLogs.details.title')}
                 </Typography>
                 <IconButton
                   onClick={handleCloseModal}
@@ -1204,7 +1210,7 @@ const AuditLogPage = () => {
                 <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 3 }}>
                   <Box>
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                      ID
+                      {t('auditLogs.details.id')}
                     </Typography>
                     <Typography variant="body1" sx={{ fontWeight: 500, wordBreak: 'break-all' }}>
                       {selectedLog.id}
@@ -1213,7 +1219,7 @@ const AuditLogPage = () => {
                   
                   <Box>
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                      User ID
+                      {t('auditLogs.details.userId')}
                     </Typography>
                     <Typography variant="body1" sx={{ fontWeight: 500 }}>
                       {selectedLog.userId || '-'}
@@ -1222,7 +1228,7 @@ const AuditLogPage = () => {
                   
                   <Box>
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                      Username
+                      {t('auditLogs.details.username')}
                     </Typography>
                     <Typography variant="body1" sx={{ fontWeight: 500 }}>
                       {selectedLog.username || 'System'}
@@ -1231,7 +1237,7 @@ const AuditLogPage = () => {
                   
                   <Box>
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                      HTTP Method
+                      {t('auditLogs.details.httpMethod')}
                     </Typography>
                     <Chip 
                       label={selectedLog.httpMethod} 
@@ -1243,7 +1249,7 @@ const AuditLogPage = () => {
                   
                   <Box>
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                      Endpoint
+                      {t('auditLogs.details.endpoint')}
                     </Typography>
                     <Typography variant="body1" sx={{ fontWeight: 500, wordBreak: 'break-all' }}>
                       {selectedLog.endpoint || '-'}
@@ -1252,7 +1258,7 @@ const AuditLogPage = () => {
                   
                   <Box>
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                      Request ID
+                      {t('auditLogs.details.requestId')}
                     </Typography>
                     <Typography variant="body1" sx={{ fontWeight: 500, wordBreak: 'break-all' }}>
                       {selectedLog.requestId || '-'}
@@ -1261,7 +1267,7 @@ const AuditLogPage = () => {
                   
                   <Box>
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                      Result
+                      {t('auditLogs.details.result')}
                     </Typography>
                     <Typography variant="body1" sx={{ fontWeight: 500 }}>
                       {selectedLog.result || '-'}
@@ -1270,7 +1276,7 @@ const AuditLogPage = () => {
                   
                   <Box>
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                      Status Code
+                      {t('auditLogs.details.statusCode')}
                     </Typography>
                     <Typography variant="body1" sx={{ fontWeight: 500 }}>
                       {selectedLog.statusCode}
@@ -1279,7 +1285,7 @@ const AuditLogPage = () => {
                   
                   <Box>
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                      Error Message
+                      {t('auditLogs.details.errorMessage')}
                     </Typography>
                     <Typography variant="body1" sx={{ fontWeight: 500 }}>
                       {selectedLog.errorMessage || 'null'}
@@ -1288,7 +1294,7 @@ const AuditLogPage = () => {
                   
                   <Box>
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                      IP Address
+                      {t('auditLogs.details.ipAddress')}
                     </Typography>
                     <Typography variant="body1" sx={{ fontWeight: 500 }}>
                       {selectedLog.ipAddress || '-'}
@@ -1297,7 +1303,7 @@ const AuditLogPage = () => {
                   
                   <Box>
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                      Session ID
+                      {t('auditLogs.details.sessionId')}
                     </Typography>
                     <Typography variant="body1" sx={{ fontWeight: 500 }}>
                       {selectedLog.sessionId || '-'}
@@ -1306,7 +1312,7 @@ const AuditLogPage = () => {
                   
                   <Box>
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                      Duration (ms)
+                      {t('auditLogs.details.duration')}
                     </Typography>
                     <Typography variant="body1" sx={{ fontWeight: 500 }}>
                       {selectedLog.durationMs || '-'}
@@ -1315,7 +1321,7 @@ const AuditLogPage = () => {
                   
                   <Box>
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                      Timestamp
+                      {t('auditLogs.details.timestamp')}
                     </Typography>
                     <Typography variant="body1" sx={{ fontWeight: 500 }}>
                       {format(parseISO(selectedLog.timestamp), 'MMM dd, yyyy HH:mm:ss')}
@@ -1324,7 +1330,7 @@ const AuditLogPage = () => {
                   
                   <Box sx={{ gridColumn: { xs: '1', sm: '1 / -1' } }}>
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                      User Agent
+                      {t('auditLogs.details.userAgent')}
                     </Typography>
                     <Typography variant="body1" sx={{ fontWeight: 500, wordBreak: 'break-all' }}>
                       {selectedLog.userAgent || '-'}

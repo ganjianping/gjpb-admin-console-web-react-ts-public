@@ -88,7 +88,7 @@ const Sidebar = ({ drawerWidth, collapsedWidth, open, onClose, variant }: Sideba
     },
     {
       key: 'audit-logs',
-      title: 'Audit Logs',
+      title: t('auditLogs.title'),
       path: '/audit-logs',
       icon: Activity,
       roles: ['ADMIN', 'SUPER_ADMIN'],
