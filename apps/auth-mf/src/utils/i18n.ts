@@ -18,7 +18,6 @@ const authResources = {
           countryCode: 'Code',
           mobileNumber: 'Mobile Number',
           submit: 'Login',
-          forgotPassword: 'Forgot password?',
         },
         errors: {
           invalidCredentials: 'Invalid credentials',
@@ -45,7 +44,7 @@ const authResources = {
   zh: {
     translation: {
       login: {
-        title: '登录到 GJPB 管理控制台',
+        title: 'GJPB管理控制台',
         tabs: {
           username: '用户名',
           email: '邮箱',
@@ -58,7 +57,6 @@ const authResources = {
           countryCode: '区号',
           mobileNumber: '手机号码',
           submit: '登录',
-          forgotPassword: '忘记密码？',
         },
         errors: {
           invalidCredentials: '无效的凭据',

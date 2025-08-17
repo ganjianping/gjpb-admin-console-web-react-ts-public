@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Box, Container, IconButton, Tooltip } from '@mui/material';
-import { Sun, Moon, Palette } from 'lucide-react';
+import { Sun, Moon, Palette, Languages } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 
@@ -16,7 +16,7 @@ import { toggleThemeMode, selectThemeMode, selectColorTheme, setColorTheme } fro
 import type { ColorTheme } from '../../../shell/src/redux/slices/uiSlice';
 
 const LoginPage = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useAppDispatch();
@@ -24,26 +24,31 @@ const LoginPage = () => {
   const colorTheme = useAppSelector(selectColorTheme);
   const [loginError, setLoginError] = useState<string | null>(null);
   const [colorDropdownOpen, setColorDropdownOpen] = useState(false);
+  const [languageDropdownOpen, setLanguageDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const languageDropdownRef = useRef<HTMLDivElement>(null);
   
   const isDarkMode = themeMode === 'dark';
   
-  // Close dropdown when clicking outside
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setColorDropdownOpen(false);
       }
+      if (languageDropdownRef.current && !languageDropdownRef.current.contains(event.target as Node)) {
+        setLanguageDropdownOpen(false);
+      }
     };
 
-    if (colorDropdownOpen) {
+    if (colorDropdownOpen || languageDropdownOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [colorDropdownOpen]);
+  }, [colorDropdownOpen, languageDropdownOpen]);
   
   // Get the intended destination from location state
   const from = (location.state?.from?.pathname as string) || APP_CONFIG.ROUTES.HOME;
@@ -58,6 +63,15 @@ const LoginPage = () => {
     dispatch(setColorTheme(newColorTheme));
     setColorDropdownOpen(false);
   };
+
+  // Handle language change
+  const handleLanguageChange = (language: string) => {
+    i18n.changeLanguage(language);
+    setLanguageDropdownOpen(false);
+  };
+
+  // Current language for display
+  const currentLanguage = i18n.language || 'en';
 
   // Color theme options
   const colorThemeOptions: { value: ColorTheme; label: string; color: string }[] = [
@@ -130,6 +144,128 @@ const LoginPage = () => {
         display: 'flex',
         gap: 2,
       }}>
+        {/* Language switcher */}
+        <Box sx={{ position: 'relative' }} ref={languageDropdownRef}>
+          <Tooltip title={t('common.language', 'Language')}>
+            <IconButton 
+              onClick={() => setLanguageDropdownOpen(!languageDropdownOpen)}
+              sx={{ 
+                width: 52,
+                height: 52,
+                color: isDarkMode ? '#ffffff' : '#475569',
+                backgroundColor: isDarkMode 
+                  ? 'rgba(255, 255, 255, 0.1)' 
+                  : 'rgba(255, 255, 255, 0.9)',
+                backdropFilter: 'blur(10px)',
+                border: '2px solid',
+                borderColor: isDarkMode 
+                  ? 'rgba(255, 255, 255, 0.2)' 
+                  : 'rgba(148, 163, 184, 0.3)',
+                borderRadius: '16px',
+                boxShadow: isDarkMode
+                  ? '0 8px 24px rgba(0, 0, 0, 0.3)'
+                  : '0 8px 24px rgba(148, 163, 184, 0.25)',
+                '&:hover': {
+                  backgroundColor: isDarkMode 
+                    ? 'rgba(255, 255, 255, 0.2)' 
+                    : 'rgba(255, 255, 255, 1)',
+                  transform: 'scale(1.05)',
+                  borderColor: isDarkMode 
+                    ? 'rgba(255, 255, 255, 0.4)' 
+                    : 'rgba(99, 102, 241, 0.5)',
+                  boxShadow: isDarkMode
+                    ? '0 12px 32px rgba(0, 0, 0, 0.4)'
+                    : '0 12px 32px rgba(99, 102, 241, 0.3)',
+                },
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              }}
+            >
+              <Languages size={24} />
+            </IconButton>
+          </Tooltip>
+          
+          {/* Language dropdown menu */}
+          {languageDropdownOpen && (
+            <Box
+              sx={{
+                position: 'absolute',
+                top: '100%',
+                right: 0,
+                mt: 1,
+                p: 1,
+                minWidth: 140,
+                backgroundColor: isDarkMode
+                  ? 'rgba(30, 41, 59, 0.95)'
+                  : '#ffffff',
+                backdropFilter: isDarkMode ? 'blur(20px)' : 'none',
+                border: '1px solid',
+                borderColor: isDarkMode
+                  ? 'rgba(255, 255, 255, 0.1)'
+                  : 'rgba(226, 232, 240, 0.8)',
+                borderRadius: 2,
+                boxShadow: isDarkMode
+                  ? '0 10px 30px rgba(0, 0, 0, 0.3)'
+                  : '0 10px 30px rgba(148, 163, 184, 0.2)',
+              }}
+            >
+              <Box
+                onClick={() => handleLanguageChange('en')}
+                sx={{
+                  p: 1.5,
+                  cursor: 'pointer',
+                  borderRadius: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1,
+                  backgroundColor: currentLanguage === 'en' 
+                    ? (isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)')
+                    : 'transparent',
+                  '&:hover': {
+                    backgroundColor: isDarkMode 
+                      ? 'rgba(255, 255, 255, 0.1)' 
+                      : 'rgba(0, 0, 0, 0.05)',
+                  },
+                }}
+              >
+                <Box sx={{ 
+                  color: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
+                  fontSize: '0.9rem',
+                  fontWeight: currentLanguage === 'en' ? 600 : 400,
+                }}>
+                  🇺🇸 English
+                </Box>
+              </Box>
+              <Box
+                onClick={() => handleLanguageChange('zh')}
+                sx={{
+                  p: 1.5,
+                  cursor: 'pointer',
+                  borderRadius: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1,
+                  backgroundColor: currentLanguage === 'zh' 
+                    ? (isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)')
+                    : 'transparent',
+                  '&:hover': {
+                    backgroundColor: isDarkMode 
+                      ? 'rgba(255, 255, 255, 0.1)' 
+                      : 'rgba(0, 0, 0, 0.05)',
+                  },
+                }}
+              >
+                <Box sx={{ 
+                  color: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
+                  fontSize: '0.9rem',
+                  fontWeight: currentLanguage === 'zh' ? 600 : 400,
+                }}>
+                  🇨🇳 中文
+                </Box>
+              </Box>
+            </Box>
+          )}
+        </Box>
+
         {/* Color theme dropdown */}
         <Box sx={{ position: 'relative' }} ref={dropdownRef}>
           <Tooltip title={t('theme.colorTheme', 'Color theme')}>

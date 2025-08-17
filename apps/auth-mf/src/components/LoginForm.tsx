@@ -313,14 +313,6 @@ const LoginForm = ({ onSubmit, error, submitText }: LoginFormProps) => {
               {getButtonText()}
             </Button>
           </Box>
-          
-          <Box textAlign="right">
-            <Typography variant="body2" color="textSecondary">
-              <a href="#forgot-password">
-                {t('login.form.forgotPassword', 'Forgot password?')}
-              </a>
-            </Typography>
-          </Box>
         </form>
       </TabPanel>
       
@@ -437,14 +429,6 @@ const LoginForm = ({ onSubmit, error, submitText }: LoginFormProps) => {
             >
               {getButtonText()}
             </Button>
-          </Box>
-          
-          <Box textAlign="right">
-            <Typography variant="body2" color="textSecondary">
-              <a href="#forgot-password">
-                {t('login.form.forgotPassword', 'Forgot password?')}
-              </a>
-            </Typography>
           </Box>
         </form>
       </TabPanel>
@@ -607,14 +591,6 @@ const LoginForm = ({ onSubmit, error, submitText }: LoginFormProps) => {
             >
               {getButtonText()}
             </Button>
-          </Box>
-          
-          <Box textAlign="right">
-            <Typography variant="body2" color="textSecondary">
-              <a href="#forgot-password">
-                {t('login.form.forgotPassword', 'Forgot password?')}
-              </a>
-            </Typography>
           </Box>
         </form>
       </TabPanel>
