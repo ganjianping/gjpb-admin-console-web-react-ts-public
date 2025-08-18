@@ -17,6 +17,7 @@ import {
   Collapse,
   Alert,
   Snackbar,
+  useTheme,
 } from '@mui/material';
 import { Plus, Shield, Settings, Search, ChevronDown, ChevronUp, ChevronRight, AlertTriangle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -38,6 +39,7 @@ const roleStatusMap = {
 
 const RolesPage = () => {
   const { t } = useTranslation();
+  const theme = useTheme();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
   const [actionType, setActionType] = useState<'view' | 'edit' | 'delete' | 'create' | null>(null);
@@ -654,7 +656,9 @@ const RolesPage = () => {
               color: 'primary.main',
               backgroundColor: searchPanelOpen 
                 ? 'rgba(25, 118, 210, 0.08)' 
-                : 'rgba(255, 255, 255, 0.9)',
+                : theme.palette.mode === 'dark' 
+                  ? 'rgba(255, 255, 255, 0.05)'
+                  : 'rgba(255, 255, 255, 0.9)',
               transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
               boxShadow: searchPanelOpen 
                 ? '0 2px 8px rgba(25, 118, 210, 0.15)' 

@@ -1,4 +1,4 @@
-import { Box, Alert, Card, CardContent, Collapse } from '@mui/material';
+import { Box, Alert, Card, CardContent, Collapse, useTheme } from '@mui/material';
 import { useEffect } from 'react';
 import '../utils/i18n'; // Initialize user translations
 
@@ -27,6 +27,7 @@ import { useRoles } from '../../roles/hooks';
 import { rolesService } from '../../roles/services/rolesCacheService';
 
 const UsersPage = () => {
+  const theme = useTheme();
   // Initialize notification system
   const { showSuccess, showError, snackbar, hideNotification } = useNotification();
    // Initialize roles loading - load roles once when Users page is accessed
@@ -183,10 +184,16 @@ const UsersPage = () => {
         sx={{ 
           borderRadius: 4, 
           border: '2px solid',
-          borderColor: 'rgba(0, 0, 0, 0.06)',
-          background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 249, 250, 0.9) 100%)',
+          borderColor: theme.palette.mode === 'dark' 
+            ? 'rgba(255, 255, 255, 0.12)' 
+            : 'rgba(0, 0, 0, 0.06)',
+          background: theme.palette.mode === 'dark' 
+            ? 'linear-gradient(135deg, rgba(18, 18, 18, 0.9) 0%, rgba(32, 32, 32, 0.9) 100%)'
+            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 249, 250, 0.9) 100%)',
           backdropFilter: 'blur(10px)',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.04)',
+          boxShadow: theme.palette.mode === 'dark'
+            ? '0 8px 32px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2)'
+            : '0 8px 32px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.04)',
         }}
       >
         <CardContent>

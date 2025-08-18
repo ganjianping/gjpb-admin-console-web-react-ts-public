@@ -1,4 +1,4 @@
-import { Box, Typography, Button } from '@mui/material';
+import { Box, Typography, Button, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { Plus, Search, ChevronDown, ChevronUp } from 'lucide-react';
 import '../utils/i18n'; // Initialize user translations
@@ -15,6 +15,7 @@ export const UserPageHeader = ({
   onToggleSearchPanel 
 }: UserPageHeaderProps) => {
   const { t } = useTranslation();
+  const theme = useTheme();
 
   return (
     <Box
@@ -46,7 +47,9 @@ export const UserPageHeader = ({
             color: 'primary.main',
             backgroundColor: searchPanelOpen 
               ? 'rgba(25, 118, 210, 0.08)' 
-              : 'rgba(255, 255, 255, 0.9)',
+              : theme.palette.mode === 'dark' 
+                ? 'rgba(255, 255, 255, 0.05)'
+                : 'rgba(255, 255, 255, 0.9)',
             transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
             boxShadow: searchPanelOpen 
               ? '0 2px 8px rgba(25, 118, 210, 0.15)' 

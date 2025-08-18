@@ -12,6 +12,7 @@ import {
   Select,
   TextField,
   Typography,
+  useTheme,
 } from '@mui/material';
 import { Search } from 'lucide-react';
 import type { RoleSearchFormData } from '../types/role.types';
@@ -32,20 +33,27 @@ export const RoleSearchPanel: React.FC<RoleSearchPanelProps> = ({
   onClear,
 }) => {
   const { t } = useTranslation();
+  const theme = useTheme();
 
   return (
     <Card 
       elevation={0} 
       sx={{ 
         borderRadius: 3, 
-        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.98) 50%, rgba(241, 245, 249, 0.95) 100%)',
+        background: theme.palette.mode === 'dark' 
+          ? 'linear-gradient(135deg, rgba(18, 18, 18, 0.95) 0%, rgba(32, 32, 32, 0.98) 50%, rgba(24, 24, 24, 0.95) 100%)'
+          : 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.98) 50%, rgba(241, 245, 249, 0.95) 100%)',
         backdropFilter: 'blur(10px)',
         border: '1px solid',
-        borderColor: 'rgba(25, 118, 210, 0.15)',
+        borderColor: theme.palette.mode === 'dark' 
+          ? 'rgba(255, 255, 255, 0.12)' 
+          : 'rgba(25, 118, 210, 0.15)',
         mb: 2,
         position: 'relative',
         overflow: 'hidden',
-        boxShadow: '0 4px 20px rgba(25, 118, 210, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04)',
+        boxShadow: theme.palette.mode === 'dark'
+          ? '0 4px 20px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.2)'
+          : '0 4px 20px rgba(25, 118, 210, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04)',
         '&::before': {
           content: '""',
           position: 'absolute',
@@ -63,7 +71,9 @@ export const RoleSearchPanel: React.FC<RoleSearchPanelProps> = ({
           left: 0,
           right: 0,
           bottom: 0,
-          background: 'radial-gradient(circle at 20% 20%, rgba(25, 118, 210, 0.03) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(66, 165, 245, 0.02) 0%, transparent 50%)',
+          background: theme.palette.mode === 'dark'
+            ? 'radial-gradient(circle at 20% 20%, rgba(25, 118, 210, 0.08) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(66, 165, 245, 0.06) 0%, transparent 50%)'
+            : 'radial-gradient(circle at 20% 20%, rgba(25, 118, 210, 0.03) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(66, 165, 245, 0.02) 0%, transparent 50%)',
           zIndex: 0,
           pointerEvents: 'none',
         }
@@ -160,12 +170,18 @@ export const RoleSearchPanel: React.FC<RoleSearchPanelProps> = ({
               sx={{
                 '& .MuiOutlinedInput-root': {
                   borderRadius: 2,
-                  backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                  backgroundColor: theme.palette.mode === 'dark' 
+                    ? 'rgba(255, 255, 255, 0.05)' 
+                    : 'rgba(255, 255, 255, 0.8)',
                   '&:hover': {
-                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    backgroundColor: theme.palette.mode === 'dark' 
+                      ? 'rgba(255, 255, 255, 0.08)' 
+                      : 'rgba(255, 255, 255, 0.9)',
                   },
                   '&.Mui-focused': {
-                    backgroundColor: 'rgba(255, 255, 255, 1)',
+                    backgroundColor: theme.palette.mode === 'dark' 
+                      ? 'rgba(255, 255, 255, 0.1)' 
+                      : 'rgba(255, 255, 255, 1)',
                   }
                 }
               }}
@@ -195,12 +211,18 @@ export const RoleSearchPanel: React.FC<RoleSearchPanelProps> = ({
               displayEmpty
               sx={{
                 borderRadius: 2,
-                backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                backgroundColor: theme.palette.mode === 'dark' 
+                  ? 'rgba(255, 255, 255, 0.05)' 
+                  : 'rgba(255, 255, 255, 0.8)',
                 '&:hover': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                  backgroundColor: theme.palette.mode === 'dark' 
+                    ? 'rgba(255, 255, 255, 0.08)' 
+                    : 'rgba(255, 255, 255, 0.9)',
                 },
                 '&.Mui-focused': {
-                  backgroundColor: 'rgba(255, 255, 255, 1)',
+                  backgroundColor: theme.palette.mode === 'dark' 
+                    ? 'rgba(255, 255, 255, 0.1)' 
+                    : 'rgba(255, 255, 255, 1)',
                 }
               }}
             >
@@ -224,12 +246,18 @@ export const RoleSearchPanel: React.FC<RoleSearchPanelProps> = ({
               displayEmpty
               sx={{
                 borderRadius: 2,
-                backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                backgroundColor: theme.palette.mode === 'dark' 
+                  ? 'rgba(255, 255, 255, 0.05)' 
+                  : 'rgba(255, 255, 255, 0.8)',
                 '&:hover': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                  backgroundColor: theme.palette.mode === 'dark' 
+                    ? 'rgba(255, 255, 255, 0.08)' 
+                    : 'rgba(255, 255, 255, 0.9)',
                 },
                 '&.Mui-focused': {
-                  backgroundColor: 'rgba(255, 255, 255, 1)',
+                  backgroundColor: theme.palette.mode === 'dark' 
+                    ? 'rgba(255, 255, 255, 0.1)' 
+                    : 'rgba(255, 255, 255, 1)',
                 }
               }}
             >

@@ -598,7 +598,11 @@ const AuditLogPage = () => {
               borderRadius: 2,
               border: '1px solid',
               borderColor: searchPanelExpanded ? 'primary.main' : 'rgba(25, 118, 210, 0.3)',
-              backgroundColor: searchPanelExpanded ? 'rgba(25, 118, 210, 0.08)' : 'rgba(255, 255, 255, 0.8)',
+              backgroundColor: searchPanelExpanded 
+                ? 'rgba(25, 118, 210, 0.08)' 
+                : theme.palette.mode === 'dark' 
+                  ? 'rgba(255, 255, 255, 0.05)' 
+                  : 'rgba(255, 255, 255, 0.8)',
               backdropFilter: 'blur(4px)',
               transition: 'all 0.2s ease',
               '&:hover': {
@@ -610,16 +614,6 @@ const AuditLogPage = () => {
             }}
           >
             <Search size={18} style={{ color: theme.palette.primary.main }} />
-            <Typography 
-              variant="body2" 
-              sx={{ 
-                fontWeight: 600,
-                color: 'primary.main',
-                fontSize: '0.875rem',
-              }}
-            >
-              {searchPanelExpanded ? t('auditLogs.hideFilters') : t('auditLogs.showFilters')}
-            </Typography>
             {(() => {
               const activeFilters = [
                 searchQuery,
@@ -666,10 +660,14 @@ const AuditLogPage = () => {
         <Card 
           sx={{ 
             mb: 3,
-            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+            backgroundColor: theme.palette.mode === 'dark' 
+              ? 'rgba(18, 18, 18, 0.9)' 
+              : 'rgba(255, 255, 255, 0.9)',
             backdropFilter: 'blur(10px)',
             border: '1px solid',
-            borderColor: 'rgba(25, 118, 210, 0.1)',
+            borderColor: theme.palette.mode === 'dark' 
+              ? 'rgba(255, 255, 255, 0.12)' 
+              : 'rgba(25, 118, 210, 0.1)',
           }}
         >
           <CardContent sx={{ p: 3 }}>
@@ -795,7 +793,9 @@ const AuditLogPage = () => {
                   size="small"
                   sx={{
                     borderRadius: 2,
-                    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                    backgroundColor: theme.palette.mode === 'dark' 
+                      ? 'rgba(255, 255, 255, 0.05)' 
+                      : 'rgba(255, 255, 255, 0.8)',
                     backdropFilter: 'blur(4px)',
                     border: '1px solid',
                     borderColor: 'primary.main',
@@ -1095,29 +1095,33 @@ const AuditLogPage = () => {
       ) : (
         <Card 
           sx={{ 
-            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+            backgroundColor: theme.palette.mode === 'dark' 
+              ? 'rgba(18, 18, 18, 0.9)' 
+              : 'rgba(255, 255, 255, 0.9)',
             backdropFilter: 'blur(10px)',
             border: '1px solid',
-            borderColor: 'rgba(25, 118, 210, 0.1)',
+            borderColor: theme.palette.mode === 'dark' 
+              ? 'rgba(255, 255, 255, 0.12)' 
+              : 'rgba(25, 118, 210, 0.1)',
           }}
         >
           <CardContent sx={{ p: 0 }}>
             <Box
               sx={{
                 '& .MuiTableHead-root': {
-                  backgroundColor: '#f8fafc',
+                  backgroundColor: 'background.default',
                 },
                 '& .MuiTableHead-root .MuiTableCell-head': {
-                  backgroundColor: '#f8fafc',
-                  borderBottom: '2px solid #e2e8f0',
+                  backgroundColor: theme.palette.mode === 'dark' ? 'grey.900' : 'grey.50',
+                  borderBottom: `2px solid ${theme.palette.divider}`,
                   fontWeight: 700,
                   fontSize: '0.875rem',
-                  color: '#475569',
+                  color: 'text.secondary',
                   textTransform: 'uppercase',
                   letterSpacing: '0.025em',
                 },
                 '& .MuiTableHead-root .MuiTableCell-head:hover': {
-                  backgroundColor: '#f1f5f9',
+                  backgroundColor: theme.palette.mode === 'dark' ? 'grey.800' : 'grey.100',
                 },
               }}
             >
