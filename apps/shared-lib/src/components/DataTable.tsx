@@ -71,7 +71,7 @@ export function DataTable<T>({
   showSearch = true,
   showSelection = false,
   showPagination = true,
-  rowsPerPageOptions = [20, 50, 100],
+  rowsPerPageOptions = [10, 20, 50, 100],
   defaultSort,
   searchPlaceholder = 'Search...',
   elevation = 0,
