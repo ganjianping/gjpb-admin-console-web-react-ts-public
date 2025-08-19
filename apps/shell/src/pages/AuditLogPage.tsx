@@ -64,7 +64,6 @@ const AuditLogPage = () => {
 
   // State management
   const [auditLogs, setAuditLogs] = useState<AuditLogData | null>(null);
-  const [originalAuditLogs, setOriginalAuditLogs] = useState<AuditLogData | null>(null); // Store original data for frontend filtering
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchPanelExpanded, setSearchPanelExpanded] = useState(false);
@@ -89,109 +88,8 @@ const AuditLogPage = () => {
   // Column helper for DataTable
   const columnHelper = createColumnHelper<AuditLogEntry>();
 
-  // Frontend filtering function
-  const applyFrontendFilters = (data: AuditLogData): AuditLogData => {
-    if (!data?.content) return data;
-
-    let filteredContent = [...data.content];
-
-    // Apply username filter
-    if (searchQuery.trim()) {
-      const query = searchQuery.trim().toLowerCase();
-      filteredContent = filteredContent.filter(log => 
-        log.username?.toLowerCase().includes(query) ||
-        log.userId?.toLowerCase().includes(query)
-      );
-    }
-
-    // Apply endpoint filter
-    if (endpointFilter.trim()) {
-      const query = endpointFilter.trim().toLowerCase();
-      filteredContent = filteredContent.filter(log => 
-        log.endpoint?.toLowerCase().includes(query)
-      );
-    }
-
-    // Apply HTTP method filter
-    if (httpMethodFilter) {
-      filteredContent = filteredContent.filter(log => 
-        log.httpMethod === httpMethodFilter
-      );
-    }
-
-    // Apply result filter
-    if (resultFilter) {
-      const query = resultFilter.toLowerCase();
-      filteredContent = filteredContent.filter(log => {
-        const result = log.result?.toLowerCase() || '';
-        return result.includes(query) || 
-               (query === 'success' && result === 'success') ||
-               (query === 'error' && (result === 'error' || result.includes('fail')));
-      });
-    }
-
-    // Apply IP address filter
-    if (ipAddressFilter.trim()) {
-      const query = ipAddressFilter.trim().toLowerCase();
-      filteredContent = filteredContent.filter(log => 
-        log.ipAddress?.toLowerCase().includes(query)
-      );
-    }
-
-    // Apply response time filter
-    if (responseTimeFilter.trim()) {
-      const minResponseTime = parseInt(responseTimeFilter.trim());
-      if (!isNaN(minResponseTime)) {
-        filteredContent = filteredContent.filter(log => 
-          log.durationMs >= minResponseTime
-        );
-      }
-    }
-
-    // Apply date range filter
-    if (startDate || endDate) {
-      filteredContent = filteredContent.filter(log => {
-        const logDate = new Date(log.timestamp);
-        const start = startDate ? new Date(startDate) : null;
-        const end = endDate ? new Date(endDate + 'T23:59:59') : null;
-        
-        if (start && logDate < start) return false;
-        if (end && logDate > end) return false;
-        return true;
-      });
-    }
-
-    return {
-      ...data,
-      content: filteredContent,
-      totalElements: filteredContent.length,
-      totalPages: Math.ceil(filteredContent.length / data.size),
-      size: data.size,
-      number: 0, // Reset to first page when filtering
-    };
-  };
-
-  // Watch for filter changes and apply frontend filtering
-  useEffect(() => {
-    if (originalAuditLogs) {
-      const filtered = applyFrontendFilters(originalAuditLogs);
-      // Apply client-side pagination
-      const startIndex = page * rowsPerPage;
-      const endIndex = startIndex + rowsPerPage;
-      const paginatedContent = filtered.content.slice(startIndex, endIndex);
-      
-      const paginatedData = {
-        ...filtered,
-        content: paginatedContent,
-        totalElements: filtered.content.length, // Total filtered items
-        totalPages: Math.ceil(filtered.content.length / rowsPerPage),
-        size: rowsPerPage,
-        number: page,
-      };
-      
-      setAuditLogs(paginatedData);
-    }
-  }, [searchQuery, endpointFilter, httpMethodFilter, resultFilter, ipAddressFilter, responseTimeFilter, startDate, endDate, originalAuditLogs, page, rowsPerPage]);
+  // Since we're using server-side pagination, we don't need frontend filtering
+  // The API handles all filtering and pagination
 
   // Reset to first page when filters change (but not page/rowsPerPage)
   useEffect(() => {
@@ -424,12 +322,15 @@ const AuditLogPage = () => {
       const response = await auditLogService.getAuditLogs(params);
       
       if (response.status.code === 200) {
-        // Store original data for frontend filtering
-        setOriginalAuditLogs(response.data);
-        // Initially set the audit logs to the original data
-        // Frontend filtering will be applied by the useEffect
+        // Use the data directly from backend with correct totalElements and totalPages
         setAuditLogs(response.data);
         console.log('✅ Audit logs loaded successfully:', response.data);
+        console.log('🔢 Backend pagination values:', {
+          totalElements: response.data.totalElements,
+          totalPages: response.data.totalPages,
+          size: response.data.size,
+          number: response.data.number
+        });
       } else {
         throw new Error(response.status.message || 'Failed to fetch audit logs');
       }
@@ -453,17 +354,55 @@ const AuditLogPage = () => {
     }
   }, []); // NO dependencies - only run once on mount
 
-  // Handle pagination change for frontend filtering
+  // Handle pagination change - call API with new page
   const handlePageChange = (newPage: number) => {
+    console.log('📄 Page changed to:', newPage);
     setPage(newPage);
-    // Frontend pagination will be handled by the useEffect above
+    
+    // Call API with current filters and new page
+    const currentFilters = {
+      username: searchQuery.trim() || undefined,
+      endpoint: endpointFilter.trim() || undefined,
+      httpMethod: httpMethodFilter || undefined,
+      result: resultFilter.trim() || undefined,
+      ipAddress: ipAddressFilter.trim() || undefined,
+      minDurationMs: responseTimeFilter.trim() ? parseInt(responseTimeFilter.trim()) : undefined,
+      startDate: startDate || undefined,
+      endDate: endDate || undefined,
+    };
+    
+    // Remove undefined values
+    const cleanParams = Object.fromEntries(
+      Object.entries(currentFilters).filter(([_, value]) => value !== undefined)
+    );
+    
+    fetchAuditLogsInternal(cleanParams, rowsPerPage, newPage);
   };
 
-  // Handle page size change for frontend filtering
+  // Handle page size change - call API with new page size
   const handlePageSizeChange = (newPageSize: number) => {
+    console.log('📏 Page size changed to:', newPageSize);
     setRowsPerPage(newPageSize);
     setPage(0); // Reset to first page when changing page size
-    // Frontend pagination will be handled by the useEffect above
+    
+    // Call API with current filters and new page size
+    const currentFilters = {
+      username: searchQuery.trim() || undefined,
+      endpoint: endpointFilter.trim() || undefined,
+      httpMethod: httpMethodFilter || undefined,
+      result: resultFilter.trim() || undefined,
+      ipAddress: ipAddressFilter.trim() || undefined,
+      minDurationMs: responseTimeFilter.trim() ? parseInt(responseTimeFilter.trim()) : undefined,
+      startDate: startDate || undefined,
+      endDate: endDate || undefined,
+    };
+    
+    // Remove undefined values
+    const cleanParams = Object.fromEntries(
+      Object.entries(currentFilters).filter(([_, value]) => value !== undefined)
+    );
+    
+    fetchAuditLogsInternal(cleanParams, newPageSize, 0); // Always start from first page
   };
 
   // Handle search and filters - API search on button click
@@ -520,10 +459,8 @@ const AuditLogPage = () => {
     setStartDate('');
     setEndDate('');
     setPage(0);
-    // When clearing filters, reset to original data without frontend filtering
-    if (originalAuditLogs) {
-      setAuditLogs(originalAuditLogs);
-    }
+    // Since we're using server-side pagination, call API to get fresh data without filters
+    fetchAuditLogsInternal();
   };
 
   // Filter handlers - update state only (no real-time API calls)
