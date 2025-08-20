@@ -8,6 +8,7 @@ import MainLayout from '../layouts/MainLayout';
 // Import through the barrel file
 import { LoginPage } from '../../../auth-mf/src/exports';
 import { UsersPage, RolesPage } from '../../../user-mf/src/exports';
+import { AppSettingsPage } from '../../../bm-mf/src/app-settings';
 import DashboardPage from '../pages/DashboardPage';
 import ProfilePage from '../pages/ProfilePage';
 import SettingsPage from '../pages/SettingsPage';
@@ -61,6 +62,9 @@ const AppRoutes = () => {
           
           {/* Audit Logs */}
           <Route path="audit-logs" element={<AuditLogPage />} />
+          
+          {/* App Settings */}
+          <Route path="app-settings" element={<AppSettingsPage />} />
         </Route>
         
         {/* Catch-all route */}

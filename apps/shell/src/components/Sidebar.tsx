@@ -19,6 +19,7 @@ import {
   Users, 
   Shield,
   Activity,
+  Settings,
   ChevronLeft, 
   ChevronRight,
   ChevronDown,
@@ -91,6 +92,13 @@ const Sidebar = ({ drawerWidth, collapsedWidth, open, onClose, variant }: Sideba
       title: t('auditLogs.title'),
       path: '/audit-logs',
       icon: Activity,
+      roles: ['ADMIN', 'SUPER_ADMIN'],
+    },
+    {
+      key: 'app-settings',
+      title: t('appSettings.title'),
+      path: '/app-settings',
+      icon: Settings,
       roles: ['ADMIN', 'SUPER_ADMIN'],
     },
   ], [t]);
