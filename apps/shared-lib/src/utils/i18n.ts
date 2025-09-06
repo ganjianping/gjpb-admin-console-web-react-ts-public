@@ -6,7 +6,7 @@ import { APP_CONFIG } from './config';
 // English translations
 const enResources = {
   app: {
-    title: 'GJPB Admin Console',
+    title: 'Admin Console',
   },
   common: {
     loading: 'Loading...',
@@ -68,7 +68,7 @@ const enResources = {
     sessionExpired: 'Your session has expired, please log in again',
   },
   login: {
-    title: 'GJPB Admin Console',
+    title: 'Admin Console',
     tabs: {
       username: 'Username',
       email: 'Email',

@@ -173,8 +173,8 @@ const Header = ({ onDrawerToggle }: HeaderProps) => {
               src="/favicon.ico"
               alt="GJPB Logo"
               style={{
-                width: '32px',
-                height: '32px',
+                width: '48px',
+                height: '48px',
                 transition: 'all 0.2s ease',
               }}
             />
