@@ -44,7 +44,7 @@ const authResources = {
   zh: {
     translation: {
       login: {
-        title: 'GJPB管理控制台',
+        title: '管理控制台',
         tabs: {
           username: '用户名',
           email: '邮箱',

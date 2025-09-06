@@ -450,6 +450,36 @@ const LoginPage = () => {
               position: 'relative',
             }}
           >
+            {/* App Logo/Favicon at the top of login card */}
+            <Box sx={{ 
+              display: 'flex', 
+              justifyContent: 'center', 
+              mb: 3,
+              pt: 1 
+            }}>
+              <Box
+                sx={{
+                  width: 96,
+                  height: 96,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  position: 'relative',
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    width: '96px',
+                    height: '96px',
+                    backgroundImage: 'url(/favicon.ico)',
+                    backgroundSize: 'contain',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'center',
+                    filter: isDarkMode ? 'brightness(1.1)' : 'brightness(1)',
+                  },
+                }}
+              />
+            </Box>
+            
             <LoginForm 
               onSubmit={handleLogin}
               error={loginError}

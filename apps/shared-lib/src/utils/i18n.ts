@@ -373,7 +373,7 @@ const enResources = {
 // Chinese translations
 const zhResources = {
   app: {
-    title: 'GJPB 管理控制台',
+    title: '管理控制台',
   },
   common: {
     loading: '加载中...',
@@ -435,7 +435,7 @@ const zhResources = {
     sessionExpired: '会话已过期，请重新登录',
   },
   login: {
-    title: '登录 GJPB 管理控制台',
+    title: '登录管理控制台',
     tabs: {
       username: '用户名',
       email: '电子邮箱',

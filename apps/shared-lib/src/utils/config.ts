@@ -10,7 +10,7 @@ export const APP_ENV = {
 };
 
 export const APP_CONFIG = {
-  APP_NAME: 'GJPB Admin Console',
+  APP_NAME: 'Admin Console',
   APP_VERSION: '1.0.0',
   COPYRIGHT: `© ${new Date().getFullYear()} GJPB All Rights Reserved`,
   DEFAULT_LANGUAGE: 'en',

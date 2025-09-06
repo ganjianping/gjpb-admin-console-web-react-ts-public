@@ -7,7 +7,6 @@ import {
   Box, 
   TextField, 
   Button,
-  Typography, 
   Tabs,
   Tab,
   IconButton,
@@ -139,21 +138,6 @@ const LoginForm = ({ onSubmit, error, submitText }: LoginFormProps) => {
   
   return (
     <Box sx={{ width: '100%' }}>
-      <Typography 
-        variant="h4" 
-        component="h1" 
-        align="center"
-        sx={{
-          fontWeight: 600,
-          fontSize: { xs: '1.75rem', sm: '2rem' },
-          color: 'text.primary',
-          mb: 4,
-          fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, sans-serif',
-        }}
-      >
-        {t('login.title')}
-      </Typography>
-      
       {error && (
         <Alert 
           severity="error" 
