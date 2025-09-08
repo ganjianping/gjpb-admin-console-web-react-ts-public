@@ -58,14 +58,14 @@ const getInitialLanguage = (): Language => {
 
 // Get initial color theme from localStorage or use default
 const getInitialColorTheme = (): ColorTheme => {
-  if (typeof window === 'undefined') return 'blue';
+  if (typeof window === 'undefined') return APP_CONFIG.THEME.DEFAULT_COLOR_THEME as ColorTheme;
   
   const savedColorTheme = localStorage.getItem('gjpb_color_theme');
   if (savedColorTheme === 'blue' || savedColorTheme === 'purple' || savedColorTheme === 'green' || savedColorTheme === 'orange' || savedColorTheme === 'red') {
     return savedColorTheme;
   }
   
-  return 'blue';
+  return APP_CONFIG.THEME.DEFAULT_COLOR_THEME as ColorTheme;
 };
 
 // Initial state
