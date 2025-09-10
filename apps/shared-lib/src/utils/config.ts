@@ -15,6 +15,8 @@ export const APP_CONFIG = {
   COPYRIGHT: `© ${new Date().getFullYear()} GANJIANPING All Rights Reserved`,
   DEFAULT_LANGUAGE: import.meta.env.VITE_DEFAULT_LANGUAGE ?? 'en',
   AVAILABLE_LANGUAGES: import.meta.env.VITE_AVAILABLE_LANGUAGES?.split(',') ?? ['en', 'zh'],
+  DEFAULT_PAGE_TITLE: import.meta.env.VITE_DEFAULT_PAGE_TITLE ?? 'Dashboard',
+  DEFAULT_PAGE_TITLE_KEY: 'navigation.dashboard', // Internal i18n key - not configurable
   TOKEN: {
     ACCESS_TOKEN_KEY: 'gjpb_access_token',
     REFRESH_TOKEN_KEY: 'gjpb_refresh_token',

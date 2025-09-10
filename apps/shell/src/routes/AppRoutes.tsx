@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 // Layouts
 import MainLayout from '../layouts/MainLayout';
@@ -21,16 +22,31 @@ import ProtectedRoute from '../components/ProtectedRoute';
 import RefreshWarningProvider from '../components/RefreshWarningProvider';
 
 // Redux
-import { useAppDispatch } from '../hooks/useRedux';
+import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
 import { initializeAuth } from '../redux/slices/authSlice';
+import { setPageTitle, selectPageTitle } from '../redux/slices/uiSlice';
+
+// Config
+import { APP_CONFIG } from '../../../shared-lib/src/utils/config';
 
 const AppRoutes = () => {
   const dispatch = useAppDispatch();
+  const { t, i18n } = useTranslation();
+  const currentPageTitle = useAppSelector(selectPageTitle);
 
   // Initialize authentication state on app load
   useEffect(() => {
     dispatch(initializeAuth());
   }, [dispatch]);
+
+  // Initialize page title with i18n after translations are loaded
+  useEffect(() => {
+    // Only set initial page title if it's still the fallback value and i18n is ready
+    if (currentPageTitle === APP_CONFIG.DEFAULT_PAGE_TITLE && i18n.isInitialized) {
+      const translatedTitle = t(APP_CONFIG.DEFAULT_PAGE_TITLE_KEY, { defaultValue: APP_CONFIG.DEFAULT_PAGE_TITLE });
+      dispatch(setPageTitle(translatedTitle));
+    }
+  }, [dispatch, t, i18n.isInitialized, currentPageTitle]);
 
   return (
     <>

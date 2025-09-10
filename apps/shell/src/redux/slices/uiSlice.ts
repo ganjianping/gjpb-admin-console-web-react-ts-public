@@ -21,50 +21,65 @@ interface UiState {
   pageTitle: string;
 }
 
-// Get initial theme mode from localStorage or use default
+// Get initial theme mode from localStorage, system preference, or use default
 const getInitialTheme = (): ThemeMode => {
-  if (typeof window === 'undefined') return APP_CONFIG.THEME.DEFAULT_THEME as ThemeMode;
+  // Server-side rendering safety check
+  if (typeof window === 'undefined') {
+    return APP_CONFIG.THEME.DEFAULT_THEME as ThemeMode;
+  }
   
+  // 1st priority: User's previously saved preference
   const savedTheme = localStorage.getItem(APP_CONFIG.THEME.STORAGE_KEY);
   if (savedTheme === 'light' || savedTheme === 'dark') {
     return savedTheme;
   }
   
-  // Check system preference
+  // 2nd priority: System/OS dark mode preference
   if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
     return 'dark';
   }
   
+  // 3rd priority: Application configured default
   return APP_CONFIG.THEME.DEFAULT_THEME as ThemeMode;
 };
 
-// Get initial language from localStorage or use default
+// Get initial language from localStorage, browser preference, or use default
 const getInitialLanguage = (): Language => {
-  if (typeof window === 'undefined') return APP_CONFIG.DEFAULT_LANGUAGE as Language;
+  // Server-side rendering safety check
+  if (typeof window === 'undefined') {
+    return APP_CONFIG.DEFAULT_LANGUAGE as Language;
+  }
   
+  // 1st priority: User's previously saved preference
   const savedLang = localStorage.getItem('gjpb_language');
   if (savedLang === 'en' || savedLang === 'zh') {
     return savedLang;
   }
   
-  // Check browser language
+  // 2nd priority: Browser/system language preference
   const browserLang = navigator.language.split('-')[0];
   if (browserLang === 'zh') {
     return 'zh';
   }
   
+  // 3rd priority: Application configured default
   return APP_CONFIG.DEFAULT_LANGUAGE as Language;
 };
 
 // Get initial color theme from localStorage or use default
 const getInitialColorTheme = (): ColorTheme => {
-  if (typeof window === 'undefined') return APP_CONFIG.THEME.DEFAULT_COLOR_THEME as ColorTheme;
+  // Server-side rendering safety check
+  if (typeof window === 'undefined') {
+    return APP_CONFIG.THEME.DEFAULT_COLOR_THEME as ColorTheme;
+  }
   
+  // 1st priority: User's previously saved preference
   const savedColorTheme = localStorage.getItem('gjpb_color_theme');
   if (savedColorTheme === 'blue' || savedColorTheme === 'purple' || savedColorTheme === 'green' || savedColorTheme === 'orange' || savedColorTheme === 'red') {
     return savedColorTheme;
   }
   
+  // 2nd priority: Application configured default
   return APP_CONFIG.THEME.DEFAULT_COLOR_THEME as ColorTheme;
 };
 
@@ -74,7 +89,7 @@ const initialState: UiState = {
   colorTheme: getInitialColorTheme(),
   language: getInitialLanguage(),
   sidebarOpen: true,
-  pageTitle: 'Dashboard',
+  pageTitle: APP_CONFIG.DEFAULT_PAGE_TITLE,
 };
 
 // UI slice
