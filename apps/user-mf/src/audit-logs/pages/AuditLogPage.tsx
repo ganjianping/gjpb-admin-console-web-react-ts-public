@@ -36,10 +36,6 @@ import {
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 
-// Redux
-import { useAppDispatch } from '../hooks/useRedux';
-import { setPageTitle } from '../redux/slices/uiSlice';
-
 // Services
 import auditLogService, { 
   type AuditLogEntry, 
@@ -48,19 +44,11 @@ import auditLogService, {
 } from '../services/auditLogService';
 
 // Shared components
-import { DataTable, createColumnHelper } from '../../../shared-lib/src/components/DataTable';
-
-// Firebase Analytics
-import { trackPageView } from '../utils/firebaseAnalytics';
+import { DataTable, createColumnHelper } from '../../../../shared-lib/src/components/DataTable';
 
 const AuditLogPage = () => {
   const { t } = useTranslation();
-  const dispatch = useAppDispatch();
   const theme = useTheme();
-
-  useEffect(() => {
-    dispatch(setPageTitle(t('auditLogs.title')));
-  }, [dispatch, t]);
 
   // State management
   const [auditLogs, setAuditLogs] = useState<AuditLogData | null>(null);
@@ -348,8 +336,6 @@ const AuditLogPage = () => {
   useEffect(() => {
     if (!hasInitiallyLoaded.current) {
       hasInitiallyLoaded.current = true;
-      dispatch(setPageTitle(t('auditLogs.title')));
-      trackPageView(t('auditLogs.title'), t('auditLogs.title'));
       fetchAuditLogsInternal();
     }
   }, []); // NO dependencies - only run once on mount

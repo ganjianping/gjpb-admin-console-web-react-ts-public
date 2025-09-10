@@ -1,7 +1,7 @@
 import dashboardService from '../../../shell/src/services/dashboardService';
-import auditLogService from '../../../shell/src/services/auditLogService';
+import auditLogService from '../../../user-mf/src/audit-logs/services/auditLogService';
 import type { DashboardStats } from '../../../shell/src/services/dashboardService';
-import type { AuditLogEntry } from '../../../shell/src/services/auditLogService';
+import type { AuditLogEntry } from '../../../user-mf/src/audit-logs/services/auditLogService';
 
 // Interface for recent activity item
 interface RecentLoginActivityItem {

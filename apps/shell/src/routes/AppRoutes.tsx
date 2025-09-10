@@ -8,12 +8,11 @@ import MainLayout from '../layouts/MainLayout';
 // Pages
 // Import through the barrel file
 import { LoginPage } from '../../../auth-mf/src/exports';
-import { UsersPage, RolesPage } from '../../../user-mf/src/exports';
+import { UsersPage, RolesPage, AuditLogPage } from '../../../user-mf/src/exports';
 import { AppSettingsPage } from '../../../bm-mf/src/app-settings';
 import DashboardPage from '../pages/DashboardPage';
 import ProfilePage from '../pages/ProfilePage';
 import SettingsPage from '../pages/SettingsPage';
-import AuditLogPage from '../pages/AuditLogPage';
 import NotFoundPage from '../pages/NotFoundPage';
 import UnauthorizedPage from '../pages/UnauthorizedPage';
 

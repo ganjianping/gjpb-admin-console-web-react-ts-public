@@ -1,4 +1,4 @@
-import { apiClient } from '../../../shared-lib/src/services/api-client';
+import { apiClient } from '../../../../shared-lib/src/services/api-client';
 
 // Audit log entry interface
 export interface AuditLogEntry {

@@ -3,3 +3,6 @@
 export { UsersPage } from './users/pages';
 export { RolesPage } from './roles/pages';
 export { LanguageSwitcher } from './shared/components';
+
+// Export the audit log components
+export { AuditLogPage } from './audit-logs';
