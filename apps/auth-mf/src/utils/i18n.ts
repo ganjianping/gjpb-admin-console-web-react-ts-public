@@ -4,6 +4,10 @@ import i18n from '../../../shared-lib/src/utils/i18n';
 const authResources = {
   en: {
     translation: {
+      auth: {
+        unauthorized: 'You are not authorized to access this page',
+        sessionExpired: 'Your session has expired, please log in again',
+      },
       login: {
         title: 'Admin Console',
         tabs: {
@@ -18,6 +22,7 @@ const authResources = {
           countryCode: 'Code',
           mobileNumber: 'Mobile Number',
           submit: 'Login',
+          forgotPassword: 'Forgot password?',
         },
         errors: {
           invalidCredentials: 'Invalid credentials',
@@ -43,20 +48,25 @@ const authResources = {
   },
   zh: {
     translation: {
+      auth: {
+        unauthorized: '您无权访问此页面',
+        sessionExpired: '会话已过期，请重新登录',
+      },
       login: {
-        title: '管理控制台',
+        title: '登录管理控制台',
         tabs: {
           username: '用户名',
-          email: '邮箱',
+          email: '电子邮箱',
           mobile: '手机',
         },
         form: {
           username: '用户名',
-          email: '邮箱',
+          email: '电子邮箱',
           password: '密码',
           countryCode: '区号',
           mobileNumber: '手机号码',
           submit: '登录',
+          forgotPassword: '忘记密码？',
         },
         errors: {
           invalidCredentials: '无效的凭据',

@@ -9,7 +9,7 @@ import MainLayout from '../layouts/MainLayout';
 // Import through the barrel file
 import { LoginPage } from '../../../auth-mf/src/exports';
 import { UsersPage, RolesPage, AuditLogPage } from '../../../user-mf/src/exports';
-import { AppSettingsPage } from '../../../bm-mf/src/app-settings';
+import { AppSettingsPage } from '../../../bm-mf/src';
 import DashboardPage from '../pages/DashboardPage';
 import ProfilePage from '../pages/ProfilePage';
 import SettingsPage from '../pages/SettingsPage';

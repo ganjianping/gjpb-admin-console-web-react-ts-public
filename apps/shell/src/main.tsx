@@ -6,6 +6,7 @@ import { Toaster } from 'react-hot-toast'
 
 import './index.css'
 import '../../shared-lib/src/utils/i18n' // Initialize i18n
+import './utils/i18n' // Load shell-specific translations (dashboard)
 import './config/firebase' // Initialize Firebase Performance Monitoring
 import { store } from './redux/store'
 import ThemeProvider from './theme/ThemeProvider'
