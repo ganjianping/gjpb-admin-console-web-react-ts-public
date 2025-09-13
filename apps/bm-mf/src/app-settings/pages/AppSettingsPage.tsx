@@ -1,5 +1,4 @@
 import { Box, Alert, Card, CardContent, Collapse, useTheme } from '@mui/material';
-import { useEffect } from 'react';
 import '../utils/i18n'; // Initialize app settings translations
 
 // Import all the refactored components and hooks
@@ -15,21 +14,9 @@ import {
   useAppSettingDialog,
 } from '../hooks';
 
-// Mock notification hook - you may need to implement this or import from shared
-const useNotification = () => {
-  const showSuccess = (message: string) => console.log('Success:', message);
-  const showError = (message: string) => console.error('Error:', message);
-  const hideNotification = () => {};
-  const snackbar = { open: false, message: '', severity: 'success' as const };
-  return { showSuccess, showError, snackbar, hideNotification };
-};
-
 const AppSettingsPage = () => {
   const theme = useTheme();
   
-  // Initialize notification system
-  const { showSuccess, showError, snackbar, hideNotification } = useNotification();
-
   // Initialize app settings data management
   const {
     allAppSettings,
@@ -56,20 +43,10 @@ const AppSettingsPage = () => {
 
   // Initialize dialog management
   const {
-    dialogOpen,
-    selectedAppSetting,
-    actionType,
-    loading: dialogLoading,
-    formData,
-    formErrors,
     handleView,
     handleEdit,
     handleCreate,
     handleDelete,
-    handleCloseDialog,
-    handleFormChange,
-    handleSave,
-    handleConfirmDelete,
   } = useAppSettingDialog();
 
   // Enhanced search functionality
@@ -112,17 +89,6 @@ const AppSettingsPage = () => {
         handleDelete(appSetting);
         break;
     }
-  };
-
-  // Handle successful operations
-  const handleOperationSuccess = (message: string) => {
-    showSuccess(message);
-    loadAppSettings(); // Reload app settings after successful operation
-  };
-
-  // Handle operation errors
-  const handleOperationError = (message: string) => {
-    showError(message);
   };
 
   return (
