@@ -54,15 +54,6 @@ const enResources = {
     createdBy: 'Created By',
     updatedBy: 'Updated By',
   },
-  navigation: {
-    dashboard: 'Dashboard',
-    profile: 'Profile',
-    settings: 'Settings',
-    logout: 'Logout',
-    users: 'Users',
-    usersList: 'Users List',
-    roles: 'Roles',
-  },
   errors: {
     notFound: 'Page not found',
     serverError: 'Server error occurred',
@@ -124,15 +115,6 @@ const zhResources = {
     updatedAt: '更新时间',
     createdBy: '创建者',
     updatedBy: '更新者',
-  },
-  navigation: {
-    dashboard: '仪表板',
-    profile: '个人资料',
-    settings: '设置',
-    logout: '退出登录',
-    users: '用户管理',
-    usersList: '用户列表',
-    roles: '角色管理',
   },
   errors: {
     notFound: '页面不存在',

@@ -44,6 +44,15 @@ const shellResources = {
         },
         unknownUser: 'Unknown User',
       },
+      navigation: {
+        dashboard: 'Dashboard',
+        profile: 'Profile',
+        settings: 'Settings',
+        logout: 'Logout',
+        users: 'Users',
+        usersList: 'Users List',
+        roles: 'Roles',
+      },
       profile: {
         noEmailProvided: 'No email provided',
         tabs: {
@@ -154,6 +163,15 @@ const shellResources = {
           tryAgain: '请稍后重试。',
         },
         unknownUser: '未知用户',
+      },
+      navigation: {
+        dashboard: '仪表板',
+        profile: '个人资料',
+        settings: '设置',
+        logout: '退出登录',
+        users: '用户管理',
+        usersList: '用户列表',
+        roles: '角色管理',
       },
       profile: {
         noEmailProvided: '未提供电子邮件',
