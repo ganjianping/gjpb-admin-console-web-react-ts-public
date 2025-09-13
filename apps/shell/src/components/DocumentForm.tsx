@@ -13,8 +13,8 @@ import {
   MenuItem,
   Alert,
   CircularProgress,
+  Grid,
 } from '@mui/material';
-import { Grid } from '../../../shared-lib/src/utils/grid';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -133,8 +133,8 @@ const DocumentForm = () => {
         )}
         
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Grid container component="div" spacing={3}>
-            <Grid item component="div" xs={12}>
+          <Grid container spacing={3}>
+            <Grid size={12}>
               <Controller
                 name="title"
                 control={control}
@@ -153,7 +153,7 @@ const DocumentForm = () => {
               />
             </Grid>
             
-            <Grid item component="div" xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="type"
                 control={control}
@@ -179,7 +179,7 @@ const DocumentForm = () => {
               />
             </Grid>
             
-            <Grid item component="div" xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="status"
                 control={control}
@@ -205,7 +205,7 @@ const DocumentForm = () => {
               />
             </Grid>
             
-            <Grid item component="div" xs={12}>
+            <Grid size={12}>
               <Controller
                 name="description"
                 control={control}
@@ -225,7 +225,7 @@ const DocumentForm = () => {
               />
             </Grid>
             
-            <Grid item component="div" xs={12}>
+            <Grid size={12}>
               <Controller
                 name="tags"
                 control={control}
@@ -247,7 +247,7 @@ const DocumentForm = () => {
               />
             </Grid>
             
-            <Grid item component="div" xs={12}>
+            <Grid size={12}>
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 2 }}>
                 <Button
                   type="button"

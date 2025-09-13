@@ -11,7 +11,8 @@ import {
   CardContent,
   Button,
   TextField,
-  useTheme
+  useTheme,
+  Grid,
 } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import type { SubmitHandler } from 'react-hook-form';
@@ -29,7 +30,6 @@ import { trackPageView, trackFormSubmission } from '../utils/firebaseAnalytics';
 import { useAppSelector, useAppDispatch } from '../hooks/useRedux';
 import { selectCurrentUser } from '../redux/slices/authSlice';
 import { setPageTitle } from '../redux/slices/uiSlice';
-import { Grid } from '../../../shared-lib/src/utils/grid';
 
 // Tab panel interface
 interface TabPanelProps {
@@ -207,8 +207,8 @@ const ProfilePage = () => {
           borderColor: 'divider',
         }}
       >
-        <Grid container component="div" spacing={3} alignItems="center">
-          <Grid item component="div" xs={12} sm="auto">
+        <Grid container spacing={3} alignItems="center">
+          <Grid size={{ xs: 12, sm: "auto" }}>
             <Avatar 
               sx={{ 
                 width: 100, 
@@ -221,7 +221,7 @@ const ProfilePage = () => {
             </Avatar>
           </Grid>
           
-          <Grid item component="div" xs={12} sm>
+          <Grid size={{ xs: 12, sm: "grow" }}>
             <Typography variant="h4" gutterBottom>
               {user.nickname || user.username}
             </Typography>
@@ -311,7 +311,7 @@ const ProfilePage = () => {
           <TabPanel value={tabIndex} index={0}>
             <form onSubmit={profileForm.handleSubmit(handleProfileUpdate)}>
               <Grid container component="div" spacing={3}>
-                <Grid item component="div" xs={12} md={6}>
+                <Grid size={{ xs: 12, md: 6 }}>
                   <Controller
                     name="nickname"
                     control={profileForm.control}
@@ -333,7 +333,7 @@ const ProfilePage = () => {
                   />
                 </Grid>
                 
-                <Grid item component="div" xs={12} md={6}>
+                <Grid size={{ xs: 12, md: 6 }}>
                   <Controller
                     name="email"
                     control={profileForm.control}
@@ -355,7 +355,7 @@ const ProfilePage = () => {
                   />
                 </Grid>
                 
-                <Grid item component="div" xs={12} md={3}>
+                <Grid size={{ xs: 12, md: 3 }}>
                   <Controller
                     name="mobileCountryCode"
                     control={profileForm.control}
@@ -373,7 +373,7 @@ const ProfilePage = () => {
                   />
                 </Grid>
                 
-                <Grid item component="div" xs={12} md={9}>
+                <Grid size={{ xs: 12, md: 9 }}>
                   <Controller
                     name="mobileNumber"
                     control={profileForm.control}
@@ -395,7 +395,7 @@ const ProfilePage = () => {
                   />
                 </Grid>
 
-                <Grid item component="div" xs={12}>
+                <Grid size={12}>
                   <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
                     <Button
                       type="submit"
@@ -416,13 +416,13 @@ const ProfilePage = () => {
           <TabPanel value={tabIndex} index={1}>
             <form onSubmit={passwordForm.handleSubmit(handlePasswordChange)}>
               <Grid container component="div" spacing={3}>
-                <Grid item component="div" xs={12}>
+                <Grid size={12}>
                   <Typography variant="h6" gutterBottom>
                     {t('profile.changePassword')}
                   </Typography>
                 </Grid>
                 
-                <Grid item component="div" xs={12} md={6}>
+                <Grid size={{ xs: 12, md: 6 }}>
                   <Controller
                     name="currentPassword"
                     control={passwordForm.control}
@@ -440,9 +440,9 @@ const ProfilePage = () => {
                   />
                 </Grid>
                 
-                <Grid item component="div" xs={12} md={6}></Grid>
+                <Grid size={{ xs: 12, md: 6 }}></Grid>
                 
-                <Grid item component="div" xs={12} md={6}>
+                <Grid size={{ xs: 12, md: 6 }}>
                   <Controller
                     name="newPassword"
                     control={passwordForm.control}
@@ -460,7 +460,7 @@ const ProfilePage = () => {
                   />
                 </Grid>
                 
-                <Grid item component="div" xs={12} md={6}>
+                <Grid size={{ xs: 12, md: 6 }}>
                   <Controller
                     name="confirmPassword"
                     control={passwordForm.control}
@@ -478,7 +478,7 @@ const ProfilePage = () => {
                   />
                 </Grid>
 
-                <Grid item component="div" xs={12}>
+                <Grid size={12}>
                   <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
                     <Button
                       type="submit"
@@ -503,7 +503,7 @@ const ProfilePage = () => {
               </Typography>
               
               <Grid container component="div" spacing={2} sx={{ mb: 3 }}>
-                <Grid item component="div" xs={12} sm={6} md={3}>
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                   <Paper
                     elevation={0}
                     sx={{
@@ -522,7 +522,7 @@ const ProfilePage = () => {
                   </Paper>
                 </Grid>
                 
-                <Grid item component="div" xs={12} sm={6} md={3}>
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                   <Paper
                     elevation={0}
                     sx={{
@@ -544,7 +544,7 @@ const ProfilePage = () => {
                   </Paper>
                 </Grid>
                 
-                <Grid item component="div" xs={12} sm={6} md={3}>
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                   <Paper
                     elevation={0}
                     sx={{
@@ -568,7 +568,7 @@ const ProfilePage = () => {
                   </Paper>
                 </Grid>
                 
-                <Grid item component="div" xs={12} sm={6} md={3}>
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                   <Paper
                     elevation={0}
                     sx={{

@@ -16,8 +16,8 @@ import {
   Button,
   useTheme,
   alpha,
+  Grid,
 } from '@mui/material';
-import { Grid } from '../../../shared-lib/src/utils/grid';
 import type { SelectChangeEvent } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import {
@@ -211,7 +211,7 @@ const SettingsPage = () => {
       {/* Settings grid */}
       <Grid container component="div" spacing={3}>
         {/* Appearance */}
-        <Grid item component="div" xs={12} md={6}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <Card 
             elevation={0}
             sx={{
@@ -233,7 +233,7 @@ const SettingsPage = () => {
             <CardContent>
               <Grid container component="div" spacing={3}>
                 {/* Theme mode */}
-                <Grid item component="div" xs={12}>
+                <Grid size={12}>
                   <Paper
                     elevation={0}
                     sx={{
@@ -298,7 +298,7 @@ const SettingsPage = () => {
                 </Grid>
                 
                 {/* Language */}
-                <Grid item component="div" xs={12}>
+                <Grid size={12}>
                   <Paper
                     elevation={0}
                     sx={{
@@ -344,7 +344,7 @@ const SettingsPage = () => {
                 </Grid>
 
                 {/* Color Theme */}
-                <Grid item component="div" xs={12}>
+                <Grid size={12}>
                   <Paper
                     elevation={0}
                     sx={{
@@ -482,7 +482,7 @@ const SettingsPage = () => {
         </Grid>
         
         {/* Notifications */}
-        <Grid item component="div" xs={12} md={6}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <Card 
             elevation={0}
             sx={{
@@ -504,7 +504,7 @@ const SettingsPage = () => {
             <CardContent>
               <Grid container component="div" spacing={3}>
                 {/* Push notifications */}
-                <Grid item component="div" xs={12}>
+                <Grid size={12}>
                   <Paper
                     elevation={0}
                     sx={{
@@ -542,7 +542,7 @@ const SettingsPage = () => {
                 </Grid>
                 
                 {/* Email notifications */}
-                <Grid item component="div" xs={12}>
+                <Grid size={12}>
                   <Paper
                     elevation={0}
                     sx={{
@@ -584,7 +584,7 @@ const SettingsPage = () => {
         </Grid>
         
         {/* Security */}
-        <Grid item component="div" xs={12}>
+        <Grid size={12}>
           <Card 
             elevation={0}
             sx={{
@@ -605,7 +605,7 @@ const SettingsPage = () => {
             <CardContent>
               <Grid container component="div" spacing={3}>
                 {/* Security alerts */}
-                <Grid item component="div" xs={12} md={6} lg={4}>
+                <Grid size={{ xs: 12, md: 6, lg: 4 }}>
                   <Paper
                     elevation={0}
                     sx={{
@@ -643,7 +643,7 @@ const SettingsPage = () => {
                 </Grid>
                 
                 {/* Cookie consent */}
-                <Grid item component="div" xs={12} md={6} lg={4}>
+                <Grid size={{ xs: 12, md: 6, lg: 4 }}>
                   <Paper
                     elevation={0}
                     sx={{
@@ -684,7 +684,7 @@ const SettingsPage = () => {
                 </Grid>
                 
                 {/* Auto logout */}
-                <Grid item component="div" xs={12} md={6} lg={4}>
+                <Grid size={{ xs: 12, md: 6, lg: 4 }}>
                   <Paper
                     elevation={0}
                     sx={{
