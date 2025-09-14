@@ -2,8 +2,9 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 
-// Import our new TranslationProvider and LoginPage through the barrel exports
-import { TranslationProvider, LoginPage } from './exports';
+// Import I18nProvider and LoginPage through the barrel exports
+import { I18nProvider, LoginPage } from './exports';
+import i18n from './utils/i18n';
 import './index.css';
 
 // Create root element
@@ -15,10 +16,13 @@ const root = createRoot(rootElement);
 
 root.render(
   <StrictMode>
-    <TranslationProvider>
+    <I18nProvider 
+      i18nInstance={i18n}
+      loadingText="Loading translations..."
+    >
       <BrowserRouter>
         <LoginPage />
       </BrowserRouter>
-    </TranslationProvider>
+    </I18nProvider>
   </StrictMode>
 );

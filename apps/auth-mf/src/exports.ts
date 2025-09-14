@@ -4,4 +4,5 @@ import './utils/i18n';
 
 // Export the LoginPage component
 export { LoginPage } from './pages/LoginPage';
-export { default as TranslationProvider } from './components/TranslationProvider';
+// Re-export I18nProvider from shared-lib for convenience
+export { I18nProvider } from '../../shared-lib/src/components';
