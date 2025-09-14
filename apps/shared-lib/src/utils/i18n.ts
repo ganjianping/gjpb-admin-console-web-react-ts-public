@@ -63,6 +63,19 @@ const enResources = {
     unauthorizedTitle: 'You do not have permission to access this page',
     unauthorizedMessage: 'If you believe you should have access to this page, please contact your administrator.',
   },
+  theme: {
+    toggle: 'Toggle theme',
+    light: 'Light mode',
+    dark: 'Dark mode',
+    colorTheme: 'Color theme',
+    colors: {
+      blue: 'Blue',
+      purple: 'Purple',
+      green: 'Green',
+      orange: 'Orange',
+      red: 'Red',
+    },
+  },
 };
 
 // Chinese translations
@@ -124,6 +137,19 @@ const zhResources = {
     unauthorized: '无访问权限',
     unauthorizedTitle: '您无权访问此页面',
     unauthorizedMessage: '如果您认为自己应该有权访问此页面，请联系管理员。',
+  },
+  theme: {
+    toggle: '切换主题',
+    light: '浅色模式',
+    dark: '深色模式',
+    colorTheme: '颜色主题',
+    colors: {
+      blue: '蓝色',
+      purple: '紫色',
+      green: '绿色',
+      orange: '橙色',
+      red: '红色',
+    },
   },
 };
 
