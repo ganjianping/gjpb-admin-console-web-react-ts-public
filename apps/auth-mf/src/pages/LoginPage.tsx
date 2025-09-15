@@ -9,26 +9,38 @@ import LoginForm from '../components/LoginFormWrapper';
 import type { LoginCredentials } from '../../../shared-lib/src/services/auth-service';
 import { APP_CONFIG } from '../../../shared-lib/src/utils/config';
 
-// Redux imports
-import { useAppDispatch, useAppSelector } from '../../../shell/src/hooks/useRedux';
-import { loginUser } from '../../../shell/src/redux/slices/authSlice';
-import { toggleThemeMode, selectThemeMode, selectColorTheme, setColorTheme } from '../../../shell/src/redux/slices/uiSlice';
+// Local Redux imports
+import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
+import { 
+  performLogin,
+  selectLoginError,
+  clearError
+} from '../redux/slices/loginSlice';
+
+// Communication with shell
+import AuthCommunication from '../utils/auth-communication';
+
+// Shell theme types (only for typing)
 import type { ColorTheme } from '../../../shell/src/redux/slices/uiSlice';
 
 const LoginPage = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
+  
+  // Local auth-mf Redux
   const dispatch = useAppDispatch();
-  const themeMode = useAppSelector(selectThemeMode);
-  const colorTheme = useAppSelector(selectColorTheme);
-  const [loginError, setLoginError] = useState<string | null>(null);
+  const loginError = useAppSelector(selectLoginError);
+
+  // State for UI controls
   const [colorDropdownOpen, setColorDropdownOpen] = useState(false);
   const [languageDropdownOpen, setLanguageDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const languageDropdownRef = useRef<HTMLDivElement>(null);
   
-  const isDarkMode = themeMode === 'dark';
+  // For now, use defaults for theme (this could be improved with proper communication)
+  const isDarkMode = false; // TODO: Get from shell or localStorage
+  const colorTheme: ColorTheme = 'blue'; // TODO: Get from shell or localStorage
   
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -53,14 +65,16 @@ const LoginPage = () => {
   // Get the intended destination from location state
   const from = (location.state?.from?.pathname as string) || APP_CONFIG.ROUTES.HOME;
 
-  // Handle theme toggle
+  // Handle theme toggle - for now, just store in localStorage
   const handleThemeToggle = () => {
-    dispatch(toggleThemeMode());
+    // TODO: This should communicate with shell properly
+    console.log('Theme toggle requested - needs shell communication');
   };
 
-  // Handle color theme change
+  // Handle color theme change  
   const handleColorThemeChange = (newColorTheme: ColorTheme) => {
-    dispatch(setColorTheme(newColorTheme));
+    // TODO: This should communicate with shell properly
+    console.log('Color theme change requested:', newColorTheme);
     setColorDropdownOpen(false);
   };
 
@@ -85,26 +99,31 @@ const LoginPage = () => {
   // Handle login submission
   const handleLogin = async (credentials: LoginCredentials) => {
     try {
-      setLoginError(null);
+      // Clear any previous errors
+      dispatch(clearError());
       
-      // Use Redux action for login
-      const result = await dispatch(loginUser(credentials));
+      // Perform login using auth-mf store
+      const result = await dispatch(performLogin(credentials));
       
-      if (loginUser.fulfilled.match(result)) {
+      if (performLogin.fulfilled.match(result)) {
+        // Notify shell of successful login
+        AuthCommunication.notifyLoginSuccess(result.payload);
+        
         // Show success message
         toast.success(t('login.success', 'Login successful'));
         
         // Navigate to the page user was trying to access or home
         navigate(from, { replace: true });
       } else {
-        // Handle login failure
+        // Handle login failure - error is already in Redux state
         const errorMessage = result.payload ?? 'Login failed. Please try again.';
-        setLoginError(errorMessage);
+        AuthCommunication.notifyLoginFailure(errorMessage);
       }
       
     } catch (error: unknown) {
       console.error('Login error:', error);
-      setLoginError(t('login.errors.generalError', 'Login failed. Please try again.'));
+      const errorMessage = t('login.errors.generalError', 'Login failed. Please try again.');
+      AuthCommunication.notifyLoginFailure(errorMessage);
     }
   };
 

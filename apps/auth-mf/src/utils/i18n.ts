@@ -4,6 +4,22 @@ import i18n from '../../../shared-lib/src/utils/i18n';
 const authResources = {
   en: {
     translation: {
+      common: {
+        language: 'Language',
+        theme: 'Theme',
+        settings: 'Settings',
+      },
+      theme: {
+        light: 'Light',
+        dark: 'Dark',
+        colors: {
+          blue: 'Blue',
+          purple: 'Purple',
+          green: 'Green',
+          orange: 'Orange',
+          red: 'Red',
+        },
+      },
       auth: {
         unauthorized: 'You are not authorized to access this page',
         sessionExpired: 'Your session has expired, please log in again',
@@ -35,6 +51,22 @@ const authResources = {
   },
   zh: {
     translation: {
+      common: {
+        language: '语言',
+        theme: '主题',
+        settings: '设置',
+      },
+      theme: {
+        light: '浅色',
+        dark: '深色',
+        colors: {
+          blue: '蓝色',
+          purple: '紫色',
+          green: '绿色',
+          orange: '橙色',
+          red: '红色',
+        },
+      },
       auth: {
         unauthorized: '您无权访问此页面',
         sessionExpired: '会话已过期，请重新登录',

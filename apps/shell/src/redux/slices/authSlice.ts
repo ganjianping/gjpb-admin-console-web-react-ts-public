@@ -1,9 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { loginService } from 'auth-mf/exports';
 import { authService } from '../../../../shared-lib/src/services/auth-service';
-import { ApiError } from '../../../../shared-lib/src/services/api-client';
-import type { LoginCredentials, UserInfo, AuthResponse } from '../../../../shared-lib/src/services/auth-service';
+import type { UserInfo, AuthResponse } from '../../../../shared-lib/src/services/auth-service';
 import type { RootState } from '../store';
 
 // Define the auth state interface
@@ -25,28 +23,6 @@ const initialState: AuthState = {
 };
 
 // Async thunks
-export const loginUser = createAsyncThunk<
-  AuthResponse,
-  LoginCredentials,
-  { rejectValue: string }
->('auth/login', async (credentials, { rejectWithValue }) => {
-  try {
-    const response = await loginService.login(credentials);
-    return response;
-  } catch (error: unknown) {
-    console.error('[AuthSlice] Login error:', error);
-    
-    if (error instanceof ApiError) {
-      // Handle API errors with detailed information
-      return rejectWithValue(error.message || 'Login failed');
-    } else if (error instanceof Error) {
-      return rejectWithValue(error.message);
-    } else {
-      return rejectWithValue('Login failed: Unknown error occurred');
-    }
-  }
-});
-
 export const fetchCurrentUser = createAsyncThunk<
   UserInfo,
   void,
@@ -125,6 +101,34 @@ const authSlice = createSlice({
       state.roles = roleCodes;
       state.error = null;
     },
+    // New action to handle login success from auth-mf
+    handleLoginSuccess: (state, action: PayloadAction<AuthResponse>) => {
+      const { username, email, mobileCountryCode, mobileNumber, nickname, accountStatus, roleCodes } = action.payload;
+      state.user = {
+        username,
+        email,
+        mobileCountryCode,
+        mobileNumber,
+        nickname,
+        accountStatus,
+        lastLoginAt: action.payload.lastLoginAt,
+        lastLoginIp: action.payload.lastLoginIp,
+        lastFailedLoginAt: action.payload.lastFailedLoginAt,
+        failedLoginAttempts: action.payload.failedLoginAttempts,
+        roleCodes,
+      };
+      state.isAuthenticated = true;
+      state.isLoading = false;
+      state.roles = roleCodes;
+      state.error = null;
+    },
+    handleLoginFailure: (state, action: PayloadAction<string>) => {
+      state.isLoading = false;
+      state.error = action.payload;
+      state.isAuthenticated = false;
+      state.user = null;
+      state.roles = [];
+    },
     clearCredentials: (state) => {
       state.user = null;
       state.isAuthenticated = false;
@@ -139,37 +143,6 @@ const authSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // Login user
-    builder
-      .addCase(loginUser.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-      })
-      .addCase(loginUser.fulfilled, (state, action) => {
-        const { username, email, mobileCountryCode, mobileNumber, nickname, accountStatus, roleCodes } = action.payload;
-        state.user = {
-          username,
-          email,
-          mobileCountryCode,
-          mobileNumber,
-          nickname,
-          accountStatus,
-          lastLoginAt: action.payload.lastLoginAt,
-          lastLoginIp: action.payload.lastLoginIp,
-          lastFailedLoginAt: action.payload.lastFailedLoginAt,
-          failedLoginAttempts: action.payload.failedLoginAttempts,
-          roleCodes,
-        };
-        state.isAuthenticated = true;
-        state.isLoading = false;
-        state.roles = roleCodes;
-        state.error = null;
-      })
-      .addCase(loginUser.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload ?? 'Login failed';
-      });
-    
     // Fetch current user
     builder
       .addCase(fetchCurrentUser.pending, (state) => {
@@ -216,7 +189,14 @@ const authSlice = createSlice({
 });
 
 // Export actions and reducer
-export const { setCredentials, clearCredentials, setError, clearError } = authSlice.actions;
+export const { 
+  setCredentials, 
+  clearCredentials, 
+  setError, 
+  clearError, 
+  handleLoginSuccess, 
+  handleLoginFailure 
+} = authSlice.actions;
 
 // Custom selectors
 export const selectCurrentUser = (state: RootState) => state.auth.user;

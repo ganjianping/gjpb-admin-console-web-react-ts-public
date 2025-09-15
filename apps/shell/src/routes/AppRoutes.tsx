@@ -22,7 +22,7 @@ import RefreshWarningProvider from '../components/RefreshWarningProvider';
 
 // Redux
 import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
-import { initializeAuth } from '../redux/slices/authSlice';
+import { initializeAuth, handleLoginSuccess, handleLoginFailure } from '../redux/slices/authSlice';
 import { setPageTitle, selectPageTitle } from '../redux/slices/uiSlice';
 
 // Config
@@ -36,6 +36,34 @@ const AppRoutes = () => {
   // Initialize authentication state on app load
   useEffect(() => {
     dispatch(initializeAuth());
+  }, [dispatch]);
+
+  // Set up auth communication handlers for auth-mf
+  useEffect(() => {
+    // Handle login success from auth-mf
+    window.onAuthLoginSuccess = (authResponse) => {
+      console.log('[Shell] Received login success from auth-mf');
+      dispatch(handleLoginSuccess(authResponse));
+    };
+
+    // Handle login failure from auth-mf
+    window.onAuthLoginFailure = (error) => {
+      console.log('[Shell] Received login failure from auth-mf:', error);
+      dispatch(handleLoginFailure(error));
+    };
+
+    // Handle logout request from auth-mf (if needed in the future)
+    window.onAuthLogoutRequest = () => {
+      console.log('[Shell] Received logout request from auth-mf');
+      // Handle logout if needed
+    };
+
+    // Cleanup on unmount
+    return () => {
+      delete window.onAuthLoginSuccess;
+      delete window.onAuthLoginFailure;
+      delete window.onAuthLogoutRequest;
+    };
   }, [dispatch]);
 
   // Initialize page title with i18n after translations are loaded
