@@ -1,10 +1,4 @@
-import { APP_CONFIG, APP_ENV } from '../utils/config';
-import { apiClient } from './api-client';
-import { setCookie, getCookie, removeCookie } from '../utils/cookie';
-import { mockApiService } from './mock-api-service';
-import { clearAllCaches } from '../utils/cache-manager';
-
-// Auth Types
+// Auth Types - Keep these for cross-module communication
 export interface LoginCredentials {
   username?: string;
   email?: string;
@@ -36,87 +30,49 @@ export interface UserInfo {
 
 export type AuthResponse = AuthTokens & UserInfo;
 
-// Check if we should use mock API
-const useMockAPI = APP_ENV.MODE === 'mock' || (APP_ENV.DEV && import.meta.env.VITE_USE_MOCK === 'true');
-
+/**
+ * Shared authentication utilities
+ * Only contains functions that might be used across multiple microfrontends
+ * Module-specific auth functions should be in their respective modules
+ */
 class AuthService {
   /**
-   * Logout the current user
+   * Check if user has specific role - utility function for any module
+   * Gets role data from localStorage (populated during login)
    */
-  public async logout(): Promise<void> {
-    try {
-      // Clear auth tokens
-      removeCookie(APP_CONFIG.TOKEN.ACCESS_TOKEN_KEY);
-      removeCookie(APP_CONFIG.TOKEN.REFRESH_TOKEN_KEY);
-      removeCookie(APP_CONFIG.TOKEN.TOKEN_TYPE_KEY);
-      
-      // Clear all application caches
-      clearAllCaches();
-    } catch (error) {
-      console.error('[AuthService] Logout error:', error);
+  public hasRole(roleCodes: string | string[]): boolean {
+    const userRoles = this.getUserRoles();
+    
+    if (!userRoles || userRoles.length === 0) {
+      return false;
     }
+    
+    const requiredRoles = Array.isArray(roleCodes) ? roleCodes : [roleCodes];
+    return requiredRoles.some(role => userRoles.includes(role));
   }
 
   /**
-   * Check if user is authenticated
+   * Get user roles from stored data - utility for role checks
    */
-  public isAuthenticated(): boolean {
-    return !!getCookie(APP_CONFIG.TOKEN.ACCESS_TOKEN_KEY);
-  }
-
-  /**
-   * Refresh the access token
-   */
-  public async refreshToken(): Promise<AuthTokens> {
-    const refreshToken = getCookie(APP_CONFIG.TOKEN.REFRESH_TOKEN_KEY);
-    
-    if (!refreshToken) {
-      throw new Error('No refresh token available');
-    }
-    
+  private getUserRoles(): string[] {
     try {
-      let tokenResponse: AuthTokens;
-      
-      // Use mock API in development mode
-      if (useMockAPI) {
-        tokenResponse = await mockApiService.refreshToken(refreshToken) as AuthTokens;
-      } else {
-        const response = await apiClient.put<AuthTokens>(
-          APP_CONFIG.AUTH.REFRESH_TOKEN_URL,
-          { refreshToken }
-        );
-        
-        if (response.status.code === 200 && response.data) {
-          tokenResponse = response.data;
-        } else {
-          throw new Error('Token refresh failed');
-        }
+      const userInfo = localStorage.getItem('gjpb_user_info');
+      if (userInfo) {
+        const { roleCodes } = JSON.parse(userInfo);
+        return roleCodes ?? [];
       }
-      
-      const { accessToken, refreshToken: newRefreshToken, tokenType, expiresIn } = tokenResponse;
-      
-      // Store new tokens with explicit SameSite protection
-      setCookie(APP_CONFIG.TOKEN.ACCESS_TOKEN_KEY, accessToken, expiresIn, '/', import.meta.env.PROD, 'Lax');
-      setCookie(APP_CONFIG.TOKEN.REFRESH_TOKEN_KEY, newRefreshToken, undefined, '/', import.meta.env.PROD, 'Lax');
-      setCookie(APP_CONFIG.TOKEN.TOKEN_TYPE_KEY, tokenType, undefined, '/', import.meta.env.PROD, 'Lax');
-      
-      return tokenResponse;
+      return [];
     } catch (error) {
-      console.error('[AuthService] Token refresh error:', error);
-      throw error;
+      console.error('[AuthService] Get user roles error:', error);
+      return [];
     }
   }
 
   /**
-   * Get current user info - now gets data from localStorage (populated during login)
+   * Get basic user info from localStorage - utility for any module
    */
-  public async getCurrentUser(): Promise<UserInfo | null> {
-    if (!this.isAuthenticated()) {
-      return null;
-    }
-    
+  public getUserInfo(): UserInfo | null {
     try {
-      // Get user info from localStorage (stored during login)
       const userInfo = localStorage.getItem('gjpb_user_info');
       if (userInfo) {
         const userData = JSON.parse(userInfo);
@@ -136,87 +92,8 @@ class AuthService {
       }
       return null;
     } catch (error) {
-      console.error('[AuthService] Get current user error:', error);
+      console.error('[AuthService] Get user info error:', error);
       return null;
-    }
-  }
-
-  /**
-   * Check if user has specific role
-   */
-  public hasRole(roleCodes: string | string[]): boolean {
-    const userRoles = this.getUserRoles();
-    
-    if (!userRoles || userRoles.length === 0) {
-      return false;
-    }
-    
-    const requiredRoles = Array.isArray(roleCodes) ? roleCodes : [roleCodes];
-    return requiredRoles.some(role => userRoles.includes(role));
-  }
-
-  /**
-   * Get user roles from stored data
-   */
-  private getUserRoles(): string[] {
-    try {
-      const userInfo = localStorage.getItem('gjpb_user_info');
-      if (userInfo) {
-        const { roleCodes } = JSON.parse(userInfo);
-        return roleCodes ?? [];
-      }
-      return [];
-    } catch (error) {
-      console.error('[AuthService] Get user roles error:', error);
-      return [];
-    }
-  }
-
-  /**
-   * Check if access token will expire soon and refresh if needed
-   * @returns Promise that resolves when token is refreshed (if needed)
-   */
-  public async ensureValidToken(): Promise<void> {
-    if (!this.isAuthenticated()) {
-      throw new Error('User not authenticated');
-    }
-
-    try {
-      // Check if token needs proactive refresh
-      if (this.shouldRefreshToken()) {
-        console.info('[AuthService] Token expiring soon, refreshing proactively');
-        await this.refreshToken();
-      }
-    } catch (error) {
-      console.error('[AuthService] Token validation error:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Check if token is close to expiring (within TOKEN_EXPIRY_BUFFER)
-   * @returns true if token should be refreshed proactively
-   */
-  public shouldRefreshToken(): boolean {
-    const accessToken = getCookie(APP_CONFIG.TOKEN.ACCESS_TOKEN_KEY);
-    
-    if (!accessToken) {
-      return false;
-    }
-
-    try {
-      // Decode JWT token to check expiry (simple base64 decode)
-      const payload = JSON.parse(atob(accessToken.split('.')[1]));
-      const expiryTime = payload.exp * 1000; // Convert to milliseconds
-      const currentTime = Date.now();
-      const bufferTime = APP_CONFIG.AUTH.TOKEN_EXPIRY_BUFFER * 1000; // Convert to milliseconds
-      
-      // Return true if token expires within the buffer time
-      return (expiryTime - currentTime) <= bufferTime;
-    } catch (error) {
-      console.warn('[AuthService] Could not decode token for expiry check:', error);
-      // If we can't decode the token, assume it needs refresh
-      return true;
     }
   }
 }

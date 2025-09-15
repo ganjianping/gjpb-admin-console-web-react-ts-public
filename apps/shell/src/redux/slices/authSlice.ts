@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { authService } from '../../../../shared-lib/src/services/auth-service';
+import { shellAuthService } from '../../services/shell-auth-service';
 import type { UserInfo, AuthResponse } from '../../../../shared-lib/src/services/auth-service';
 import type { RootState } from '../store';
 
@@ -29,7 +29,7 @@ export const fetchCurrentUser = createAsyncThunk<
   { rejectValue: string }
 >('auth/fetchCurrentUser', async (_, { rejectWithValue }) => {
   try {
-    const user = await authService.getCurrentUser();
+    const user = await shellAuthService.getCurrentUser();
     if (!user) {
       throw new Error('Failed to fetch user data');
     }
@@ -41,7 +41,7 @@ export const fetchCurrentUser = createAsyncThunk<
 });
 
 export const logoutUser = createAsyncThunk('auth/logout', async () => {
-  await authService.logout();
+  await shellAuthService.logout();
   return null;
 });
 
@@ -52,7 +52,7 @@ export const initializeAuth = createAsyncThunk<
 >('auth/initialize', async () => {
   try {
     // Check if user has valid authentication tokens
-    const isAuthenticated = authService.isAuthenticated();
+    const isAuthenticated = shellAuthService.isAuthenticated();
     
     if (isAuthenticated) {
       // Try to get user info from localStorage first (faster)
@@ -63,7 +63,7 @@ export const initializeAuth = createAsyncThunk<
       }
       
       // If no stored user info, fetch from API
-      const user = await authService.getCurrentUser();
+      const user = await shellAuthService.getCurrentUser();
       if (user) {
         return { isAuthenticated: true, user };
       }
