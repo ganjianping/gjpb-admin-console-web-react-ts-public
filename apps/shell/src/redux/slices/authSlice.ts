@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
+import { loginService } from 'auth-mf/exports';
 import { authService } from '../../../../shared-lib/src/services/auth-service';
 import { ApiError } from '../../../../shared-lib/src/services/api-client';
 import type { LoginCredentials, UserInfo, AuthResponse } from '../../../../shared-lib/src/services/auth-service';
@@ -30,7 +31,7 @@ export const loginUser = createAsyncThunk<
   { rejectValue: string }
 >('auth/login', async (credentials, { rejectWithValue }) => {
   try {
-    const response = await authService.login(credentials);
+    const response = await loginService.login(credentials);
     return response;
   } catch (error: unknown) {
     console.error('[AuthSlice] Login error:', error);

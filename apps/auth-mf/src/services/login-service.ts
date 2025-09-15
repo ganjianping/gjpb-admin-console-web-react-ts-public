@@ -1,0 +1,130 @@
+import type {
+  LoginCredentials,
+  AuthResponse,
+} from '@shared/services/auth-service';
+import { APP_CONFIG, APP_ENV } from '@shared/utils/config';
+import { apiClient } from '@shared/services/api-client';
+import { setCookie } from '@shared/utils/cookie';
+import { mockApiService } from '@shared/services/mock-api-service';
+import { clearAllCaches } from '@shared/utils/cache-manager';
+
+// Check if we should use mock API
+const useMockAPI =
+  APP_ENV.MODE === 'mock' ||
+  (APP_ENV.DEV && import.meta.env.VITE_USE_MOCK === 'true');
+
+class LoginService {
+  /**
+   * Login with credentials
+   */
+  public async login(credentials: LoginCredentials): Promise<AuthResponse> {
+    try {
+      let authResponse: AuthResponse;
+
+      // Clear all caches on login (fresh start)
+      clearAllCaches();
+
+      // Use mock API in development mode
+      if (useMockAPI) {
+        authResponse = await mockApiService.login(credentials);
+      } else {
+        console.log(
+          '[AuthService] Making login request to:',
+          APP_CONFIG.AUTH.LOGIN_URL
+        );
+        const response = await apiClient.post<AuthResponse>(
+          APP_CONFIG.AUTH.LOGIN_URL,
+          credentials
+        );
+
+        if (response.status.code === 200 && response.data) {
+          authResponse = response.data;
+        } else {
+          throw new Error('Login failed');
+        }
+      }
+
+      // Store tokens in HTTP-only cookies
+      const { accessToken, refreshToken, tokenType, expiresIn } = authResponse;
+
+      // Store tokens with explicit SameSite protection
+      setCookie(
+        APP_CONFIG.TOKEN.ACCESS_TOKEN_KEY,
+        accessToken,
+        expiresIn,
+        '/',
+        import.meta.env.PROD,
+        'Lax'
+      );
+      setCookie(
+        APP_CONFIG.TOKEN.REFRESH_TOKEN_KEY,
+        refreshToken,
+        undefined,
+        '/',
+        import.meta.env.PROD,
+        'Lax'
+      );
+      setCookie(
+        APP_CONFIG.TOKEN.TOKEN_TYPE_KEY,
+        tokenType,
+        undefined,
+        '/',
+        import.meta.env.PROD,
+        'Lax'
+      );
+
+      // Store user info in localStorage for convenience (all fields from backend response)
+      localStorage.setItem(
+        'gjpb_user_info',
+        JSON.stringify({
+          username: authResponse.username,
+          email: authResponse.email,
+          mobileCountryCode: authResponse.mobileCountryCode,
+          mobileNumber: authResponse.mobileNumber,
+          nickname: authResponse.nickname,
+          accountStatus: authResponse.accountStatus,
+          lastLoginAt: authResponse.lastLoginAt,
+          lastLoginIp: authResponse.lastLoginIp,
+          lastFailedLoginAt: authResponse.lastFailedLoginAt,
+          failedLoginAttempts: authResponse.failedLoginAttempts,
+          roleCodes: authResponse.roleCodes,
+        })
+      );
+
+      // Notify dashboard component to refresh cache after successful login
+      try {
+        console.log(
+          '[AuthService] Notifying dashboard to refresh after login for user:',
+          authResponse.username
+        );
+
+        // Use a small delay to ensure the dashboard component is mounted
+        setTimeout(() => {
+          if (
+            typeof window !== 'undefined' &&
+            (window as any).updateDashboardAfterLogin
+          ) {
+            (window as any).updateDashboardAfterLogin();
+            console.log(
+              '[AuthService] Dashboard refresh notification sent successfully'
+            );
+          } else {
+            console.warn(
+              '[AuthService] Dashboard refresh function not available'
+            );
+          }
+        }, 100);
+      } catch (error) {
+        console.warn('[AuthService] Error notifying dashboard refresh:', error);
+      }
+
+      return authResponse;
+    } catch (error) {
+      console.error('[AuthService] Login error:', error);
+      throw error;
+    }
+  }
+}
+
+export const loginService = new LoginService();
+export default loginService;

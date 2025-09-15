@@ -17,6 +17,8 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         '@apps': path.resolve(__dirname, './apps'),
+        'auth-mf': path.resolve(__dirname, './apps/auth-mf/src'),
+        '@shared': path.resolve(__dirname, './apps/shared-lib/src'),
       },
     },
     server: {

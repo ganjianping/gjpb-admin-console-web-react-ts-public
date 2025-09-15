@@ -6,3 +6,5 @@ import './utils/i18n';
 export { LoginPage } from './pages/LoginPage';
 // Re-export I18nProvider from shared-lib for convenience
 export { I18nProvider } from '../../shared-lib/src/components';
+// Export auth service
+export * from './services/login-service';
