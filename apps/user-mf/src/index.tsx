@@ -6,7 +6,7 @@ import { BrowserRouter } from 'react-router-dom';
 import './shared/utils/i18n';
 
 // Import our components through the barrel exports
-import { UsersPage } from './exports';
+import { UsersPage } from './public-api';
 
 // Create root element
 const rootElement = document.getElementById('root');

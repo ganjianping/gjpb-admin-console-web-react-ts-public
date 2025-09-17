@@ -8,8 +8,8 @@ import MainLayout from '../layouts/MainLayout';
 // Pages
 // Import through the barrel file
 import { LoginPage } from '../../../auth-mf/src/public-api';
-import { UsersPage, RolesPage, AuditLogPage } from '../../../user-mf/src/exports';
-import { AppSettingsPage } from '../../../bm-mf/src';
+import { UsersPage, RolesPage, AuditLogPage } from '../../../user-mf/src/public-api';
+import { AppSettingsPage } from '../../../bm-mf/src/public-api';
 import DashboardPage from '../pages/DashboardPage';
 import ProfilePage from '../pages/ProfilePage';
 import SettingsPage from '../pages/SettingsPage';
