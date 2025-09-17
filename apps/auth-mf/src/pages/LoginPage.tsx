@@ -5,20 +5,20 @@ import { Sun, Moon, Palette, Languages } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 
-import LoginForm from '../components/LoginFormWrapper';
+import LoginForm from '../components/forms/LoginFormWithI18n';
 import type { LoginCredentials } from '../../../shared-lib/src/services/auth-service';
 import { APP_CONFIG } from '../../../shared-lib/src/utils/config';
 
 // Local Redux imports
-import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
+import { useAppDispatch, useAppSelector } from '../hooks/useAuthStore';
 import { 
-  performLogin,
-  selectLoginError,
+  performAuthentication,
+  selectAuthError,
   clearError
-} from '../redux/slices/loginSlice';
+} from '../store/slices/authentication.slice';
 
 // Communication with shell
-import AuthCommunication, { type ColorTheme } from '../utils/auth-communication';
+import AuthCommunication, { type ColorTheme } from '../utils/shell-communication';
 
 const LoginPage = () => {
   const { t, i18n } = useTranslation();
@@ -27,7 +27,7 @@ const LoginPage = () => {
   
   // Local auth-mf Redux
   const dispatch = useAppDispatch();
-  const loginError = useAppSelector(selectLoginError);
+  const authError = useAppSelector(selectAuthError);
 
   // State for UI controls
   const [colorDropdownOpen, setColorDropdownOpen] = useState(false);
@@ -108,10 +108,10 @@ const LoginPage = () => {
       // Clear any previous errors
       dispatch(clearError());
       
-      // Perform login using auth-mf store
-      const result = await dispatch(performLogin(credentials));
+      // Perform authentication using auth-mf store
+      const result = await dispatch(performAuthentication(credentials));
       
-      if (performLogin.fulfilled.match(result)) {
+      if (performAuthentication.fulfilled.match(result)) {
         // Notify shell of successful login
         AuthCommunication.notifyLoginSuccess(result.payload);
         
@@ -507,7 +507,7 @@ const LoginPage = () => {
             
             <LoginForm 
               onSubmit={handleLogin}
-              error={loginError}
+              error={authError}
             />
           </Box>
         </Box>

@@ -7,7 +7,7 @@ import MainLayout from '../layouts/MainLayout';
 
 // Pages
 // Import through the barrel file
-import { LoginPage } from '../../../auth-mf/src/exports';
+import { LoginPage } from '../../../auth-mf/src/public-api';
 import { UsersPage, RolesPage, AuditLogPage } from '../../../user-mf/src/exports';
 import { AppSettingsPage } from '../../../bm-mf/src';
 import DashboardPage from '../pages/DashboardPage';

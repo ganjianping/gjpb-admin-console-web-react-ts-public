@@ -13,11 +13,11 @@ const useMockAPI =
   APP_ENV.MODE === 'mock' ||
   (APP_ENV.DEV && import.meta.env.VITE_USE_MOCK === 'true');
 
-class LoginService {
+class AuthenticationService {
   /**
-   * Login with credentials
+   * Authenticate user with credentials
    */
-  public async login(credentials: LoginCredentials): Promise<AuthResponse> {
+  public async authenticate(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
       let authResponse: AuthResponse;
 
@@ -99,5 +99,5 @@ class LoginService {
   }
 }
 
-export const loginService = new LoginService();
-export default loginService;
+export const authenticationService = new AuthenticationService();
+export default authenticationService;

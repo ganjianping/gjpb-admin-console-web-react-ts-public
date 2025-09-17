@@ -17,7 +17,7 @@ interface AuthMfModule {
 export const cleanupAuthMfResources = async (): Promise<void> => {
   try {
     // Dynamically import auth-mf module if it's loaded
-    const authMfModule = await import('../../../auth-mf/src/redux/store').catch(() => null) as AuthMfModule | null;
+    const authMfModule = await import('../../../auth-mf/src/store').catch(() => null) as AuthMfModule | null;
     
     if (authMfModule?.destroyAuthMfStore) {
       console.log('[Shell] Cleaning up auth-mf store resources');
@@ -34,7 +34,7 @@ export const cleanupAuthMfResources = async (): Promise<void> => {
  */
 export const preloadAuthMfStore = async (): Promise<void> => {
   try {
-    const authMfModule = await import('../../../auth-mf/src/redux/store').catch(() => null) as AuthMfModule | null;
+    const authMfModule = await import('../../../auth-mf/src/store').catch(() => null) as AuthMfModule | null;
     
     if (authMfModule?.getAuthMfStore) {
       console.log('[Shell] Preloading auth-mf store');

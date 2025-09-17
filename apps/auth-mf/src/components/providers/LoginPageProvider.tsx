@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Provider } from 'react-redux';
-import { getAuthMfStore } from '../store';
-import { LoginPage as LoginPageComponent } from '../pages/LoginPage';
+import { getAuthMfStore } from '../../store';
+import { LoginPage as LoginPageComponent } from '../../pages/LoginPage';
 
 // Wrapper component that provides the auth-mf Redux store using lazy loading
 export const LoginPage = () => {
