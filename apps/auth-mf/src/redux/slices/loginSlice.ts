@@ -49,17 +49,32 @@ export const performLogin = createAsyncThunk<
 
   try {
     const response = await loginService.login(credentials);
+    
+    // Communicate success to shell after successful authentication
+    if (typeof window !== 'undefined' && window.onAuthLoginSuccess) {
+      window.onAuthLoginSuccess(response);
+    }
+    
     return response;
   } catch (error: unknown) {
     console.error('[LoginSlice] Login error:', error);
     
+    // Determine error message
+    let errorMessage: string;
     if (error instanceof ApiError) {
-      return rejectWithValue(error.message || 'Login failed');
+      errorMessage = error.message || 'Login failed';
     } else if (error instanceof Error) {
-      return rejectWithValue(error.message);
+      errorMessage = error.message;
     } else {
-      return rejectWithValue('Login failed: Unknown error occurred');
+      errorMessage = 'Login failed: Unknown error occurred';
     }
+    
+    // Communicate failure to shell
+    if (typeof window !== 'undefined' && window.onAuthLoginFailure) {
+      window.onAuthLoginFailure(errorMessage);
+    }
+    
+    return rejectWithValue(errorMessage);
   }
 });
 

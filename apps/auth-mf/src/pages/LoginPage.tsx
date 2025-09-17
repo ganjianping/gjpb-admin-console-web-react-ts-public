@@ -18,10 +18,7 @@ import {
 } from '../redux/slices/loginSlice';
 
 // Communication with shell
-import AuthCommunication from '../utils/auth-communication';
-
-// Shell theme types (only for typing)
-import type { ColorTheme } from '../../../shell/src/redux/slices/uiSlice';
+import AuthCommunication, { type ColorTheme } from '../utils/auth-communication';
 
 const LoginPage = () => {
   const { t, i18n } = useTranslation();
@@ -65,16 +62,25 @@ const LoginPage = () => {
   // Get the intended destination from location state
   const from = (location.state?.from?.pathname as string) || APP_CONFIG.ROUTES.HOME;
 
-  // Handle theme toggle - for now, just store in localStorage
+  // Handle theme toggle - communicate with shell
   const handleThemeToggle = () => {
-    // TODO: This should communicate with shell properly
-    console.log('Theme toggle requested - needs shell communication');
+    if (AuthCommunication.isThemeCommunicationAvailable()) {
+      // Toggle between light/dark - shell will handle the actual logic
+      const currentMode = localStorage.getItem('theme_mode') || 'light';
+      const newMode = currentMode === 'light' ? 'dark' : 'light';
+      AuthCommunication.requestThemeModeChange(newMode);
+    } else {
+      console.warn('[Auth-MF] Theme communication not available with shell');
+    }
   };
 
-  // Handle color theme change  
+  // Handle color theme change - communicate with shell
   const handleColorThemeChange = (newColorTheme: ColorTheme) => {
-    // TODO: This should communicate with shell properly
-    console.log('Color theme change requested:', newColorTheme);
+    if (AuthCommunication.isThemeCommunicationAvailable()) {
+      AuthCommunication.requestColorThemeChange(newColorTheme);
+    } else {
+      console.warn('[Auth-MF] Color theme communication not available with shell');
+    }
     setColorDropdownOpen(false);
   };
 

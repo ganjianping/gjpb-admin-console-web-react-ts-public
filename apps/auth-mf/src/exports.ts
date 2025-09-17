@@ -14,3 +14,5 @@ export * from './services/login-service';
 export { default as authMfStore } from './redux/store';
 // Export auth communication utilities
 export { default as AuthCommunication } from './utils/auth-communication';
+// Export auth-mf specific types
+export * from './types';
