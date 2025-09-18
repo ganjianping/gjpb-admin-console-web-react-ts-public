@@ -1,49 +1,9 @@
 // User Service - handles user management API calls based on API spec
 import { apiClient } from '../../../../shared-lib/src/services/api-client';
-
-// API Response types
-export interface ApiResponse<T> {
-  status: {
-    code: number;
-    message: string;
-    errors?: any;
-  };
-  data: T;
-  meta: {
-    serverDateTime: string;
-    requestId?: string;
-    sessionId?: string;
-  };
-}
-
-export interface PaginatedResponse<T> {
-  content: T[];
-  pageable: {
-    pageNumber: number;
-    pageSize: number;
-    sort: {
-      empty: boolean;
-      sorted: boolean;
-      unsorted: boolean;
-    };
-    offset: number;
-    paged: boolean;
-    unpaged: boolean;
-  };
-  last: boolean;
-  totalPages: number;
-  totalElements: number;
-  first: boolean;
-  size: number;
-  number: number;
-  sort: {
-    empty: boolean;
-    sorted: boolean;
-    unsorted: boolean;
-  };
-  numberOfElements: number;
-  empty: boolean;
-}
+import type { 
+  ApiResponse, 
+  PaginatedResponse
+} from '../../../../shared-lib/src/types/api.types';
 
 // Role interface from API spec
 export interface Role {

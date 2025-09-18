@@ -1,6 +1,6 @@
 // Role Service - handles role management API calls based on API spec
 import { apiClient } from '../../../../shared-lib/src/services/api-client';
-import type { ApiResponse } from '../../users/services/userService';
+import type { ApiResponse, PaginatedResponse } from '../../../../shared-lib/src/types/api.types';
 
 // Role interface from API spec
 export interface Role {
@@ -53,35 +53,8 @@ export interface UpdateRoleRequest {
   active?: boolean;
 }
 
-// Response type for paginated roles
-export interface PaginatedRoleResponse {
-  content: Role[];
-  pageable: {
-    pageNumber: number;
-    pageSize: number;
-    sort: {
-      empty: boolean;
-      sorted: boolean;
-      unsorted: boolean;
-    };
-    offset: number;
-    paged: boolean;
-    unpaged: boolean;
-  };
-  last: boolean;
-  totalPages: number;
-  totalElements: number;
-  first: boolean;
-  size: number;
-  number: number;
-  sort: {
-    empty: boolean;
-    sorted: boolean;
-    unsorted: boolean;
-  };
-  numberOfElements: number;
-  empty: boolean;
-}
+// Response type for paginated roles - use shared interface
+export type PaginatedRoleResponse = PaginatedResponse<Role>;
 
 class RoleService {
   private readonly baseUrl = '/v1/roles';

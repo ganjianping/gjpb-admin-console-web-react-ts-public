@@ -1,7 +1,8 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import '../utils/i18n'; // Initialize user translations
-import type { User, UserQueryParams, PaginatedResponse } from '../services/userService';
+import type { User, UserQueryParams } from '../services/userService';
+import type { PaginatedResponse } from '../../../../shared-lib/src/types/api.types';
 import { userService } from '../services/userService';
 
 export const useUsers = () => {

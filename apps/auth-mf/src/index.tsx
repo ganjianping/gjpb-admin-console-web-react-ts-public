@@ -3,7 +3,8 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 
 // Import I18nProvider and LoginPageComponent (unwrapped since we provide store here)
-import { I18nProvider, LoginPageComponent } from './public-api';
+import { LoginPageComponent } from './public-api';
+import { I18nProvider } from '../../shared-lib/src/components';
 import i18n from './config/i18n.config';
 import authMfStore from './store';
 import { Provider } from 'react-redux';

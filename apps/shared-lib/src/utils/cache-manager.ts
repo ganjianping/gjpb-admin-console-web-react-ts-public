@@ -2,7 +2,7 @@
  * Cache management utilities for clearing all application caches
  */
 
-import { rolesService } from '../../../user-mf/src/roles/services/rolesCacheService';
+import CacheManagerService from '../services/cache-registry.service';
 
 /**
  * Clear all application caches
@@ -11,12 +11,8 @@ import { rolesService } from '../../../user-mf/src/roles/services/rolesCacheServ
 export const clearAllCaches = (): void => {
   console.log('=== Clearing all application caches ===');
   
-  // Clear roles cache (localStorage)
-  rolesService.clearCache();
-  
-  // Add other cache clearances here as needed
-  // Example: permissionsCache.clearCache();
-  // Example: settingsCache.clearCache();
+  // Use the centralized cache registry to clear all registered caches
+  CacheManagerService.clearAllCaches();
   
   console.log('All caches cleared (including localStorage)');
 };
@@ -26,10 +22,7 @@ export const clearAllCaches = (): void => {
  */
 export const getCacheStatus = (): Record<string, any> => {
   return {
-    roles: {
-      loaded: rolesService.isRolesLoaded(),
-      count: rolesService.getRolesCount(),
-    },
-    // Add other cache status here as needed
+    message: 'Cache status reporting should be implemented by individual modules',
+    timestamp: new Date().toISOString(),
   };
 };
