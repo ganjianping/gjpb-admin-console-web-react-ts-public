@@ -4,3 +4,6 @@ export { default as I18nProvider } from './I18nProvider';
 
 // Re-export shared types for convenience
 export * from '../types';
+
+// Re-export shared hooks for convenience
+export * from '../hooks';

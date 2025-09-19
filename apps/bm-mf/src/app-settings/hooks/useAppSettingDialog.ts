@@ -126,6 +126,46 @@ export const useAppSettingDialog = () => {
     return Object.keys(errors).length === 0;
   };
 
+  const createAppSetting = async () => {
+    const createRequest: CreateAppSettingRequest = {
+      name: formData.name.trim(),
+      value: formData.value.trim(),
+      lang: formData.lang.trim(),
+      isSystem: formData.isSystem,
+      isPublic: formData.isPublic,
+    };
+    
+    const response = await appSettingService.createAppSetting(createRequest);
+    
+    if (response.status.code === 200 || response.status.code === 201) {
+      handleCloseDialog();
+      return t('appSettings.messages.createSuccess');
+    } else {
+      throw new Error(response.status.message);
+    }
+  };
+
+  const updateAppSetting = async () => {
+    if (!selectedAppSetting) return;
+    
+    const updateRequest: UpdateAppSettingRequest = {
+      name: formData.name.trim(),
+      value: formData.value.trim(),
+      lang: formData.lang.trim(),
+      isSystem: formData.isSystem,
+      isPublic: formData.isPublic,
+    };
+    
+    const response = await appSettingService.updateAppSetting(selectedAppSetting.id, updateRequest);
+    
+    if (response.status.code === 200) {
+      handleCloseDialog();
+      return t('appSettings.messages.updateSuccess');
+    } else {
+      throw new Error(response.status.message);
+    }
+  };
+
   const handleSave = async (
     onSuccess: (message: string) => void,
     onError: (message: string) => void
@@ -137,46 +177,18 @@ export const useAppSettingDialog = () => {
     try {
       setLoading(true);
       
-      if (actionType === 'create') {
-        const createRequest: CreateAppSettingRequest = {
-          name: formData.name.trim(),
-          value: formData.value.trim(),
-          lang: formData.lang.trim(),
-          isSystem: formData.isSystem,
-          isPublic: formData.isPublic,
-        };
+      const successMessage = actionType === 'create' 
+        ? await createAppSetting()
+        : await updateAppSetting();
         
-        const response = await appSettingService.createAppSetting(createRequest);
-        
-        if (response.status.code === 200 || response.status.code === 201) {
-          handleCloseDialog();
-          onSuccess(t('appSettings.messages.createSuccess'));
-        } else {
-          throw new Error(response.status.message);
-        }
-      } else if (actionType === 'edit' && selectedAppSetting) {
-        const updateRequest: UpdateAppSettingRequest = {
-          name: formData.name.trim(),
-          value: formData.value.trim(),
-          lang: formData.lang.trim(),
-          isSystem: formData.isSystem,
-          isPublic: formData.isPublic,
-        };
-        
-        const response = await appSettingService.updateAppSetting(selectedAppSetting.id, updateRequest);
-        
-        if (response.status.code === 200) {
-          handleCloseDialog();
-          onSuccess(t('appSettings.messages.updateSuccess'));
-        } else {
-          throw new Error(response.status.message);
-        }
+      if (successMessage) {
+        onSuccess(successMessage);
       }
     } catch (err: any) {
       console.error('Save app setting error:', err);
       
       // Handle validation errors from API
-      if (err.response && err.response.data && err.response.data.status && err.response.data.status.errors) {
+      if (err.response?.data?.status?.errors) {
         setFormErrors(err.response.data.status.errors);
       } else {
         const errorMessage = err.message || (actionType === 'create' 
