@@ -2,8 +2,8 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 
-// Import I18nProvider and LoginPageComponent (unwrapped since we provide store here)
-import { LoginPageComponent } from './public-api';
+// Import I18nProvider and LoginPageRaw (unwrapped since we provide store here)
+import { LoginPageRaw } from './public-api';
 import { I18nProvider } from '../../shared-lib/src/components';
 import i18n from './config/i18n.config';
 import authMfStore from './store';
@@ -25,7 +25,7 @@ root.render(
         loadingText="Loading translations..."
       >
         <BrowserRouter>
-          <LoginPageComponent />
+          <LoginPageRaw />
         </BrowserRouter>
       </I18nProvider>
     </Provider>

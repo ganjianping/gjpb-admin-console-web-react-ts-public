@@ -5,7 +5,7 @@ import './config/i18n.config';
 // Export the LoginPage component (wrapped with Redux provider)
 export { LoginPage } from './components/providers/LoginPageProvider';
 // Export the raw LoginPage component for internal use
-export { LoginPage as LoginPageComponent } from './pages/LoginPage';
+export { LoginPage as LoginPageRaw } from './pages/LoginPage';
 // Export auth service
 export * from './services/authentication.service';
 // Export Redux store for external access if needed
