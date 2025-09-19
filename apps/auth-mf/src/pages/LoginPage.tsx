@@ -12,10 +12,10 @@ import { APP_CONFIG } from '../../../shared-lib/src/utils/config';
 // Local Redux imports
 import { useAppDispatch, useAppSelector } from '../hooks/useAuthStore';
 import { 
-  performAuthentication,
+  performLogin,
   selectAuthError,
   clearError
-} from '../store/slices/authentication.slice';
+} from '../store/slices/authLogin.slice';
 
 // Communication with shell
 import AuthCommunication, { type ColorTheme } from '../utils/shell-communication';
@@ -108,10 +108,10 @@ const LoginPage = () => {
       // Clear any previous errors
       dispatch(clearError());
       
-      // Perform authentication using auth-mf store
-      const result = await dispatch(performAuthentication(credentials));
+      // Perform login authentication using auth-mf store
+      const result = await dispatch(performLogin(credentials));
       
-      if (performAuthentication.fulfilled.match(result)) {
+      if (performLogin.fulfilled.match(result)) {
         // Notify shell of successful login
         AuthCommunication.notifyLoginSuccess(result.payload);
         

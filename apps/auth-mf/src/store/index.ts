@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import authenticationReducer from './slices/authentication.slice';
+import authLoginReducer from './slices/authLogin.slice';
 
 let authMfStoreInstance: ReturnType<typeof createAuthMfStore> | null = null;
 
@@ -7,7 +7,7 @@ let authMfStoreInstance: ReturnType<typeof createAuthMfStore> | null = null;
 const createAuthMfStore = () => {
   return configureStore({
     reducer: {
-      authentication: authenticationReducer,
+      authLogin: authLoginReducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({

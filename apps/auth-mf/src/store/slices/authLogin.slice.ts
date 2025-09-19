@@ -6,7 +6,7 @@ import { ApiError } from '../../../../shared-lib/src/services/api-client';
 import type { RootState } from '../index';
 
 // Login form state interface
-interface AuthenticationState {
+interface AuthLoginState {
   isLoading: boolean;
   error: string | null;
   lastLoginAttempt: string | null;
@@ -19,7 +19,7 @@ interface AuthenticationState {
 }
 
 // Initial state
-const initialState: AuthenticationState = {
+const initialState: AuthLoginState = {
   isLoading: false,
   error: null,
   lastLoginAttempt: null,
@@ -31,17 +31,17 @@ const initialState: AuthenticationState = {
   lastSuccessfulLogin: null,
 };
 
-// Async thunk for authentication
-export const performAuthentication = createAsyncThunk<
+// Async thunk for login authentication
+export const performLogin = createAsyncThunk<
   AuthResponse,
   LoginCredentials,
-  { rejectValue: string; state: { authentication: AuthenticationState } }
->('authentication/performAuthentication', async (credentials, { rejectWithValue, getState }) => {
+  { rejectValue: string; state: { authLogin: AuthLoginState } }
+>('authLogin/performLogin', async (credentials, { rejectWithValue, getState }) => {
   const state = getState();
   
   // Check if account is locked
-  if (state.authentication.isLocked) {
-    const lockoutExpiry = state.authentication.lockoutExpiresAt;
+  if (state.authLogin.isLocked) {
+    const lockoutExpiry = state.authLogin.lockoutExpiresAt;
     if (lockoutExpiry && new Date().toISOString() < lockoutExpiry) {
       return rejectWithValue('Account is temporarily locked due to too many failed attempts. Please try again later.');
     }
@@ -57,7 +57,7 @@ export const performAuthentication = createAsyncThunk<
     
     return response;
   } catch (error: unknown) {
-    console.error('[LoginSlice] Login error:', error);
+    console.error('[AuthLoginSlice] Login error:', error);
     
     // Determine error message
     let errorMessage: string;
@@ -78,9 +78,9 @@ export const performAuthentication = createAsyncThunk<
   }
 });
 
-// Authentication slice
-const authenticationSlice = createSlice({
-  name: 'authentication',
+// Auth Login slice
+const authLoginSlice = createSlice({
+  name: 'authLogin',
   initialState,
   reducers: {
     clearError: (state) => {
@@ -103,12 +103,12 @@ const authenticationSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(performAuthentication.pending, (state) => {
+      .addCase(performLogin.pending, (state) => {
         state.isLoading = true;
         state.error = null;
         state.lastLoginAttempt = new Date().toISOString();
       })
-      .addCase(performAuthentication.fulfilled, (state) => {
+      .addCase(performLogin.fulfilled, (state) => {
         state.isLoading = false;
         state.error = null;
         state.loginAttempts = 0; // Reset attempts on success
@@ -123,7 +123,7 @@ const authenticationSlice = createSlice({
           localStorage.removeItem('gjpb_remember_me');
         }
       })
-      .addCase(performAuthentication.rejected, (state, action) => {
+      .addCase(performLogin.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload ?? 'Login failed';
         state.loginAttempts += 1;
@@ -146,25 +146,25 @@ export const {
   setRememberMe, 
   resetLoginAttempts, 
   clearLoginState 
-} = authenticationSlice.actions;
+} = authLoginSlice.actions;
 
 // Selectors
-export const selectIsLoading = (state: RootState) => state.authentication?.isLoading ?? false;
-export const selectAuthError = (state: RootState) => state.authentication?.error ?? null;
-export const selectLoginAttempts = (state: RootState) => state.authentication?.loginAttempts ?? 0;
-export const selectIsLocked = (state: RootState) => state.authentication?.isLocked ?? false;
-export const selectLockoutExpiresAt = (state: RootState) => state.authentication?.lockoutExpiresAt ?? null;
-export const selectRememberMe = (state: RootState) => state.authentication?.rememberMe ?? false;
-export const selectLastSuccessfulLogin = (state: RootState) => state.authentication?.lastSuccessfulLogin ?? null;
+export const selectIsLoading = (state: RootState) => state.authLogin?.isLoading ?? false;
+export const selectAuthError = (state: RootState) => state.authLogin?.error ?? null;
+export const selectLoginAttempts = (state: RootState) => state.authLogin?.loginAttempts ?? 0;
+export const selectIsLocked = (state: RootState) => state.authLogin?.isLocked ?? false;
+export const selectLockoutExpiresAt = (state: RootState) => state.authLogin?.lockoutExpiresAt ?? null;
+export const selectRememberMe = (state: RootState) => state.authLogin?.rememberMe ?? false;
+export const selectLastSuccessfulLogin = (state: RootState) => state.authLogin?.lastSuccessfulLogin ?? null;
 
 // Computed selectors
 export const selectRemainingAttempts = (state: RootState) => 
-  (state.authentication?.maxLoginAttempts ?? 5) - (state.authentication?.loginAttempts ?? 0);
+  (state.authLogin?.maxLoginAttempts ?? 5) - (state.authLogin?.loginAttempts ?? 0);
 
 export const selectIsLockoutActive = (state: RootState) => {
-  const authentication = state.authentication;
-  if (!authentication?.isLocked || !authentication?.lockoutExpiresAt) return false;
-  return new Date().toISOString() < authentication.lockoutExpiresAt;
+  const authLogin = state.authLogin;
+  if (!authLogin?.isLocked || !authLogin?.lockoutExpiresAt) return false;
+  return new Date().toISOString() < authLogin.lockoutExpiresAt;
 };
 
-export default authenticationSlice.reducer;
+export default authLoginSlice.reducer;
