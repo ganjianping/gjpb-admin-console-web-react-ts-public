@@ -7,7 +7,7 @@ import MainLayout from '../layouts/MainLayout';
 
 // Pages
 // Import through the barrel file
-import { LoginPage } from '../../../auth-mf/src/public-api';
+import { LoginPageProvider } from '../../../auth-mf/src/public-api';
 import { UsersPage, RolesPage, AuditLogPage } from '../../../user-mf/src/public-api';
 import { AppSettingsPage } from '../../../bm-mf/src/public-api';
 import DashboardPage from '../pages/DashboardPage';
@@ -82,7 +82,7 @@ const AppRoutes = () => {
       
       <Routes>
         {/* Public routes */}
-        <Route path="/auth/login" element={<LoginPage />} />
+        <Route path="/auth/login" element={<LoginPageProvider />} />
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
         
         {/* Protected routes */}
