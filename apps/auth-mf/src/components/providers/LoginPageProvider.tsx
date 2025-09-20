@@ -1,19 +1,19 @@
 import { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { getAuthMfStore } from '../../store';
-import { LoginPage as LoginPageRaw } from '../../pages/LoginPage';
+import { LoginPage } from '../../pages/LoginPage';
 
 // Wrapper component that provides the auth-mf Redux store using lazy loading
-export const LoginPage = () => {
+export const LoginPageProvider = () => {
   // Get store instance (created lazily on first access)
   const store = getAuthMfStore();
 
   useEffect(() => {
-    console.log('[Auth-MF] LoginPageWrapper mounted, store loaded');
+    console.log('[Auth-MF] LoginPageProvider mounted, store loaded');
     
     // Cleanup function when component unmounts
     return () => {
-      console.log('[Auth-MF] LoginPageWrapper unmounting');
+      console.log('[Auth-MF] LoginPageProvider unmounting');
       // Note: We don't destroy the store immediately as it might be reused
       // Store cleanup can be handled by the shell when navigating away from auth flow
     };
@@ -21,9 +21,9 @@ export const LoginPage = () => {
 
   return (
     <Provider store={store}>
-      <LoginPageRaw />
+      <LoginPage />
     </Provider>
   );
 };
 
-export default LoginPage;
+export default LoginPageProvider;
