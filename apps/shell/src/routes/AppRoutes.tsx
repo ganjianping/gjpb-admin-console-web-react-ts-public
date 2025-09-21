@@ -23,7 +23,7 @@ import RefreshWarningProvider from '../components/RefreshWarningProvider';
 // Redux
 import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
 import { initializeAuth, handleLoginSuccess, handleLoginFailure } from '../redux/slices/authSlice';
-import { setPageTitle, selectPageTitle } from '../redux/slices/uiSlice';
+import { setPageTitle, selectPageTitle, setThemeMode, setColorTheme } from '../redux/slices/uiSlice';
 
 // Config
 import { APP_CONFIG } from '../../../shared-lib/src/utils/config';
@@ -58,11 +58,25 @@ const AppRoutes = () => {
       // Handle logout if needed
     };
 
+    // Handle theme mode change requests from auth-mf
+    window.onThemeModeChange = (mode) => {
+      console.log('[Shell] Received theme mode change request from auth-mf:', mode);
+      dispatch(setThemeMode(mode));
+    };
+
+    // Handle color theme change requests from auth-mf
+    window.onColorThemeChange = (colorTheme) => {
+      console.log('[Shell] Received color theme change request from auth-mf:', colorTheme);
+      dispatch(setColorTheme(colorTheme));
+    };
+
     // Cleanup on unmount
     return () => {
       delete window.onAuthLoginSuccess;
       delete window.onAuthLoginFailure;
       delete window.onAuthLogoutRequest;
+      delete window.onThemeModeChange;
+      delete window.onColorThemeChange;
     };
   }, [dispatch]);
 

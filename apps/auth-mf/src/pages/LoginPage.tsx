@@ -35,9 +35,9 @@ const LoginPage = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const languageDropdownRef = useRef<HTMLDivElement>(null);
   
-  // For now, use defaults for theme (this could be improved with proper communication)
-  const isDarkMode = false; // TODO: Get from shell or localStorage
-  const colorTheme: ColorTheme = 'blue'; // TODO: Get from shell or localStorage
+  // Get theme from localStorage or use defaults
+  const isDarkMode = localStorage.getItem('gjpb_theme_mode') === 'dark';
+  const colorTheme: ColorTheme = (localStorage.getItem('gjpb_color_theme') as ColorTheme) || 'blue';
   
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -66,7 +66,7 @@ const LoginPage = () => {
   const handleThemeToggle = () => {
     if (AuthCommunication.isThemeCommunicationAvailable()) {
       // Toggle between light/dark - shell will handle the actual logic
-      const currentMode = localStorage.getItem('theme_mode') || 'light';
+      const currentMode = localStorage.getItem('gjpb_theme_mode') || 'light';
       const newMode = currentMode === 'light' ? 'dark' : 'light';
       AuthCommunication.requestThemeModeChange(newMode);
     } else {
