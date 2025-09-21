@@ -4,3 +4,8 @@ export { useNotification, type SnackbarState } from './useNotification';
 export { useDataManagement, type UseDataManagementProps } from './useDataManagement';
 export { useSearch, type UseSearchProps } from './useSearch';
 export { useDialog, type UseDialogProps, type DialogActionType } from './useDialog';
+
+// Theme hooks
+export { useTheme } from './useTheme';
+export { default as useThemeMode } from './useThemeMode';
+export { useLanguage } from './useLanguage';

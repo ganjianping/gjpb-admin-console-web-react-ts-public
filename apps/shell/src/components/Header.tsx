@@ -11,17 +11,23 @@ import {
   Avatar, 
   Tooltip, 
   Divider,
-  Select,
-  FormControl,
 } from '@mui/material';
-import type { SelectChangeEvent } from '@mui/material';
-import { Menu as MenuIcon, Sun, Moon, User, LogOut, Settings, Globe, Palette } from 'lucide-react';
+import { Menu as MenuIcon, User, LogOut, Settings } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-// Redux
+// Use shared theme components instead of manual Redux
+import { 
+  useTheme,
+  ThemeModeToggle,
+  ColorThemeSelector,
+  LanguageSelector
+} from '../../../shared-lib/src/components';
+import type { Language } from '../../../shared-lib/src/types/theme.types';
+
+// Redux (only for auth, not theme)
 import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
 import { logoutUser, selectCurrentUser } from '../redux/slices/authSlice';
-import { toggleThemeMode, selectThemeMode, setLanguage, setColorTheme, selectColorTheme } from '../redux/slices/uiSlice';
+import { setLanguage as setReduxLanguage } from '../redux/slices/uiSlice';
 import { APP_CONFIG } from '../../../shared-lib/src/utils/config';
 
 interface HeaderProps {
@@ -33,12 +39,22 @@ const Header = ({ onDrawerToggle }: HeaderProps) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const user = useAppSelector(selectCurrentUser);
-  const themeMode = useAppSelector(selectThemeMode);
-  const colorTheme = useAppSelector(selectColorTheme);
-  const isDarkMode = themeMode === 'dark';
+
+  // Use shared theme hook instead of manual Redux
+  const { 
+    themeMode, 
+    colorTheme, 
+    language, 
+    toggleThemeMode, 
+    setColorTheme, 
+    setLanguage 
+  } = useTheme({ 
+    appName: 'shell',
+    enableSystemPreferenceSync: true,
+    enableDebugging: false 
+  });
 
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
-  const [anchorElColorTheme, setAnchorElColorTheme] = useState<null | HTMLElement>(null);
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -58,37 +74,12 @@ const Header = ({ onDrawerToggle }: HeaderProps) => {
     }
   };
 
-  const handleThemeToggle = () => {
-    dispatch(toggleThemeMode());
-  };
-
-  const handleOpenColorThemeMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElColorTheme(event.currentTarget);
-  };
-
-  const handleCloseColorThemeMenu = () => {
-    setAnchorElColorTheme(null);
-  };
-
-  const handleColorThemeChange = (theme: 'blue' | 'purple' | 'green' | 'orange' | 'red') => {
-    dispatch(setColorTheme(theme));
-    handleCloseColorThemeMenu();
-  };
-
-  const getColorThemeIcon = () => {
-    const colors = {
-      blue: '#2196F3',
-      purple: '#9C27B0', 
-      green: '#4CAF50',
-      orange: '#FF9800',
-      red: '#F44336'
-    };
-    return colors[colorTheme];
-  };
-
-  const handleLanguageChange = (event: SelectChangeEvent<string>) => {
-    const newLanguage = event.target.value as 'en' | 'zh';
-    dispatch(setLanguage(newLanguage));
+  const handleLanguageChange = (newLanguage: Language) => {
+    // Update shared theme state and localStorage
+    setLanguage(newLanguage);
+    // Update shell Redux state for consistency
+    dispatch(setReduxLanguage(newLanguage));
+    // Also update i18n instance for immediate UI updates  
     i18n.changeLanguage(newLanguage);
   };
 
@@ -202,184 +193,43 @@ const Header = ({ onDrawerToggle }: HeaderProps) => {
           alignItems: 'center', 
           gap: { xs: 0.5, sm: 1 } 
         }}>
-          {/* Language selector */}
-          <FormControl size="small" sx={{ minWidth: 100 }}>
-            <Select
-              value={i18n.language}
-              onChange={handleLanguageChange}
-              displayEmpty
-              variant="outlined"
-              sx={{
-                borderRadius: 2,
-                '& .MuiOutlinedInput-notchedOutline': {
-                  borderColor: 'divider',
-                },
-                '&:hover .MuiOutlinedInput-notchedOutline': {
-                  borderColor: 'primary.main',
-                },
-                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                  borderColor: 'primary.main',
-                },
-              }}
-              renderValue={(selected) => (
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Globe size={16} />
-                  <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                    {selected.toUpperCase()}
-                  </Typography>
-                </Box>
-              )}
-            >
-              <MenuItem value="en">
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <span>🇺🇸</span>
-                  <Typography>English</Typography>
-                </Box>
-              </MenuItem>
-              <MenuItem value="zh">
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <span>🇨🇳</span>
-                  <Typography>中文</Typography>
-                </Box>
-              </MenuItem>
-            </Select>
-          </FormControl>
+          {/* Language selector - Always visible like original */}
+          <LanguageSelector
+            currentLanguage={language}
+            languageOptions={[
+              { value: 'en', label: 'English', flag: '🇺🇸' },
+              { value: 'zh', label: '中文', flag: '🇨🇳' }
+            ]}
+            onLanguageChange={handleLanguageChange}
+            isDarkMode={themeMode === 'dark'}
+            t={(key: string, defaultValue?: string) => defaultValue ? t(key, { defaultValue }) : t(key)}
+          />
 
-          {/* Theme Toggle - Only visible after login */}
+          {/* Theme Toggle - Only visible after login like original */}
           {user && (
-            <Tooltip title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}>
-              <IconButton 
-                color="inherit"
-                onClick={handleThemeToggle}
-                sx={{ 
-                  borderRadius: 2,
-                  transition: 'all 0.2s ease',
-                  '&:hover': {
-                    backgroundColor: 'action.hover',
-                    transform: 'scale(1.05)',
-                  }
-                }}
-              >
-                {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
-              </IconButton>
-            </Tooltip>
+            <ThemeModeToggle
+              isDarkMode={themeMode === 'dark'}
+              onToggle={toggleThemeMode}
+              t={(key: string, defaultValue?: string) => defaultValue ? t(key, { defaultValue }) : t(key)}
+            />
           )}
 
-          {/* Color Theme Picker - Only visible after login */}
+          {/* Color Theme Picker - Only visible after login like original */}
           {user && (
-            <Tooltip title="Change Color Theme">
-              <IconButton 
-                color="inherit"
-                onClick={handleOpenColorThemeMenu}
-                sx={{ 
-                  borderRadius: 2,
-                  transition: 'all 0.2s ease',
-                  '&:hover': {
-                    backgroundColor: 'action.hover',
-                    transform: 'scale(1.05)',
-                  }
-                }}
-              >
-                <Palette size={20} style={{ color: getColorThemeIcon() }} />
-              </IconButton>
-            </Tooltip>
+            <ColorThemeSelector
+              currentColorTheme={colorTheme}
+              colorThemeOptions={[
+                { value: 'blue', label: 'Blue', color: '#2196F3' },
+                { value: 'purple', label: 'Purple', color: '#9C27B0' },
+                { value: 'green', label: 'Green', color: '#4CAF50' },
+                { value: 'orange', label: 'Orange', color: '#FF9800' },
+                { value: 'red', label: 'Red', color: '#F44336' }
+              ]}
+              onColorThemeChange={setColorTheme}
+              isDarkMode={themeMode === 'dark'}
+              t={(key: string, defaultValue?: string) => defaultValue ? t(key, { defaultValue }) : t(key)}
+            />
           )}
-
-          {/* Color Theme Menu */}
-          <Menu
-            id="color-theme-menu"
-            anchorEl={anchorElColorTheme}
-            open={Boolean(anchorElColorTheme)}
-            onClose={handleCloseColorThemeMenu}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'right',
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-            sx={{
-              '& .MuiPaper-root': {
-                borderRadius: 3,
-                minWidth: 160,
-                boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
-                border: '1px solid',
-                borderColor: 'divider',
-              }
-            }}
-          >
-            <MenuItem 
-              onClick={() => handleColorThemeChange('blue')}
-              sx={{ 
-                py: 1.5, 
-                px: 2,
-                bgcolor: colorTheme === 'blue' ? 'action.selected' : 'transparent',
-                '&:hover': { backgroundColor: 'action.hover' }
-              }}
-            >
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <Box sx={{ width: 16, height: 16, bgcolor: '#2196F3', borderRadius: '50%' }} />
-                <Typography>Blue</Typography>
-              </Box>
-            </MenuItem>
-            <MenuItem 
-              onClick={() => handleColorThemeChange('purple')}
-              sx={{ 
-                py: 1.5, 
-                px: 2,
-                bgcolor: colorTheme === 'purple' ? 'action.selected' : 'transparent',
-                '&:hover': { backgroundColor: 'action.hover' }
-              }}
-            >
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <Box sx={{ width: 16, height: 16, bgcolor: '#9C27B0', borderRadius: '50%' }} />
-                <Typography>Purple</Typography>
-              </Box>
-            </MenuItem>
-            <MenuItem 
-              onClick={() => handleColorThemeChange('green')}
-              sx={{ 
-                py: 1.5, 
-                px: 2,
-                bgcolor: colorTheme === 'green' ? 'action.selected' : 'transparent',
-                '&:hover': { backgroundColor: 'action.hover' }
-              }}
-            >
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <Box sx={{ width: 16, height: 16, bgcolor: '#4CAF50', borderRadius: '50%' }} />
-                <Typography>Green</Typography>
-              </Box>
-            </MenuItem>
-            <MenuItem 
-              onClick={() => handleColorThemeChange('orange')}
-              sx={{ 
-                py: 1.5, 
-                px: 2,
-                bgcolor: colorTheme === 'orange' ? 'action.selected' : 'transparent',
-                '&:hover': { backgroundColor: 'action.hover' }
-              }}
-            >
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <Box sx={{ width: 16, height: 16, bgcolor: '#FF9800', borderRadius: '50%' }} />
-                <Typography>Orange</Typography>
-              </Box>
-            </MenuItem>
-            <MenuItem 
-              onClick={() => handleColorThemeChange('red')}
-              sx={{ 
-                py: 1.5, 
-                px: 2,
-                bgcolor: colorTheme === 'red' ? 'action.selected' : 'transparent',
-                '&:hover': { backgroundColor: 'action.hover' }
-              }}
-            >
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <Box sx={{ width: 16, height: 16, bgcolor: '#F44336', borderRadius: '50%' }} />
-                <Typography>Red</Typography>
-              </Box>
-            </MenuItem>
-          </Menu>
 
           {/* User menu */}
           <Box sx={{ ml: 1 }}>
