@@ -23,23 +23,34 @@ interface UiState {
 
 // Get initial theme mode from localStorage, system preference, or use default
 const getInitialTheme = (): ThemeMode => {
+  console.log('[Shell Redux] 🎨 Getting initial theme...');
+  
   // Server-side rendering safety check
   if (typeof window === 'undefined') {
+    console.log('[Shell Redux] 🎨 Server-side rendering, using default:', APP_CONFIG.THEME.DEFAULT_THEME);
     return APP_CONFIG.THEME.DEFAULT_THEME as ThemeMode;
   }
   
   // 1st priority: User's previously saved preference
   const savedTheme = localStorage.getItem(APP_CONFIG.THEME.STORAGE_KEY);
+  console.log('[Shell Redux] 🎨 Saved theme from localStorage:', savedTheme);
+  
   if (savedTheme === 'light' || savedTheme === 'dark') {
+    console.log('[Shell Redux] 🎨 Using saved theme:', savedTheme);
     return savedTheme;
   }
   
   // 2nd priority: System/OS dark mode preference
-  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+  const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  console.log('[Shell Redux] 🎨 System prefers dark mode:', systemPrefersDark);
+  
+  if (systemPrefersDark) {
+    console.log('[Shell Redux] 🎨 Using system preference: dark');
     return 'dark';
   }
   
   // 3rd priority: Application configured default
+  console.log('[Shell Redux] 🎨 Using app default:', APP_CONFIG.THEME.DEFAULT_THEME);
   return APP_CONFIG.THEME.DEFAULT_THEME as ThemeMode;
 };
 
@@ -85,7 +96,11 @@ const getInitialColorTheme = (): ColorTheme => {
 
 // Initial state
 const initialState: UiState = {
-  themeMode: getInitialTheme(),
+  themeMode: (() => {
+    const theme = getInitialTheme();
+    console.log('[Shell Redux] 🎨 Creating initial state with theme:', theme);
+    return theme;
+  })(),
   colorTheme: getInitialColorTheme(),
   language: getInitialLanguage(),
   sidebarOpen: true,
@@ -98,10 +113,22 @@ const uiSlice = createSlice({
   initialState,
   reducers: {
     setThemeMode: (state, action: PayloadAction<ThemeMode>) => {
+      const timestamp = new Date().toISOString();
+      console.log(`[Shell Redux] 🎨 setThemeMode called at ${timestamp}:`, {
+        currentTheme: state.themeMode,
+        newTheme: action.payload,
+        caller: new Error().stack?.split('\n')[2]?.trim()
+      });
+      
       state.themeMode = action.payload;
       if (typeof window !== 'undefined') {
+        console.log(`[Shell Redux] 🎨 Setting localStorage gjpb_theme to: ${action.payload}`);
         localStorage.setItem(APP_CONFIG.THEME.STORAGE_KEY, action.payload);
         document.documentElement.setAttribute('data-theme', action.payload);
+        
+        // Verify the storage was set
+        const verifyStorage = localStorage.getItem(APP_CONFIG.THEME.STORAGE_KEY);
+        console.log(`[Shell Redux] 🎨 Verified localStorage value: ${verifyStorage}`);
       }
     },
     toggleThemeMode: (state) => {

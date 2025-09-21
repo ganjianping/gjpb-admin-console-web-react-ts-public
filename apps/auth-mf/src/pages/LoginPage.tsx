@@ -32,12 +32,15 @@ const LoginPage = () => {
   // State for UI controls
   const [colorDropdownOpen, setColorDropdownOpen] = useState(false);
   const [languageDropdownOpen, setLanguageDropdownOpen] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    // Use same storage key as shell for consistency
+    return localStorage.getItem('gjpb_theme') === 'dark';
+  });
+  const [currentColorTheme, setCurrentColorTheme] = useState<ColorTheme>(() => 
+    (localStorage.getItem('gjpb_color_theme') as ColorTheme) || 'blue'
+  );
   const dropdownRef = useRef<HTMLDivElement>(null);
   const languageDropdownRef = useRef<HTMLDivElement>(null);
-  
-  // Get theme from localStorage or use defaults
-  const isDarkMode = localStorage.getItem('gjpb_theme_mode') === 'dark';
-  const colorTheme: ColorTheme = (localStorage.getItem('gjpb_color_theme') as ColorTheme) || 'blue';
   
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -58,30 +61,173 @@ const LoginPage = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [colorDropdownOpen, languageDropdownOpen]);
+
+  // Listen for theme changes from localStorage (when shell updates theme)
+  useEffect(() => {
+    const handleStorageChange = (event?: StorageEvent) => {
+      // Log all storage events for debugging
+      if (event) {
+        console.log('[Auth-MF] 🔥 Storage event detected:', {
+          key: event.key,
+          newValue: event.newValue,
+          oldValue: event.oldValue,
+          storageArea: event.storageArea === localStorage ? 'localStorage' : 'sessionStorage',
+          url: event.url
+        });
+      } else {
+        console.log('[Auth-MF] 🔥 Initial storage check on mount');
+      }
+      
+      // Only update if the storage event is for theme-related keys
+      if (event && !['gjpb_theme', 'gjpb_color_theme'].includes(event.key || '')) {
+        console.log('[Auth-MF] 🔥 Ignoring storage event for key:', event.key);
+        return;
+      }
+      
+      // Use same storage keys as shell for consistency
+      const currentThemeInStorage = localStorage.getItem('gjpb_theme');
+      const currentColorInStorage = localStorage.getItem('gjpb_color_theme');
+      const newThemeMode = currentThemeInStorage === 'dark';
+      const newColorTheme = (currentColorInStorage as ColorTheme) || 'blue';
+      
+      console.log('[Auth-MF] 🔥 Reading from localStorage:', {
+        theme: currentThemeInStorage,
+        color: currentColorInStorage,
+        newThemeMode,
+        newColorTheme,
+        currentStateTheme: isDarkMode,
+        currentStateColor: currentColorTheme
+      });
+      
+      // Only update state if values actually changed to avoid unnecessary re-renders
+      setIsDarkMode(prev => {
+        if (prev !== newThemeMode) {
+          console.log('[Auth-MF] 🔥 Updating theme mode state from', prev, 'to', newThemeMode, 'due to storage change');
+          return newThemeMode;
+        }
+        return prev;
+      });
+      
+      setCurrentColorTheme(prev => {
+        if (prev !== newColorTheme) {
+          console.log('[Auth-MF] 🔥 Updating color theme state from', prev, 'to', newColorTheme, 'due to storage change');
+          return newColorTheme;
+        }
+        return prev;
+      });
+    };
+
+    // Listen for storage changes from other tabs/windows
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Initial check on mount
+    handleStorageChange();
+
+    // Add periodic check to see if something else is changing localStorage
+    const intervalId = setInterval(() => {
+      const currentTheme = localStorage.getItem('gjpb_theme');
+      const expectedTheme = isDarkMode ? 'dark' : 'light';
+      if (currentTheme !== expectedTheme) {
+        console.log('[Auth-MF] 🚨 DETECTED THEME MISMATCH!', {
+          currentTheme,
+          expectedTheme,
+          stateIsDarkMode: isDarkMode,
+          timestamp: new Date().toISOString()
+        });
+        // Force sync with storage
+        handleStorageChange();
+      }
+    }, 1000);
+
+    // Listen for system preference changes
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleSystemThemeChange = (e: MediaQueryListEvent) => {
+      console.log('[Auth-MF] 🌍 System theme preference changed to:', e.matches ? 'dark' : 'light');
+      // We should NOT automatically change theme based on system preference if user has explicitly set one
+      const hasUserTheme = localStorage.getItem('gjpb_theme');
+      if (!hasUserTheme) {
+        console.log('[Auth-MF] 🌍 No user preference saved, updating to system preference:', e.matches ? 'dark' : 'light');
+        const systemTheme = e.matches ? 'dark' : 'light';
+        localStorage.setItem('gjpb_theme', systemTheme);
+        setIsDarkMode(e.matches);
+      } else {
+        console.log('[Auth-MF] 🌍 User has saved preference, ignoring system change');
+      }
+    };
+    
+    mediaQuery.addEventListener('change', handleSystemThemeChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      clearInterval(intervalId);
+      mediaQuery.removeEventListener('change', handleSystemThemeChange);
+    };
+  }, [isDarkMode, currentColorTheme]); // Added dependencies to detect state changes
   
   // Get the intended destination from location state
   const from = (location.state?.from?.pathname as string) || APP_CONFIG.ROUTES.HOME;
 
   // Handle theme toggle - communicate with shell
   const handleThemeToggle = () => {
+    const timestamp = new Date().toISOString();
+    console.log(`[Auth-MF] 🎨 Theme toggle clicked at ${timestamp}`);
+    
+    // Use same storage key as shell for consistency
+    const currentMode = localStorage.getItem('gjpb_theme') || 'light';
+    const newMode = currentMode === 'light' ? 'dark' : 'light';
+    
+    console.log(`[Auth-MF] 🎨 Current mode: ${currentMode}, New mode: ${newMode}`);
+    console.log(`[Auth-MF] 🎨 Current state isDarkMode: ${isDarkMode}`);
+    
+    // Update local state immediately for UI responsiveness
+    setIsDarkMode(newMode === 'dark');
+    console.log(`[Auth-MF] 🎨 Updated local state to: ${newMode === 'dark'}`);
+    
+    // TEMPORARY FIX: Always handle locally to debug the issue
+    console.log(`[Auth-MF] 🎨 Setting localStorage gjpb_theme to: ${newMode}`);
+    localStorage.setItem('gjpb_theme', newMode);
+    document.documentElement.setAttribute('data-theme', newMode);
+    
+    // Verify the storage was set correctly
+    const verifyStorage = localStorage.getItem('gjpb_theme');
+    console.log(`[Auth-MF] 🎨 Verified localStorage value: ${verifyStorage}`);
+    
+    // Also try to communicate with shell, but don't rely on it
     if (AuthCommunication.isThemeCommunicationAvailable()) {
-      // Toggle between light/dark - shell will handle the actual logic
-      const currentMode = localStorage.getItem('gjpb_theme_mode') || 'light';
-      const newMode = currentMode === 'light' ? 'dark' : 'light';
+      console.log(`[Auth-MF] 🎨 Sending theme change request to shell: ${newMode}`);
       AuthCommunication.requestThemeModeChange(newMode);
     } else {
-      console.warn('[Auth-MF] Theme communication not available with shell');
+      console.log('[Auth-MF] 🎨 Shell communication not available');
     }
+    
+    // Schedule a verification check after a short delay
+    setTimeout(() => {
+      const finalStorage = localStorage.getItem('gjpb_theme');
+      const finalState = document.documentElement.getAttribute('data-theme');
+      console.log(`[Auth-MF] 🎨 VERIFICATION (1s later): localStorage=${finalStorage}, DOM data-theme=${finalState}, state=${isDarkMode}`);
+      
+      if (finalStorage !== newMode) {
+        console.log(`[Auth-MF] 🚨 ALERT: Storage was changed externally from ${newMode} to ${finalStorage}!`);
+      }
+    }, 1000);
   };
 
   // Handle color theme change - communicate with shell
   const handleColorThemeChange = (newColorTheme: ColorTheme) => {
-    if (AuthCommunication.isThemeCommunicationAvailable()) {
-      AuthCommunication.requestColorThemeChange(newColorTheme);
-    } else {
-      console.warn('[Auth-MF] Color theme communication not available with shell');
-    }
+    // Update local state immediately for UI responsiveness
+    setCurrentColorTheme(newColorTheme);
     setColorDropdownOpen(false);
+    
+    if (AuthCommunication.isThemeCommunicationAvailable()) {
+      // Shell is available - let it handle the change
+      AuthCommunication.requestColorThemeChange(newColorTheme);
+      console.log('[Auth-MF] Color theme change request sent to shell:', newColorTheme);
+    } else {
+      // Shell not available - handle locally as fallback
+      console.log('[Auth-MF] Color theme communication not available with shell - handling locally');
+      localStorage.setItem('gjpb_color_theme', newColorTheme);
+      document.documentElement.setAttribute('data-color-theme', newColorTheme);
+    }
   };
 
   // Handle language change
@@ -356,7 +502,7 @@ const LoginPage = () => {
               }}
             >
               {colorThemeOptions.map((option) => {
-                const isSelected = colorTheme === option.value;
+                const isSelected = currentColorTheme === option.value;
                 const selectedBgColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)';
                 
                 return (
