@@ -23,6 +23,7 @@ import {
   LanguageSelector
 } from '../../../shared-lib/src/components';
 import type { Language } from '../../../shared-lib/src/types/theme.types';
+import { getColorThemeOptions } from '../../../shared-lib/src/utils/theme.utils';
 
 // Redux (only for auth, not theme)
 import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
@@ -218,13 +219,7 @@ const Header = ({ onDrawerToggle }: HeaderProps) => {
           {user && (
             <ColorThemeSelector
               currentColorTheme={colorTheme}
-              colorThemeOptions={[
-                { value: 'blue', label: 'Blue', color: '#2196F3' },
-                { value: 'purple', label: 'Purple', color: '#9C27B0' },
-                { value: 'green', label: 'Green', color: '#4CAF50' },
-                { value: 'orange', label: 'Orange', color: '#FF9800' },
-                { value: 'red', label: 'Red', color: '#F44336' }
-              ]}
+              colorThemeOptions={getColorThemeOptions((key: string, defaultValue?: string) => defaultValue ? t(key, { defaultValue }) : t(key))}
               onColorThemeChange={setColorTheme}
               isDarkMode={themeMode === 'dark'}
               t={(key: string, defaultValue?: string) => defaultValue ? t(key, { defaultValue }) : t(key)}

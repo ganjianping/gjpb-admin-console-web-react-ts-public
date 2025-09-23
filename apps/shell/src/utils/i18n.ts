@@ -120,6 +120,17 @@ const shellResources = {
           autoLogoutDescription: 'Automatically log out after period of inactivity',
         },
       },
+      theme: {
+        light: 'Light',
+        dark: 'Dark',
+        colors: {
+          blue: 'Blue',
+          purple: 'Purple',
+          green: 'Green',
+          orange: 'Orange',
+          red: 'Red',
+        },
+      },
     }
   },
   zh: {
@@ -238,6 +249,17 @@ const shellResources = {
           cookieDescription: '允许使用 Cookie 以增强您的体验',
           autoLogout: '自动注销',
           autoLogoutDescription: '在一段时间不活动后自动注销',
+        },
+      },
+      theme: {
+        light: '浅色',
+        dark: '深色',
+        colors: {
+          blue: '蓝色',
+          purple: '紫色',
+          green: '绿色',
+          orange: '橙色',
+          red: '红色',
         },
       },
     }
