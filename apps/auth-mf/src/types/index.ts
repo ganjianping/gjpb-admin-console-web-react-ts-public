@@ -5,19 +5,8 @@
  * These are separate from shared types to maintain modularity.
  */
 
-// Re-export shared auth types for convenience
-export type {
-  LoginCredentials,
-  AuthResponse,
-  AuthTokens,
-  UserInfo
-} from '../../../shared-lib/src/services/auth-service';
-
 import type { LoginCredentials, AuthResponse } from '../../../shared-lib/src/services/auth-service';
-
-// Auth-MF specific UI types
-export type ColorTheme = 'blue' | 'purple' | 'green' | 'orange' | 'red';
-export type ThemeMode = 'light' | 'dark';
+import type { ColorTheme, ThemeMode } from '../../../shared-lib/src/types/theme.types';
 
 // Login form specific types
 export interface LoginFormData extends LoginCredentials {

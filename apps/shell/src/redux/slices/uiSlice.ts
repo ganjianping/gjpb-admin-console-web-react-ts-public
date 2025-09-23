@@ -2,15 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '../store';
 import { APP_CONFIG } from '../../../../shared-lib/src/utils/config';
-
-// Theme type
-export type ThemeMode = 'light' | 'dark';
-
-// Color theme type
-export type ColorTheme = 'blue' | 'purple' | 'green' | 'orange' | 'red';
-
-// Language type
-export type Language = 'en' | 'zh';
+import type { ThemeMode, ColorTheme, Language } from '../../../../shared-lib/src/types/theme.types';
 
 // UI state interface
 interface UiState {

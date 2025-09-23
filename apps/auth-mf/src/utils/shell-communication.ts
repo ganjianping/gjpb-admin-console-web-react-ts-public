@@ -1,8 +1,5 @@
 import type { AuthResponse } from '../../../shared-lib/src/services/auth-service';
-
-// Auth-MF specific types (no shell dependencies)
-export type ColorTheme = 'blue' | 'purple' | 'green' | 'orange' | 'red';
-export type ThemeMode = 'light' | 'dark';
+import type { ColorTheme, ThemeMode } from '../../../shared-lib/src/types/theme.types';
 
 // Shell communication interface
 export interface ShellCommunication {

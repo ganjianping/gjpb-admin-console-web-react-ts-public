@@ -1,9 +1,7 @@
 import type { ThemeOptions } from '@mui/material/styles';
 import type { PaletteMode } from '@mui/material';
 import { createTheme as muiCreateTheme } from '@mui/material/styles';
-
-// Color theme type
-export type ColorTheme = 'blue' | 'purple' | 'green' | 'orange' | 'red';
+import type { ColorTheme } from '../../../shared-lib/src/types/theme.types';
 
 // Color theme palettes
 const colorThemes = {

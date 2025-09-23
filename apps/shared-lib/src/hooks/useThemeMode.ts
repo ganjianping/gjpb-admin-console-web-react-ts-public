@@ -3,8 +3,7 @@
  */
 import { useState, useEffect, useCallback } from 'react';
 import { APP_CONFIG } from '../utils/config';
-
-type ThemeMode = 'light' | 'dark';
+import type { ThemeMode } from '../types/theme.types';
 
 export const useThemeMode = () => {
   const [mode, setMode] = useState<ThemeMode>(() => {

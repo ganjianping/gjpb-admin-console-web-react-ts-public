@@ -44,7 +44,7 @@ import {
   setLanguage,
   setColorTheme,
 } from '../redux/slices/uiSlice';
-import type { ThemeMode, Language, ColorTheme } from '../redux/slices/uiSlice';
+import type { ThemeMode, Language, ColorTheme } from '../../../shared-lib/src/types/theme.types';
 
 // Settings sections
 import { APP_CONFIG } from '../../../shared-lib/src/utils/config';
