@@ -74,11 +74,84 @@ export default defineConfig(({ mode }) => {
       chunkSizeWarningLimit: 1000,
       rollupOptions: {
         output: {
-          manualChunks: {
-            vendor: ['react', 'react-dom', 'react-router-dom'],
-            ui: ['@mui/material', '@mui/icons-material'],
-            utils: ['axios', 'lodash', 'date-fns']
-          }
+          // Custom chunk splitting strategy for better control
+          manualChunks: (id) => {
+            // Debug logging (remove in production)
+            if (isDev) {
+              console.log('📦 Analyzing module:', id);
+            }
+            
+            // Microfrontend modules - create dedicated chunks
+            if (id.includes('auth-mf/src')) {
+              return 'auth-mf';
+            }
+            if (id.includes('user-mf/src')) {
+              return 'user-mf';
+            }
+            if (id.includes('bm-mf/src')) {
+              return 'base-mf';
+            }
+            
+            // Shared library - separate chunk for shared components
+            if (id.includes('shared-lib/src')) {
+              return 'shared-lib';
+            }
+            
+            // Core React libraries
+            if (id.includes('node_modules/react') || 
+                id.includes('node_modules/react-dom') || 
+                id.includes('node_modules/react-router')) {
+              return 'react-vendor';
+            }
+            
+            // UI Framework
+            if (id.includes('@mui/material') || 
+                id.includes('@mui/icons-material') || 
+                id.includes('@mui/x-')) {
+              return 'mui-vendor';
+            }
+            
+            // Utility libraries
+            if (id.includes('node_modules/axios') ||
+                id.includes('node_modules/lodash') ||
+                id.includes('node_modules/date-fns')) {
+              return 'utils-vendor';
+            }
+            
+            // i18n libraries
+            if (id.includes('node_modules/i18next') ||
+                id.includes('node_modules/react-i18next')) {
+              return 'i18n-vendor';
+            }
+            
+            // Redux libraries
+            if (id.includes('node_modules/@reduxjs') ||
+                id.includes('node_modules/react-redux')) {
+              return 'redux-vendor';
+            }
+            
+            // Other node_modules go to common vendor chunk
+            if (id.includes('node_modules')) {
+              return 'vendor';
+            }
+            
+            // Default: let Vite decide (usually goes to main chunk)
+            return undefined;
+          },
+          
+          // Control chunk file naming pattern
+          chunkFileNames: (chunkInfo) => {
+            const facadeModuleId = chunkInfo.facadeModuleId ? 
+              chunkInfo.facadeModuleId.split('/').pop()?.replace('.ts', '').replace('.tsx', '') : 
+              'chunk';
+            return `${chunkInfo.name}-${facadeModuleId}-[hash].js`;
+          },
+          
+          // Control entry file naming  
+          entryFileNames: '[name]-[hash].js',
+          
+          // Control asset file naming
+          assetFileNames: 'assets/[name]-[hash].[ext]'
         }
       },
       // Optimize CSS

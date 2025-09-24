@@ -131,6 +131,12 @@ const shellResources = {
           red: 'Red',
         },
       },
+      auditLogs: {
+        title: 'Audit Logs',
+      },
+      appSettings: {
+        title: 'App Settings',
+      },
     }
   },
   zh: {
@@ -261,6 +267,12 @@ const shellResources = {
           orange: '橙色',
           red: '红色',
         },
+      },
+      auditLogs: {
+        title: '审计日志',
+      },
+      appSettings: {
+        title: '应用设置',
       },
     }
   }
