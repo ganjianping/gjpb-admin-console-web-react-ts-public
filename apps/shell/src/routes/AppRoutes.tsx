@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
@@ -6,10 +6,32 @@ import { useTranslation } from 'react-i18next';
 import MainLayout from '../layouts/MainLayout';
 
 // Pages
-// Import through the barrel file
-import { LoginPageProvider } from '../../../auth-mf/src/public-api';
-import { UsersPage, RolesPage, AuditLogPage } from '../../../user-mf/src/public-api';
-import { AppSettingsPage } from '../../../bm-mf/src/public-api';
+// Dynamic imports for better code splitting
+const LoginPageProvider = lazy(() => 
+  import('../../../auth-mf/src/public-api').then(module => ({ 
+    default: module.LoginPageProvider 
+  }))
+);
+const UsersPage = lazy(() => 
+  import('../../../user-mf/src/public-api').then(module => ({ 
+    default: module.UsersPage 
+  }))
+);
+const RolesPage = lazy(() => 
+  import('../../../user-mf/src/public-api').then(module => ({ 
+    default: module.RolesPage 
+  }))
+);
+const AuditLogPage = lazy(() => 
+  import('../../../user-mf/src/public-api').then(module => ({ 
+    default: module.AuditLogPage 
+  }))
+);
+const AppSettingsPage = lazy(() => 
+  import('../../../bm-mf/src/public-api').then(module => ({ 
+    default: module.AppSettingsPage 
+  }))
+);
 import DashboardPage from '../pages/DashboardPage';
 import ProfilePage from '../pages/ProfilePage';
 import SettingsPage from '../pages/SettingsPage';
@@ -19,6 +41,7 @@ import UnauthorizedPage from '../pages/UnauthorizedPage';
 // Components
 import ProtectedRoute from '../components/ProtectedRoute';
 import RefreshWarningProvider from '../components/RefreshWarningProvider';
+import AppLoading from '../components/AppLoading';
 
 // Redux
 import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
@@ -96,7 +119,11 @@ const AppRoutes = () => {
       
       <Routes>
         {/* Public routes */}
-        <Route path="/auth/login" element={<LoginPageProvider />} />
+        <Route path="/auth/login" element={
+          <Suspense fallback={<AppLoading />}>
+            <LoginPageProvider />
+          </Suspense>
+        } />
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
         
         {/* Protected routes */}
@@ -114,14 +141,30 @@ const AppRoutes = () => {
           <Route path="settings" element={<SettingsPage />} />
           
           {/* Users Management */}
-          <Route path="users" element={<UsersPage />} />
-          <Route path="roles" element={<RolesPage />} />
+          <Route path="users" element={
+            <Suspense fallback={<AppLoading />}>
+              <UsersPage />
+            </Suspense>
+          } />
+          <Route path="roles" element={
+            <Suspense fallback={<AppLoading />}>
+              <RolesPage />
+            </Suspense>
+          } />
           
           {/* Audit Logs */}
-          <Route path="audit-logs" element={<AuditLogPage />} />
+          <Route path="audit-logs" element={
+            <Suspense fallback={<AppLoading />}>
+              <AuditLogPage />
+            </Suspense>
+          } />
           
           {/* App Settings */}
-          <Route path="app-settings" element={<AppSettingsPage />} />
+          <Route path="app-settings" element={
+            <Suspense fallback={<AppLoading />}>
+              <AppSettingsPage />
+            </Suspense>
+          } />
         </Route>
         
         {/* Catch-all route */}
