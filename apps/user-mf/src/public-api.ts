@@ -8,7 +8,7 @@ import { userMfCacheProvider } from './utils/cache-adapter';
 CacheManagerService.registerCacheProvider(userMfCacheProvider);
 
 // Export the user management components
-export { UsersPage } from './users/pages';
+export { UsersPage, ProfilePage } from './users/pages';
 export { RolesPage } from './roles/pages';
 export { LanguageSwitcher } from './shared/components';
 

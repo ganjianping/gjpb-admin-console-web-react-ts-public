@@ -1,6 +1,6 @@
 import i18n from '../../../shared-lib/src/utils/i18n';
 
-// User-mf specific translations (auditLogs, users, roles)
+// User-mf specific translations (auditLogs, users, roles, profile)
 const userMfResources = {
   en: {
     translation: {
@@ -8,6 +8,39 @@ const userMfResources = {
         searchFilters: 'Search Filters',
         clearAll: 'Clear All',
         search: 'Search',
+        loading: 'Loading...',
+        save: 'Save',
+        notAvailable: 'Not Available',
+      },
+      profile: {
+        noEmailProvided: 'No email provided',
+        tabs: {
+          personal: 'Personal Info',
+          security: 'Security',
+          activity: 'Activity',
+        },
+        form: {
+          nickname: 'Nickname',
+          email: 'Email',
+          countryCode: 'Country Code',
+          mobileNumber: 'Mobile Number',
+          currentPassword: 'Current Password',
+          newPassword: 'New Password',
+          confirmPassword: 'Confirm New Password',
+        },
+        changePassword: 'Change Password',
+        updatePassword: 'Update Password',
+        updateSuccess: 'Profile updated successfully',
+        updateError: 'Error updating profile',
+        passwordChangeSuccess: 'Password changed successfully',
+        passwordChangeError: 'Error changing password',
+        loginActivity: 'Login Activity',
+        lastLogin: 'Last Login',
+        lastIP: 'Last IP',
+        failedAttempts: 'Failed Attempts',
+        accountStatus: 'Account Status',
+        deviceSessions: 'Device Sessions',
+        noActiveSessions: 'No active sessions found',
       },
       auditLogs: {
         title: 'Audit Logs',

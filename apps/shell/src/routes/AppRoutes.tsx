@@ -27,13 +27,17 @@ const AuditLogPage = lazy(() =>
     default: module.AuditLogPage 
   }))
 );
-const AppSettingsPage = lazy(() => 
-  import('../../../bm-mf/src/public-api').then(module => ({ 
-    default: module.AppSettingsPage 
+const ProfilePage = lazy(() => 
+  import('../../../user-mf/src/public-api').then(module => ({ 
+    default: module.ProfilePage 
+  }))
+);
+const AppSettingsPage = lazy(() =>
+  import('../../../bm-mf/src/public-api').then(module => ({
+    default: module.AppSettingsPage
   }))
 );
 import DashboardPage from '../pages/DashboardPage';
-import ProfilePage from '../pages/ProfilePage';
 import SettingsPage from '../pages/SettingsPage';
 import NotFoundPage from '../pages/NotFoundPage';
 import UnauthorizedPage from '../pages/UnauthorizedPage';
@@ -45,11 +49,68 @@ import AppLoading from '../components/AppLoading';
 
 // Redux
 import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
-import { initializeAuth, handleLoginSuccess, handleLoginFailure } from '../redux/slices/authSlice';
+import { initializeAuth, handleLoginSuccess, handleLoginFailure, selectCurrentUser } from '../redux/slices/authSlice';
 import { setPageTitle, selectPageTitle, setThemeMode, setColorTheme } from '../redux/slices/uiSlice';
+import type { UserInfo } from '../../../shared-lib/src/services/auth-service';
 
 // Config
 import { APP_CONFIG } from '../../../shared-lib/src/utils/config';
+
+// Profile page wrapper that passes current user as prop
+const ProfilePageWrapper = () => {
+  const dispatch = useAppDispatch();
+  const { t } = useTranslation();
+  const currentUser = useAppSelector(selectCurrentUser);
+  
+  useEffect(() => {
+    dispatch(setPageTitle(t('navigation.profile')));
+  }, [dispatch, t]);
+  
+  // Map UserInfo to User type expected by ProfilePage
+  const mapUserInfoToUser = (userInfo: UserInfo | null) => {
+    if (!userInfo) return null;
+    
+    return {
+      id: '', // ProfilePage doesn't really need ID for display
+      username: userInfo.username,
+      nickname: userInfo.nickname,
+      email: userInfo.email,
+      mobileCountryCode: userInfo.mobileCountryCode,
+      mobileNumber: userInfo.mobileNumber,
+      accountStatus: userInfo.accountStatus.toLowerCase() as 'active' | 'locked' | 'suspend' | 'pending_verification',
+      active: userInfo.accountStatus.toLowerCase() === 'active',
+      lastLoginAt: userInfo.lastLoginAt,
+      lastLoginIp: userInfo.lastLoginIp,
+      passwordChangedAt: '', // Not available in UserInfo
+      createdAt: '', // Not available in UserInfo
+      updatedAt: '', // Not available in UserInfo
+      roles: userInfo.roleCodes.map(code => ({
+        id: '',
+        name: code,
+        code: code,
+        description: '',
+        status: 'active' as const,
+        sortOrder: 0,
+        level: 0,
+        parentRoleId: null,
+        systemRole: false,
+        active: true,
+        createdAt: '',
+        updatedAt: '',
+        createdBy: null,
+        updatedBy: null,
+      })),
+    };
+  };
+  
+  const mappedUser = mapUserInfoToUser(currentUser);
+  
+  return (
+    <Suspense fallback={<AppLoading />}>
+      <ProfilePage user={mappedUser} />
+    </Suspense>
+  );
+};
 
 const AppRoutes = () => {
   const dispatch = useAppDispatch();
@@ -137,7 +198,7 @@ const AppRoutes = () => {
         >
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<DashboardPage />} />
-          <Route path="profile" element={<ProfilePage />} />
+          <Route path="profile" element={<ProfilePageWrapper />} />
           <Route path="settings" element={<SettingsPage />} />
           
           {/* Users Management */}
