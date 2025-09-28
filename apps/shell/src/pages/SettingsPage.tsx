@@ -6,93 +6,36 @@ import {
   Card,
   CardContent,
   CardHeader,
-  Switch,
-  FormControlLabel,
   Divider,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Button,
-  useTheme,
-  alpha,
   Grid,
+  Chip,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
 } from '@mui/material';
-import type { SelectChangeEvent } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import {
-  Moon,
-  Sun,
-  Globe,
-  Monitor,
-  Bell,
-  Eye,
-  Shield,
-  Cookie,
-  Lock,
-  Palette,
+  Settings,
+  Database,
+  Code,
 } from 'lucide-react';
 
 // Redux
-import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
-import {
-  setPageTitle,
-  setThemeMode,
-  selectThemeMode,
-  selectLanguage,
-  selectColorTheme,
-  setLanguage,
-  setColorTheme,
-} from '../redux/slices/uiSlice';
-import type { ThemeMode, Language, ColorTheme } from '../../../shared-lib/src/types/theme.types';
+import { useAppDispatch } from '../hooks/useRedux';
+import { setPageTitle } from '../redux/slices/uiSlice';
 
-// Settings sections
-import { APP_CONFIG } from '../../../shared-lib/src/utils/config';
-import { useState } from 'react';
-import toast from 'react-hot-toast';
+// Config
+import { APP_CONFIG, APP_ENV } from '../../../shared-lib/src/utils/config';
 
 // Firebase Analytics
-import { trackPageView, trackEvent } from '../utils/firebaseAnalytics';
+import { trackPageView } from '../utils/firebaseAnalytics';
 
 const SettingsPage = () => {
-  const { t, i18n } = useTranslation();
-  const theme = useTheme();
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  
-  // Redux state
-  const currentTheme = useAppSelector(selectThemeMode);
-  const currentLanguage = useAppSelector(selectLanguage);
-  const currentColorTheme = useAppSelector(selectColorTheme);
-  
-  // Local state for settings
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [emailNotifications, setEmailNotifications] = useState(true);
-  const [securityAlerts, setSecurityAlerts] = useState(true);
-  const [cookieConsent, setCookieConsent] = useState(true);
-  const [autoLogout, setAutoLogout] = useState(true);
-
-  // Helper functions for color theme
-  const getColorThemeColor = (colorTheme: ColorTheme): string => {
-    const colors = {
-      blue: '#1976d2',
-      purple: '#9c27b0',
-      green: '#4caf50',
-      orange: '#ff9800',
-      red: '#f44336',
-    };
-    return colors[colorTheme];
-  };
-
-  const getColorThemeLabel = (colorTheme: ColorTheme): string => {
-    const labels = {
-      blue: t('theme.colors.blue', 'Blue'),
-      purple: t('theme.colors.purple', 'Purple'),
-      green: t('theme.colors.green', 'Green'),
-      orange: t('theme.colors.orange', 'Orange'),
-      red: t('theme.colors.red', 'Red'),
-    };
-    return labels[colorTheme];
-  };
   
   // Set page title
   useEffect(() => {
@@ -101,100 +44,73 @@ const SettingsPage = () => {
     // Track page view for analytics
     trackPageView('Settings', t('navigation.settings'));
   }, [dispatch, t]);
-  
-  // Handle theme change
-  const handleThemeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newTheme = event.target.checked ? 'dark' : 'light';
-    dispatch(setThemeMode(newTheme as ThemeMode));
-    
-    // Track theme change
-    trackEvent('change_theme', { 
-      newTheme,
-      previousTheme: currentTheme 
-    });
-    
-    toast.success(t('settings.themeChanged'));
-  };
-  
-  // Handle language change
-  const handleLanguageChange = (event: SelectChangeEvent) => {
-    const newLang = event.target.value as Language;
-    dispatch(setLanguage(newLang));
-    i18n.changeLanguage(newLang);
-    
-    // Track language change
-    trackEvent('change_language', { 
-      newLanguage: newLang,
-      previousLanguage: currentLanguage 
-    });
-    
-    toast.success(t('settings.languageChanged'));
+
+  // Environment variables (Vite runtime environment variables)
+  const envVariables = {
+    'DEV': APP_ENV.DEV,
+    'PROD': APP_ENV.PROD,
+    'MODE': APP_ENV.MODE,
+    'API_BASE_URL': APP_ENV.API_BASE_URL,
+    'VITE_APP_NAME': import.meta.env.VITE_APP_NAME,
+    'VITE_APP_VERSION': import.meta.env.VITE_APP_VERSION,
+    'VITE_DEFAULT_LANGUAGE': import.meta.env.VITE_DEFAULT_LANGUAGE,
+    'VITE_AVAILABLE_LANGUAGES': import.meta.env.VITE_AVAILABLE_LANGUAGES,
+    'VITE_DEFAULT_THEME': import.meta.env.VITE_DEFAULT_THEME,
+    'VITE_DEFAULT_COLOR_THEME': import.meta.env.VITE_DEFAULT_COLOR_THEME,
+    'VITE_AUTH_LOGIN_URL': import.meta.env.VITE_AUTH_LOGIN_URL,
+    'VITE_AUTH_REFRESH_TOKEN_URL': import.meta.env.VITE_AUTH_REFRESH_TOKEN_URL,
+    'VITE_AUTH_TOKEN_EXPIRY_BUFFER': import.meta.env.VITE_AUTH_TOKEN_EXPIRY_BUFFER,
+    'VITE_FIREBASE_API_KEY': import.meta.env.VITE_FIREBASE_API_KEY ? '***hidden***' : undefined,
+    'VITE_FIREBASE_AUTH_DOMAIN': import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    'VITE_FIREBASE_PROJECT_ID': import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    'VITE_FIREBASE_STORAGE_BUCKET': import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    'VITE_FIREBASE_MESSAGING_SENDER_ID': import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    'VITE_FIREBASE_APP_ID': import.meta.env.VITE_FIREBASE_APP_ID,
+    'VITE_FIREBASE_MEASUREMENT_ID': import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
   };
 
-  // Handle color theme change
-  const handleColorThemeChange = (event: SelectChangeEvent) => {
-    const newColorTheme = event.target.value as ColorTheme;
-    dispatch(setColorTheme(newColorTheme));
-    
-    // Track color theme change
-    trackEvent('change_color_theme', { 
-      newColorTheme,
-      previousColorTheme: currentColorTheme 
-    });
-    
-    toast.success(t('settings.colorThemeChanged'));
+  // Global variables from APP_CONFIG
+  const globalVariables = {
+    'APP_NAME': APP_CONFIG.APP_NAME,
+    'APP_VERSION': APP_CONFIG.APP_VERSION,
+    'COPYRIGHT': APP_CONFIG.COPYRIGHT,
+    'DEFAULT_LANGUAGE': APP_CONFIG.DEFAULT_LANGUAGE,
+    'AVAILABLE_LANGUAGES': APP_CONFIG.AVAILABLE_LANGUAGES,
+    'DEFAULT_PAGE_TITLE': APP_CONFIG.DEFAULT_PAGE_TITLE,
+    'DEFAULT_PAGE_TITLE_KEY': APP_CONFIG.DEFAULT_PAGE_TITLE_KEY,
+    'TOKEN.ACCESS_TOKEN_KEY': APP_CONFIG.TOKEN.ACCESS_TOKEN_KEY,
+    'TOKEN.REFRESH_TOKEN_KEY': APP_CONFIG.TOKEN.REFRESH_TOKEN_KEY,
+    'TOKEN.TOKEN_TYPE_KEY': APP_CONFIG.TOKEN.TOKEN_TYPE_KEY,
+    'THEME.DEFAULT_THEME': APP_CONFIG.THEME.DEFAULT_THEME,
+    'THEME.DEFAULT_COLOR_THEME': APP_CONFIG.THEME.DEFAULT_COLOR_THEME,
+    'THEME.STORAGE_KEY': APP_CONFIG.THEME.STORAGE_KEY,
+    'ROUTES.HOME': APP_CONFIG.ROUTES.HOME,
+    'ROUTES.LOGIN': APP_CONFIG.ROUTES.LOGIN,
+    'ROUTES.DASHBOARD': APP_CONFIG.ROUTES.DASHBOARD,
+    'ROUTES.UNAUTHORIZED': APP_CONFIG.ROUTES.UNAUTHORIZED,
+    'ROUTES.NOT_FOUND': APP_CONFIG.ROUTES.NOT_FOUND,
+    'AUTH.LOGIN_URL': APP_CONFIG.AUTH.LOGIN_URL,
+    'AUTH.REFRESH_TOKEN_URL': APP_CONFIG.AUTH.REFRESH_TOKEN_URL,
+    'AUTH.TOKEN_EXPIRY_BUFFER': APP_CONFIG.AUTH.TOKEN_EXPIRY_BUFFER,
   };
-  
-  // Handle notification toggle
-  const handleNotificationToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNotificationsEnabled(event.target.checked);
-    toast.success(t('settings.settingsUpdated'));
-  };
-  
-  // Handle email notifications toggle
-  const handleEmailNotificationsToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEmailNotifications(event.target.checked);
-    toast.success(t('settings.settingsUpdated'));
-  };
-  
-  // Handle security alerts toggle
-  const handleSecurityAlertsToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSecurityAlerts(event.target.checked);
-    toast.success(t('settings.settingsUpdated'));
-  };
-  
-  // Handle cookie consent toggle
-  const handleCookieConsentToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCookieConsent(event.target.checked);
-    toast.success(t('settings.settingsUpdated'));
-  };
-  
-  // Handle auto logout toggle
-  const handleAutoLogoutToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setAutoLogout(event.target.checked);
-    toast.success(t('settings.settingsUpdated'));
-  };
-  
-  // Reset all settings
-  const handleResetSettings = () => {
-    // Reset theme
-    dispatch(setThemeMode(APP_CONFIG.THEME.DEFAULT_THEME as ThemeMode));
-    
-    // Reset color theme
-    dispatch(setColorTheme('blue' as ColorTheme));
-    
-    // Reset language
-    dispatch(setLanguage(APP_CONFIG.DEFAULT_LANGUAGE as Language));
-    i18n.changeLanguage(APP_CONFIG.DEFAULT_LANGUAGE);
-    
-    // Reset local settings
-    setNotificationsEnabled(true);
-    setEmailNotifications(true);
-    setSecurityAlerts(true);
-    setCookieConsent(true);
-    setAutoLogout(true);
-    
-    toast.success(t('settings.settingsReset'));
+
+  const renderVariableValue = (value: any) => {
+    if (value === undefined) {
+      return <Chip label="undefined" size="small" color="default" variant="outlined" />;
+    }
+    if (value === null) {
+      return <Chip label="null" size="small" color="default" variant="outlined" />;
+    }
+    if (typeof value === 'boolean') {
+      return <Chip label={value.toString()} size="small" color={value ? 'success' : 'error'} />;
+    }
+    if (Array.isArray(value)) {
+      return <Chip label={`[${value.join(', ')}]`} size="small" color="info" />;
+    }
+    if (typeof value === 'number') {
+      return <Chip label={value.toString()} size="small" color="primary" />;
+    }
+    return <Typography variant="body2" component="span" sx={{ fontFamily: 'monospace' }}>{value}</Typography>;
   };
 
   return (
@@ -204,14 +120,14 @@ const SettingsPage = () => {
         {t('navigation.settings')}
       </Typography>
       
-      <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
-        {t('settings.description')}
+      <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
+        System environment variables and global configuration settings
       </Typography>
       
       {/* Settings grid */}
       <Grid container component="div" spacing={3}>
-        {/* Appearance */}
-        <Grid size={{ xs: 12, md: 6 }}>
+        {/* Environment Variables */}
+        <Grid size={{ xs: 12, lg: 6 }}>
           <Card 
             elevation={0}
             sx={{
@@ -224,265 +140,42 @@ const SettingsPage = () => {
             <CardHeader 
               title={
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Eye size={20} />
-                  <span>{t('settings.appearance.title')}</span>
+                  <Code size={20} />
+                  <span>Environment Variables</span>
                 </Box>
               }
+              subheader="Runtime environment variables from Vite"
             />
             <Divider />
             <CardContent>
-              <Grid container component="div" spacing={3}>
-                {/* Theme mode */}
-                <Grid size={12}>
-                  <Paper
-                    elevation={0}
-                    sx={{
-                      p: 2,
-                      border: 1,
-                      borderColor: 'divider',
-                      borderRadius: 2,
-                      display: 'flex',
-                      flexDirection: { xs: 'column', sm: 'row' },
-                      alignItems: { xs: 'flex-start', sm: 'center' },
-                      justifyContent: 'space-between',
-                      gap: 2,
-                    }}
-                  >
-                    <Box>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                        {currentTheme === 'dark' ? (
-                          <Moon size={16} />
-                        ) : (
-                          <Sun size={16} />
-                        )}
-                        <Typography variant="subtitle1" fontWeight={500}>
-                          {t('settings.appearance.theme')}
-                        </Typography>
-                      </Box>
-                      <Typography variant="body2" color="text.secondary">
-                        {currentTheme === 'dark'
-                          ? t('settings.appearance.darkMode')
-                          : t('settings.appearance.lightMode')}
-                      </Typography>
-                    </Box>
-                    
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={currentTheme === 'dark'}
-                          onChange={handleThemeChange}
-                          color="primary"
-                        />
-                      }
-                      label={
-                        <Box
-                          sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 1,
-                            ml: 0.5,
-                          }}
-                        >
-                          <Sun size={14} style={{ color: alpha(theme.palette.warning.main, 0.8) }} />
-                          <Monitor size={14} />
-                          <Moon size={14} style={{ color: alpha(theme.palette.info.main, 0.8) }} />
-                        </Box>
-                      }
-                      labelPlacement="start"
-                      sx={{
-                        ml: 0,
-                        mr: 0,
-                      }}
-                    />
-                  </Paper>
-                </Grid>
-                
-                {/* Language */}
-                <Grid size={12}>
-                  <Paper
-                    elevation={0}
-                    sx={{
-                      p: 2,
-                      border: 1,
-                      borderColor: 'divider',
-                      borderRadius: 2,
-                      display: 'flex',
-                      flexDirection: { xs: 'column', sm: 'row' },
-                      alignItems: { xs: 'flex-start', sm: 'center' },
-                      justifyContent: 'space-between',
-                      gap: 2,
-                    }}
-                  >
-                    <Box>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                        <Globe size={16} />
-                        <Typography variant="subtitle1" fontWeight={500}>
-                          {t('settings.appearance.language')}
-                        </Typography>
-                      </Box>
-                      <Typography variant="body2" color="text.secondary">
-                        {t('settings.appearance.languageDescription')}
-                      </Typography>
-                    </Box>
-                    
-                    <FormControl sx={{ minWidth: 120 }} size="small">
-                      <InputLabel id="language-select-label">
-                        {t('settings.appearance.selectLanguage')}
-                      </InputLabel>
-                      <Select
-                        labelId="language-select-label"
-                        id="language-select"
-                        value={currentLanguage}
-                        label={t('settings.appearance.selectLanguage')}
-                        onChange={handleLanguageChange}
-                      >
-                        <MenuItem value="en">English</MenuItem>
-                        <MenuItem value="zh">中文</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Paper>
-                </Grid>
-
-                {/* Color Theme */}
-                <Grid size={12}>
-                  <Paper
-                    elevation={0}
-                    sx={{
-                      p: 2,
-                      border: 1,
-                      borderColor: 'divider',
-                      borderRadius: 2,
-                      display: 'flex',
-                      flexDirection: { xs: 'column', sm: 'row' },
-                      alignItems: { xs: 'flex-start', sm: 'center' },
-                      justifyContent: 'space-between',
-                      gap: 2,
-                    }}
-                  >
-                    <Box>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                        <Palette size={16} />
-                        <Typography variant="subtitle1" fontWeight={500}>
-                          {t('settings.appearance.colorTheme', 'Color Theme')}
-                        </Typography>
-                      </Box>
-                      <Typography variant="body2" color="text.secondary">
-                        {t('settings.appearance.colorThemeDescription', 'Choose your preferred color scheme')}
-                      </Typography>
-                    </Box>
-                    
-                    <FormControl sx={{ minWidth: 140 }} size="small">
-                      <InputLabel id="color-theme-select-label">
-                        {t('settings.appearance.selectColorTheme', 'Select Color')}
-                      </InputLabel>
-                      <Select
-                        labelId="color-theme-select-label"
-                        id="color-theme-select"
-                        value={currentColorTheme}
-                        label={t('settings.appearance.selectColorTheme', 'Select Color')}
-                        onChange={handleColorThemeChange}
-                        renderValue={(value) => (
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <Box
-                              sx={{
-                                width: 16,
-                                height: 16,
-                                borderRadius: '50%',
-                                backgroundColor: getColorThemeColor(value as ColorTheme),
-                                border: '1px solid',
-                                borderColor: 'divider',
-                              }}
-                            />
-                            {getColorThemeLabel(value as ColorTheme)}
-                          </Box>
-                        )}
-                      >
-                        <MenuItem value="blue">
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                            <Box
-                              sx={{
-                                width: 16,
-                                height: 16,
-                                borderRadius: '50%',
-                                backgroundColor: '#1976d2',
-                                border: '1px solid',
-                                borderColor: 'divider',
-                              }}
-                            />
-                            {t('theme.colors.blue', 'Blue')}
-                          </Box>
-                        </MenuItem>
-                        <MenuItem value="purple">
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                            <Box
-                              sx={{
-                                width: 16,
-                                height: 16,
-                                borderRadius: '50%',
-                                backgroundColor: '#9c27b0',
-                                border: '1px solid',
-                                borderColor: 'divider',
-                              }}
-                            />
-                            {t('theme.colors.purple', 'Purple')}
-                          </Box>
-                        </MenuItem>
-                        <MenuItem value="green">
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                            <Box
-                              sx={{
-                                width: 16,
-                                height: 16,
-                                borderRadius: '50%',
-                                backgroundColor: '#4caf50',
-                                border: '1px solid',
-                                borderColor: 'divider',
-                              }}
-                            />
-                            {t('theme.colors.green', 'Green')}
-                          </Box>
-                        </MenuItem>
-                        <MenuItem value="orange">
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                            <Box
-                              sx={{
-                                width: 16,
-                                height: 16,
-                                borderRadius: '50%',
-                                backgroundColor: '#ff9800',
-                                border: '1px solid',
-                                borderColor: 'divider',
-                              }}
-                            />
-                            {t('theme.colors.orange', 'Orange')}
-                          </Box>
-                        </MenuItem>
-                        <MenuItem value="red">
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                            <Box
-                              sx={{
-                                width: 16,
-                                height: 16,
-                                borderRadius: '50%',
-                                backgroundColor: '#f44336',
-                                border: '1px solid',
-                                borderColor: 'divider',
-                              }}
-                            />
-                            {t('theme.colors.red', 'Red')}
-                          </Box>
-                        </MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Paper>
-                </Grid>
-              </Grid>
+              <TableContainer>
+                <Table size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell><strong>Variable</strong></TableCell>
+                      <TableCell><strong>Value</strong></TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {Object.entries(envVariables).map(([key, value]) => (
+                      <TableRow key={key} hover>
+                        <TableCell sx={{ fontFamily: 'monospace', fontSize: '0.875rem' }}>
+                          {key}
+                        </TableCell>
+                        <TableCell>
+                          {renderVariableValue(value)}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
             </CardContent>
           </Card>
         </Grid>
         
-        {/* Notifications */}
-        <Grid size={{ xs: 12, md: 6 }}>
+        {/* Global Variables */}
+        <Grid size={{ xs: 12, lg: 6 }}>
           <Card 
             elevation={0}
             sx={{
@@ -495,95 +188,43 @@ const SettingsPage = () => {
             <CardHeader 
               title={
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Bell size={20} />
-                  <span>{t('settings.notifications.title')}</span>
+                  <Settings size={20} />
+                  <span>Global Configuration</span>
                 </Box>
               }
+              subheader="Application configuration from APP_CONFIG"
             />
             <Divider />
             <CardContent>
-              <Grid container component="div" spacing={3}>
-                {/* Push notifications */}
-                <Grid size={12}>
-                  <Paper
-                    elevation={0}
-                    sx={{
-                      p: 2,
-                      border: 1,
-                      borderColor: 'divider',
-                      borderRadius: 2,
-                      display: 'flex',
-                      flexDirection: { xs: 'column', sm: 'row' },
-                      alignItems: { xs: 'flex-start', sm: 'center' },
-                      justifyContent: 'space-between',
-                      gap: 2,
-                    }}
-                  >
-                    <Box>
-                      <Typography variant="subtitle1" fontWeight={500}>
-                        {t('settings.notifications.pushNotifications')}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {t('settings.notifications.pushDescription')}
-                      </Typography>
-                    </Box>
-                    
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={notificationsEnabled}
-                          onChange={handleNotificationToggle}
-                          color="primary"
-                        />
-                      }
-                      label=""
-                    />
-                  </Paper>
-                </Grid>
-                
-                {/* Email notifications */}
-                <Grid size={12}>
-                  <Paper
-                    elevation={0}
-                    sx={{
-                      p: 2,
-                      border: 1,
-                      borderColor: 'divider',
-                      borderRadius: 2,
-                      display: 'flex',
-                      flexDirection: { xs: 'column', sm: 'row' },
-                      alignItems: { xs: 'flex-start', sm: 'center' },
-                      justifyContent: 'space-between',
-                      gap: 2,
-                    }}
-                  >
-                    <Box>
-                      <Typography variant="subtitle1" fontWeight={500}>
-                        {t('settings.notifications.emailNotifications')}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {t('settings.notifications.emailDescription')}
-                      </Typography>
-                    </Box>
-                    
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={emailNotifications}
-                          onChange={handleEmailNotificationsToggle}
-                          color="primary"
-                        />
-                      }
-                      label=""
-                    />
-                  </Paper>
-                </Grid>
-              </Grid>
+              <TableContainer>
+                <Table size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell><strong>Variable</strong></TableCell>
+                      <TableCell><strong>Value</strong></TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {Object.entries(globalVariables).map(([key, value]) => (
+                      <TableRow key={key} hover>
+                        <TableCell sx={{ fontFamily: 'monospace', fontSize: '0.875rem' }}>
+                          {key}
+                        </TableCell>
+                        <TableCell>
+                          {renderVariableValue(value)}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
             </CardContent>
           </Card>
         </Grid>
-        
-        {/* Security */}
+      </Grid>
+      
+      {/* Build Information */}
+      <Grid container component="div" spacing={3} sx={{ mt: 1 }}>
         <Grid size={12}>
           <Card 
             elevation={0}
@@ -596,16 +237,16 @@ const SettingsPage = () => {
             <CardHeader 
               title={
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Shield size={20} />
-                  <span>{t('settings.security.title')}</span>
+                  <Database size={20} />
+                  <span>Build Information</span>
                 </Box>
               }
+              subheader="Runtime environment and build details"
             />
             <Divider />
             <CardContent>
-              <Grid container component="div" spacing={3}>
-                {/* Security alerts */}
-                <Grid size={{ xs: 12, md: 6, lg: 4 }}>
+              <Grid container component="div" spacing={2}>
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                   <Paper
                     elevation={0}
                     sx={{
@@ -613,37 +254,20 @@ const SettingsPage = () => {
                       border: 1,
                       borderColor: 'divider',
                       borderRadius: 2,
-                      display: 'flex',
-                      flexDirection: { xs: 'column', sm: 'row' },
-                      alignItems: { xs: 'flex-start', sm: 'center' },
-                      justifyContent: 'space-between',
-                      gap: 2,
+                      textAlign: 'center',
                     }}
                   >
-                    <Box>
-                      <Typography variant="subtitle1" fontWeight={500}>
-                        {t('settings.security.securityAlerts')}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {t('settings.security.alertsDescription')}
-                      </Typography>
-                    </Box>
-                    
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={securityAlerts}
-                          onChange={handleSecurityAlertsToggle}
-                          color="primary"
-                        />
-                      }
-                      label=""
+                    <Typography variant="body2" color="text.secondary" gutterBottom>
+                      Environment
+                    </Typography>
+                    <Chip 
+                      label={APP_ENV.MODE} 
+                      size="small" 
+                      color={APP_ENV.PROD ? 'success' : 'warning'} 
                     />
                   </Paper>
                 </Grid>
-                
-                {/* Cookie consent */}
-                <Grid size={{ xs: 12, md: 6, lg: 4 }}>
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                   <Paper
                     elevation={0}
                     sx={{
@@ -651,40 +275,20 @@ const SettingsPage = () => {
                       border: 1,
                       borderColor: 'divider',
                       borderRadius: 2,
-                      display: 'flex',
-                      flexDirection: { xs: 'column', sm: 'row' },
-                      alignItems: { xs: 'flex-start', sm: 'center' },
-                      justifyContent: 'space-between',
-                      gap: 2,
+                      textAlign: 'center',
                     }}
                   >
-                    <Box>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                        <Cookie size={16} />
-                        <Typography variant="subtitle1" fontWeight={500}>
-                          {t('settings.security.cookieConsent')}
-                        </Typography>
-                      </Box>
-                      <Typography variant="body2" color="text.secondary">
-                        {t('settings.security.cookieDescription')}
-                      </Typography>
-                    </Box>
-                    
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={cookieConsent}
-                          onChange={handleCookieConsentToggle}
-                          color="primary"
-                        />
-                      }
-                      label=""
+                    <Typography variant="body2" color="text.secondary" gutterBottom>
+                      Development
+                    </Typography>
+                    <Chip 
+                      label={APP_ENV.DEV ? 'Yes' : 'No'} 
+                      size="small" 
+                      color={APP_ENV.DEV ? 'info' : 'default'} 
                     />
                   </Paper>
                 </Grid>
-                
-                {/* Auto logout */}
-                <Grid size={{ xs: 12, md: 6, lg: 4 }}>
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                   <Paper
                     elevation={0}
                     sx={{
@@ -692,35 +296,36 @@ const SettingsPage = () => {
                       border: 1,
                       borderColor: 'divider',
                       borderRadius: 2,
-                      display: 'flex',
-                      flexDirection: { xs: 'column', sm: 'row' },
-                      alignItems: { xs: 'flex-start', sm: 'center' },
-                      justifyContent: 'space-between',
-                      gap: 2,
+                      textAlign: 'center',
                     }}
                   >
-                    <Box>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                        <Lock size={16} />
-                        <Typography variant="subtitle1" fontWeight={500}>
-                          {t('settings.security.autoLogout')}
-                        </Typography>
-                      </Box>
-                      <Typography variant="body2" color="text.secondary">
-                        {t('settings.security.autoLogoutDescription')}
-                      </Typography>
-                    </Box>
-                    
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={autoLogout}
-                          onChange={handleAutoLogoutToggle}
-                          color="primary"
-                        />
-                      }
-                      label=""
+                    <Typography variant="body2" color="text.secondary" gutterBottom>
+                      Production
+                    </Typography>
+                    <Chip 
+                      label={APP_ENV.PROD ? 'Yes' : 'No'} 
+                      size="small" 
+                      color={APP_ENV.PROD ? 'success' : 'default'} 
                     />
+                  </Paper>
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                  <Paper
+                    elevation={0}
+                    sx={{
+                      p: 2,
+                      border: 1,
+                      borderColor: 'divider',
+                      borderRadius: 2,
+                      textAlign: 'center',
+                    }}
+                  >
+                    <Typography variant="body2" color="text.secondary" gutterBottom>
+                      Version
+                    </Typography>
+                    <Typography variant="body1" fontWeight={500} sx={{ fontFamily: 'monospace' }}>
+                      {APP_CONFIG.APP_VERSION}
+                    </Typography>
                   </Paper>
                 </Grid>
               </Grid>
@@ -728,18 +333,6 @@ const SettingsPage = () => {
           </Card>
         </Grid>
       </Grid>
-      
-      {/* Reset settings */}
-      <Box sx={{ mt: 4, textAlign: 'right' }}>
-        <Button 
-          variant="outlined" 
-          color="warning" 
-          onClick={handleResetSettings}
-          sx={{ px: 3, py: 1 }}
-        >
-          {t('settings.resetAll')}
-        </Button>
-      </Box>
     </Box>
   );
 };
