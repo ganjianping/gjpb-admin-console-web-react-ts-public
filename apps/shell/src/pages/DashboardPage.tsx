@@ -89,21 +89,25 @@ const DashboardPage = () => {
       width: '100%', 
       bgcolor: theme.palette.background.default, 
       minHeight: '100vh', 
-      p: { xs: 2, sm: 3, md: 4 },
+      p: { xs: 1, sm: 1, md: 1 },
     }}>
       {/* Welcome Section */}
       <Box
         sx={{
-          background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+          background: theme.palette.mode === 'light' 
+            ? '#ffffff'
+            : `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
           borderRadius: { xs: 2, sm: 3, md: 4 },
           p: { xs: 2, sm: 3, md: 4 },
-          color: 'white',
+          color: theme.palette.mode === 'light' ? theme.palette.text.primary : 'white',
           mb: 4,
           boxShadow: {
             xs: '0 4px 16px rgba(0,0,0,0.08)',
             sm: '0 6px 24px rgba(0,0,0,0.1)',
             md: '0 8px 32px rgba(0,0,0,0.12)',
           },
+          border: theme.palette.mode === 'light' ? '1px solid' : 'none',
+          borderColor: theme.palette.mode === 'light' ? 'divider' : 'transparent',
         }}
       >
         <Typography 

@@ -242,15 +242,24 @@ const Header = ({ onDrawerToggle }: HeaderProps) => {
               >
                 <Avatar 
                   alt={user?.nickname ?? user?.username ?? ''}
-                  src="/static/images/avatar/2.jpg"
                   sx={{ 
-                    width: 36, 
-                    height: 36,
+                    width: 40, 
+                    height: 40,
                     border: '2px solid',
                     borderColor: 'primary.main',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                    fontSize: '1rem',
+                    fontWeight: 600,
+                    backgroundColor: 'primary.main',
+                    color: 'primary.contrastText',
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      boxShadow: '0 6px 20px rgba(0,0,0,0.25)',
+                    }
                   }}
-                />
+                >
+                  {(user?.nickname ?? user?.username ?? 'U').charAt(0).toUpperCase()}
+                </Avatar>
               </IconButton>
             </Tooltip>
             <Menu
@@ -279,13 +288,56 @@ const Header = ({ onDrawerToggle }: HeaderProps) => {
               onClose={handleCloseUserMenu}
             >
               {/* User info header */}
-              <Box sx={{ px: 3, py: 2, bgcolor: 'primary.main', color: 'white' }}>
-                <Typography variant="subtitle1" fontWeight={600}>
-                  {user?.nickname ?? user?.username}
-                </Typography>
-                <Typography variant="body2" sx={{ opacity: 0.9 }}>
-                  {user?.email}
-                </Typography>
+              <Box sx={{ 
+                px: 3, 
+                py: 2.5, 
+                bgcolor: themeMode === 'dark' ? 'primary.main' : 'white', 
+                color: themeMode === 'dark' ? 'white' : 'text.primary',
+                position: 'relative',
+                overflow: 'hidden',
+                borderBottom: '1px solid',
+                borderBottomColor: 'divider',
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  background: themeMode === 'dark' 
+                    ? 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)'
+                    : 'linear-gradient(135deg, rgba(0,0,0,0.02) 0%, rgba(0,0,0,0.01) 100%)',
+                  pointerEvents: 'none'
+                }
+              }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, position: 'relative', zIndex: 1 }}>
+                  <Avatar 
+                    sx={{ 
+                      width: 48, 
+                      height: 48,
+                      backgroundColor: themeMode === 'dark' 
+                        ? 'rgba(255,255,255,0.2)' 
+                        : 'primary.main',
+                      color: themeMode === 'dark' ? 'white' : 'primary.contrastText',
+                      fontSize: '1.2rem',
+                      fontWeight: 700,
+                      border: '2px solid',
+                      borderColor: themeMode === 'dark' 
+                        ? 'rgba(255,255,255,0.3)' 
+                        : 'primary.light',
+                    }}
+                  >
+                    {(user?.nickname ?? user?.username ?? 'U').charAt(0).toUpperCase()}
+                  </Avatar>
+                  <Box>
+                    <Typography variant="subtitle1" fontWeight={600} sx={{ lineHeight: 1.2 }}>
+                      {user?.nickname ?? user?.username}
+                    </Typography>
+                    <Typography variant="body2" sx={{ opacity: 0.9, mt: 0.5 }}>
+                      {user?.email}
+                    </Typography>
+                  </Box>
+                </Box>
               </Box>
               
               {/* Menu items */}

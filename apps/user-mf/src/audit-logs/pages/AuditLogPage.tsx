@@ -36,6 +36,9 @@ import {
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 
+// Initialize user-mf translations
+import '../../utils/i18n';
+
 // Services
 import auditLogService, { 
   type AuditLogEntry, 
