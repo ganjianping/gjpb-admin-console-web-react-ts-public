@@ -154,14 +154,34 @@ const ProfilePage = ({ user: propUser }: ProfilePageProps = {}) => {
     setTabIndex(newValue);
   };
 
-  // Helper function to build error messages
+  // Helper function to build error messages with specific error details
+  // This function handles different error response formats from the API:
+  // 1. Specific business errors: response.data.status.errors.error (e.g., "Email is already in use by another account")
+  // 2. General API errors: response.data.status.message (when not generic "Business error")
+  // 3. Network/connection errors: error.message
+  // 4. Fallback: baseMessage for unknown error types
   const buildErrorMessage = (baseMessage: string, error: any): string => {
-    if (error.response?.data?.status?.message) {
-      return `${baseMessage}: ${error.response.data.status.message}`;
+    // Check for API error response with specific error details
+    if (error.response?.data?.status?.errors?.error) {
+      // Extract specific error message from the nested errors object
+      return error.response.data.status.errors.error;
     }
+    
+    // Check for general API error message
+    if (error.response?.data?.status?.message) {
+      const statusMessage = error.response.data.status.message;
+      // If the status message is generic, just return the base message
+      if (statusMessage === 'Business error') {
+        return baseMessage;
+      }
+      return `${baseMessage}: ${statusMessage}`;
+    }
+    
+    // Check for network/connection error
     if (error.message) {
       return `${baseMessage}: ${error.message}`;
     }
+    
     return baseMessage;
   };
 
@@ -225,9 +245,15 @@ const ProfilePage = ({ user: propUser }: ProfilePageProps = {}) => {
         console.log('Profile updated successfully:', response.data);
       } else {
         console.error('Profile update failed:', response.status);
-        const errorMessage = response.status.message 
-          ? `${t('profile.updateError')}: ${response.status.message}`
-          : t('profile.updateError');
+        // Extract specific error message from response
+        let errorMessage = t('profile.updateError');
+        if (response.status.errors?.error) {
+          // Show specific error from the errors object
+          errorMessage = response.status.errors.error;
+        } else if (response.status.message && response.status.message !== 'Business error') {
+          // Show general status message if it's not generic
+          errorMessage = `${t('profile.updateError')}: ${response.status.message}`;
+        }
         showError(errorMessage);
       }
     } catch (error: any) {
@@ -271,9 +297,15 @@ const ProfilePage = ({ user: propUser }: ProfilePageProps = {}) => {
         console.log('Password changed successfully');
       } else {
         console.error('Password change failed:', response.status);
-        const errorMessage = response.status.message 
-          ? `${t('profile.passwordChangeError')}: ${response.status.message}`
-          : t('profile.passwordChangeError');
+        // Extract specific error message from response
+        let errorMessage = t('profile.passwordChangeError');
+        if (response.status.errors?.error) {
+          // Show specific error from the errors object
+          errorMessage = response.status.errors.error;
+        } else if (response.status.message && response.status.message !== 'Business error') {
+          // Show general status message if it's not generic
+          errorMessage = `${t('profile.passwordChangeError')}: ${response.status.message}`;
+        }
         showError(errorMessage);
       }
     } catch (error: any) {
