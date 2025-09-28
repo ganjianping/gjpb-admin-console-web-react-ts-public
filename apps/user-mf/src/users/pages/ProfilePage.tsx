@@ -29,6 +29,11 @@ import { useNotification } from '../../shared/hooks';
 
 // Import user types and interfaces
 import type { User as UserType } from '../services/userService';
+import { profileService } from '../services/profileService';
+import type { UpdateProfileRequest, ChangePasswordRequest } from '../services/profileService';
+
+// Import notification component
+import { NotificationSnackbar } from '../components/NotificationSnackbar';
 
 // Tab panel interface
 interface TabPanelProps {
@@ -103,7 +108,9 @@ const ProfilePage = ({ user: propUser }: ProfilePageProps = {}) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const [tabIndex, setTabIndex] = useState(0);
-  const { showSuccess, showError } = useNotification();
+  const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const { showSuccess, showError, snackbar, hideNotification } = useNotification();
   
   // Use prop user if provided, otherwise we'll need to get current user
   // For now, we'll assume user is passed as a prop from shell
@@ -147,38 +154,111 @@ const ProfilePage = ({ user: propUser }: ProfilePageProps = {}) => {
     setTabIndex(newValue);
   };
 
+  // Helper function to build error messages
+  const buildErrorMessage = (baseMessage: string, error: any): string => {
+    if (error.response?.data?.status?.message) {
+      return `${baseMessage}: ${error.response.data.status.message}`;
+    }
+    if (error.message) {
+      return `${baseMessage}: ${error.message}`;
+    }
+    return baseMessage;
+  };
+
+  // Helper function to get updated fields for success message
+  const getUpdatedFields = (data: ProfileFormData): string[] => {
+    const updatedFields = [];
+    if (data.nickname !== user?.nickname) updatedFields.push(t('profile.form.nickname'));
+    if (data.email !== user?.email) updatedFields.push(t('profile.form.email'));
+    if (data.mobileCountryCode !== user?.mobileCountryCode || data.mobileNumber !== user?.mobileNumber) {
+      updatedFields.push(t('profile.form.mobileNumber'));
+    }
+    return updatedFields;
+  };
+
   // Handle profile update
   const handleProfileUpdate: SubmitHandler<ProfileFormData> = async (data) => {
+    setIsUpdatingProfile(true);
     try {
-      // In a real app, this would call an API to update the profile
-      console.log('Updated profile data:', data);
+      // Prepare the update data
+      const updateData: UpdateProfileRequest = {
+        nickname: data.nickname,
+        email: data.email,
+        mobileCountryCode: data.mobileCountryCode || undefined,
+        mobileNumber: data.mobileNumber || undefined,
+      };
+
+      // Call the API to update the profile
+      const response = await profileService.updateProfile(updateData);
       
-      // Show success message using notification hook
-      showSuccess(t('profile.updateSuccess'));
-    } catch (error) {
+      if (response.status.code === 200) {
+        // Show detailed success message
+        const updatedFields = getUpdatedFields(data);
+        const successMessage = updatedFields.length > 0 
+          ? `${t('profile.updateSuccess')}: ${updatedFields.join(', ')}`
+          : t('profile.updateSuccess');
+          
+        showSuccess(successMessage);
+        console.log('Profile updated successfully:', response.data);
+      } else {
+        console.error('Profile update failed:', response.status);
+        const errorMessage = response.status.message 
+          ? `${t('profile.updateError')}: ${response.status.message}`
+          : t('profile.updateError');
+        showError(errorMessage);
+      }
+    } catch (error: any) {
       console.error('Profile update error:', error);
-      showError(t('profile.updateError'));
+      const errorMessage = buildErrorMessage(t('profile.updateError'), error);
+      showError(errorMessage);
+    } finally {
+      setIsUpdatingProfile(false);
     }
   };
 
   // Handle password change
   const handlePasswordChange: SubmitHandler<PasswordFormData> = async (data) => {
+    setIsChangingPassword(true);
     try {
-      // In a real app, this would call an API to change the password
-      console.log('Password change data:', data);
+      // Validate passwords match (extra client-side validation)
+      if (data.newPassword !== data.confirmPassword) {
+        showError(t('profile.passwordMismatchError'));
+        return;
+      }
+
+      // Prepare the password change data
+      const passwordData: ChangePasswordRequest = {
+        currentPassword: data.currentPassword,
+        newPassword: data.newPassword,
+      };
+
+      // Call the API to change the password
+      const response = await profileService.changePassword(passwordData);
       
-      // Reset form
-      passwordForm.reset({
-        currentPassword: '',
-        newPassword: '',
-        confirmPassword: '',
-      });
-      
-      // Show success message
-      showSuccess(t('profile.passwordChangeSuccess'));
-    } catch (error) {
+      if (response.status.code === 200) {
+        // Reset form on success
+        passwordForm.reset({
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: '',
+        });
+        
+        // Show detailed success message with security note
+        showSuccess(`${t('profile.passwordChangeSuccess')} ${t('profile.passwordChangeSecurityNote')}`);
+        console.log('Password changed successfully');
+      } else {
+        console.error('Password change failed:', response.status);
+        const errorMessage = response.status.message 
+          ? `${t('profile.passwordChangeError')}: ${response.status.message}`
+          : t('profile.passwordChangeError');
+        showError(errorMessage);
+      }
+    } catch (error: any) {
       console.error('Password change error:', error);
-      showError(t('profile.passwordChangeError'));
+      const errorMessage = buildErrorMessage(t('profile.passwordChangeError'), error);
+      showError(errorMessage);
+    } finally {
+      setIsChangingPassword(false);
     }
   };
 
@@ -404,10 +484,10 @@ const ProfilePage = ({ user: propUser }: ProfilePageProps = {}) => {
                       type="submit"
                       variant="contained"
                       color="primary"
-                      disabled={!profileForm.formState.isDirty || profileForm.formState.isSubmitting}
+                      disabled={!profileForm.formState.isDirty || profileForm.formState.isSubmitting || isUpdatingProfile}
                       sx={{ py: 1, px: 4 }}
                     >
-                      {t('common.save')}
+                      {isUpdatingProfile ? t('common.saving') : t('common.save')}
                     </Button>
                   </Box>
                 </Grid>
@@ -487,10 +567,10 @@ const ProfilePage = ({ user: propUser }: ProfilePageProps = {}) => {
                       type="submit"
                       variant="contained"
                       color="primary"
-                      disabled={!passwordForm.formState.isDirty || passwordForm.formState.isSubmitting}
+                      disabled={!passwordForm.formState.isDirty || passwordForm.formState.isSubmitting || isChangingPassword}
                       sx={{ py: 1, px: 4 }}
                     >
-                      {t('profile.updatePassword')}
+                      {isChangingPassword ? t('common.updating') : t('profile.updatePassword')}
                     </Button>
                   </Box>
                 </Grid>
@@ -606,6 +686,12 @@ const ProfilePage = ({ user: propUser }: ProfilePageProps = {}) => {
           </TabPanel>
         </CardContent>
       </Card>
+
+      {/* Toast Notifications */}
+      <NotificationSnackbar
+        snackbar={snackbar}
+        onClose={hideNotification}
+      />
     </Box>
   );
 };

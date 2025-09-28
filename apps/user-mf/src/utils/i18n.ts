@@ -10,6 +10,8 @@ const userMfResources = {
         search: 'Search',
         loading: 'Loading...',
         save: 'Save',
+        saving: 'Saving...',
+        updating: 'Updating...',
         notAvailable: 'Not Available',
       },
       profile: {
@@ -34,6 +36,8 @@ const userMfResources = {
         updateError: 'Error updating profile',
         passwordChangeSuccess: 'Password changed successfully',
         passwordChangeError: 'Error changing password',
+        passwordChangeSecurityNote: 'For security reasons, please log in again with your new password.',
+        passwordMismatchError: 'Passwords do not match',
         loginActivity: 'Login Activity',
         lastLogin: 'Last Login',
         lastIP: 'Last IP',
