@@ -4,7 +4,6 @@ import {
   Typography,
   Paper,
   Avatar,
-  Divider,
   Tabs,
   Tab,
   Card,
@@ -18,7 +17,7 @@ import { useForm, Controller } from 'react-hook-form';
 import type { SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { User, Mail, Phone, Shield, Lock, Clock, MapPin } from 'lucide-react';
+import { User, Mail, Phone, Shield, Lock } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 // Initialize user-mf translations
@@ -279,6 +278,7 @@ const ProfilePage = ({ user: propUser }: ProfilePageProps = {}) => {
       const passwordData: ChangePasswordRequest = {
         currentPassword: data.currentPassword,
         newPassword: data.newPassword,
+        confirmPassword: data.confirmPassword,
       };
 
       // Call the API to change the password
@@ -425,15 +425,6 @@ const ProfilePage = ({ user: propUser }: ProfilePageProps = {}) => {
                 </Box>
               } 
               {...a11yProps(1)} 
-            />
-            <Tab 
-              label={
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Clock size={16} />
-                  <span>{t('profile.tabs.activity')}</span>
-                </Box>
-              } 
-              {...a11yProps(2)} 
             />
           </Tabs>
         </Box>
@@ -631,113 +622,6 @@ const ProfilePage = ({ user: propUser }: ProfilePageProps = {}) => {
                 </Grid>
               </Grid>
             </form>
-          </TabPanel>
-          
-          {/* Activity Tab */}
-          <TabPanel value={tabIndex} index={2}>
-            <Box>
-              <Typography variant="h6" gutterBottom>
-                {t('profile.loginActivity')}
-              </Typography>
-              
-              <Grid container component="div" spacing={2} sx={{ mb: 3 }}>
-                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                  <Paper
-                    elevation={0}
-                    sx={{
-                      p: 2,
-                      border: 1,
-                      borderColor: 'divider',
-                      borderRadius: 2,
-                    }}
-                  >
-                    <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                      {t('profile.lastLogin')}
-                    </Typography>
-                    <Typography variant="body1" fontWeight={500}>
-                      {user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleString() : t('common.notAvailable')}
-                    </Typography>
-                  </Paper>
-                </Grid>
-                
-                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                  <Paper
-                    elevation={0}
-                    sx={{
-                      p: 2,
-                      border: 1,
-                      borderColor: 'divider',
-                      borderRadius: 2,
-                    }}
-                  >
-                    <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                      {t('profile.lastIP')}
-                    </Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <MapPin size={14} style={{ marginRight: 4 }} />
-                      <Typography variant="body1" fontWeight={500}>
-                        {user.lastLoginIp || t('common.notAvailable')}
-                      </Typography>
-                    </Box>
-                  </Paper>
-                </Grid>
-                
-                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                  <Paper
-                    elevation={0}
-                    sx={{
-                      p: 2,
-                      border: 1,
-                      borderColor: 'divider',
-                      borderRadius: 2,
-                    }}
-                  >
-                    <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                      {t('profile.failedAttempts')}
-                    </Typography>
-                    <Typography
-                      variant="body1"
-                      fontWeight={500}
-                    >
-                      0
-                    </Typography>
-                  </Paper>
-                </Grid>
-                
-                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                  <Paper
-                    elevation={0}
-                    sx={{
-                      p: 2,
-                      border: 1,
-                      borderColor: 'divider',
-                      borderRadius: 2,
-                    }}
-                  >
-                    <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                      {t('profile.accountStatus')}
-                    </Typography>
-                    <Typography
-                      variant="body1"
-                      fontWeight={500}
-                      color={user.accountStatus === 'active' ? 'success.main' : 'error.main'}
-                    >
-                      {user.accountStatus || t('common.notAvailable')}
-                    </Typography>
-                  </Paper>
-                </Grid>
-              </Grid>
-              
-              <Divider sx={{ my: 3 }} />
-              
-              <Typography variant="h6" gutterBottom>
-                {t('profile.deviceSessions')}
-              </Typography>
-              
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                {t('profile.noActiveSessions')}
-              </Typography>
-            </Box>
           </TabPanel>
         </CardContent>
       </Card>
