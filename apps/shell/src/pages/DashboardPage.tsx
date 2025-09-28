@@ -148,7 +148,7 @@ const DashboardPage = () => {
                         {t('dashboard.userInfo.mobile', 'Mobile')}
                       </Typography>
                       <Typography variant="body2" sx={{ mt: 0.5 }}>
-                        {user.mobileCountryCode} {user.mobileNumber}
+                        +{user.mobileCountryCode} - {user.mobileNumber}
                       </Typography>
                     </Box>
                     

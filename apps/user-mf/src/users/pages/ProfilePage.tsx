@@ -165,6 +165,21 @@ const ProfilePage = ({ user: propUser }: ProfilePageProps = {}) => {
     return baseMessage;
   };
 
+  // Helper function to update local storage user info
+  const updateLocalStorageUserInfo = (updatedData: Partial<UserType>) => {
+    try {
+      const currentUserInfo = localStorage.getItem('gjpb_user_info');
+      if (currentUserInfo) {
+        const userData = JSON.parse(currentUserInfo);
+        const updatedUserData = { ...userData, ...updatedData };
+        localStorage.setItem('gjpb_user_info', JSON.stringify(updatedUserData));
+        console.log('Local storage user info updated:', updatedUserData);
+      }
+    } catch (error) {
+      console.error('Failed to update local storage user info:', error);
+    }
+  };
+
   // Helper function to get updated fields for success message
   const getUpdatedFields = (data: ProfileFormData): string[] => {
     const updatedFields = [];
@@ -192,6 +207,14 @@ const ProfilePage = ({ user: propUser }: ProfilePageProps = {}) => {
       const response = await profileService.updateProfile(updateData);
       
       if (response.status.code === 200) {
+        // Update local storage with new user info
+        updateLocalStorageUserInfo({
+          nickname: data.nickname,
+          email: data.email,
+          mobileCountryCode: data.mobileCountryCode || '',
+          mobileNumber: data.mobileNumber || '',
+        });
+        
         // Show detailed success message
         const updatedFields = getUpdatedFields(data);
         const successMessage = updatedFields.length > 0 
