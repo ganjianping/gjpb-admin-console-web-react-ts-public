@@ -10,21 +10,74 @@ import {
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 import { enUS, zhCN } from 'date-fns/locale';
+import { useEffect } from 'react';
 
 // Firebase Performance
 import { useFirebasePerformance } from '../hooks/useFirebasePerformance';
 
 // Store
-import { useAppSelector } from '../hooks/useRedux';
-import { selectCurrentUser } from '../redux/slices/authSlice';
+import { useAppSelector, useAppDispatch } from '../hooks/useRedux';
+import { selectCurrentUser, updateUserProfile } from '../redux/slices/authSlice';
 
 const DashboardPage = () => {
   const { t, i18n } = useTranslation();
   const user = useAppSelector(selectCurrentUser);
+  const dispatch = useAppDispatch();
   const theme = useTheme();
   
   // Firebase Performance tracking for dashboard page
   useFirebasePerformance('dashboard', user?.username);
+  
+  // Sync user data from localStorage on component mount to reflect profile updates
+  useEffect(() => {
+    const syncUserData = () => {
+      try {
+        const storedUserInfo = localStorage.getItem('gjpb_user_info');
+        if (storedUserInfo && user) {
+          const userData = JSON.parse(storedUserInfo);
+          // Check if stored data is different from current Redux state
+          if (userData.nickname !== user.nickname || 
+              userData.email !== user.email || 
+              userData.mobileCountryCode !== user.mobileCountryCode ||
+              userData.mobileNumber !== user.mobileNumber) {
+            // Update Redux store with latest data from localStorage
+            dispatch(updateUserProfile({
+              nickname: userData.nickname,
+              email: userData.email,
+              mobileCountryCode: userData.mobileCountryCode,
+              mobileNumber: userData.mobileNumber,
+            }));
+            console.log('Dashboard: Synced user data from localStorage');
+          }
+        }
+      } catch (error) {
+        console.error('Failed to sync user data from localStorage:', error);
+      }
+    };
+
+    // Sync on mount
+    syncUserData();
+
+    // Sync when page becomes visible (user navigates back from profile)
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        syncUserData();
+      }
+    };
+
+    // Sync when window gains focus
+    const handleFocus = () => {
+      syncUserData();
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, [user, dispatch]); // Include user and dispatch in dependencies
   
   // Helper function to get date-fns locale based on current language
   const getDateLocale = () => {

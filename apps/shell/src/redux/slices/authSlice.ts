@@ -141,6 +141,12 @@ const authSlice = createSlice({
     clearError: (state) => {
       state.error = null;
     },
+    // Update user profile information
+    updateUserProfile: (state, action: PayloadAction<Partial<UserInfo>>) => {
+      if (state.user) {
+        state.user = { ...state.user, ...action.payload };
+      }
+    },
   },
   extraReducers: (builder) => {
     // Fetch current user
@@ -195,7 +201,8 @@ export const {
   setError, 
   clearError, 
   handleLoginSuccess, 
-  handleLoginFailure 
+  handleLoginFailure,
+  updateUserProfile 
 } = authSlice.actions;
 
 // Custom selectors
