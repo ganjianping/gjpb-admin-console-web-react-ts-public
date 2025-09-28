@@ -11,7 +11,10 @@ import { performance as firebasePerf } from '../config/firebase';
  */
 export const startTrace = (traceName: string): PerformanceTrace | null => {
   if (!firebasePerf) {
-    console.warn(`Performance trace "${traceName}" not started - Firebase Performance not initialized`);
+    // Only log warning in production to avoid console spam in development
+    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+      console.warn(`Performance trace "${traceName}" not started - Firebase Performance not initialized`);
+    }
     return null;
   }
 

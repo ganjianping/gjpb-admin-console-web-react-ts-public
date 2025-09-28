@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { startTrace, stopTrace, setTraceAttribute } from '../utils/firebasePerformance';
+import { performance as firebasePerf } from '../config/firebase';
 
 /**
  * React hook for Firebase Performance page tracking
@@ -7,6 +8,11 @@ import { startTrace, stopTrace, setTraceAttribute } from '../utils/firebasePerfo
  */
 export const useFirebasePerformance = (pageName: string, userId?: string) => {
   useEffect(() => {
+    // Skip performance tracking if Firebase Performance is not available (e.g., in development)
+    if (!firebasePerf) {
+      return;
+    }
+
     // Start page load trace
     const pageTrace = startTrace(`page_load_${pageName}`);
     
@@ -34,6 +40,11 @@ export const useActionTracing = () => {
     action: () => Promise<T>,
     metadata?: Record<string, string>
   ): Promise<T> => {
+    // Skip performance tracking if Firebase Performance is not available (e.g., in development)
+    if (!firebasePerf) {
+      return await action();
+    }
+
     const actionTrace = startTrace(`user_action_${actionName}`);
     
     if (actionTrace && metadata) {
