@@ -28,6 +28,11 @@ import {
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
+// Initialize shell translations
+import '../utils/i18n';
+
+// User selectors
+
 // Redux
 import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
 import { toggleSidebar } from '../redux/slices/uiSlice';

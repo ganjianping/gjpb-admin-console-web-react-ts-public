@@ -29,6 +29,12 @@ const shellResources = {
         users: 'Users',
         roles: 'Roles',
       },
+      auditLogs: {
+        title: 'Audit Logs',
+      },
+      appSettings: {
+        title: 'App Settings',
+      },
       common: {
         goBack: 'Go Back',
         goHome: 'Go Home',
@@ -71,6 +77,12 @@ const shellResources = {
         logout: '退出登录',
         users: '用户管理',
         roles: '角色管理',
+      },
+      auditLogs: {
+        title: '审计日志',
+      },
+      appSettings: {
+        title: '应用设置',
       },
       common: {
         goBack: '返回',
