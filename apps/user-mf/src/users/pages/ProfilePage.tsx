@@ -378,7 +378,7 @@ const ProfilePage = ({ user: propUser }: ProfilePageProps = {}) => {
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <Shield size={16} style={{ marginRight: 6 }} />
                 <Typography variant="body2" color="text.secondary">
-                  {user.roles?.map(role => role.code || role.name).join(', ') || 'User'}
+                  {user.roles?.map(role => role.code || role.name).join(', ') || t('profile.defaultRole')}
                 </Typography>
               </Box>
             </Box>

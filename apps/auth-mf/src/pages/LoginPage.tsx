@@ -30,7 +30,7 @@ const LoginPage = () => {
   const dispatch = useAppDispatch();
   const authError = useAppSelector(selectAuthError);
 
-  // Use shared theme hook - much simpler!
+  // Use shared theme hook
   const {
     themeMode,
     colorTheme,

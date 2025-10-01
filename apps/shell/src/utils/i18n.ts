@@ -78,6 +78,32 @@ const shellResources = {
         users: '用户管理',
         roles: '角色管理',
       },
+      settings: {
+        title: '系统设置',
+        description: '系统环境变量和全局配置设置',
+        envVariables: {
+          title: '环境变量',
+          subtitle: 'Vite运行时环境变量',
+        },
+        globalConfig: {
+          title: '全局配置',
+          subtitle: 'APP_CONFIG应用程序配置',
+        },
+        buildInfo: {
+          title: '构建信息',
+          subtitle: '运行时环境和构建详细信息',
+          environment: '环境',
+          development: '开发环境',
+          production: '生产环境',
+          version: '版本',
+          yes: '是',
+          no: '否',
+        },
+        table: {
+          variable: '变量',
+          value: '值',
+        },
+      },
       auditLogs: {
         title: '审计日志',
       },

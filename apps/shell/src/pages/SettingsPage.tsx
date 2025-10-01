@@ -117,11 +117,11 @@ const SettingsPage = () => {
     <Box sx={{ py: 3 }}>
       {/* Page heading */}
       <Typography variant="h4" gutterBottom>
-        {t('navigation.settings')}
+        {t('settings.title')}
       </Typography>
       
       <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-        System environment variables and global configuration settings
+        {t('settings.description')}
       </Typography>
       
       {/* Settings grid */}
@@ -141,10 +141,10 @@ const SettingsPage = () => {
               title={
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <Code size={20} />
-                  <span>Environment Variables</span>
+                  <span>{t('settings.envVariables.title')}</span>
                 </Box>
               }
-              subheader="Runtime environment variables from Vite"
+              subheader={t('settings.envVariables.subtitle')}
             />
             <Divider />
             <CardContent>
@@ -152,8 +152,8 @@ const SettingsPage = () => {
                 <Table size="small">
                   <TableHead>
                     <TableRow>
-                      <TableCell><strong>Variable</strong></TableCell>
-                      <TableCell><strong>Value</strong></TableCell>
+                      <TableCell><strong>{t('settings.table.variable')}</strong></TableCell>
+                      <TableCell><strong>{t('settings.table.value')}</strong></TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -189,10 +189,10 @@ const SettingsPage = () => {
               title={
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <Settings size={20} />
-                  <span>Global Configuration</span>
+                  <span>{t('settings.globalConfig.title')}</span>
                 </Box>
               }
-              subheader="Application configuration from APP_CONFIG"
+              subheader={t('settings.globalConfig.subtitle')}
             />
             <Divider />
             <CardContent>
@@ -200,8 +200,8 @@ const SettingsPage = () => {
                 <Table size="small">
                   <TableHead>
                     <TableRow>
-                      <TableCell><strong>Variable</strong></TableCell>
-                      <TableCell><strong>Value</strong></TableCell>
+                      <TableCell><strong>{t('settings.table.variable')}</strong></TableCell>
+                      <TableCell><strong>{t('settings.table.value')}</strong></TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -238,10 +238,10 @@ const SettingsPage = () => {
               title={
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <Database size={20} />
-                  <span>Build Information</span>
+                  <span>{t('settings.buildInfo.title')}</span>
                 </Box>
               }
-              subheader="Runtime environment and build details"
+              subheader={t('settings.buildInfo.subtitle')}
             />
             <Divider />
             <CardContent>
@@ -258,7 +258,7 @@ const SettingsPage = () => {
                     }}
                   >
                     <Typography variant="body2" color="text.secondary" gutterBottom>
-                      Environment
+                      {t('settings.buildInfo.environment')}
                     </Typography>
                     <Chip 
                       label={APP_ENV.MODE} 
@@ -279,10 +279,10 @@ const SettingsPage = () => {
                     }}
                   >
                     <Typography variant="body2" color="text.secondary" gutterBottom>
-                      Development
+                      {t('settings.buildInfo.development')}
                     </Typography>
                     <Chip 
-                      label={APP_ENV.DEV ? 'Yes' : 'No'} 
+                      label={APP_ENV.DEV ? t('settings.buildInfo.yes') : t('settings.buildInfo.no')} 
                       size="small" 
                       color={APP_ENV.DEV ? 'info' : 'default'} 
                     />
@@ -300,10 +300,10 @@ const SettingsPage = () => {
                     }}
                   >
                     <Typography variant="body2" color="text.secondary" gutterBottom>
-                      Production
+                      {t('settings.buildInfo.production')}
                     </Typography>
                     <Chip 
-                      label={APP_ENV.PROD ? 'Yes' : 'No'} 
+                      label={APP_ENV.PROD ? t('settings.buildInfo.yes') : t('settings.buildInfo.no')} 
                       size="small" 
                       color={APP_ENV.PROD ? 'success' : 'default'} 
                     />
@@ -321,7 +321,7 @@ const SettingsPage = () => {
                     }}
                   >
                     <Typography variant="body2" color="text.secondary" gutterBottom>
-                      Version
+                      {t('settings.buildInfo.version')}
                     </Typography>
                     <Typography variant="body1" fontWeight={500} sx={{ fontFamily: 'monospace' }}>
                       {APP_CONFIG.APP_VERSION}
