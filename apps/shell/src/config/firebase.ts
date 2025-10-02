@@ -14,24 +14,43 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID ?? ""
 };
 
+// Check if Firebase configuration is complete
+const isFirebaseConfigured = () => {
+  return firebaseConfig.apiKey && 
+         firebaseConfig.authDomain && 
+         firebaseConfig.projectId && 
+         firebaseConfig.appId;
+};
+
 // Initialize Firebase services
 const initializeFirebaseServices = () => {
-  const app = initializeApp(firebaseConfig);
-  let performance: FirebasePerformance | null = null;
-  let analytics: Analytics | null = null;
-
-  // Initialize Performance Monitoring and Analytics only in production
-  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
-    performance = getPerformance(app);
-    analytics = getAnalytics(app);
-    console.log('🔥 Firebase Performance monitoring initialized');
-    console.log('📊 Firebase Analytics initialized');
-  } else {
-    console.log('🔥 Firebase Performance monitoring disabled in development');
-    console.log('📊 Firebase Analytics disabled in development');
+  if (!isFirebaseConfigured()) {
+    console.log('🔥 Firebase configuration incomplete - services disabled');
+    console.log('📊 To enable Firebase, configure environment variables in .env.local');
+    return { app: null, performance: null, analytics: null };
   }
 
-  return { app, performance, analytics };
+  try {
+    const app = initializeApp(firebaseConfig);
+    let performance: FirebasePerformance | null = null;
+    let analytics: Analytics | null = null;
+
+    // Initialize Performance Monitoring and Analytics only in production
+    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+      performance = getPerformance(app);
+      analytics = getAnalytics(app);
+      console.log('🔥 Firebase Performance monitoring initialized');
+      console.log('📊 Firebase Analytics initialized');
+    } else {
+      console.log('🔥 Firebase Performance monitoring disabled in development');
+      console.log('📊 Firebase Analytics disabled in development');
+    }
+
+    return { app, performance, analytics };
+  } catch (error) {
+    console.error('❌ Firebase initialization failed:', error);
+    return { app: null, performance: null, analytics: null };
+  }
 };
 
 const { app, performance, analytics } = initializeFirebaseServices();

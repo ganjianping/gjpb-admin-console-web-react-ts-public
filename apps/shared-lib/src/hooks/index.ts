@@ -7,5 +7,3 @@ export { useDialog, type UseDialogProps, type DialogActionType } from './useDial
 
 // Theme hooks
 export { useTheme } from './useTheme';
-export { default as useThemeMode } from './useThemeMode';
-export { useLanguage } from './useLanguage';

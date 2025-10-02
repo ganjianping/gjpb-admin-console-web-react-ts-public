@@ -29,6 +29,32 @@ const shellResources = {
         users: 'Users',
         roles: 'Roles',
       },
+      settings: {
+        title: 'System Settings',
+        description: 'System environment variables and global configuration settings',
+        envVariables: {
+          title: 'Environment Variables',
+          subtitle: 'Vite runtime environment variables',
+        },
+        globalConfig: {
+          title: 'Global Configuration',
+          subtitle: 'APP_CONFIG application configuration',
+        },
+        buildInfo: {
+          title: 'Build Information',
+          subtitle: 'Runtime environment and build details',
+          environment: 'Environment',
+          development: 'Development',
+          production: 'Production',
+          version: 'Version',
+          yes: 'Yes',
+          no: 'No',
+        },
+        table: {
+          variable: 'Variable',
+          value: 'Value',
+        },
+      },
       auditLogs: {
         title: 'Audit Logs',
       },

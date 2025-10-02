@@ -11,7 +11,13 @@ import { analytics } from '../config/firebase';
  */
 export const trackPageView = (pageName: string, pageTitle?: string): void => {
   if (!analytics) {
-    console.warn(`Analytics page view "${pageName}" not tracked - Firebase Analytics not initialized`);
+    // Only show warning in production, debug info in development
+    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+      console.warn(`Analytics page view "${pageName}" not tracked - Firebase Analytics not initialized`);
+      console.warn('Check Firebase configuration in environment variables');
+    } else {
+      console.log(`🔧 Analytics page view "${pageName}" not tracked - disabled in development`);
+    }
     return;
   }
 
@@ -33,7 +39,11 @@ export const trackPageView = (pageName: string, pageTitle?: string): void => {
  */
 export const trackUserLogin = (method: string = 'email'): void => {
   if (!analytics) {
-    console.warn('Analytics login event not tracked - Firebase Analytics not initialized');
+    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+      console.warn('Analytics login event not tracked - Firebase Analytics not initialized');
+    } else {
+      console.log('🔧 Analytics login event not tracked - disabled in development');
+    }
     return;
   }
 
@@ -52,7 +62,11 @@ export const trackUserLogin = (method: string = 'email'): void => {
  */
 export const trackUserLogout = (): void => {
   if (!analytics) {
-    console.warn('Analytics logout event not tracked - Firebase Analytics not initialized');
+    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+      console.warn('Analytics logout event not tracked - Firebase Analytics not initialized');
+    } else {
+      console.log('🔧 Analytics logout event not tracked - disabled in development');
+    }
     return;
   }
 
@@ -72,7 +86,11 @@ export const trackEvent = (
   eventParameters?: Record<string, any>
 ): void => {
   if (!analytics) {
-    console.warn(`Analytics event "${eventName}" not tracked - Firebase Analytics not initialized`);
+    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+      console.warn(`Analytics event "${eventName}" not tracked - Firebase Analytics not initialized`);
+    } else {
+      console.log(`🔧 Analytics event "${eventName}" not tracked - disabled in development`);
+    }
     return;
   }
 
@@ -94,7 +112,11 @@ export const trackUserAction = (
   value?: number
 ): void => {
   if (!analytics) {
-    console.warn(`Analytics user action "${action}" not tracked - Firebase Analytics not initialized`);
+    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+      console.warn(`Analytics user action "${action}" not tracked - Firebase Analytics not initialized`);
+    } else {
+      console.log(`🔧 Analytics user action "${action}" not tracked - disabled in development`);
+    }
     return;
   }
 
@@ -198,7 +220,11 @@ export const trackError = (
  */
 export const setAnalyticsUserProperties = (properties: Record<string, any>): void => {
   if (!analytics) {
-    console.warn('Analytics user properties not set - Firebase Analytics not initialized');
+    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+      console.warn('Analytics user properties not set - Firebase Analytics not initialized');
+    } else {
+      console.log('🔧 Analytics user properties not set - disabled in development');
+    }
     return;
   }
 
@@ -215,7 +241,11 @@ export const setAnalyticsUserProperties = (properties: Record<string, any>): voi
  */
 export const setAnalyticsUserId = (userId: string): void => {
   if (!analytics) {
-    console.warn('Analytics user ID not set - Firebase Analytics not initialized');
+    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+      console.warn('Analytics user ID not set - Firebase Analytics not initialized');
+    } else {
+      console.log('🔧 Analytics user ID not set - disabled in development');
+    }
     return;
   }
 
