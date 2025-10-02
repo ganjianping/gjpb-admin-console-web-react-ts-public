@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import '../utils/i18n'; // Initialize user translations
+import '../../config/i18n.config'; // Initialize user translations
 import type { User, CreateUserRequest, UpdateUserRequest } from '../services/userService';
 import { userService } from '../services/userService';
 import type { UserFormData, UserActionType } from '../types/user.types';

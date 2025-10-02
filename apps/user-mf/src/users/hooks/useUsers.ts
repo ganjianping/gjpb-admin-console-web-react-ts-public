@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import '../utils/i18n'; // Initialize user translations
+import '../../config/i18n.config'; // Initialize user translations
 import type { User, UserQueryParams } from '../services/userService';
 import type { PaginatedResponse } from '../../../../shared-lib/src/types/api.types';
 import { userService } from '../services/userService';

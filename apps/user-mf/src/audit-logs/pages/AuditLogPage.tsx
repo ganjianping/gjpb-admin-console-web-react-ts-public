@@ -37,7 +37,7 @@ import {
 import { format, parseISO } from 'date-fns';
 
 // Initialize user-mf translations
-import '../../utils/i18n';
+import '../../config/i18n.config';
 
 // Services
 import auditLogService, { 

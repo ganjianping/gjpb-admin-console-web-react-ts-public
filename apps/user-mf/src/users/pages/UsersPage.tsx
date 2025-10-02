@@ -1,6 +1,6 @@
 import { Box, Alert, Card, CardContent, Collapse, useTheme } from '@mui/material';
 import { useEffect } from 'react';
-import '../utils/i18n'; // Initialize user translations
+import '../../config/i18n.config'; // Initialize user translations
 
 // Import all the refactored components and hooks
 import {

@@ -21,7 +21,7 @@ import { User, Mail, Phone, Shield, Lock } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 // Initialize user-mf translations
-import '../utils/i18n';
+import '../../config/i18n.config';
 
 // Import shared components and services - use user-mf's re-exports
 import { useNotification } from '../../shared/hooks';

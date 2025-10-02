@@ -29,7 +29,7 @@ import {
 import { useTranslation } from 'react-i18next';
 
 // Initialize shell translations
-import '../utils/i18n';
+import '../config/i18n.config';
 
 // User selectors
 

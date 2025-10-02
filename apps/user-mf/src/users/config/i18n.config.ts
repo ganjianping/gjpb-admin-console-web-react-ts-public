@@ -1,5 +1,5 @@
 import i18n from '../../../../shared-lib/src/utils/i18n';
-import '../../shared/utils/i18n'; // Import shared user-mf translations
+import '../../shared/config/i18n.config'; // Import shared user-mf translations
 
 // User-specific translations
 const userTranslations = {

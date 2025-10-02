@@ -9,7 +9,7 @@ import i18n from '../../../../shared-lib/src/utils/i18n'
 import type { User } from '../services/userService'
 
 // Initialize i18n for user-mf
-import '../utils/i18n'
+import '../../config/i18n.config'
 
 // Mock notification hook
 vi.mock('../../shared/hooks', () => ({

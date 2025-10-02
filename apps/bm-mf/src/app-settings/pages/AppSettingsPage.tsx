@@ -1,5 +1,5 @@
 import { Box, Alert, Card, CardContent, Collapse, useTheme } from '@mui/material';
-import '../utils/i18n'; // Initialize app settings translations
+import '../../config/i18n.config'; // Initialize app settings translations
 
 // Import all the refactored components and hooks
 import {
