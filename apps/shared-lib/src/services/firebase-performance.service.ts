@@ -1,5 +1,8 @@
 import { trace, type PerformanceTrace } from 'firebase/performance';
-import { performance as firebasePerf } from '../config/firebase';
+import { performance as firebasePerf } from './firebase-config.service';
+
+// Re-export the performance instance for external use
+export { firebasePerf as performance };
 
 /**
  * Firebase Performance Monitoring utilities

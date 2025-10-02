@@ -31,7 +31,7 @@ import { setPageTitle } from '../redux/slices/uiSlice';
 import { APP_CONFIG, APP_ENV } from '../../../shared-lib/src/utils/config';
 
 // Firebase Analytics
-import { trackPageView } from '../utils/firebaseAnalytics';
+import { trackPageView } from '../../../shared-lib/src/services/firebase-analytics.service';
 
 const SettingsPage = () => {
   const { t } = useTranslation();

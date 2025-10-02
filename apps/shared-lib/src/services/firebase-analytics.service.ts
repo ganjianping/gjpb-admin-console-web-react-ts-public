@@ -1,5 +1,5 @@
 import { logEvent, setUserProperties, setUserId } from 'firebase/analytics';
-import { analytics } from '../config/firebase';
+import { analytics } from './firebase-config.service';
 
 /**
  * Firebase Analytics utilities
