@@ -7,3 +7,6 @@ export { useDialog, type UseDialogProps, type DialogActionType } from './useDial
 
 // Theme hooks
 export { useTheme } from './useTheme';
+
+// Firebase hooks
+export { useFirebasePerformance } from './useFirebasePerformance';

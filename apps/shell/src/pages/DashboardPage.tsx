@@ -13,7 +13,7 @@ import { enUS, zhCN } from 'date-fns/locale';
 import { useEffect } from 'react';
 
 // Firebase Performance
-import { useFirebasePerformance } from '../hooks/useFirebasePerformance';
+import { useFirebasePerformance } from '../../../shared-lib/src/hooks';
 
 // Store
 import { useAppSelector, useAppDispatch } from '../hooks/useRedux';

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { startTrace, stopTrace, setTraceAttribute, performance as firebasePerf } from '../../../shared-lib/src/services/firebase-performance.service';
+import { startTrace, stopTrace, setTraceAttribute, performance as firebasePerf } from '../services/firebase-performance.service';
 
 /**
  * React hook for Firebase Performance page tracking
