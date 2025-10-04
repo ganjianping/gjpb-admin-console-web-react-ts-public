@@ -142,6 +142,18 @@ export const getThemeOptions = (mode: PaletteMode, colorTheme: ColorTheme = 'blu
               boxShadow: 'none',
             },
           },
+          containedPrimary: {
+            // Force white text for green theme in light mode
+            ...(mode === 'light' && (colorTheme === 'green' || colorTheme === 'orange') && {
+              color: '#ffffff',
+              '&:hover': {
+                color: '#ffffff',
+              },
+              '&:disabled': {
+                color: 'rgba(255, 255, 255, 0.6)',
+              },
+            }),
+          },
         },
       },
       MuiPaper: {

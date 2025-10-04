@@ -246,7 +246,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, error, submitText }) =>
             disabled={isLoading}
           />
           <Box sx={{ mt: 3, mb: 2 }}>
-            <Button type="submit" variant="contained" color="primary" fullWidth disabled={isLoading}>
+            <Button type="submit" size="large" variant="contained" color="primary" fullWidth disabled={isLoading}>
               {getButtonText()}
             </Button>
           </Box>
