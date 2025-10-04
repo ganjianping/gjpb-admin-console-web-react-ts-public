@@ -4,20 +4,7 @@ import type {
   ApiResponse, 
   PaginatedResponse
 } from '../../../../shared-lib/src/api/api.types';
-
-// App Setting interface from API spec
-export interface AppSetting {
-  id: string;
-  name: string;
-  value: string;
-  lang: string;
-  isSystem: boolean;
-  isPublic: boolean;
-  createdAt: string;
-  createdBy: string | null;
-  updatedAt: string;
-  updatedBy: string | null;
-}
+import type { AppSetting } from '../types/app-setting.types';
 
 // Query parameters for app settings search
 export interface AppSettingQueryParams {

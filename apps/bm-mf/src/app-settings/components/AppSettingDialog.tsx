@@ -19,8 +19,8 @@ import {
 import { useTranslation } from 'react-i18next';
 import '../i18n/i18n.config'; // Initialize app settings translations
 import { Settings, Eye, Edit, Plus } from 'lucide-react';
-import type { AppSetting } from '../services/appSettingService';
-import type { AppSettingFormData, AppSettingActionType } from '../types/app-setting.types';
+import type { AppSetting, AppSettingFormData, AppSettingActionType } from '../types/app-setting.types';
+import { LANGUAGE_OPTIONS } from '../constants';
 
 interface AppSettingDialogProps {
   open: boolean;
@@ -33,12 +33,6 @@ interface AppSettingDialogProps {
   loading: boolean;
   formErrors: Record<string, string[] | string>;
 }
-
-const languageOptions = [
-  { value: 'EN', label: 'English' },
-  { value: 'ZH', label: 'Chinese' },
-  { value: 'ALL', label: 'All Languages' },
-];
 
 export const AppSettingDialog = (
   {
@@ -193,7 +187,7 @@ export const AppSettingDialog = (
                     },
                   }}
                 >
-                  {languageOptions.map((option) => (
+                  {LANGUAGE_OPTIONS.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
                       {option.label}
                     </MenuItem>

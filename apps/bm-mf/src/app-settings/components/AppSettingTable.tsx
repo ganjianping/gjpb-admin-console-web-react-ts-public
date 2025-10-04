@@ -1,10 +1,12 @@
 import { Box, Chip, CircularProgress, Typography } from '@mui/material';
 import { Settings as SettingsIcon, Eye, Edit, Trash2, Lock, Globe } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { memo, useMemo } from 'react';
 import '../i18n/i18n.config'; // Initialize app settings translations
 import { DataTable, createColumnHelper, createStatusChip } from '../../../../shared-lib/src/data-management/DataTable';
-import type { AppSetting } from '../services/appSettingService';
+import type { AppSetting } from '../types/app-setting.types';
 import { format, parseISO } from 'date-fns';
+import { STATUS_MAPS } from '../constants';
 
 interface AppSettingTableProps {
   appSettings: AppSetting[];
@@ -15,21 +17,10 @@ interface AppSettingTableProps {
   onAppSettingAction: (appSetting: AppSetting, action: 'view' | 'edit' | 'delete') => void;
 }
 
-// Map boolean status to UI status for display
-const systemStatusMap = {
-  true: { label: 'System', color: 'error' as const },
-  false: { label: 'User', color: 'success' as const },
-};
-
-const publicStatusMap = {
-  true: { label: 'Public', color: 'success' as const },
-  false: { label: 'Private', color: 'warning' as const },
-};
-
 // Column helper
 const columnHelper = createColumnHelper<AppSetting>();
 
-export const AppSettingTable = ({ 
+export const AppSettingTable = memo(({ 
   appSettings, 
   loading, 
   pagination, 
@@ -39,8 +30,8 @@ export const AppSettingTable = ({
 }: AppSettingTableProps) => {
   const { t } = useTranslation();
 
-  // Define table columns
-  const columns = [
+  // Memoize columns to prevent recreation on every render
+  const columns = useMemo(() => [
     columnHelper.accessor('name', {
       header: t('appSettings.columns.name'),
       cell: (info) => (
@@ -93,7 +84,7 @@ export const AppSettingTable = ({
         return (
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             {isSystem ? <Lock size={14} /> : <SettingsIcon size={14} />}
-            {createStatusChip(isSystem.toString(), systemStatusMap)}
+            {createStatusChip(isSystem.toString(), STATUS_MAPS.system)}
           </Box>
         );
       },
@@ -105,7 +96,7 @@ export const AppSettingTable = ({
         return (
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             {isPublic ? <Globe size={14} /> : <Lock size={14} />}
-            {createStatusChip(isPublic.toString(), publicStatusMap)}
+            {createStatusChip(isPublic.toString(), STATUS_MAPS.public)}
           </Box>
         );
       },
@@ -117,7 +108,26 @@ export const AppSettingTable = ({
         return date ? format(parseISO(date), 'MMM dd, yyyy HH:mm') : '-';
       },
     }),
-  ];
+  ], [t]);
+
+  // Memoize action menu items
+  const actionMenuItems = useMemo(() => [
+    { 
+      label: t('appSettings.actions.view'), 
+      icon: <Eye size={16} />, 
+      action: (appSetting: AppSetting) => onAppSettingAction(appSetting, 'view') 
+    },
+    { 
+      label: t('appSettings.actions.edit'), 
+      icon: <Edit size={16} />, 
+      action: (appSetting: AppSetting) => onAppSettingAction(appSetting, 'edit') 
+    },
+    { 
+      label: t('appSettings.actions.delete'), 
+      icon: <Trash2 size={16} />, 
+      action: (appSetting: AppSetting) => onAppSettingAction(appSetting, 'delete') 
+    },
+  ], [t, onAppSettingAction]);
 
   // Show loading spinner
   if (loading) {
@@ -153,11 +163,7 @@ export const AppSettingTable = ({
       totalRows={pagination?.totalElements || 0}
       onPageChange={onPageChange}
       onPageSizeChange={onPageSizeChange}
-      actionMenuItems={[
-        { label: t('appSettings.actions.view'), icon: <Eye size={16} />, action: (appSetting: AppSetting) => onAppSettingAction(appSetting, 'view') },
-        { label: t('appSettings.actions.edit'), icon: <Edit size={16} />, action: (appSetting: AppSetting) => onAppSettingAction(appSetting, 'edit') },
-        { label: t('appSettings.actions.delete'), icon: <Trash2 size={16} />, action: (appSetting: AppSetting) => onAppSettingAction(appSetting, 'delete') },
-      ]}
+      actionMenuItems={actionMenuItems}
     />
   );
-};
+});

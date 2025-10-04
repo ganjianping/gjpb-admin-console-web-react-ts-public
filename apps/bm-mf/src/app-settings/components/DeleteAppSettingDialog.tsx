@@ -12,7 +12,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import '../i18n/i18n.config'; // Initialize app settings translations
 import { Trash2, AlertTriangle } from 'lucide-react';
-import type { AppSetting } from '../services/appSettingService';
+import type { AppSetting } from '../types/app-setting.types';
 
 interface DeleteAppSettingDialogProps {
   open: boolean;

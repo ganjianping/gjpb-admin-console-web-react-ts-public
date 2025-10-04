@@ -1,9 +1,11 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import '../i18n/i18n.config'; // Initialize app settings translations
-import type { AppSetting, AppSettingQueryParams } from '../services/appSettingService';
+import type { AppSettingQueryParams } from '../services/appSettingService';
+import type { AppSetting } from '../types/app-setting.types';
 import type { PaginatedResponse } from '../../../../shared-lib/src/api/api.types';
 import { appSettingService } from '../services/appSettingService';
+import { APP_SETTING_CONSTANTS } from '../constants';
 
 export const useAppSettings = () => {
   const { t } = useTranslation();
@@ -13,10 +15,11 @@ export const useAppSettings = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
-  const [pageSize, setPageSize] = useState(20);
+  const [pageSize, setPageSize] = useState(APP_SETTING_CONSTANTS.DEFAULT_PAGE_SIZE);
   const hasInitiallyLoaded = useRef(false);
 
-  const loadAppSettingsInternal = async (params?: AppSettingQueryParams, page?: number, size?: number) => {
+  // Memoized function to load app settings
+  const loadAppSettings = useCallback(async (params?: AppSettingQueryParams, page?: number, size?: number) => {
     const actualPage = page ?? currentPage;
     const actualSize = size ?? pageSize;
     
@@ -27,8 +30,8 @@ export const useAppSettings = () => {
       const queryParams: AppSettingQueryParams = {
         page: actualPage,
         size: actualSize,
-        sort: 'updatedAt',
-        direction: 'desc',
+        sort: APP_SETTING_CONSTANTS.SORT_FIELD,
+        direction: APP_SETTING_CONSTANTS.SORT_DIRECTION,
         ...params,
       };
 
@@ -55,36 +58,31 @@ export const useAppSettings = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const loadAppSettings = useCallback((params?: AppSettingQueryParams) => {
-    return loadAppSettingsInternal(params, currentPage, pageSize);
-  }, [currentPage, pageSize]);
+  }, [currentPage, pageSize, t]);
 
   // Load app settings only once on initial mount
   useEffect(() => {
     if (!hasInitiallyLoaded.current) {
       hasInitiallyLoaded.current = true;
-      loadAppSettingsInternal(undefined, 0, 20); // Use hardcoded initial values
+      loadAppSettings(undefined, 0, APP_SETTING_CONSTANTS.DEFAULT_PAGE_SIZE);
     }
-  }, []); // NO dependencies - only run once on mount
+  }, [loadAppSettings]);
 
-  const handlePageChange = (page: number) => {
+  const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
-    // Manually trigger reload when page changes
-    if (hasInitiallyLoaded.current) {
-      loadAppSettingsInternal(undefined, page, pageSize);
-    }
-  };
+  }, []);
 
-  const handlePageSizeChange = (newPageSize: number) => {
+  const handlePageSizeChange = useCallback((newPageSize: number) => {
     setPageSize(newPageSize);
     setCurrentPage(0);
-    // Manually trigger reload when page size changes
+  }, []);
+
+  // Effect to reload when page or pageSize changes (but not on initial mount)
+  useEffect(() => {
     if (hasInitiallyLoaded.current) {
-      loadAppSettingsInternal(undefined, 0, newPageSize);
+      loadAppSettings(undefined, currentPage, pageSize);
     }
-  };
+  }, [currentPage, pageSize, loadAppSettings]);
 
   return {
     allAppSettings,

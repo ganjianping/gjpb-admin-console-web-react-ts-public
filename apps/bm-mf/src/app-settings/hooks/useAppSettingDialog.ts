@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import '../i18n/i18n.config'; // Initialize app settings translations
-import type { AppSetting, CreateAppSettingRequest, UpdateAppSettingRequest } from '../services/appSettingService';
+import type { CreateAppSettingRequest, UpdateAppSettingRequest } from '../services/appSettingService';
 import { appSettingService } from '../services/appSettingService';
-import type { AppSettingFormData, AppSettingActionType } from '../types/app-setting.types';
+import type { AppSetting, AppSettingFormData, AppSettingActionType } from '../types/app-setting.types';
+import { APP_SETTING_CONSTANTS } from '../constants';
+import { handleApiError, extractValidationErrors } from '../utils/error-handler';
 
 export const useAppSettingDialog = () => {
   const { t } = useTranslation();
@@ -16,7 +18,7 @@ export const useAppSettingDialog = () => {
   const [formData, setFormData] = useState<AppSettingFormData>({
     name: '',
     value: '',
-    lang: 'EN',
+    lang: APP_SETTING_CONSTANTS.DEFAULT_LANGUAGE,
     isSystem: false,
     isPublic: true,
   });
@@ -55,7 +57,7 @@ export const useAppSettingDialog = () => {
     setFormData({
       name: '',
       value: '',
-      lang: 'EN',
+      lang: APP_SETTING_CONSTANTS.DEFAULT_LANGUAGE,
       isSystem: false,
       isPublic: true,
     });
@@ -77,7 +79,7 @@ export const useAppSettingDialog = () => {
     setFormData({
       name: '',
       value: '',
-      lang: 'EN',
+      lang: APP_SETTING_CONSTANTS.DEFAULT_LANGUAGE,
       isSystem: false,
       isPublic: true,
     });
@@ -104,16 +106,16 @@ export const useAppSettingDialog = () => {
     // Name validation
     if (!formData.name.trim()) {
       errors.name = t('appSettings.errors.nameRequired');
-    } else if (formData.name.length < 2) {
+    } else if (formData.name.length < APP_SETTING_CONSTANTS.NAME_MIN_LENGTH) {
       errors.name = t('appSettings.validation.nameMinLength');
-    } else if (formData.name.length > 100) {
+    } else if (formData.name.length > APP_SETTING_CONSTANTS.NAME_MAX_LENGTH) {
       errors.name = t('appSettings.validation.nameMaxLength');
     }
 
     // Value validation
     if (!formData.value.trim()) {
       errors.value = t('appSettings.errors.valueRequired');
-    } else if (formData.value.length > 1000) {
+    } else if (formData.value.length > APP_SETTING_CONSTANTS.VALUE_MAX_LENGTH) {
       errors.value = t('appSettings.validation.valueMaxLength');
     }
 
@@ -188,12 +190,17 @@ export const useAppSettingDialog = () => {
       console.error('Save app setting error:', err);
       
       // Handle validation errors from API
-      if (err.response?.data?.status?.errors) {
-        setFormErrors(err.response.data.status.errors);
+      const validationErrors = extractValidationErrors(err);
+      if (Object.keys(validationErrors).length > 0) {
+        setFormErrors(validationErrors);
       } else {
-        const errorMessage = err.message || (actionType === 'create' 
-          ? t('appSettings.errors.createFailed') 
-          : t('appSettings.errors.updateFailed'));
+        const errorMessage = handleApiError(
+          err,
+          t,
+          actionType === 'create' 
+            ? 'appSettings.errors.createFailed' 
+            : 'appSettings.errors.updateFailed'
+        );
         onError(errorMessage);
       }
     } finally {
@@ -221,7 +228,7 @@ export const useAppSettingDialog = () => {
       }
     } catch (err: any) {
       console.error('Delete app setting error:', err);
-      const errorMessage = err.message || t('appSettings.errors.deleteFailed');
+      const errorMessage = handleApiError(err, t, 'appSettings.errors.deleteFailed');
       onError(errorMessage);
     } finally {
       setLoading(false);
