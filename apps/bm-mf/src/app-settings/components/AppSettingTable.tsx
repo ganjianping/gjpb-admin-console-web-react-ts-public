@@ -1,4 +1,4 @@
-import { Box, Chip, CircularProgress, Typography } from '@mui/material';
+import { Box, Chip, Typography } from '@mui/material';
 import { Settings as SettingsIcon, Eye, Edit, Trash2, Lock, Globe } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { memo, useMemo } from 'react';
@@ -7,6 +7,7 @@ import { DataTable, createColumnHelper, createStatusChip } from '../../../../sha
 import type { AppSetting } from '../types/app-setting.types';
 import { format, parseISO } from 'date-fns';
 import { STATUS_MAPS } from '../constants';
+import { AppSettingTableSkeleton } from './AppSettingTableSkeleton';
 
 interface AppSettingTableProps {
   appSettings: AppSetting[];
@@ -129,13 +130,9 @@ export const AppSettingTable = memo(({
     },
   ], [t, onAppSettingAction]);
 
-  // Show loading spinner
-  if (loading) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: 8 }}>
-        <CircularProgress />
-      </Box>
-    );
+  // Show skeleton loader while loading
+  if (loading && !appSettings.length) {
+    return <AppSettingTableSkeleton rows={5} />;
   }
 
   // Show empty state
@@ -167,3 +164,5 @@ export const AppSettingTable = memo(({
     />
   );
 });
+
+AppSettingTable.displayName = 'AppSettingTable';
