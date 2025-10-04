@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 // Firebase Performance
 import { useFirebasePerformance } from '../../../../shared-lib/src/firebase/useFirebasePerformance';
@@ -15,11 +15,13 @@ import {
   LoginActivityCard,
   RolesCard,
   UserPreferencesCard,
+  DashboardSkeleton,
 } from '../components';
 
 const DashboardPage = () => {
   const user = useAppSelector(selectCurrentUser);
   const dispatch = useAppDispatch();
+  const [isLoading, setIsLoading] = useState(true);
   
   // Firebase Performance tracking for dashboard page
   useFirebasePerformance('dashboard', user?.username);
@@ -54,6 +56,11 @@ const DashboardPage = () => {
     // Sync on mount
     syncUserData();
 
+    // Simulate initial loading
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
+
     // Sync when page becomes visible (user navigates back from profile)
     const handleVisibilityChange = () => {
       if (!document.hidden) {
@@ -70,6 +77,7 @@ const DashboardPage = () => {
     window.addEventListener('focus', handleFocus);
 
     return () => {
+      clearTimeout(timer);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('focus', handleFocus);
     };
@@ -77,6 +85,11 @@ const DashboardPage = () => {
 
   if (!user) {
     return null;
+  }
+
+  // Show skeleton during initial load
+  if (isLoading) {
+    return <DashboardSkeleton />;
   }
 
   const displayName = user.nickname ?? user.username;
@@ -116,18 +129,15 @@ const DashboardPage = () => {
           gap: 3, 
           mb: 3 
         }}>
-
-          {/* Roles Information Card */}
-          <Box sx={{ flex: 1 }}>
-            <RolesCard roleCodes={user.roleCodes || []} />
-          </Box>
-
-
           {/* User Preferences Card */}
           <Box sx={{ flex: 1 }}>
             <UserPreferencesCard />
           </Box>
 
+          {/* Roles Information Card */}
+          <Box sx={{ flex: 1 }}>
+            <RolesCard roleCodes={user.roleCodes || []} />
+          </Box>
         </Box>
       </Box>
     </Box>
