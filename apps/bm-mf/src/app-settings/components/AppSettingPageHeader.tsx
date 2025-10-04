@@ -44,16 +44,6 @@ export const AppSettingPageHeader: React.FC<AppSettingPageHeaderProps> = ({
           >
             {t('appSettings.title')}
           </Typography>
-          <Typography 
-            variant="body1" 
-            sx={{ 
-              color: 'text.secondary',
-              fontSize: '1rem',
-              opacity: 0.9,
-            }}
-          >
-            {t('appSettings.subtitle')}
-          </Typography>
         </Box>
 
         <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center' }}>
