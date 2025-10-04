@@ -22,7 +22,7 @@ const MainLayout = () => {
   // Calculate margin-left for main content (minimal spacing to avoid overlap)
   const getContentMarginLeft = () => {
     if (isMobile) return 0;
-    return sidebarOpen ? 12 : 8; // Minimal 12px margin when expanded
+    return sidebarOpen ? 4 : 8; // Minimal 12px margin when expanded
   };
 
   return (

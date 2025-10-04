@@ -1,7 +1,7 @@
 import { Box, Chip, CircularProgress, Typography } from '@mui/material';
 import { Settings as SettingsIcon, Eye, Edit, Trash2, Lock, Globe } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import '../../core/i18n/i18n.config'; // Initialize app settings translations
+import '../i18n/i18n.config'; // Initialize app settings translations
 import { DataTable, createColumnHelper, createStatusChip } from '../../../../shared-lib/src/data-management/DataTable';
 import type { AppSetting } from '../services/appSettingService';
 import { format, parseISO } from 'date-fns';

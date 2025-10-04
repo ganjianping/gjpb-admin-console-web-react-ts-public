@@ -1,16 +1,18 @@
-# App Settings CRUD Module
+# BM-MF (Business Management Microfrontend)
 
-This module provides a complete CRUD (Create, Read, Update, Delete) implementation for managing application settings, built using the UsersPage as a template.
+This microfrontend provides business management functionality with a complete CRUD implementation for managing application settings. It follows a feature-first architecture pattern and integrates seamlessly with the main shell application.
 
-## Features
+## Architecture
 
+- ✅ **Feature-First Structure**: Self-contained feature modules with complete functionality
+- ✅ **Microfrontend Pattern**: Independent deployment and development
 - ✅ **Full CRUD Operations**: Create, Read, Update, Delete app settings
 - ✅ **Server-side Pagination**: Efficient handling of large datasets
 - ✅ **Advanced Search & Filtering**: Search by name, language, system/public flags
 - ✅ **Responsive Design**: Works on all device sizes
 - ✅ **Dark Mode Support**: Consistent with the application theme
 - ✅ **TypeScript**: Fully typed for better development experience
-- ✅ **i18n Ready**: Internationalization support
+- ✅ **i18n Ready**: Internationalization with feature-specific translations
 - ✅ **Reusable Components**: Modular architecture
 
 ## API Endpoint
@@ -23,27 +25,31 @@ This module provides a complete CRUD (Create, Read, Update, Delete) implementati
 ## Project Structure
 
 ```
-apps/bm-mf/src/app-settings/
-├── components/
-│   ├── AppSettingTable.tsx           # Data table component
-│   ├── AppSettingSearchPanel.tsx     # Search and filter panel
-│   ├── AppSettingPageHeader.tsx      # Page header with actions
-│   └── index.ts                      # Component exports
-├── hooks/
-│   ├── useAppSettings.ts             # Data management hook
-│   ├── useAppSettingSearch.ts        # Search functionality hook
-│   ├── useAppSettingDialog.ts        # Dialog management hook
-│   └── index.ts                      # Hook exports
-├── pages/
-│   ├── AppSettingsPage.tsx           # Main page component
-│   └── index.ts                      # Page exports
-├── services/
-│   └── appSettingService.ts          # API service layer
-├── types/
-│   └── app-setting.types.ts          # TypeScript definitions
-├── utils/
-│   └── i18n.ts                       # Internationalization setup
-└── index.ts                          # Module exports
+apps/bm-mf/src/
+├── public-api.ts                     # Microfrontend public exports
+├── vite-env.d.ts                     # Vite type definitions
+└── app-settings/                     # Complete feature module
+    ├── components/
+    │   ├── AppSettingDialog.tsx          # Create/Edit dialog
+    │   ├── AppSettingTable.tsx           # Data table component
+    │   ├── AppSettingSearchPanel.tsx     # Search and filter panel
+    │   ├── AppSettingPageHeader.tsx      # Page header with actions
+    │   ├── DeleteAppSettingDialog.tsx    # Delete confirmation dialog
+    │   └── index.ts                      # Component exports
+    ├── hooks/
+    │   ├── useAppSettings.ts             # Data management hook
+    │   ├── useAppSettingDialog.ts        # Dialog management hook
+    │   └── index.ts                      # Hook exports
+    ├── i18n/
+    │   └── i18n.config.ts                # Feature-specific translations
+    ├── pages/
+    │   ├── AppSettingsPage.tsx           # Main page component
+    │   └── index.ts                      # Page exports
+    ├── services/
+    │   └── appSettingService.ts          # API service layer
+    ├── types/
+    │   └── app-setting.types.ts          # TypeScript definitions
+    └── index.ts                          # Feature module exports
 ```
 
 ## Data Model
@@ -149,27 +155,26 @@ The main page component that orchestrates all functionality:
 ## Features Implemented
 
 ### ✅ Completed Features
-1. **Data Table**: Server-side paginated table with sorting
-2. **Search & Filter**: Advanced search panel with multiple filters
-3. **Responsive Design**: Mobile-friendly layout
-4. **TypeScript**: Fully typed components and services
-5. **Service Layer**: API integration with error handling
-6. **Hooks Architecture**: Reusable custom hooks
-7. **i18n Setup**: Internationalization structure
-
-### 🚧 TODO (Dialog Components)
-1. **AppSettingDialog**: Create/Edit/View dialog
-2. **DeleteAppSettingDialog**: Confirmation dialog for deletion
-3. **NotificationSnackbar**: Success/error notifications
+1. **Complete CRUD Operations**: Full Create, Read, Update, Delete functionality
+2. **Data Table**: Server-side paginated table with sorting
+3. **Dialog Management**: Create/Edit and Delete confirmation dialogs
+4. **Search & Filter**: Advanced search panel with multiple filters
+5. **Responsive Design**: Mobile-friendly layout
+6. **TypeScript**: Fully typed components and services
+7. **Service Layer**: API integration with error handling
+8. **Hooks Architecture**: Reusable custom hooks
+9. **i18n Integration**: Feature-specific internationalization
+10. **Microfrontend Architecture**: Clean public API and modular structure
 
 ## Development Notes
 
-This module was created following the established patterns from the UsersPage:
-- Same project structure and naming conventions
-- Consistent styling and theming
-- Reusable component architecture
-- Server-side pagination approach
-- TypeScript best practices
+This microfrontend follows the established architecture patterns:
+- **Feature-first organization**: Complete features in self-contained modules
+- **Consistent styling and theming**: Material-UI with application theme integration
+- **Reusable component architecture**: Modular, testable components
+- **Server-side pagination approach**: Efficient data handling
+- **TypeScript best practices**: Full type safety across the application
+- **i18n Integration**: Feature-specific translations that extend shared translations
 
 ## Dependencies
 
@@ -180,11 +185,29 @@ This module was created following the established patterns from the UsersPage:
 - date-fns (for date formatting)
 - lucide-react (for icons)
 
-## Integration
+## Microfrontend Integration
 
-To integrate this module into your application:
+This microfrontend is consumed by the shell application through the public API:
 
-1. Import the page component: `import { AppSettingsPage } from './apps/bm-mf/src/app-settings'`
-2. Add routing configuration
-3. Ensure API endpoint `/v1/app-settings` is available
-4. Include the module in your build process
+```typescript
+// Shell application integration
+import { AppSettingsPage } from 'bm-mf/public-api';
+
+// Usage in shell routing
+<Route path="/app-settings" component={AppSettingsPage} />
+```
+
+### Integration Requirements
+
+1. **API Endpoint**: Ensure `/v1/app-settings` endpoint is available
+2. **Shared Dependencies**: React, Material-UI, and shared-lib must be available
+3. **i18n Setup**: Feature translations are automatically loaded when the module is imported
+4. **Theme Integration**: Uses shared theme configuration from shell application
+5. **Authentication**: Leverages shell application's authentication context
+
+### Public API Exports
+
+```typescript
+// Available exports from public-api.ts
+export * from './app-settings';  // All app-settings functionality
+```

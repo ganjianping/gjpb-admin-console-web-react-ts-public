@@ -1,5 +1,5 @@
 import { Box, Alert, Card, CardContent, Collapse, useTheme, Snackbar } from '@mui/material';
-import '../../core/i18n/i18n.config'; // Initialize app settings translations
+import '../i18n/i18n.config'; // Initialize app settings translations
 import { useState } from 'react';
 
 // Import all the refactored components and hooks
@@ -149,7 +149,7 @@ const AppSettingsPage = () => {
   };
 
   return (
-    <Box sx={{ py: 3 }}>
+    <Box sx={{ py: 2, minHeight: '100vh' }}>
       {/* Page Header */}
       <AppSettingPageHeader
         onCreateAppSetting={handleCreateAppSetting}
