@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import '../../config/i18n.config'; // Initialize app settings translations
 import type { AppSetting, AppSettingQueryParams } from '../services/appSettingService';
-import type { PaginatedResponse } from '../../../../shared-lib/src/types/api.types';
+import type { PaginatedResponse } from '../../../../shared-lib/src/features/api/api.types';
 import { appSettingService } from '../services/appSettingService';
 
 export const useAppSettings = () => {

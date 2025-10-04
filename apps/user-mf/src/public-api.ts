@@ -1,9 +1,11 @@
 // This file serves as a barrel export file for the user-mf module
 // Import i18n to ensure translations are loaded
 import './config/i18n.config';
+import './users/config/i18n.config';
+import './roles/config/i18n.config';
 
 // Register cache provider with shared cache manager
-import CacheManagerService from '../../shared-lib/src/services/cache-registry.service';
+import CacheManagerService from '../../shared-lib/src/features/core/cache-registry.service';
 import { userMfCacheProvider } from './utils/cache-adapter';
 CacheManagerService.registerCacheProvider(userMfCacheProvider);
 

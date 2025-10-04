@@ -1,12 +1,12 @@
 import type {
   LoginCredentials,
   AuthResponse,
-} from '../../../shared-lib/src/services/auth-service';
-import { APP_CONFIG, APP_ENV } from '../../../shared-lib/src/utils/config';
-import { apiClient } from '../../../shared-lib/src/services/api-client';
-import { setCookie } from '../../../shared-lib/src/utils/cookie';
-import { mockApiService } from '../../../shared-lib/src/services/mock-api-service';
-import { clearAllCaches } from '../../../shared-lib/src/utils/cache-manager';
+} from '../../../shared-lib/src/features/api/auth-service';
+import { APP_CONFIG, APP_ENV } from '../../../shared-lib/src/features/core/config';
+import { apiClient } from '../../../shared-lib/src/features/api/api-client';
+import { setCookie } from '../../../shared-lib/src/features/core/cookie';
+import { mockApiService } from '../../../shared-lib/src/features/api/mock-api-service';
+import { clearAllCaches } from '../../../shared-lib/src/features/core/cache-manager';
 
 // Check if we should use mock API
 const useMockAPI =

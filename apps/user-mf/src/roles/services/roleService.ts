@@ -1,6 +1,6 @@
 // Role Service - handles role management API calls based on API spec
-import { apiClient } from '../../../../shared-lib/src/services/api-client';
-import type { ApiResponse, PaginatedResponse } from '../../../../shared-lib/src/types/api.types';
+import { apiClient } from '../../../../shared-lib/src/features/api/api-client';
+import type { ApiResponse, PaginatedResponse } from '../../../../shared-lib/src/features/api/api.types';
 
 // Role interface from API spec
 export interface Role {

@@ -1,4 +1,4 @@
-import i18n from 'i18next';
+import i18n from '../../../../shared-lib/src/features/i18n/i18n';
 
 // English translations for app settings
 const enTranslations = {
@@ -32,6 +32,8 @@ const enTranslations = {
       namePlaceholder: 'Enter setting name',
       valuePlaceholder: 'Enter setting value',
       langPlaceholder: 'Select language',
+      basicInformation: 'Basic Information',
+      settings: 'Settings',
     },
     filters: {
       searchByName: 'Search by name...',
@@ -112,6 +114,8 @@ const zhTranslations = {
       namePlaceholder: '输入设置名称',
       valuePlaceholder: '输入设置值',
       langPlaceholder: '选择语言',
+      basicInformation: '基本信息',
+      settings: '设置',
     },
     filters: {
       searchByName: '按名称搜索...',

@@ -1,4 +1,4 @@
-import i18n from '../../../shared-lib/src/utils/i18n';
+import i18n from '../../../shared-lib/src/features/i18n/i18n';
 
 // User-mf specific translations (auditLogs, users, roles, profile)
 const userMfResources = {

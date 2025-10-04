@@ -22,7 +22,7 @@ import {
 import { Plus, Shield, Settings, Search, ChevronDown, ChevronUp, ChevronRight, AlertTriangle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import '../../config/i18n.config'; // Initialize role translations
-import { DataTable, createColumnHelper, createStatusChip } from '../../../../shared-lib/src/components/DataTable';
+import { DataTable, createColumnHelper, createStatusChip } from '../../../../shared-lib/src/features/data-management/DataTable';
 import { RoleSearchPanel } from '../components';
 import { useRoleSearch } from '../hooks';
 import { roleService } from '../services';

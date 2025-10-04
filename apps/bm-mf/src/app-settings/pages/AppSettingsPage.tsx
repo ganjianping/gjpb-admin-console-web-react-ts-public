@@ -1,11 +1,14 @@
-import { Box, Alert, Card, CardContent, Collapse, useTheme } from '@mui/material';
+import { Box, Alert, Card, CardContent, Collapse, useTheme, Snackbar } from '@mui/material';
 import '../../config/i18n.config'; // Initialize app settings translations
+import { useState } from 'react';
 
 // Import all the refactored components and hooks
 import {
   AppSettingPageHeader,
   AppSettingSearchPanel,
   AppSettingTable,
+  AppSettingDialog,
+  DeleteAppSettingDialog,
 } from '../components';
 
 import {
@@ -16,6 +19,13 @@ import {
 
 const AppSettingsPage = () => {
   const theme = useTheme();
+  
+  // Notification state
+  const [notification, setNotification] = useState<{
+    open: boolean;
+    message: string;
+    severity: 'success' | 'error';
+  }>({ open: false, message: '', severity: 'success' });
   
   // Initialize app settings data management
   const {
@@ -43,11 +53,30 @@ const AppSettingsPage = () => {
 
   // Initialize dialog management
   const {
+    dialogOpen,
+    selectedAppSetting,
+    actionType,
+    loading: dialogLoading,
+    formData,
+    formErrors,
     handleView,
     handleEdit,
     handleCreate,
     handleDelete,
+    handleCloseDialog,
+    handleFormChange,
+    handleSave,
+    handleConfirmDelete,
   } = useAppSettingDialog();
+  
+  // Notification handlers
+  const showNotification = (message: string, severity: 'success' | 'error') => {
+    setNotification({ open: true, message, severity });
+  };
+  
+  const hideNotification = () => {
+    setNotification(prev => ({ ...prev, open: false }));
+  };
 
   // Enhanced search functionality
   const handleSearch = () => {
@@ -75,6 +104,34 @@ const AppSettingsPage = () => {
   // App setting action handlers
   const handleCreateAppSetting = () => {
     handleCreate();
+  };
+  
+  // Dialog save handler
+  const handleDialogSave = () => {
+    handleSave(
+      (message) => {
+        showNotification(message, 'success');
+        // Refresh the data
+        loadAppSettings();
+      },
+      (message) => {
+        showNotification(message, 'error');
+      }
+    );
+  };
+  
+  // Dialog delete handler
+  const handleDialogDelete = () => {
+    handleConfirmDelete(
+      (message) => {
+        showNotification(message, 'success');
+        // Refresh the data
+        loadAppSettings();
+      },
+      (message) => {
+        showNotification(message, 'error');
+      }
+    );
   };
 
   const handleAppSettingAction = (appSetting: any, action: 'view' | 'edit' | 'delete') => {
@@ -148,9 +205,42 @@ const AppSettingsPage = () => {
         </CardContent>
       </Card>
 
-      {/* TODO: Add AppSettingDialog and DeleteAppSettingDialog components */}
+      {/* App Setting Dialog */}
+      <AppSettingDialog
+        open={dialogOpen && (actionType === 'create' || actionType === 'edit' || actionType === 'view')}
+        onClose={handleCloseDialog}
+        actionType={actionType}
+        formData={formData}
+        onFormChange={handleFormChange}
+        onSubmit={handleDialogSave}
+        loading={dialogLoading}
+        formErrors={formErrors}
+      />
       
-      {/* TODO: Add NotificationSnackbar component */}
+      {/* Delete App Setting Dialog */}
+      <DeleteAppSettingDialog
+        open={actionType === 'delete' && selectedAppSetting !== null}
+        onClose={() => handleDelete(null as any)} // Reset delete state
+        appSetting={selectedAppSetting}
+        onConfirm={handleDialogDelete}
+        loading={dialogLoading}
+      />
+      
+      {/* Notification Snackbar */}
+      <Snackbar
+        open={notification.open}
+        autoHideDuration={4000}
+        onClose={hideNotification}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert
+          onClose={hideNotification}
+          severity={notification.severity}
+          sx={{ width: '100%' }}
+        >
+          {notification.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

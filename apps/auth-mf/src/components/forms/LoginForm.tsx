@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 import { Eye, EyeOff, User, Mail, Phone } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import type { LoginCredentials } from '../../../../shared-lib/src/services/auth-service';
+import type { LoginCredentials } from '../../../../shared-lib/src/features/api/auth-service';
 
 // Schema definitions
 const schemas = {

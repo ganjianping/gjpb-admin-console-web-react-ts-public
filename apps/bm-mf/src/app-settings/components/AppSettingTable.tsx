@@ -2,7 +2,7 @@ import { Box, Chip, CircularProgress, Typography } from '@mui/material';
 import { Settings as SettingsIcon, Eye, Edit, Trash2, Lock, Globe } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import '../../config/i18n.config'; // Initialize app settings translations
-import { DataTable, createColumnHelper, createStatusChip } from '../../../../shared-lib/src/components/DataTable';
+import { DataTable, createColumnHelper, createStatusChip } from '../../../../shared-lib/src/features/data-management/DataTable';
 import type { AppSetting } from '../services/appSettingService';
 import { format, parseISO } from 'date-fns';
 

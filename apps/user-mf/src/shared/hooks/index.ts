@@ -10,4 +10,4 @@ export {
   type UseSearchProps,
   type UseDialogProps,
   type DialogActionType
-} from '../../../../shared-lib/src/hooks';
+} from '../../../../shared-lib/src/features/data-management';

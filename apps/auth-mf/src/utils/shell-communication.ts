@@ -1,5 +1,5 @@
-import type { AuthResponse } from '../../../shared-lib/src/services/auth-service';
-import type { ColorTheme, ThemeMode } from '../../../shared-lib/src/types/theme.types';
+import type { AuthResponse } from '../../../shared-lib/src/features/api/auth-service';
+import type { ColorTheme, ThemeMode } from '../../../shared-lib/src/features/theme/theme.types';
 
 // Shell communication interface
 export interface ShellCommunication {

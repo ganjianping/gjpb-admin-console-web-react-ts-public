@@ -1,4 +1,4 @@
-import { useSearch } from '../../../../shared-lib/src/hooks';
+import { useSearch } from '../../../../shared-lib/src/features/data-management';
 import type { AppSetting } from '../services/appSettingService';
 import type { AppSettingSearchFormData } from '../types/app-setting.types';
 

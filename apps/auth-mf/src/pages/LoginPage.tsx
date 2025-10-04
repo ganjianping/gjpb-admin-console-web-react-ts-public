@@ -4,14 +4,14 @@ import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 
 import LoginForm from '../components/forms/LoginFormWithI18n';
-import type { LoginCredentials } from '../../../shared-lib/src/services/auth-service';
-import { APP_CONFIG } from '../../../shared-lib/src/utils/config';
+import type { LoginCredentials } from '../../../shared-lib/src/features/api/auth-service';
+import { APP_CONFIG } from '../../../shared-lib/src/features/core/config';
 
 // Use shared theme components and hooks
 import { 
   useTheme,
   ThemeControls
-} from '../../../shared-lib/src/components';
+} from '../../../shared-lib/src/features/theme';
 
 // Local Redux imports
 import { useAppDispatch, useAppSelector } from '../hooks/useAuthStore';
