@@ -1,8 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { authenticationService } from '../../services/authentication.service';
-import type { LoginCredentials, AuthResponse } from '../../../../shared-lib/src/features/api/auth-service';
-import { ApiError } from '../../../../shared-lib/src/features/api/api-client';
+import type { LoginCredentials, AuthResponse } from '../../../../shared-lib/src/api/auth-service';
+import { ApiError } from '../../../../shared-lib/src/api/api-client';
 import type { RootState } from '../index';
 
 // Login form state interface

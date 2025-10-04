@@ -2,7 +2,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import LoginForm from './LoginForm';
-import type { LoginCredentials } from '../../../../shared-lib/src/features/api/auth-service';
+import type { LoginCredentials } from '../../../../shared-lib/src/api/auth-service';
 
 interface LoginFormWrapperProps {
   onSubmit: (data: LoginCredentials) => Promise<void>;

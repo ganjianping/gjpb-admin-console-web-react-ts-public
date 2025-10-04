@@ -1,9 +1,9 @@
 // App Settings Service - handles app settings management API calls
-import { apiClient } from '../../../../shared-lib/src/features/api/api-client';
+import { apiClient } from '../../../../shared-lib/src/api/api-client';
 import type { 
   ApiResponse, 
   PaginatedResponse
-} from '../../../../shared-lib/src/features/api/api.types';
+} from '../../../../shared-lib/src/api/api.types';
 
 // App Setting interface from API spec
 export interface AppSetting {

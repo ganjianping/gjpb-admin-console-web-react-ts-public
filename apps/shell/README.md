@@ -1,83 +1,81 @@
-# Shell Application - Feature-Based Architecture
+# Shell Application - Domain-Based Architecture
 
-This document describes the new feature-based organization of the shell application.
+This document describes the domain-based organization of the shell application.
 
 ## 🏗️ Architecture Overview
 
-The shell application has been restructured to follow a **feature-first** approach, where related components, services, and logic are co-located by feature rather than by technical layer.
+The shell application follows a **domain-first** approach, where related components, services, and logic are co-located by domain rather than by technical layer. Each domain represents a distinct area of functionality within the shell.
 
 ## 📁 Directory Structure
 
 ```
 apps/shell/src/
-├── features/                    # Feature-based organization
-│   ├── authentication/         # Authentication & authorization
-│   │   ├── components/         # Auth-specific components
-│   │   │   └── ProtectedRoute.tsx
-│   │   ├── pages/             # Auth-related pages
-│   │   │   └── UnauthorizedPage.tsx
-│   │   ├── services/          # Auth services
-│   │   │   └── shell-auth-service.ts
-│   │   ├── store/             # Auth Redux slice
-│   │   │   └── authSlice.ts
-│   │   └── index.ts           # Feature exports
-│   │
-│   ├── navigation/            # Navigation & routing
-│   │   ├── components/        # Navigation components
-│   │   │   ├── Header.tsx
-│   │   │   └── Sidebar.tsx
-│   │   ├── layouts/           # Layout components
-│   │   │   └── MainLayout.tsx
-│   │   ├── pages/             # Navigation-related pages
-│   │   │   └── NotFoundPage.tsx
-│   │   ├── routes/            # Route definitions
-│   │   │   └── AppRoutes.tsx
-│   │   └── index.ts           # Feature exports
-│   │
-│   ├── dashboard/             # Dashboard functionality
-│   │   ├── pages/             # Dashboard pages
-│   │   │   └── DashboardPage.tsx
-│   │   └── index.ts           # Feature exports
-│   │
-│   ├── theme/                 # Theme management
-│   │   ├── components/        # Theme-related components
-│   │   │   ├── ThemeProvider.tsx
-│   │   │   └── theme.ts
-│   │   └── index.ts           # Feature exports
-│   │
-│   ├── settings/              # User settings
-│   │   ├── pages/             # Settings pages
-│   │   │   └── SettingsPage.tsx
-│   │   └── index.ts           # Feature exports
-│   │
-│   └── refresh-warning/       # Refresh warning system
-│       ├── RefreshWarningDialog.tsx
-│       ├── RefreshWarningProvider.tsx
-│       ├── useCustomRefreshWarning.ts
-│       ├── README.md
-│       └── index.ts           # Feature exports
+├── authentication/            # Authentication & authorization domain
+│   ├── components/           # Auth-specific components
+│   │   └── ProtectedRoute.tsx
+│   ├── pages/               # Auth-related pages
+│   │   └── UnauthorizedPage.tsx
+│   ├── services/            # Auth services
+│   │   └── shell-auth-service.ts
+│   ├── store/               # Auth Redux slice
+│   │   └── authSlice.ts
+│   └── index.ts             # Domain exports
 │
-├── shared/                    # Shared utilities across features
-│   ├── components/            # Shared components
+├── navigation/              # Navigation & routing domain
+│   ├── components/          # Navigation components
+│   │   ├── Header.tsx
+│   │   └── Sidebar.tsx
+│   ├── layouts/             # Layout components
+│   │   └── MainLayout.tsx
+│   ├── pages/               # Navigation-related pages
+│   │   └── NotFoundPage.tsx
+│   ├── routes/              # Route definitions
+│   │   └── AppRoutes.tsx
+│   └── index.ts             # Domain exports
+│
+├── dashboard/               # Dashboard functionality domain
+│   ├── pages/               # Dashboard pages
+│   │   └── DashboardPage.tsx
+│   └── index.ts             # Domain exports
+│
+├── theme/                   # Theme management domain
+│   ├── components/          # Theme-related components
+│   │   ├── ThemeProvider.tsx
+│   │   └── theme.ts
+│   └── index.ts             # Domain exports
+│
+├── settings/                # User settings domain
+│   ├── pages/               # Settings pages
+│   │   └── SettingsPage.tsx
+│   └── index.ts             # Domain exports
+│
+├── refresh-warning/         # Refresh warning system domain
+│   ├── RefreshWarningDialog.tsx
+│   ├── RefreshWarningProvider.tsx
+│   ├── useCustomRefreshWarning.ts
+│   ├── README.md
+│   └── index.ts             # Domain exports
+│
+├── core/                    # Shell-specific shared utilities
+│   ├── components/          # Shell shared components
 │   │   └── AppLoading.tsx
-│   ├── hooks/                 # Shared hooks
+│   ├── hooks/               # Shell shared hooks
 │   │   └── useRedux.ts
-│   ├── store/                 # Global Redux store
+│   ├── store/               # Global Redux store
 │   │   ├── store.ts
 │   │   └── uiSlice.ts
-│   ├── config/                # Shared configuration
+│   ├── config/              # Shell configuration
 │   │   └── i18n.config.ts
-│   └── index.ts               # Shared exports
+│   └── index.ts             # Core exports
 │
-├── __tests__/                 # Test files
-├── main.tsx                   # Application entry point
-├── index.css                  # Global styles
-└── vite-env.d.ts             # Vite type definitions
+├── main.tsx                 # Application entry point
+├── index.css                # Global styles
+└── vite-env.d.ts           # Vite type definitions
 ```
 
-## 🎯 Features
+## 🎯 Domains
 
-### 1. Authentication (`/features/authentication/`)
+### 1. Authentication (`/authentication/`)
 **Purpose**: Handles user authentication, authorization, and session management.
 
 **Contains**:
@@ -92,7 +90,7 @@ apps/shell/src/
 - Route-level access control
 - Login/logout coordination with auth-mf
 
-### 2. Navigation (`/features/navigation/`)
+### 2. Navigation (`/navigation/`)
 **Purpose**: Manages application routing, navigation UI, and layout structure.
 
 **Contains**:
@@ -108,7 +106,7 @@ apps/shell/src/
 - Layout management
 - Microfrontend route coordination
 
-### 3. Dashboard (`/features/dashboard/`)
+### 3. Dashboard (`/dashboard/`)
 **Purpose**: Main dashboard functionality and user landing page.
 
 **Contains**:
@@ -119,7 +117,7 @@ apps/shell/src/
 - Quick stats and overview
 - User profile synchronization
 
-### 4. Theme (`/features/theme/`)
+### 4. Theme (`/theme/`)
 **Purpose**: Theme management and UI styling coordination.
 
 **Contains**:
@@ -131,7 +129,7 @@ apps/shell/src/
 - Color theme switching
 - Material-UI theme configuration
 
-### 5. Settings (`/features/settings/`)
+### 5. Settings (`/settings/`)
 **Purpose**: User and application settings management.
 
 **Contains**:
@@ -142,7 +140,7 @@ apps/shell/src/
 - Application configuration
 - Settings persistence
 
-### 6. Refresh Warning (`/features/refresh-warning/`)
+### 6. Refresh Warning (`/refresh-warning/`)
 **Purpose**: Prevents accidental logout during page refresh/navigation.
 
 **Contains**:
@@ -155,33 +153,35 @@ apps/shell/src/
 - Navigation warning dialogs
 - User session preservation
 
-## 🔗 Shared Layer (`/shared/`)
+## 🔗 Core Layer (`/core/`)
 
-The shared layer contains utilities and components used across multiple features:
+The core layer contains shell-specific utilities and components used across multiple domains:
 
-- **Components**: Reusable UI components (AppLoading, etc.)
-- **Hooks**: Shared React hooks (useRedux, etc.)
-- **Store**: Global Redux store and UI state management
-- **Config**: Shared configuration files (i18n, etc.)
+- **Components**: Shell-specific reusable UI components (AppLoading, etc.)
+- **Hooks**: Shell-specific React hooks (useRedux, etc.)
+- **Store**: Global Redux store and UI state management for the shell
+- **Config**: Shell-specific configuration files (i18n, etc.)
+
+*Note: This is distinct from `shared-lib` which contains cross-application shared code.*
 
 ## 📦 Import Patterns
 
-### Feature Imports
+### Domain Imports
 ```typescript
-// Import from specific features
-import { ProtectedRoute } from './features/authentication';
-import { Header, Sidebar, MainLayout } from './features/navigation';
-import { DashboardPage } from './features/dashboard';
+// Import from specific domains
+import { ProtectedRoute } from './authentication';
+import { Header, Sidebar, MainLayout } from './navigation';
+import { DashboardPage } from './dashboard';
 
-// Import from shared utilities
-import { useAppDispatch, useAppSelector } from './shared/hooks/useRedux';
-import { AppLoading } from './shared/components/AppLoading';
+// Import from core utilities
+import { useAppDispatch, useAppSelector } from './core/hooks/useRedux';
+import { AppLoading } from './core/components/AppLoading';
 ```
 
-### Cross-Feature Communication
+### Cross-Domain Communication
 ```typescript
-// Authentication feature using shared store
-import { useAppDispatch } from '../../shared/hooks/useRedux';
+// Authentication domain using core store
+import { useAppDispatch } from '../../core/hooks/useRedux';
 
 // Navigation using authentication state
 import { selectCurrentUser } from '../authentication/store/authSlice';
@@ -189,29 +189,32 @@ import { selectCurrentUser } from '../authentication/store/authSlice';
 
 ## 🚀 Benefits
 
-1. **Better Organization**: Related code is co-located by feature
-2. **Easier Maintenance**: Changes to a feature are contained within its directory
-3. **Improved Discoverability**: Clear structure makes finding code intuitive
-4. **Reduced Coupling**: Features have clear boundaries and dependencies
-5. **Scalability**: Easy to add new features without cluttering existing structure
-6. **Team Collaboration**: Different features can be worked on independently
+1. **Better Organization**: Related code is co-located by domain
+2. **Easier Maintenance**: Changes to a domain are contained within its directory
+3. **Improved Discoverability**: Flat structure makes finding code intuitive
+4. **Reduced Coupling**: Domains have clear boundaries and dependencies
+5. **Scalability**: Easy to add new domains without deep nesting
+6. **Team Collaboration**: Different domains can be worked on independently
+7. **Clear Separation**: `core/` for shell utilities vs `shared-lib/` for cross-app code
 
 ## 🔄 Migration Notes
 
+- Migrated from nested `features/` structure to flat domain organization
+- Renamed `shared/` to `core/` to avoid confusion with `shared-lib`
 - All import paths have been updated to reflect the new structure
-- Each feature has its own `index.ts` for clean exports
-- Shared utilities are clearly separated from feature-specific code
-- The architecture supports easy addition of new features
+- Each domain has its own `index.ts` for clean exports
+- Core utilities are clearly separated from domain-specific code
+- The architecture supports easy addition of new domains
 - Maintains backward compatibility with existing microfrontend integrations
 
-## 📝 Adding New Features
+## 📝 Adding New Domains
 
-To add a new feature:
+To add a new domain:
 
-1. Create a new directory under `/features/`
+1. Create a new directory directly under `/src/`
 2. Organize by: `components/`, `pages/`, `services/`, `store/`, etc.
 3. Create an `index.ts` file for exports
-4. Update imports in files that use the new feature
-5. Document the feature's purpose and responsibilities
+4. Update imports in files that use the new domain
+5. Document the domain's purpose and responsibilities
 
 This architecture provides a solid foundation for continued development and maintenance of the shell application.

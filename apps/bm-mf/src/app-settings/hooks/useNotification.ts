@@ -1,2 +1,2 @@
 // Re-export notification hook from shared-lib
-export { useNotification } from '../../../../shared-lib/src/features/data-management';
+export { useNotification } from '../../../../shared-lib/src/data-management';

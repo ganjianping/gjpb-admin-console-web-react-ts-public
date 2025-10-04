@@ -2,7 +2,7 @@ import { Box, Chip, CircularProgress, Typography } from '@mui/material';
 import { Users as UsersIcon, Shield, User as UserIcon, Eye, Edit, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import '../../config/i18n.config'; // Initialize user translations
-import { DataTable, createColumnHelper, createStatusChip } from '../../../../shared-lib/src/features/data-management/DataTable';
+import { DataTable, createColumnHelper, createStatusChip } from '../../../../shared-lib/src/data-management/DataTable';
 import type { User } from '../services/userService';
 import { getRoleNameByCode } from '../utils/roleUtils';
 

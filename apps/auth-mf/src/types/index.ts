@@ -5,8 +5,8 @@
  * These are separate from shared types to maintain modularity.
  */
 
-import type { LoginCredentials, AuthResponse } from '../../../shared-lib/src/features/api/auth-service';
-import type { ColorTheme, ThemeMode } from '../../../shared-lib/src/features/theme/theme.types';
+import type { LoginCredentials, AuthResponse } from '../../../shared-lib/src/api/auth-service';
+import type { ColorTheme, ThemeMode } from '../../../shared-lib/src/theme/theme.types';
 
 // Login form specific types
 export interface LoginFormData extends LoginCredentials {

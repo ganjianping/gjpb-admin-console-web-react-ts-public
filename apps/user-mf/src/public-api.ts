@@ -5,7 +5,7 @@ import './users/config/i18n.config';
 import './roles/config/i18n.config';
 
 // Register cache provider with shared cache manager
-import CacheManagerService from '../../shared-lib/src/features/core/cache-registry.service';
+import CacheManagerService from '../../shared-lib/src/core/cache-registry.service';
 import { userMfCacheProvider } from './utils/cache-adapter';
 CacheManagerService.registerCacheProvider(userMfCacheProvider);
 

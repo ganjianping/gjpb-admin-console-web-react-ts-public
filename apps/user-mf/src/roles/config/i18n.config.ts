@@ -1,4 +1,4 @@
-import i18n from '../../../../shared-lib/src/features/i18n/i18n';
+import i18n from '../../../../shared-lib/src/i18n/i18n';
 
 // Role-specific translations
 const roleTranslations = {

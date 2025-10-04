@@ -47,7 +47,7 @@ import auditLogService, {
 } from '../services/auditLogService';
 
 // Shared components
-import { DataTable, createColumnHelper } from '../../../../shared-lib/src/features/data-management/DataTable';
+import { DataTable, createColumnHelper } from '../../../../shared-lib/src/data-management/DataTable';
 
 const AuditLogPage = () => {
   const { t } = useTranslation();

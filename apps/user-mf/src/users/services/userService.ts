@@ -1,9 +1,9 @@
 // User Service - handles user management API calls based on API spec
-import { apiClient } from '../../../../shared-lib/src/features/api/api-client';
+import { apiClient } from '../../../../shared-lib/src/api/api-client';
 import type { 
   ApiResponse, 
   PaginatedResponse
-} from '../../../../shared-lib/src/features/api/api.types';
+} from '../../../../shared-lib/src/api/api.types';
 
 // Role interface from API spec
 export interface Role {

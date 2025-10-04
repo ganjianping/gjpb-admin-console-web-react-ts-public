@@ -1,4 +1,4 @@
-import i18n from '../../../../shared-lib/src/features/i18n/i18n';
+import i18n from '../../../../shared-lib/src/i18n/i18n';
 import '../../shared/config/i18n.config'; // Import shared user-mf translations
 
 // User-specific translations

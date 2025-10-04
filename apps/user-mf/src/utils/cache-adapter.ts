@@ -1,5 +1,5 @@
 // User-MF Cache Adapter - implements CacheProvider interface for user-mf module
-import type { CacheProvider } from '../../../shared-lib/src/features/core/cache-registry.service';
+import type { CacheProvider } from '../../../shared-lib/src/core/cache-registry.service';
 import { rolesService } from '../roles/services/rolesCacheService';
 
 export class UserMfCacheProvider implements CacheProvider {

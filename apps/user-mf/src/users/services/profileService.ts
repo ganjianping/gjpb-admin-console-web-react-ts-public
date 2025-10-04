@@ -1,6 +1,6 @@
 // Profile Service - handles profile management API calls
-import { apiClient } from '../../../../shared-lib/src/features/api/api-client';
-import type { ApiResponse } from '../../../../shared-lib/src/features/api/api.types';
+import { apiClient } from '../../../../shared-lib/src/api/api-client';
+import type { ApiResponse } from '../../../../shared-lib/src/api/api.types';
 
 // Profile update request interface
 export interface UpdateProfileRequest {

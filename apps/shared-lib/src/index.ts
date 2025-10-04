@@ -1,15 +1,15 @@
 /**
- * Shared Library - Feature-Based Architecture
+ * Shared Library - Domain-Based Architecture
  * 
- * All functionality is now organized by features for better maintainability.
- * Each feature contains related components, hooks, services, types, and utilities.
+ * All functionality is organized by domains for better maintainability.
+ * Each domain contains related components, hooks, services, types, and utilities.
  */
 
-// Export all features
-export * from './features/api';
-export * from './features/core'; 
-export * from './features/data-management';
-export * from './features/firebase';
-export * from './features/i18n';
-export * from './features/theme';
-export * from './features/ui-components';
+// Export all domains
+export * from './api';
+export * from './core'; 
+export * from './data-management';
+export * from './firebase';
+export * from './i18n';
+export * from './theme';
+export * from './ui-components';

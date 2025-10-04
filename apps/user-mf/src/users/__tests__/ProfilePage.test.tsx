@@ -5,7 +5,7 @@ import { MemoryRouter } from 'react-router-dom'
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 import ProfilePage from '../pages/ProfilePage'
 import { I18nextProvider } from 'react-i18next'
-import i18n from '../../../../shared-lib/src/features/i18n/i18n'
+import i18n from '../../../../shared-lib/src/i18n/i18n'
 import type { User } from '../services/userService'
 
 // Initialize i18n for user-mf

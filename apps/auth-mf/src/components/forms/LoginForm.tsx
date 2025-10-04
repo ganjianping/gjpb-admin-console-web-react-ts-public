@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 import { Eye, EyeOff, User, Mail, Phone } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import type { LoginCredentials } from '../../../../shared-lib/src/features/api/auth-service';
+import type { LoginCredentials } from '../../../../shared-lib/src/api/auth-service';
 
 // Schema definitions
 const schemas = {
@@ -290,7 +290,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, error, submitText }) =>
             disabled={isLoading}
           />
           <Box sx={{ mt: 3, mb: 2 }}>
-            <Button type="submit" variant="contained" color="primary" fullWidth disabled={isLoading}>
+            <Button type="submit" size="large" variant="contained" color="primary" fullWidth disabled={isLoading}>
               {getButtonText()}
             </Button>
           </Box>
