@@ -18,7 +18,6 @@ export const APP_SETTING_CONSTANTS = {
 export const LANGUAGE_OPTIONS = [
   { value: 'EN', label: 'English' },
   { value: 'ZH', label: 'Chinese' },
-  { value: 'ALL', label: 'All Languages' },
 ] as const;
 
 export const STATUS_MAPS = {
