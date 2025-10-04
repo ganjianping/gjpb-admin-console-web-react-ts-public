@@ -251,7 +251,7 @@ const Header = ({ onDrawerToggle }: HeaderProps) => {
                     fontSize: '1rem',
                     fontWeight: 600,
                     backgroundColor: 'primary.main',
-                    color: 'primary.contrastText',
+                    color: 'white',
                     transition: 'all 0.3s ease',
                     '&:hover': {
                       boxShadow: '0 6px 20px rgba(0,0,0,0.25)',
@@ -318,7 +318,7 @@ const Header = ({ onDrawerToggle }: HeaderProps) => {
                       backgroundColor: themeMode === 'dark' 
                         ? 'rgba(255,255,255,0.2)' 
                         : 'primary.main',
-                      color: themeMode === 'dark' ? 'white' : 'primary.contrastText',
+                      color: 'white',
                       fontSize: '1.2rem',
                       fontWeight: 700,
                       border: '2px solid',

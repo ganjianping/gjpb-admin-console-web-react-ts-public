@@ -5,7 +5,6 @@ import {
   Card,
   CardContent,
   Chip,
-  Avatar,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
@@ -96,7 +95,7 @@ const DashboardPage = () => {
         sx={{
           background: theme.palette.mode === 'light' 
             ? '#ffffff'
-            : `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+            : theme.palette.background.paper,
           borderRadius: { xs: 2, sm: 3, md: 4 },
           p: { xs: 2, sm: 3, md: 4 },
           color: theme.palette.mode === 'light' ? theme.palette.text.primary : 'white',
@@ -169,28 +168,29 @@ const DashboardPage = () => {
                 borderRadius: 2,
               }}>
                 <CardContent sx={{ p: 3 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                    <Avatar sx={{ 
-                      width: 48, 
-                      height: 48, 
-                      bgcolor: theme.palette.primary.main, 
-                      mr: 2,
-                      fontSize: '1.2rem',
-                      fontWeight: 600,
-                    }}>
-                      {user.nickname?.charAt(0)?.toUpperCase() || user.username?.charAt(0)?.toUpperCase() || '?'}
-                    </Avatar>
+                  <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
+                    {t('dashboard.userInfo.basicInfo', 'Basic Information')}
+                  </Typography>
+                  
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
                     <Box>
-                      <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                      <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 500 }}>
+                        {t('dashboard.userInfo.displayName', 'Display Name')}
+                      </Typography>
+                      <Typography variant="body2" sx={{ mt: 0.5 }}>
                         {user.nickname || user.username}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
+                    </Box>
+                    
+                    <Box>
+                      <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 500 }}>
+                        {t('dashboard.userInfo.username', 'Username')}
+                      </Typography>
+                      <Typography variant="body2" sx={{ mt: 0.5 }}>
                         @{user.username}
                       </Typography>
                     </Box>
-                  </Box>
-                  
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                    
                     <Box>
                       <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 500 }}>
                         {t('dashboard.userInfo.email', 'Email')}
