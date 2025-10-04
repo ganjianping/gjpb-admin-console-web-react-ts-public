@@ -16,6 +16,7 @@ import {
 } from '@mui/material';
 import { Search } from 'lucide-react';
 import type { AppSettingSearchFormData } from '../types/app-setting.types';
+import { LANGUAGE_OPTIONS } from '../constants';
 
 interface AppSettingSearchPanelProps {
   searchFormData: AppSettingSearchFormData;
@@ -196,15 +197,13 @@ export const AppSettingSearchPanel: React.FC<AppSettingSearchPanelProps> = ({
             <FormLabel sx={{ fontWeight: 500, color: 'text.primary', mb: 1, display: 'block' }}>
               {t('appSettings.form.lang')}
             </FormLabel>
-            <TextField
-              fullWidth
-              size="small"
-              value={searchFormData.lang}
-              onChange={(e) => onFormChange('lang', e.target.value)}
-              placeholder={t('appSettings.filters.language')}
-              disabled={loading}
-              sx={{
-                '& .MuiOutlinedInput-root': {
+            <FormControl fullWidth size="small">
+              <Select
+                value={searchFormData.lang}
+                onChange={(e) => onFormChange('lang', e.target.value)}
+                disabled={loading}
+                displayEmpty
+                sx={{
                   borderRadius: 2,
                   backgroundColor: theme.palette.mode === 'dark' 
                     ? 'rgba(255, 255, 255, 0.05)' 
@@ -220,9 +219,16 @@ export const AppSettingSearchPanel: React.FC<AppSettingSearchPanelProps> = ({
                       ? 'rgba(255, 255, 255, 0.1)' 
                       : 'rgba(255, 255, 255, 1)',
                   },
-                },
-              }}
-            />
+                }}
+              >
+                <MenuItem value="">{t('appSettings.filters.all')}</MenuItem>
+                {LANGUAGE_OPTIONS.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Box>
 
           {/* System Setting */}
