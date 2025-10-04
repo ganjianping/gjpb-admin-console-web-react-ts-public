@@ -3,15 +3,15 @@ import { Box, Container } from '@mui/material';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 
-import LoginForm from '../components/forms/LoginFormWithI18n';
-import type { LoginCredentials } from '../../../shared-lib/src/api/auth-service';
-import { APP_CONFIG } from '../../../shared-lib/src/core/config';
+import LoginForm from '../components/LoginFormWithI18n';
+import type { LoginCredentials } from '../../../../shared-lib/src/api/auth-service';
+import { APP_CONFIG } from '../../../../shared-lib/src/core/config';
 
 // Use shared theme components and hooks
 import { 
   useTheme,
   ThemeControls
-} from '../../../shared-lib/src/theme';
+} from '../../../../shared-lib/src/theme';
 
 // Local Redux imports
 import { useAppDispatch, useAppSelector } from '../hooks/useAuthStore';
@@ -19,7 +19,7 @@ import {
   performLogin,
   selectAuthError,
   clearError
-} from '../store/slices/authLogin.slice';
+} from '../store/authLogin.slice';
 
 const LoginPage = () => {
   const { t } = useTranslation();

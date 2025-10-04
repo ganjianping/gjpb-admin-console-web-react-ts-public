@@ -1,29 +1,9 @@
-import i18n from '../../../shared-lib/src/i18n/i18n';
+import i18n from '../../../../shared-lib/src/i18n/i18n';
 
-// Auth-specific translations
-const authResources = {
+// Login-specific translations
+const loginResources = {
   en: {
     translation: {
-      common: {
-        language: 'Language',
-        theme: 'Theme',
-        settings: 'Settings',
-      },
-      theme: {
-        light: 'Light',
-        dark: 'Dark',
-        colors: {
-          blue: 'Blue',
-          purple: 'Purple',
-          green: 'Green',
-          orange: 'Orange',
-          red: 'Red',
-        },
-      },
-      auth: {
-        unauthorized: 'You are not authorized to access this page',
-        sessionExpired: 'Your session has expired, please log in again',
-      },
       login: {
         title: 'Admin Console',
         tabs: {
@@ -51,26 +31,6 @@ const authResources = {
   },
   zh: {
     translation: {
-      common: {
-        language: '语言',
-        theme: '主题',
-        settings: '设置',
-      },
-      theme: {
-        light: '浅色',
-        dark: '深色',
-        colors: {
-          blue: '蓝色',
-          purple: '紫色',
-          green: '绿色',
-          orange: '橙色',
-          red: '红色',
-        },
-      },
-      auth: {
-        unauthorized: '您无权访问此页面',
-        sessionExpired: '会话已过期，请重新登录',
-      },
       login: {
         title: '登录管理控制台',
         tabs: {
@@ -98,8 +58,8 @@ const authResources = {
   }
 };
 
-// Add auth-specific resources to the shared i18n instance
-Object.entries(authResources).forEach(([lng, namespaces]) => {
+// Add login-specific resources to the shared i18n instance
+Object.entries(loginResources).forEach(([lng, namespaces]) => {
   Object.entries(namespaces).forEach(([ns, resources]) => {
     i18n.addResourceBundle(lng, ns, resources, true, true);
   });

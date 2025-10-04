@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import '../../config/i18n.config'; // Initialize app settings translations
+import '../../i18n/i18n.config'; // Initialize app settings translations
 import type { AppSetting, CreateAppSettingRequest, UpdateAppSettingRequest } from '../services/appSettingService';
 import { appSettingService } from '../services/appSettingService';
 import type { AppSettingFormData, AppSettingActionType } from '../types/app-setting.types';

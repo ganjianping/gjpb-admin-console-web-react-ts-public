@@ -1,6 +1,6 @@
 // This file serves as a barrel export file for the auth-mf module
-// Import i18n to ensure auth-specific translations are loaded
-import './config/i18n.config';
+// Import login i18n to ensure login-specific translations are loaded
+import './login/i18n/i18n.config';
 
 // Export the LoginPageProvider component (the only component used by shell)
-export { LoginPageProvider } from './components/providers/LoginPageProvider';
+export { LoginPageProvider } from './login/components/LoginPageProvider';

@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import authLoginReducer from './slices/authLogin.slice';
+import authLoginReducer from '../../login/store/authLogin.slice';
 
 let authMfStoreInstance: ReturnType<typeof createAuthMfStore> | null = null;
 
