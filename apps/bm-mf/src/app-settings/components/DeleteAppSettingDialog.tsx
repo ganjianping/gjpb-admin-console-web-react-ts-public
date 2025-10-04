@@ -10,7 +10,7 @@ import {
   CircularProgress,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import '../../i18n/i18n.config'; // Initialize app settings translations
+import '../../core/i18n/i18n.config'; // Initialize app settings translations
 import { Trash2, AlertTriangle } from 'lucide-react';
 import type { AppSetting } from '../services/appSettingService';
 

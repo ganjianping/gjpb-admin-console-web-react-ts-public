@@ -17,7 +17,7 @@ import {
   Switch,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import '../../i18n/i18n.config'; // Initialize app settings translations
+import '../../core/i18n/i18n.config'; // Initialize app settings translations
 import { Settings, Eye, Edit, Plus } from 'lucide-react';
 import type { AppSetting } from '../services/appSettingService';
 import type { AppSettingFormData, AppSettingActionType } from '../types/app-setting.types';
