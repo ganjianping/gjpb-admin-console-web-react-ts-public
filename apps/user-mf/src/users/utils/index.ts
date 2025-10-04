@@ -1,4 +1,5 @@
 // User utilities exports
 export * from './roleUtils';
 export * from './userUtils';
-export { default as userI18n, userTranslations } from '../config/i18n.config';
+export * from './error-handler';
+export { userI18n, usersTranslations } from '../i18n';

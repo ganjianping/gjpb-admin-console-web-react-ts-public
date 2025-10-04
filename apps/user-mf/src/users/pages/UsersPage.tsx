@@ -1,6 +1,5 @@
 import { Box, Alert, Card, CardContent, Collapse, useTheme } from '@mui/material';
 import { useEffect } from 'react';
-import '../../config/i18n.config'; // Initialize user translations
 
 // Import all the refactored components and hooks
 import {
@@ -20,7 +19,7 @@ import {
 
 import {
   useNotification,
-} from '../../shared/hooks';
+} from '../../../../shared-lib/src/data-management';
 
 import { useRoles } from '../../roles/hooks';
 
@@ -82,7 +81,6 @@ const UsersPage = () => {
     
     if (!isRolesCached) {
       // Always load roles from API on first visit
-      console.log('=== UsersPage: Loading roles from API ===');
       loadRoles();
     }
   }, []); // Empty dependency array to run only once on mount

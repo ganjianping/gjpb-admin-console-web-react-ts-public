@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import '../../config/i18n.config'; // Initialize user translations
 import type { User, CreateUserRequest, UpdateUserRequest } from '../services/userService';
 import { userService } from '../services/userService';
 import type { UserFormData, UserActionType } from '../types/user.types';
+import { processApiErrors } from '../utils/error-handler';
 
 export const useUserDialog = () => {
   const { t } = useTranslation();
@@ -103,31 +103,6 @@ export const useUserDialog = () => {
     });
   };
 
-  // Helper function to process API errors
-  const processApiErrors = (apiErrors: any): Record<string, string> => {
-    console.log('Processing API errors - raw input:', JSON.stringify(apiErrors, null, 2));
-    const formattedErrors: Record<string, string> = {};
-    
-    if (apiErrors && typeof apiErrors === 'object') {
-      // Handle the errors object directly (as shown in the API response)
-      Object.keys(apiErrors).forEach(key => {
-        const value = apiErrors[key];
-        console.log(`Processing error for key "${key}":`, value);
-        
-        if (key === 'contactMethodProvided') {
-          // Map contactMethodProvided to a user-friendly message and show as general error
-          formattedErrors.contactMethodProvided = value || t('users.errors.contactMethodProvided');
-        } else {
-          // Map field-specific errors directly
-          formattedErrors[key] = Array.isArray(value) ? value.join(', ') : String(value);
-        }
-      });
-    }
-    
-    console.log('Final formatted errors:', formattedErrors);
-    return formattedErrors;
-  };
-
   const handleFormChange = (field: keyof UserFormData, value: any) => {
     setFormData(prev => ({
       ...prev,
@@ -163,19 +138,14 @@ export const useUserDialog = () => {
         };
 
         const response = await userService.createUser(createData);
-        console.log('Create user response:', response);
         
         if (response.status.code === 200) {
           onSuccess(t('users.userCreatedSuccess'));
           handleCloseDialog();
         } else {
-          console.log('Create user failed with status:', response.status);
-          
           // Handle API error structure
           if (response.status.errors) {
-            console.log('Processing status.errors:', response.status.errors);
             const processedErrors = processApiErrors(response.status.errors);
-            console.log('Setting form errors for create:', processedErrors);
             setFormErrors(processedErrors);
             
             // Don't show generic toast when we have specific field errors
@@ -208,13 +178,9 @@ export const useUserDialog = () => {
           onSuccess(t('users.userUpdatedSuccess'));
           handleCloseDialog();
         } else {
-          console.log('Update user failed with status:', response.status);
-          
           // Handle API error structure
           if (response.status.errors) {
-            console.log('Processing status.errors for update:', response.status.errors);
             const processedErrors = processApiErrors(response.status.errors);
-            console.log('Setting form errors for update:', processedErrors);
             setFormErrors(processedErrors);
             
             // Don't show generic toast when we have specific field errors
@@ -227,26 +193,20 @@ export const useUserDialog = () => {
         }
       }
     } catch (err) {
-      console.error('User save error:', err);
-      
       // Check if it's an ApiError (from api-client interceptor)
       if (err && typeof err === 'object' && 'errors' in err) {
         const apiError = err as any;
-        console.log('API error with errors property:', apiError.errors);
         
         if (apiError.errors) {
-          console.log('Processing API errors from ApiError:', apiError.errors);
           const processedErrors = processApiErrors(apiError.errors);
-          console.log('Setting form errors from ApiError:', processedErrors);
           setFormErrors(processedErrors);
-          
           // Don't show generic toast when we have specific field errors
           return;
         }
         
         // Show toast for ApiError without field errors
         const errorMessage = apiError.message || 
-                            (actionType === 'create' ? t('users.errors.createFailed') : t('users.errors.updateFailed'));
+          (actionType === 'create' ? t('users.errors.createFailed') : t('users.errors.updateFailed'));
         onError(errorMessage);
         return;
       }
@@ -254,25 +214,21 @@ export const useUserDialog = () => {
       // Check if it's an axios error with response
       if (err && typeof err === 'object' && 'response' in err) {
         const apiError = err as any;
-        console.log('API error response:', apiError.response);
         
         if (apiError.response?.data?.status?.errors) {
-          console.log('Processing API errors from axios response:', apiError.response.data.status.errors);
           const processedErrors = processApiErrors(apiError.response.data.status.errors);
-          console.log('Setting form errors from axios response:', processedErrors);
           setFormErrors(processedErrors);
-          
           // Don't show generic toast when we have specific field errors
           return;
         }
         
         // Only show toast if no field-specific errors were found
-        const errorMessage = apiError.response?.data?.status?.message || 
-                            (actionType === 'create' ? t('users.errors.createFailed') : t('users.errors.updateFailed'));
+        const defaultMessage = actionType === 'create' ? t('users.errors.createFailed') : t('users.errors.updateFailed');
+        const errorMessage = apiError.response?.data?.status?.message || defaultMessage;
         onError(errorMessage);
       } else {
-        const errorMessage = err instanceof Error ? err.message : 
-                            (actionType === 'create' ? t('users.errors.createFailed') : t('users.errors.updateFailed'));
+        const defaultMessage = actionType === 'create' ? t('users.errors.createFailed') : t('users.errors.updateFailed');
+        const errorMessage = err instanceof Error ? err.message : defaultMessage;
         onError(errorMessage);
       }
     } finally {

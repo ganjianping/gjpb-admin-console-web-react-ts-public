@@ -21,7 +21,6 @@ import {
 } from '@mui/material';
 import { Plus, Shield, Settings, Search, ChevronDown, ChevronUp, ChevronRight, AlertTriangle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import '../../config/i18n.config'; // Initialize role translations
 import { DataTable, createColumnHelper, createStatusChip } from '../../../../shared-lib/src/data-management/DataTable';
 import { RoleSearchPanel } from '../components';
 import { useRoleSearch } from '../hooks';

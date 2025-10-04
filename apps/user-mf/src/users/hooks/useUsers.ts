@@ -1,9 +1,9 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import '../../config/i18n.config'; // Initialize user translations
 import type { User, UserQueryParams } from '../services/userService';
 import type { PaginatedResponse } from '../../../../shared-lib/src/api/api.types';
 import { userService } from '../services/userService';
+import { USER_CONSTANTS } from '../constants';
 
 export const useUsers = () => {
   const { t } = useTranslation();
@@ -13,10 +13,11 @@ export const useUsers = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
-  const [pageSize, setPageSize] = useState(20);
+  const [pageSize, setPageSize] = useState<number>(USER_CONSTANTS.DEFAULT_PAGE_SIZE);
   const hasInitiallyLoaded = useRef(false);
 
-  const loadUsersInternal = async (params?: UserQueryParams, page?: number, size?: number) => {
+  // Memoized function to load users
+  const loadUsers = useCallback(async (params?: UserQueryParams, page?: number, size?: number) => {
     const actualPage = page ?? currentPage;
     const actualSize = size ?? pageSize;
     
@@ -27,8 +28,8 @@ export const useUsers = () => {
       const queryParams: UserQueryParams = {
         page: actualPage,
         size: actualSize,
-        sort: 'updatedAt',
-        direction: 'desc',
+        sort: USER_CONSTANTS.SORT_FIELD,
+        direction: USER_CONSTANTS.SORT_DIRECTION,
         ...params,
       };
 
@@ -55,36 +56,31 @@ export const useUsers = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const loadUsers = useCallback((params?: UserQueryParams) => {
-    return loadUsersInternal(params, currentPage, pageSize);
-  }, [currentPage, pageSize]);
+  }, [currentPage, pageSize, t]);
 
   // Load users only once on initial mount
   useEffect(() => {
     if (!hasInitiallyLoaded.current) {
       hasInitiallyLoaded.current = true;
-      loadUsersInternal(undefined, 0, 20); // Use hardcoded initial values
+      loadUsers(undefined, 0, USER_CONSTANTS.DEFAULT_PAGE_SIZE);
     }
-  }, []); // NO dependencies - only run once on mount
+  }, [loadUsers]);
 
-  const handlePageChange = (page: number) => {
+  const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
-    // Manually trigger reload when page changes
-    if (hasInitiallyLoaded.current) {
-      loadUsersInternal(undefined, page, pageSize);
-    }
-  };
+  }, []);
 
-  const handlePageSizeChange = (newPageSize: number) => {
+  const handlePageSizeChange = useCallback((newPageSize: number) => {
     setPageSize(newPageSize);
     setCurrentPage(0);
-    // Manually trigger reload when page size changes
+  }, []);
+
+  // Effect to reload when page or pageSize changes (but not on initial mount)
+  useEffect(() => {
     if (hasInitiallyLoaded.current) {
-      loadUsersInternal(undefined, 0, newPageSize);
+      loadUsers(undefined, currentPage, pageSize);
     }
-  };
+  }, [currentPage, pageSize, loadUsers]);
 
   return {
     allUsers,

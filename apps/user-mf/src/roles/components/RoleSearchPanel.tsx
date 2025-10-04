@@ -1,6 +1,5 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import '../../config/i18n.config'; // Initialize role translations
 import {
   Box,
   Button,

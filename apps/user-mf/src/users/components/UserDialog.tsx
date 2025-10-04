@@ -18,7 +18,6 @@ import {
   InputLabel,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import '../../config/i18n.config'; // Initialize user translations
 import { Shield, User as UserIcon, Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import type { User, AccountStatus } from '../services/userService';
@@ -91,31 +90,18 @@ export const UserDialog = ({
 
   const getErrorMessage = (field: string) => {
     const error = formErrors[field];
-    console.log(`=== getErrorMessage for field "${field}" ===`);
-    console.log('Raw error value:', error);
-    console.log('Error type:', typeof error);
     
-    let result = '';
     if (Array.isArray(error)) {
-      result = error.join(', ');
+      return error.join(', ');
     } else if (error) {
-      result = String(error);
+      return String(error);
     }
     
-    console.log('Final error message:', result);
-    console.log('=== End getErrorMessage ===');
-    return result;
+    return '';
   };
 
   const hasError = (field: string) => {
-    const error = formErrors[field];
-    const hasErrorResult = Boolean(error);
-    console.log(`=== hasError for field "${field}" ===`);
-    console.log('Raw error value:', error);
-    console.log('Boolean result:', hasErrorResult);
-    console.log('All formErrors:', formErrors);
-    console.log('=== End hasError ===');
-    return hasErrorResult;
+    return Boolean(formErrors[field]);
   };
 
   const getPasswordHelperText = () => {
@@ -132,19 +118,13 @@ export const UserDialog = ({
   const getGeneralErrors = () => {
     const generalErrors = [];
     
-    console.log('=== UserDialog getGeneralErrors ===');
-    console.log('Current formErrors:', formErrors);
-    console.log('formErrors keys:', Object.keys(formErrors));
-    
     // Check for contactMethodProvided error
     if (formErrors.contactMethodProvided) {
-      console.log('Found contactMethodProvided error:', formErrors.contactMethodProvided);
       generalErrors.push(formErrors.contactMethodProvided);
     }
     
     // Check for general error
     if (formErrors.general) {
-      console.log('Found general error:', formErrors.general);
       generalErrors.push(formErrors.general);
     }
     
@@ -152,13 +132,10 @@ export const UserDialog = ({
     const fieldNames = ['username', 'password', 'nickname', 'email', 'mobileCountryCode', 'mobileNumber', 'accountStatus', 'roleCodes', 'active', 'contactMethodProvided', 'general'];
     Object.keys(formErrors).forEach(key => {
       if (!fieldNames.includes(key)) {
-        console.log(`Found unmapped error for key "${key}":`, formErrors[key]);
         generalErrors.push(formErrors[key]);
       }
     });
     
-    console.log('Final general errors:', generalErrors);
-    console.log('=== End UserDialog getGeneralErrors ===');
     return generalErrors;
   };
 
