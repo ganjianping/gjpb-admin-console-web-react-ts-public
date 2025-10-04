@@ -31,16 +31,3 @@ export const STATUS_MAPS = {
     false: { label: 'Private', color: 'warning' as const },
   },
 } as const;
-
-export const FILTER_OPTIONS = {
-  isSystem: [
-    { value: '', label: 'All' },
-    { value: 'true', label: 'System Only' },
-    { value: 'false', label: 'Non-System' },
-  ],
-  isPublic: [
-    { value: '', label: 'All' },
-    { value: 'true', label: 'Public Only' },
-    { value: 'false', label: 'Private' },
-  ],
-} as const;

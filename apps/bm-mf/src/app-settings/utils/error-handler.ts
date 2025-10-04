@@ -68,7 +68,7 @@ export const handleApiError = (
 };
 
 /**
- * Extracts validation errors from API response
+ * Extract validation errors from API response
  * @param error - The error object
  * @returns Record of field errors
  */
@@ -88,20 +88,4 @@ export const extractValidationErrors = (
   }
   
   return {};
-};
-
-/**
- * Checks if an error is a validation error
- */
-export const isValidationError = (error: unknown): boolean => {
-  if (error instanceof ApiError) {
-    return !!error.errors && Object.keys(error.errors).length > 0;
-  }
-  
-  if (typeof error === 'object' && error !== null) {
-    const err = error as any;
-    return !!err.response?.data?.status?.errors;
-  }
-  
-  return false;
 };

@@ -1,4 +1,3 @@
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import '../i18n/i18n.config'; // Initialize app settings translations
 import {

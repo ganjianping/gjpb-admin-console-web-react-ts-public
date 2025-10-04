@@ -19,13 +19,12 @@ import {
 import { useTranslation } from 'react-i18next';
 import '../i18n/i18n.config'; // Initialize app settings translations
 import { Settings, Eye, Edit, Plus } from 'lucide-react';
-import type { AppSetting, AppSettingFormData, AppSettingActionType } from '../types/app-setting.types';
+import type { AppSettingFormData, AppSettingActionType } from '../types/app-setting.types';
 import { LANGUAGE_OPTIONS } from '../constants';
 
 interface AppSettingDialogProps {
   open: boolean;
   onClose: () => void;
-  appSetting: AppSetting | null;
   actionType: AppSettingActionType;
   formData: AppSettingFormData;
   onFormChange: (field: keyof AppSettingFormData, value: any) => void;
@@ -34,18 +33,16 @@ interface AppSettingDialogProps {
   formErrors: Record<string, string[] | string>;
 }
 
-export const AppSettingDialog = (
-  {
-    open,
-    onClose,
-    actionType,
-    formData,
-    onFormChange,
-    onSubmit,
-    loading,
-    formErrors,
-  }: Omit<AppSettingDialogProps, 'appSetting'>
-) => {
+export const AppSettingDialog = ({
+  open,
+  onClose,
+  actionType,
+  formData,
+  onFormChange,
+  onSubmit,
+  loading,
+  formErrors,
+}: AppSettingDialogProps) => {
   const { t } = useTranslation();
 
   const getDialogTitle = () => {
