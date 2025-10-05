@@ -5,6 +5,44 @@ import type { PaginatedResponse } from '../../../../shared-lib/src/api/api.types
 import { userService } from '../services/userService';
 import { USER_CONSTANTS } from '../constants';
 
+/**
+ * Custom hook for user data management
+ * 
+ * This hook manages user data fetching, pagination, and filtering.
+ * It provides a centralized way to handle user list state and operations.
+ * 
+ * @returns {Object} Object containing user data and management functions
+ * @returns {User[]} allUsers - All loaded users
+ * @returns {User[]} filteredUsers - Filtered users based on search criteria
+ * @returns {Function} setFilteredUsers - Function to update filtered users
+ * @returns {PaginatedResponse<User> | null} pagination - Pagination metadata
+ * @returns {boolean} loading - Loading state
+ * @returns {string | null} error - Error message if any
+ * @returns {Function} loadUsers - Function to load users with optional params
+ * @returns {Function} setError - Function to set error state
+ * @returns {Function} handlePageChange - Function to handle page change
+ * @returns {Function} handlePageSizeChange - Function to handle page size change
+ * 
+ * @example
+ * ```tsx
+ * const {
+ *   allUsers,
+ *   filteredUsers,
+ *   pagination,
+ *   loading,
+ *   error,
+ *   loadUsers,
+ *   handlePageChange,
+ *   handlePageSizeChange,
+ * } = useUsers();
+ * 
+ * // Load users with search params
+ * loadUsers({ username: 'john' });
+ * 
+ * // Change page
+ * handlePageChange(2);
+ * ```
+ */
 export const useUsers = () => {
   const { t } = useTranslation();
   const [allUsers, setAllUsers] = useState<User[]>([]);

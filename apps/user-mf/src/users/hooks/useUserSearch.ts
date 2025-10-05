@@ -2,6 +2,43 @@ import { useState, useCallback } from 'react';
 import type { User } from '../services/userService';
 import type { SearchFormData } from '../types/user.types';
 
+/**
+ * Custom hook for user search functionality
+ * 
+ * This hook manages the search panel state and provides client-side filtering
+ * capabilities for the user list. It handles search form data and applies
+ * filters based on various user attributes.
+ * 
+ * @param {User[]} allUsers - The complete list of users to search through
+ * @returns {Object} Object containing search state and functions
+ * @returns {boolean} searchPanelOpen - Whether search panel is open
+ * @returns {SearchFormData} searchFormData - Current search form values
+ * @returns {Function} applyClientSideFiltersWithData - Apply filters to user list
+ * @returns {Function} handleSearchPanelToggle - Toggle search panel visibility
+ * @returns {Function} handleSearchFormChange - Update search form field
+ * @returns {Function} handleClearSearch - Clear all search filters
+ * 
+ * @example
+ * ```tsx
+ * const {
+ *   searchPanelOpen,
+ *   searchFormData,
+ *   handleSearchPanelToggle,
+ *   handleSearchFormChange,
+ *   applyClientSideFiltersWithData,
+ *   handleClearSearch,
+ * } = useUserSearch(allUsers);
+ * 
+ * // Toggle search panel
+ * handleSearchPanelToggle();
+ * 
+ * // Update search field
+ * handleSearchFormChange('username', 'john');
+ * 
+ * // Apply filters
+ * const filtered = applyClientSideFiltersWithData(searchFormData);
+ * ```
+ */
 export const useUserSearch = (allUsers: User[]) => {
   const [searchPanelOpen, setSearchPanelOpen] = useState(false);
   const [searchFormData, setSearchFormData] = useState<SearchFormData>({
