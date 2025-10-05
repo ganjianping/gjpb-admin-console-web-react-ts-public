@@ -6,12 +6,26 @@
 export const USER_CONSTANTS = {
   // Pagination
   DEFAULT_PAGE_SIZE: 20,
+  PAGE_SIZE_OPTIONS: [10, 20, 50, 100],
   
   // Sorting
   SORT_FIELD: 'updatedAt',
   SORT_DIRECTION: 'desc' as const,
   
-  // Validation constraints
+  // Validation constraints - organized in nested object for better maintainability
+  VALIDATION: {
+    USERNAME_MIN_LENGTH: 3,
+    USERNAME_MAX_LENGTH: 50,
+    PASSWORD_MIN_LENGTH: 8,
+    PASSWORD_MAX_LENGTH: 100,
+    NICKNAME_MIN_LENGTH: 1,
+    NICKNAME_MAX_LENGTH: 100,
+    EMAIL_MAX_LENGTH: 255,
+    MOBILE_NUMBER_MIN_LENGTH: 10,
+    MOBILE_NUMBER_MAX_LENGTH: 15,
+  },
+  
+  // Legacy validation constants (maintained for backward compatibility)
   USERNAME_MIN_LENGTH: 3,
   USERNAME_MAX_LENGTH: 50,
   PASSWORD_MIN_LENGTH: 8,

@@ -17,6 +17,7 @@ export const useUsers = () => {
   const hasInitiallyLoaded = useRef(false);
 
   // Memoized function to load users
+  // Dependencies optimized to prevent unnecessary re-renders
   const loadUsers = useCallback(async (params?: UserQueryParams, page?: number, size?: number) => {
     const actualPage = page ?? currentPage;
     const actualSize = size ?? pageSize;
@@ -56,7 +57,7 @@ export const useUsers = () => {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, pageSize, t]);
+  }, [t]); // Optimized: removed currentPage, pageSize from dependencies to prevent circular updates
 
   // Load users only once on initial mount
   useEffect(() => {
