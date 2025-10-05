@@ -1,8 +1,9 @@
-export { default as WelcomeCard } from './WelcomeCard';
-export { default as BasicInfoCard } from './BasicInfoCard';
-export { default as LoginActivityCard } from './LoginActivityCard';
-export { default as RolesCard } from './RolesCard';
-export { default as UserPreferencesCard } from './UserPreferencesCard';
+export { default as WelcomeCard } from "./WelcomeCard";
+export { default as BasicInfoCard } from "./BasicInfoCard";
+export { default as LoginActivityCard } from "./LoginActivityCard";
+export { default as RolesCard } from "./RolesCard";
+export { default as UserPreferencesCard } from "./UserPreferencesCard";
+export { default as AppSettingsCard } from "./AppSettingsCard";
 
 // Skeletons
 export {
@@ -11,4 +12,4 @@ export {
   InfoCardSkeleton,
   RolesCardSkeleton,
   UserPreferencesCardSkeleton,
-} from './DashboardSkeleton';
+} from "./DashboardSkeleton";

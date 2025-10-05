@@ -15,6 +15,7 @@ import {
   LoginActivityCard,
   RolesCard,
   UserPreferencesCard,
+  AppSettingsCard,
   DashboardSkeleton,
 } from '../components';
 
@@ -138,6 +139,11 @@ const DashboardPage = () => {
           <Box sx={{ flex: 1 }}>
             <RolesCard roleCodes={user.roleCodes || []} />
           </Box>
+        </Box>
+
+        {/* App Settings Card */}
+        <Box sx={{ mb: 3 }}>
+          <AppSettingsCard />
         </Box>
       </Box>
     </Box>

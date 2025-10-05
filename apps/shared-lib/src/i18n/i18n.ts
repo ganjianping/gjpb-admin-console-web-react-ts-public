@@ -131,6 +131,14 @@ const enResources = {
       lastFailedLogin: 'Last Failed Login',
       roles: 'User Roles',
     },
+    appSettings: {
+      title: 'App Settings',
+      app_name: 'App Name',
+      app_version: 'App Version',
+      app_company: 'Company',
+      app_description: 'Description',
+      website_tags: 'Website Tags',
+    },
   },
 };
 
@@ -261,6 +269,14 @@ const zhResources = {
       failedAttempts: '失败登录尝试',
       lastFailedLogin: '最后失败登录',
       roles: '用户角色',
+    },
+    appSettings: {
+      title: '应用设置',
+      app_name: '应用名称',
+      app_version: '应用版本',
+      app_company: '公司',
+      app_description: '描述',
+      website_tags: '网站标签',
     },
   },
 };

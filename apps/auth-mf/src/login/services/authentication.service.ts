@@ -7,6 +7,7 @@ import { apiClient } from '../../../../shared-lib/src/api/api-client';
 import { setCookie } from '../../../../shared-lib/src/core/cookie';
 import { mockApiService } from '../../../../shared-lib/src/api/mock-api-service';
 import { clearAllCaches } from '../../../../shared-lib/src/core/cache-manager';
+import { appSettingsService } from '../../../../shared-lib/src/api/app-settings-service';
 
 // Check if we should use mock API
 const useMockAPI =
@@ -90,6 +91,12 @@ class AuthenticationService {
           roleCodes: authResponse.roleCodes,
         })
       );
+
+      // Fetch and store app settings in the background
+      appSettingsService.fetchAppSettings().catch(error => {
+        console.error('[AuthService] Failed to fetch app settings:', error);
+        // Don't fail the login if app settings fetch fails
+      });
 
       return authResponse;
     } catch (error) {
