@@ -7,7 +7,7 @@ import { apiClient } from "../../../../shared-lib/src/api/api-client";
 import { setCookie } from "../../../../shared-lib/src/core/cookie";
 import { mockApiService } from "../../../../shared-lib/src/api/mock-api-service";
 import { clearAllCaches } from "../../../../shared-lib/src/core/cache-manager";
-import { appSettingsService } from "../../../../shared-lib/src/api/app-settings-service";
+import { appSettingsService } from "./app-settings-service";
 
 // Check if we should use mock API
 const useMockAPI =

@@ -1,4 +1,4 @@
-import { apiClient } from "./api-client";
+import { apiClient } from "../../../../shared-lib/src/api/api-client";
 
 export interface AppSetting {
   name: string;

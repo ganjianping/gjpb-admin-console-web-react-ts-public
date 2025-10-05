@@ -9,7 +9,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import SettingsIcon from "@mui/icons-material/Settings";
-import { appSettingsService } from "../../../../shared-lib/src/api/app-settings-service";
+import { appSettingsService } from "../../../../auth-mf/src/login/services/app-settings-service";
 
 const AppSettingsCard = () => {
   const { t, i18n } = useTranslation();
