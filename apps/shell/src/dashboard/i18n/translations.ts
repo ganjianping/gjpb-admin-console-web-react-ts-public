@@ -61,19 +61,40 @@ const zhDashboard = {
 };
 
 // Add dashboard translations to i18n
-i18n.addResourceBundle(
-  "en",
-  "translation",
-  { dashboard: enDashboard },
-  true,
-  true,
-);
-i18n.addResourceBundle(
-  "zh",
-  "translation",
-  { dashboard: zhDashboard },
-  true,
-  true,
-);
+// Use deep merge to add dashboard namespace to existing translation resources
+if (i18n.isInitialized) {
+  i18n.addResourceBundle(
+    "en",
+    "translation",
+    { dashboard: enDashboard },
+    true,
+    true,
+  );
+  i18n.addResourceBundle(
+    "zh",
+    "translation",
+    { dashboard: zhDashboard },
+    true,
+    true,
+  );
+} else {
+  // If i18n is not initialized yet, wait for it
+  i18n.on("initialized", () => {
+    i18n.addResourceBundle(
+      "en",
+      "translation",
+      { dashboard: enDashboard },
+      true,
+      true,
+    );
+    i18n.addResourceBundle(
+      "zh",
+      "translation",
+      { dashboard: zhDashboard },
+      true,
+      true,
+    );
+  });
+}
 
 export { enDashboard, zhDashboard };
