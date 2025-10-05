@@ -7,15 +7,40 @@ import { appSettingService } from '../services/appSettingService';
 import { APP_SETTING_CONSTANTS } from '../constants';
 import { handleApiError, extractValidationErrors } from '../utils/error-handler';
 
+/**
+ * Parameters for useAppSettingHandlers hook
+ * @interface UseAppSettingHandlersParams
+ */
 interface UseAppSettingHandlersParams {
+  /** Callback invoked when operation succeeds, receives success message */
   onSuccess: (message: string) => void;
+  /** Callback invoked when operation fails, receives error message */
   onError: (message: string) => void;
+  /** Callback invoked to refresh data after successful operations */
   onRefresh: () => void;
 }
 
 /**
  * Custom hook to handle app setting CRUD operations
- * Separates business logic from UI components
+ * 
+ * This hook separates business logic from UI components, providing a clean interface
+ * for creating, updating, and deleting app settings. It handles validation, API calls,
+ * error handling, and success/error notifications.
+ * 
+ * @param {UseAppSettingHandlersParams} params - Configuration callbacks
+ * @returns {Object} Handler methods for app setting operations
+ * 
+ * @example
+ * ```tsx
+ * const { handleSave, handleDelete } = useAppSettingHandlers({
+ *   onSuccess: (msg) => showSuccess(msg),
+ *   onError: (msg) => showError(msg),
+ *   onRefresh: () => loadAppSettings(),
+ * });
+ * ```
+ * 
+ * @see {@link useAppSettingDialog} for UI state management
+ * @see {@link AppSettingsPage} for usage example
  */
 export const useAppSettingHandlers = ({
   onSuccess,

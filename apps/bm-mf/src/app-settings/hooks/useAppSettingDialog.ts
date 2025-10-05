@@ -5,7 +5,31 @@ import type { AppSetting, AppSettingFormData, AppSettingActionType } from '../ty
 
 /**
  * Hook to manage app setting dialog state and UI interactions
- * Business logic is handled by useAppSettingHandlers
+ * 
+ * This hook manages all UI-related state for the app setting dialog, including:
+ * - Dialog open/close state
+ * - Form data and validation errors
+ * - Action type (view, edit, create, delete)
+ * - Loading state
+ * 
+ * Business logic (save/delete operations) is handled by useAppSettingHandlers.
+ * 
+ * @returns {Object} Dialog state and handler methods
+ * 
+ * @example
+ * ```tsx
+ * const {
+ *   dialogOpen,
+ *   formData,
+ *   formErrors,
+ *   handleCreate,
+ *   handleEdit,
+ *   handleClose,
+ * } = useAppSettingDialog();
+ * ```
+ * 
+ * @see {@link useAppSettingHandlers} for business logic
+ * @see {@link AppSettingsPage} for usage example
  */
 export const useAppSettingDialog = () => {
   const [dialogOpen, setDialogOpen] = useState(false);

@@ -19,13 +19,33 @@ import {
   useAppSettingHandlers,
 } from '../hooks';
 
+/**
+ * Main page component for App Settings management
+ * 
+ * This component orchestrates multiple hooks to provide a complete
+ * CRUD interface for managing application settings. It demonstrates
+ * the separation of concerns pattern:
+ * 
+ * - useAppSettings: Data fetching & pagination
+ * - useAppSettingSearch: Search functionality
+ * - useAppSettingDialog: Dialog UI state
+ * - useAppSettingHandlers: Business logic (CRUD operations)
+ * 
+ * @component
+ */
 const AppSettingsPage = () => {
   const theme = useTheme();
   
+  // ============================================================================
+  // Notification Management
+  // ============================================================================
   // Notification state using shared hook
   const { snackbar, showSuccess, showError, hideNotification } = useNotification();
   
-  // Initialize app settings data management
+  // ============================================================================
+  // Data Management
+  // ============================================================================
+  // Initialize app settings data management with pagination support
   const {
     allAppSettings,
     filteredAppSettings,
@@ -39,7 +59,10 @@ const AppSettingsPage = () => {
     handlePageSizeChange,
   } = useAppSettings();
 
-  // Initialize search functionality
+  // ============================================================================
+  // Search Functionality
+  // ============================================================================
+  // Initialize client-side search with real-time filtering
   const {
     searchPanelOpen,
     searchFormData,
@@ -49,7 +72,10 @@ const AppSettingsPage = () => {
     handleClearSearch,
   } = useAppSettingSearch(allAppSettings);
 
-  // Initialize dialog management (UI state only)
+  // ============================================================================
+  // Dialog Management (UI State Only)
+  // ============================================================================
+  // Initialize dialog UI state - no business logic here
   const {
     dialogOpen,
     selectedAppSetting,
@@ -66,7 +92,10 @@ const AppSettingsPage = () => {
     handleFormChange,
   } = useAppSettingDialog();
 
-  // Initialize business logic handlers
+  // ============================================================================
+  // Business Logic Handlers
+  // ============================================================================
+  // Initialize CRUD operation handlers with callbacks
   const { handleSave, handleDelete: handleConfirmDelete } = useAppSettingHandlers({
     onSuccess: (message: string) => {
       showSuccess(message);
@@ -81,7 +110,13 @@ const AppSettingsPage = () => {
     },
   });
 
-  // Enhanced search functionality
+  // ============================================================================
+  // Search Handlers
+  // ============================================================================
+  /**
+   * Handle server-side search with API call
+   * Constructs search parameters and triggers data reload
+   */
   const handleSearch = () => {
     const searchParams: any = {};
     
@@ -94,31 +129,47 @@ const AppSettingsPage = () => {
     loadAppSettings(searchParams);
   };
 
-  // Handle form changes with client-side filtering
+  /**
+   * Handle form changes with real-time client-side filtering
+   * Updates search form and applies filters immediately without API call
+   */
   const handleSearchFormChangeWrapper = (field: keyof typeof searchFormData, value: any) => {
     handleSearchFormChange(field, value);
     
-    // Apply real-time client-side filtering
+    // Apply real-time client-side filtering for better UX
     const newSearchFormData = { ...searchFormData, [field]: value };
     const filtered = applyClientSideFiltersWithData(newSearchFormData);
     setFilteredAppSettings(filtered);
   };
 
-  // App setting action handlers
+  // ============================================================================
+  // Action Handlers
+  // ============================================================================
+  /**
+   * Trigger create dialog
+   */
   const handleCreateAppSetting = () => {
     handleCreate();
   };
   
-  // Dialog save handler
+  /**
+   * Save handler - delegates to business logic hook
+   */
   const handleDialogSave = async () => {
     await handleSave(actionType, formData, selectedAppSetting, setFormErrors);
   };
   
-  // Dialog delete handler
+  /**
+   * Delete handler - delegates to business logic hook
+   */
   const handleDialogDelete = async () => {
     await handleConfirmDelete(selectedAppSetting);
   };
 
+  /**
+   * Router for app setting actions (view/edit/delete)
+   * Called from table row actions
+   */
   const handleAppSettingAction = (appSetting: AppSetting, action: 'view' | 'edit' | 'delete') => {
     switch (action) {
       case 'view':
