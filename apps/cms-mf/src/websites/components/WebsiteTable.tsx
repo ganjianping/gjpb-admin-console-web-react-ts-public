@@ -1,5 +1,5 @@
-import { Box, Chip, Typography } from '@mui/material';
-import { Settings as SettingsIcon } from 'lucide-react';
+import { Box, Chip, Typography, Avatar } from '@mui/material';
+import { Globe } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { memo, useMemo } from 'react';
 import '../i18n/translations'; // Initialize websites translations
@@ -43,14 +43,35 @@ export const WebsiteTable = memo(({
   const columns = useMemo(() => [
     columnHelper.accessor('name', {
       header: t('websites.columns.name'),
-      cell: (info) => (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <SettingsIcon size={16} />
-          <Typography variant="body2" sx={{ fontWeight: 500 }}>
-            {info.getValue()}
-          </Typography>
-        </Box>
-      ),
+      cell: (info) => {
+        const website = info.row.original;
+        return (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            {website.logoUrl ? (
+              <Avatar
+                src={website.logoUrl}
+                alt={info.getValue()}
+                sx={{ width: 32, height: 32 }}
+                variant="rounded"
+              />
+            ) : (
+              <Avatar
+                sx={{ 
+                  width: 32, 
+                  height: 32,
+                  bgcolor: 'primary.main',
+                }}
+                variant="rounded"
+              >
+                <Globe size={16} />
+              </Avatar>
+            )}
+            <Typography variant="body2" sx={{ fontWeight: 500 }}>
+              {info.getValue()}
+            </Typography>
+          </Box>
+        );
+      },
     }),
     columnHelper.accessor('url', {
       header: t('websites.columns.url'),
@@ -135,7 +156,7 @@ export const WebsiteTable = memo(({
   if (!websites?.length) {
     return (
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 8 }}>
-        <SettingsIcon size={48} style={{ opacity: 0.3, marginBottom: 16 }} />
+        <Globe size={48} style={{ opacity: 0.3, marginBottom: 16 }} />
         <Typography variant="h6" sx={{ mt: 2, opacity: 0.7 }}>
           {t('websites.noSettingsFound')}
         </Typography>
