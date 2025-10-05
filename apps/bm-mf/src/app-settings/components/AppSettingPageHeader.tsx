@@ -23,6 +23,13 @@ export const AppSettingPageHeader: React.FC<AppSettingPageHeaderProps> = ({
   const { t } = useTranslation();
   const theme = useTheme();
 
+  const getSearchButtonBgColor = () => {
+    if (searchPanelOpen) return 'rgba(25, 118, 210, 0.08)';
+    return theme.palette.mode === 'dark' 
+      ? 'rgba(255, 255, 255, 0.05)'
+      : 'rgba(255, 255, 255, 0.9)';
+  };
+
   return (
     <Box sx={{ mb: 3 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
@@ -50,51 +57,66 @@ export const AppSettingPageHeader: React.FC<AppSettingPageHeaderProps> = ({
           {/* Search Panel Toggle */}
           <Button
             variant="outlined"
-            size="medium"
+            startIcon={<Search size={16} />}
+            endIcon={searchPanelOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
             onClick={onToggleSearchPanel}
-            startIcon={<Search size={18} />}
-            endIcon={searchPanelOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
             sx={{
               borderRadius: 2,
-              textTransform: 'none',
-              fontWeight: 500,
-              px: 2,
+              px: 2.5,
               py: 1,
-              backgroundColor: searchPanelOpen 
-                ? 'rgba(25, 118, 210, 0.08)' 
-                : 'transparent',
-              borderColor: searchPanelOpen ? 'primary.main' : 'divider',
-              color: searchPanelOpen ? 'primary.main' : 'text.secondary',
+              fontWeight: 600,
+              textTransform: 'none',
+              fontSize: '0.875rem',
+              borderColor: 'primary.main',
+              color: 'primary.main',
+              backgroundColor: getSearchButtonBgColor(),
+              transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+              boxShadow: searchPanelOpen 
+                ? '0 2px 8px rgba(25, 118, 210, 0.15)' 
+                : '0 1px 4px rgba(0, 0, 0, 0.1)',
               '&:hover': {
+                backgroundColor: searchPanelOpen 
+                  ? 'rgba(25, 118, 210, 0.12)' 
+                  : 'rgba(25, 118, 210, 0.04)',
                 borderColor: 'primary.main',
-                backgroundColor: 'rgba(25, 118, 210, 0.08)',
-                color: 'primary.main',
+                transform: 'translateY(-1px)',
+                boxShadow: '0 4px 12px rgba(25, 118, 210, 0.2)',
+              },
+              '& .MuiButton-endIcon': {
+                marginLeft: 1,
+                transition: 'transform 0.2s ease',
+                transform: searchPanelOpen ? 'rotate(180deg)' : 'rotate(0deg)',
               },
             }}
           >
-            {t('common.search')}
+            {searchPanelOpen ? t('common.hideSearch') : t('common.showSearch')}
           </Button>
 
           {/* Create Setting Button */}
           <Button
             variant="contained"
-            size="medium"
+            startIcon={<Plus size={16} />}
             onClick={onCreateAppSetting}
-            startIcon={<Plus size={18} />}
             sx={{
               borderRadius: 2,
-              textTransform: 'none',
-              fontWeight: 600,
-              px: 2.5,
+              px: 3,
               py: 1,
-              boxShadow: 'none',
+              fontWeight: 600,
+              textTransform: 'none',
+              fontSize: '0.875rem',
               backgroundColor: 'primary.main',
+              color: 'white',
+              boxShadow: '0 2px 8px rgba(25, 118, 210, 0.25)',
+              transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
               '&:hover': {
                 backgroundColor: 'primary.dark',
-                boxShadow: '0 4px 12px rgba(25, 118, 210, 0.3)',
                 transform: 'translateY(-1px)',
+                boxShadow: '0 4px 12px rgba(25, 118, 210, 0.35)',
               },
-              transition: 'all 0.2s ease',
+              '&:active': {
+                backgroundColor: 'primary.dark',
+                transform: 'translateY(0px)',
+              },
             }}
           >
             {t('appSettings.create')}

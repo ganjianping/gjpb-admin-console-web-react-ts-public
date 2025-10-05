@@ -74,7 +74,32 @@ export const RolePageHeader: React.FC<RolePageHeaderProps> = React.memo(({
         >
           {searchPanelOpen ? t('roles.hideSearch') : t('roles.showSearch')}
         </Button>
-        <Button variant="contained" startIcon={<Plus size={18} />} onClick={onCreate}>
+        <Button 
+          variant="contained" 
+          startIcon={<Plus size={16} />} 
+          onClick={onCreate}
+          sx={{
+            borderRadius: 2,
+            px: 3,
+            py: 1,
+            fontWeight: 600,
+            textTransform: 'none',
+            fontSize: '0.875rem',
+            backgroundColor: 'primary.main',
+            color: 'white',
+            boxShadow: '0 2px 8px rgba(25, 118, 210, 0.25)',
+            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+            '&:hover': {
+              backgroundColor: 'primary.dark',
+              transform: 'translateY(-1px)',
+              boxShadow: '0 4px 12px rgba(25, 118, 210, 0.35)',
+            },
+            '&:active': {
+              backgroundColor: 'primary.dark',
+              transform: 'translateY(0px)',
+            },
+          }}
+        >
           {t('roles.addRole')}
         </Button>
       </Box>

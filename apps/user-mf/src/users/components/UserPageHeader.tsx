@@ -16,6 +16,13 @@ export const UserPageHeader = ({
   const { t } = useTranslation();
   const theme = useTheme();
 
+  const getSearchButtonBgColor = () => {
+    if (searchPanelOpen) return 'rgba(25, 118, 210, 0.08)';
+    return theme.palette.mode === 'dark' 
+      ? 'rgba(255, 255, 255, 0.05)'
+      : 'rgba(255, 255, 255, 0.9)';
+  };
+
   return (
     <Box
       sx={{
@@ -44,11 +51,7 @@ export const UserPageHeader = ({
             fontSize: '0.875rem',
             borderColor: 'primary.main',
             color: 'primary.main',
-            backgroundColor: searchPanelOpen 
-              ? 'rgba(25, 118, 210, 0.08)' 
-              : theme.palette.mode === 'dark' 
-                ? 'rgba(255, 255, 255, 0.05)'
-                : 'rgba(255, 255, 255, 0.9)',
+            backgroundColor: getSearchButtonBgColor(),
             transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
             boxShadow: searchPanelOpen 
               ? '0 2px 8px rgba(25, 118, 210, 0.15)' 

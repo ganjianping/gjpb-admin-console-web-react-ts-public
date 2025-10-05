@@ -20,6 +20,13 @@ export const AuditLogPageHeader: React.FC<AuditLogPageHeaderProps> = ({
   const { t } = useTranslation();
   const theme = useTheme();
 
+  const getSearchButtonBgColor = () => {
+    if (searchPanelExpanded) return 'rgba(25, 118, 210, 0.08)';
+    return theme.palette.mode === 'dark' 
+      ? 'rgba(255, 255, 255, 0.05)'
+      : 'rgba(255, 255, 255, 0.9)';
+  };
+
   return (
     <Box sx={{ mb: 4 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
@@ -35,75 +42,68 @@ export const AuditLogPageHeader: React.FC<AuditLogPageHeaderProps> = ({
         
         <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center' }}>
           {/* Search Panel Toggle Button */}
-          <Box
+          <Button
+            variant="outlined"
+            startIcon={<Search size={16} />}
+            endIcon={
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                {activeFiltersCount > 0 && (
+                  <Box
+                    sx={{
+                      backgroundColor: 'error.main',
+                      color: 'white',
+                      borderRadius: '50%',
+                      width: 18,
+                      height: 18,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '0.75rem',
+                      fontWeight: 600,
+                    }}
+                  >
+                    {activeFiltersCount}
+                  </Box>
+                )}
+                {searchPanelExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+              </Box>
+            }
             onClick={onToggleSearchPanel}
             sx={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 1,
-              cursor: 'pointer',
-              py: 1,
-              px: 2,
               borderRadius: 2,
-              border: '1px solid',
-              borderColor: searchPanelExpanded ? 'primary.main' : 'rgba(25, 118, 210, 0.3)',
-              backgroundColor: searchPanelExpanded 
-                ? 'rgba(25, 118, 210, 0.08)' 
-                : theme.palette.mode === 'dark' 
-                  ? 'rgba(255, 255, 255, 0.05)' 
-                  : 'rgba(255, 255, 255, 0.8)',
-              backdropFilter: 'blur(4px)',
-              transition: 'all 0.2s ease',
+              px: 2.5,
+              py: 1,
+              fontWeight: 600,
+              textTransform: 'none',
+              fontSize: '0.875rem',
+              borderColor: 'primary.main',
+              color: 'primary.main',
+              backgroundColor: getSearchButtonBgColor(),
+              transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+              boxShadow: searchPanelExpanded 
+                ? '0 2px 8px rgba(25, 118, 210, 0.15)' 
+                : '0 1px 4px rgba(0, 0, 0, 0.1)',
               '&:hover': {
-                backgroundColor: 'rgba(25, 118, 210, 0.08)',
+                backgroundColor: searchPanelExpanded 
+                  ? 'rgba(25, 118, 210, 0.12)' 
+                  : 'rgba(25, 118, 210, 0.04)',
                 borderColor: 'primary.main',
                 transform: 'translateY(-1px)',
-                boxShadow: '0 2px 8px rgba(25, 118, 210, 0.15)',
+                boxShadow: '0 4px 12px rgba(25, 118, 210, 0.2)',
+              },
+              '& .MuiButton-endIcon': {
+                marginLeft: 1,
+                transition: 'transform 0.2s ease',
+                transform: searchPanelExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
               },
             }}
           >
-            <Search size={18} style={{ color: theme.palette.primary.main }} />
-            <Typography
-              variant="body2"
-              sx={{
-                fontWeight: 500,
-                color: searchPanelExpanded ? 'primary.main' : 'text.primary',
-              }}
-            >
-              {searchPanelExpanded ? t('common.hideSearch') : t('common.showSearch')}
-            </Typography>
-            {activeFiltersCount > 0 && (
-              <Box
-                sx={{
-                  backgroundColor: 'error.main',
-                  color: 'white',
-                  borderRadius: '50%',
-                  width: 18,
-                  height: 18,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '0.75rem',
-                  fontWeight: 600,
-                  ml: 0.5
-                }}
-              >
-                {activeFiltersCount}
-              </Box>
-            )}
-            {searchPanelExpanded ? (
-              <ChevronUp size={18} style={{ color: theme.palette.primary.main }} />
-            ) : (
-              <ChevronDown size={18} style={{ color: theme.palette.primary.main }} />
-            )}
-          </Box>
+            {searchPanelExpanded ? t('common.hideSearch') : t('common.showSearch')}
+          </Button>
 
           {/* Refresh Button */}
           <Button
             variant="outlined"
-            size="medium"
-            onClick={onRefresh}
-            disabled={loading}
             startIcon={
               <RefreshCw 
                 size={16} 
@@ -112,12 +112,31 @@ export const AuditLogPageHeader: React.FC<AuditLogPageHeaderProps> = ({
                 }} 
               />
             }
+            onClick={onRefresh}
+            disabled={loading}
             sx={{
               borderRadius: 2,
-              textTransform: 'none',
-              fontWeight: 500,
-              px: 2,
+              px: 2.5,
               py: 1,
+              fontWeight: 600,
+              textTransform: 'none',
+              fontSize: '0.875rem',
+              borderColor: 'primary.main',
+              color: 'primary.main',
+              backgroundColor: theme.palette.mode === 'dark' 
+                ? 'rgba(255, 255, 255, 0.05)'
+                : 'rgba(255, 255, 255, 0.9)',
+              transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+              boxShadow: '0 1px 4px rgba(0, 0, 0, 0.1)',
+              '&:hover': {
+                backgroundColor: 'rgba(25, 118, 210, 0.04)',
+                borderColor: 'primary.main',
+                transform: 'translateY(-1px)',
+                boxShadow: '0 4px 12px rgba(25, 118, 210, 0.2)',
+              },
+              '&:disabled': {
+                opacity: 0.6,
+              },
             }}
           >
             {t('common.refresh')}
