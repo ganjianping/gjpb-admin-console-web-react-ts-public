@@ -65,6 +65,9 @@ const shellResources = {
       auditLogs: {
         title: 'Audit Logs',
       },
+      websites: {
+        title: 'Websites',
+      },
       appSettings: {
         title: 'App Settings',
       },
@@ -146,6 +149,9 @@ const shellResources = {
       },
       auditLogs: {
         title: '审计日志',
+      },
+      websites: {
+        title: '网站管理',
       },
       appSettings: {
         title: '应用设置',

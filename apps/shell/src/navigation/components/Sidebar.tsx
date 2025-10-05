@@ -20,6 +20,7 @@ import {
   Shield,
   Activity,
   Settings,
+  Globe,
   ChevronLeft, 
   ChevronRight,
   ChevronDown,
@@ -97,6 +98,13 @@ const Sidebar = ({ drawerWidth, collapsedWidth, open, onClose, variant }: Sideba
       title: t('auditLogs.title'),
       path: '/audit-logs',
       icon: Activity,
+      roles: ['ADMIN', 'SUPER_ADMIN'],
+    },
+    {
+      key: 'websites',
+      title: t('websites.title'),
+      path: '/websites',
+      icon: Globe,
       roles: ['ADMIN', 'SUPER_ADMIN'],
     },
     {

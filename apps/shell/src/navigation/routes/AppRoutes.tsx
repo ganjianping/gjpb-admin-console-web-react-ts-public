@@ -37,6 +37,11 @@ const AppSettingsPage = lazy(() =>
     default: module.AppSettingsPage
   }))
 );
+const WebsitesPage = lazy(() =>
+  import('../../../../cms-mf/src/public-api').then(module => ({
+    default: module.WebsitesPage
+  }))
+);
 import DashboardPage from '../../dashboard/pages/DashboardPage';
 import SettingsPage from '../../settings/pages/SettingsPage';
 import NotFoundPage from '../pages/NotFoundPage';
@@ -217,6 +222,13 @@ const AppRoutes = () => {
           <Route path="audit-logs" element={
             <Suspense fallback={<AppLoading />}>
               <AuditLogPage />
+            </Suspense>
+          } />
+          
+          {/* Websites */}
+          <Route path="websites" element={
+            <Suspense fallback={<AppLoading />}>
+              <WebsitesPage />
             </Suspense>
           } />
           
