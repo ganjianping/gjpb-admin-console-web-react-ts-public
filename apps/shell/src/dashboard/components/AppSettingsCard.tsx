@@ -17,11 +17,39 @@ const AppSettingsCard = () => {
   const [settings, setSettings] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    // Get settings filtered by current language
-    const currentSettings = appSettingsService.getAppSettingsByLanguage(
-      i18n.language,
-    );
-    setSettings(currentSettings);
+    // Function to load settings
+    const loadSettings = () => {
+      const currentSettings = appSettingsService.getAppSettingsByLanguage(
+        i18n.language,
+      );
+      return currentSettings;
+    };
+
+    // Load settings immediately
+    const initialSettings = loadSettings();
+    setSettings(initialSettings);
+
+    // If settings are empty, set up a retry mechanism
+    // This handles the case where the background API call hasn't completed yet
+    if (Object.keys(initialSettings).length === 0) {
+      const intervalId = setInterval(() => {
+        const currentSettings = loadSettings();
+        if (Object.keys(currentSettings).length > 0) {
+          setSettings(currentSettings);
+          clearInterval(intervalId);
+        }
+      }, 500); // Check every 500ms for up to 10 seconds
+
+      // Clear interval after 10 seconds to avoid infinite polling
+      const timeoutId = setTimeout(() => {
+        clearInterval(intervalId);
+      }, 10000);
+
+      return () => {
+        clearInterval(intervalId);
+        clearTimeout(timeoutId);
+      };
+    }
   }, [i18n.language]);
 
   // If no settings available, don't render the card
