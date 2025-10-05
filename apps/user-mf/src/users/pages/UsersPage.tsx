@@ -9,6 +9,7 @@ import {
   UserDialog,
   DeleteUserDialog,
   NotificationSnackbar,
+  UsersPageSkeleton,
 } from '../components';
 
 import {
@@ -148,6 +149,11 @@ const UsersPage = () => {
   const handleOperationError = (message: string) => {
     showError(message);
   };
+
+  // Show skeleton while loading initial data
+  if (loading && allUsers.length === 0) {
+    return <UsersPageSkeleton />;
+  }
 
   return (
     <Box sx={{ py: 3 }}>

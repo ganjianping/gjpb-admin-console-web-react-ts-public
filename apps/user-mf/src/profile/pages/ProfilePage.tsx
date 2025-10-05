@@ -31,6 +31,9 @@ import type { UpdateProfileRequest, ChangePasswordRequest } from '../services/pr
 // Import notification component
 import { NotificationSnackbar } from '../../users/components/NotificationSnackbar';
 
+// Import skeleton component
+import { ProfilePageSkeleton } from '../components';
+
 // Tab panel interface
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -309,13 +312,9 @@ const ProfilePage = ({ user: propUser }: ProfilePageProps = {}) => {
     }
   };
 
-  // If user data is not available
+  // If user data is not available, show skeleton
   if (!user) {
-    return (
-      <Box sx={{ py: 4, textAlign: 'center' }}>
-        <Typography>{t('common.loading')}</Typography>
-      </Box>
-    );
+    return <ProfilePageSkeleton />;
   }
 
   return (

@@ -22,7 +22,7 @@ import {
 import { Plus, Shield, Settings, Search, ChevronDown, ChevronUp, ChevronRight, AlertTriangle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { DataTable, createColumnHelper, createStatusChip } from '../../../../shared-lib/src/data-management/DataTable';
-import { RoleSearchPanel } from '../components';
+import { RoleSearchPanel, RolesPageSkeleton } from '../components';
 import { useRoleSearch } from '../hooks';
 import { roleService } from '../services';
 import type { Role } from '../types/role.types';
@@ -622,6 +622,11 @@ const RolesPage = () => {
       default: return '';
     }
   };
+
+  // Show skeleton while loading initial data
+  if (loading && roles.length === 0) {
+    return <RolesPageSkeleton />;
+  }
 
   return (
     <Box sx={{ py: 3 }}>
