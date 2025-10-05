@@ -73,6 +73,10 @@ const enTranslations = {
       nameRequired: 'Setting name is required',
       valueRequired: 'Setting value is required',
       langRequired: 'Language is required',
+      networkError: 'Network error. Please check your connection.',
+      unauthorized: 'You are not authorized to perform this action.',
+      notFound: 'App setting not found.',
+      duplicateName: 'An app setting with this name already exists.',
     },
     validation: {
       nameMinLength: 'Setting name must be at least 2 characters',
@@ -155,6 +159,10 @@ const zhTranslations = {
       nameRequired: '设置名称为必填项',
       valueRequired: '设置值为必填项',
       langRequired: '语言为必填项',
+      networkError: '网络错误。请检查您的连接。',
+      unauthorized: '您无权执行此操作。',
+      notFound: '未找到应用设置。',
+      duplicateName: '已存在同名的应用设置。',
     },
     validation: {
       nameMinLength: '设置名称至少需要2个字符',

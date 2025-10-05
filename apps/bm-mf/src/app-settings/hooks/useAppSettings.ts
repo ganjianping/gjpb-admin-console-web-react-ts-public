@@ -15,7 +15,7 @@ export const useAppSettings = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
-  const [pageSize, setPageSize] = useState(APP_SETTING_CONSTANTS.DEFAULT_PAGE_SIZE);
+  const [pageSize, setPageSize] = useState<number>(APP_SETTING_CONSTANTS.DEFAULT_PAGE_SIZE);
   const hasInitiallyLoaded = useRef(false);
 
   // Memoized function to load app settings
@@ -58,7 +58,7 @@ export const useAppSettings = () => {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, pageSize, t]);
+  }, [t]); // Removed currentPage and pageSize from dependencies
 
   // Load app settings only once on initial mount
   useEffect(() => {
@@ -82,7 +82,8 @@ export const useAppSettings = () => {
     if (hasInitiallyLoaded.current) {
       loadAppSettings(undefined, currentPage, pageSize);
     }
-  }, [currentPage, pageSize, loadAppSettings]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage, pageSize]); // Removed loadAppSettings from dependencies
 
   return {
     allAppSettings,

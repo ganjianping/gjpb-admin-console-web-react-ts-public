@@ -1,7 +1,7 @@
 import { Box, Alert, Card, CardContent, Collapse, useTheme, Snackbar } from '@mui/material';
-import React, { useEffect } from 'react';
 import '../i18n/translations'; // Initialize app settings translations
-import { useState } from 'react';
+import { useNotification } from '../../../../shared-lib/src/data-management/useNotification';
+import type { AppSetting } from '../types/app-setting.types';
 
 // Import all the refactored components and hooks
 import {
@@ -21,12 +21,8 @@ import {
 const AppSettingsPage = () => {
   const theme = useTheme();
   
-  // Notification state
-  const [notification, setNotification] = useState<{
-    open: boolean;
-    message: string;
-    severity: 'success' | 'error';
-  }>({ open: false, message: '', severity: 'success' });
+  // Notification state using shared hook
+  const { snackbar, showSuccess, showError, hideNotification } = useNotification();
   
   // Initialize app settings data management
   const {
@@ -69,15 +65,6 @@ const AppSettingsPage = () => {
     handleSave,
     handleConfirmDelete,
   } = useAppSettingDialog();
-  
-  // Notification handlers
-  const showNotification = (message: string, severity: 'success' | 'error') => {
-    setNotification({ open: true, message, severity });
-  };
-  
-  const hideNotification = () => {
-    setNotification(prev => ({ ...prev, open: false }));
-  };
 
   // Enhanced search functionality
   const handleSearch = () => {
@@ -108,34 +95,34 @@ const AppSettingsPage = () => {
   };
   
   // Dialog save handler
-  const handleDialogSave = () => {
-    handleSave(
+  const handleDialogSave = async () => {
+    await handleSave(
       (message) => {
-        showNotification(message, 'success');
+        showSuccess(message);
         // Refresh the data
         loadAppSettings();
       },
       (message) => {
-        showNotification(message, 'error');
+        showError(message);
       }
     );
   };
   
   // Dialog delete handler
-  const handleDialogDelete = () => {
-    handleConfirmDelete(
+  const handleDialogDelete = async () => {
+    await handleConfirmDelete(
       (message) => {
-        showNotification(message, 'success');
+        showSuccess(message);
         // Refresh the data
         loadAppSettings();
       },
       (message) => {
-        showNotification(message, 'error');
+        showError(message);
       }
     );
   };
 
-  const handleAppSettingAction = (appSetting: any, action: 'view' | 'edit' | 'delete') => {
+  const handleAppSettingAction = (appSetting: AppSetting, action: 'view' | 'edit' | 'delete') => {
     switch (action) {
       case 'view':
         handleView(appSetting);
@@ -229,17 +216,17 @@ const AppSettingsPage = () => {
       
       {/* Notification Snackbar */}
       <Snackbar
-        open={notification.open}
-        autoHideDuration={4000}
+        open={snackbar.open}
+        autoHideDuration={snackbar.severity === 'error' ? 6000 : 4000}
         onClose={hideNotification}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
         <Alert
           onClose={hideNotification}
-          severity={notification.severity}
+          severity={snackbar.severity}
           sx={{ width: '100%' }}
         >
-          {notification.message}
+          {snackbar.message}
         </Alert>
       </Snackbar>
     </Box>

@@ -4,12 +4,26 @@
  */
 
 export const APP_SETTING_CONSTANTS = {
+  // Pagination
   DEFAULT_PAGE_SIZE: 20,
+  PAGE_SIZE_OPTIONS: [10, 20, 50, 100],
+  
+  // Defaults
   DEFAULT_LANGUAGE: 'EN',
+  
+  // Sorting
   SORT_FIELD: 'updatedAt',
   SORT_DIRECTION: 'desc' as const,
   
   // Validation constraints
+  VALIDATION: {
+    NAME_MIN_LENGTH: 2,
+    NAME_MAX_LENGTH: 100,
+    VALUE_MAX_LENGTH: 1000,
+    LANG_LENGTH: 2,
+  },
+  
+  // Keep old keys for backward compatibility
   NAME_MIN_LENGTH: 2,
   NAME_MAX_LENGTH: 100,
   VALUE_MAX_LENGTH: 1000,
