@@ -4,20 +4,6 @@ import i18n from '../../../../shared-lib/src/i18n/i18n';
 const usersTranslations = {
   en: {
     translation: {
-      common: {
-        searchFilters: 'Search Filters',
-        clearAll: 'Clear All',
-        search: 'Search',
-        searching: 'Searching...',
-        loading: 'Loading...',
-        save: 'Save',
-        saving: 'Saving...',
-        updating: 'Updating...',
-        create: 'Create',
-        notAvailable: 'Not Available',
-        active: 'Active',
-        inactive: 'Inactive',
-      },
       users: {
         pageTitle: 'User Management',
         username: 'Username',
@@ -113,20 +99,6 @@ const usersTranslations = {
   },
   zh: {
     translation: {
-      common: {
-        searchFilters: '搜索筛选',
-        clearAll: '清除全部',
-        search: '搜索',
-        searching: '搜索中...',
-        loading: '加载中...',
-        save: '保存',
-        saving: '保存中...',
-        updating: '更新中...',
-        create: '创建',
-        notAvailable: '不可用',
-        active: '启用',
-        inactive: '禁用',
-      },
       users: {
         pageTitle: '用户管理',
         username: '用户名',

@@ -4,17 +4,6 @@ import i18n from '../../../../shared-lib/src/i18n/i18n';
 const rolesTranslations = {
   en: {
     translation: {
-      common: {
-        searchFilters: 'Search Filters',
-        clearAll: 'Clear All',
-        search: 'Search',
-        loading: 'Loading...',
-        save: 'Save',
-        saving: 'Saving...',
-        updating: 'Updating...',
-        create: 'Create',
-        notAvailable: 'Not Available',
-      },
       roles: {
         name: 'Role Name',
         description: 'Description',
@@ -76,17 +65,6 @@ const rolesTranslations = {
   },
   zh: {
     translation: {
-      common: {
-        searchFilters: '搜索筛选',
-        clearAll: '清除全部',
-        search: '搜索',
-        loading: '加载中...',
-        save: '保存',
-        saving: '保存中...',
-        updating: '更新中...',
-        create: '创建',
-        notAvailable: '不可用',
-      },
       roles: {
         name: '角色名称',
         description: '描述',

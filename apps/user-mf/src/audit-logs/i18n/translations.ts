@@ -4,16 +4,6 @@ import i18n from '../../../../shared-lib/src/i18n/i18n';
 const auditLogsTranslations = {
   en: {
     translation: {
-      common: {
-        searchFilters: 'Search Filters',
-        clearAll: 'Clear All',
-        search: 'Search',
-        refresh: 'Refresh',
-        showSearch: 'Show Search',
-        hideSearch: 'Hide Search',
-        loading: 'Loading...',
-        notAvailable: 'Not Available',
-      },
       auditLogs: {
         title: 'Audit Logs',
         timestamp: 'Timestamp',
@@ -99,16 +89,6 @@ const auditLogsTranslations = {
   },
   zh: {
     translation: {
-      common: {
-        searchFilters: '搜索筛选',
-        clearAll: '清除全部',
-        search: '搜索',
-        refresh: '刷新',
-        showSearch: '显示搜索',
-        hideSearch: '隐藏搜索',
-        loading: '加载中...',
-        notAvailable: '不可用',
-      },
       auditLogs: {
         title: '审计日志',
         timestamp: '时间戳',

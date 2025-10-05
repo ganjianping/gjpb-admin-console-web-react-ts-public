@@ -6,13 +6,6 @@ console.log('🔵 [Profile i18n] translations.ts file loaded at:', new Date().to
 const profileTranslations = {
   en: {
     translation: {
-      common: {
-        save: 'Save',
-        saving: 'Saving...',
-        loading: 'Loading...',
-        updating: 'Updating...',
-        notAvailable: 'Not Available',
-      },
       profile: {
         title: 'Profile',
         personalInfo: 'Personal Information',
@@ -57,11 +50,6 @@ const profileTranslations = {
   },
   zh: {
     translation: {
-      common: {
-        save: '保存',
-        saving: '保存中...',
-        updating: '更新中...',
-      },
       profile: {
         title: '个人资料',
         personalInfo: '个人信息',

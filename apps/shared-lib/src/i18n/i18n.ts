@@ -9,40 +9,64 @@ const enResources = {
     title: 'Admin Console',
   },
   common: {
+    // Loading & Status
     loading: 'Loading...',
-    error: 'An error occurred',
-    retry: 'Retry',
-    cancel: 'Cancel',
-    confirm: 'Confirm',
+    saving: 'Saving...',
+    updating: 'Updating...',
+    creating: 'Creating...',
+    deleting: 'Deleting...',
+    searching: 'Searching...',
+    
+    // Actions
     save: 'Save',
     delete: 'Delete',
     edit: 'Edit',
     add: 'Add',
+    create: 'Create',
+    view: 'View',
+    cancel: 'Cancel',
+    confirm: 'Confirm',
+    close: 'Close',
+    apply: 'Apply',
+    refresh: 'Refresh',
+    
+    // Search & Filter
     search: 'Search',
+    searchFilters: 'Search Filters',
     filter: 'Filter',
-    all: 'All',
-    actions: 'Actions',
     clear: 'Clear',
     clearAll: 'Clear All',
-    searchFilters: 'Search Filters',
+    showSearch: 'Show Search',
+    hideSearch: 'Hide Search',
+    
+    // Common Terms
+    all: 'All',
+    actions: 'Actions',
     yes: 'Yes',
     no: 'No',
-    close: 'Close',
-    view: 'View',
+    active: 'Active',
+    inactive: 'Inactive',
+    notAvailable: 'Not Available',
+    
+    // Navigation
     goBack: 'Go Back',
     goHome: 'Go Home',
     viewAll: 'View All',
+    
+    // Theme
     lightMode: 'Light Mode',
     darkMode: 'Dark Mode',
     language: 'Language',
     theme: 'Theme',
+    
+    // UI Elements
     settings: 'Settings',
     notifications: 'Notifications',
     userMenu: 'User Menu',
     collapseSidebar: 'Collapse Sidebar',
     expandSidebar: 'Expand Sidebar',
-    notAvailable: 'Not Available',
-    apply: 'Apply',
+    
+    // Date & Time
     today: 'Today',
     yesterday: 'Yesterday',
     last7Days: 'Last 7 Days',
@@ -57,6 +81,10 @@ const enResources = {
     updatedAt: 'Updated At',
     createdBy: 'Created By',
     updatedBy: 'Updated By',
+    
+    // Messages
+    error: 'An error occurred',
+    retry: 'Retry',
   },
   errors: {
     notFound: 'Page not found',
@@ -112,40 +140,64 @@ const zhResources = {
     title: '管理控制台',
   },
   common: {
+    // Loading & Status
     loading: '加载中...',
-    error: '发生错误',
-    retry: '重试',
-    cancel: '取消',
-    confirm: '确认',
+    saving: '保存中...',
+    updating: '更新中...',
+    creating: '创建中...',
+    deleting: '删除中...',
+    searching: '搜索中...',
+    
+    // Actions
     save: '保存',
     delete: '删除',
     edit: '编辑',
     add: '添加',
+    create: '创建',
+    view: '查看',
+    cancel: '取消',
+    confirm: '确认',
+    close: '关闭',
+    apply: '应用',
+    refresh: '刷新',
+    
+    // Search & Filter
     search: '搜索',
+    searchFilters: '搜索筛选',
     filter: '筛选',
-    all: '全部',
-    actions: '操作',
     clear: '清除',
     clearAll: '清除全部',
-    searchFilters: '搜索筛选',
+    showSearch: '显示搜索',
+    hideSearch: '隐藏搜索',
+    
+    // Common Terms
+    all: '全部',
+    actions: '操作',
     yes: '是',
     no: '否',
-    close: '关闭',
-    view: '查看',
+    active: '活跃',
+    inactive: '未激活',
+    notAvailable: '不可用',
+    
+    // Navigation
     goBack: '返回',
     goHome: '回到首页',
     viewAll: '查看全部',
+    
+    // Theme
     lightMode: '亮色模式',
     darkMode: '暗色模式',
     language: '语言',
     theme: '主题',
+    
+    // UI Elements
     settings: '设置',
     notifications: '通知',
     userMenu: '用户菜单',
     collapseSidebar: '收起侧边栏',
     expandSidebar: '展开侧边栏',
-    notAvailable: '不可用',
-    apply: '应用',
+    
+    // Date & Time
     today: '今天',
     yesterday: '昨天',
     last7Days: '最近7天',
@@ -160,6 +212,10 @@ const zhResources = {
     updatedAt: '更新时间',
     createdBy: '创建者',
     updatedBy: '更新者',
+    
+    // Messages
+    error: '发生错误',
+    retry: '重试',
   },
   errors: {
     notFound: '页面不存在',
