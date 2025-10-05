@@ -8,6 +8,9 @@ const shellResources = {
         welcome: 'Welcome back',
         userInfo: {
           title: 'User Information',
+          basicInfo: 'Basic Information',
+          displayName: 'Display Name',
+          username: 'Username',
           email: 'Email',
           mobile: 'Mobile',
           accountStatus: 'Account Status',
@@ -19,6 +22,10 @@ const shellResources = {
           roles: 'User Roles',
           never: 'Never',
           notAvailable: 'Not available',
+          userPreferences: 'User Preferences',
+          language: 'Language',
+          colorTheme: 'Color Theme',
+          themeMode: 'Theme Mode',
         },
       },
       navigation: {
@@ -83,6 +90,9 @@ const shellResources = {
         welcome: '欢迎回来',
         userInfo: {
           title: '用户信息',
+          basicInfo: '基本信息',
+          displayName: '显示名称',
+          username: '用户名',
           email: '电子邮件',
           mobile: '手机号码',
           accountStatus: '账户状态',
@@ -94,6 +104,10 @@ const shellResources = {
           roles: '用户角色',
           never: '从未',
           notAvailable: '不可用',
+          userPreferences: '用户偏好设置',
+          language: '语言',
+          colorTheme: '颜色主题',
+          themeMode: '主题模式',
         },
       },
       navigation: {
