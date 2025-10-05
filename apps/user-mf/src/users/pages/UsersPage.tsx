@@ -29,7 +29,7 @@ import { rolesService } from '../../roles/services/rolesCacheService';
 const UsersPage = () => {
   const theme = useTheme();
   // Initialize notification system
-  const { showSuccess, showError, snackbar, hideNotification } = useNotification();
+  const { showError, snackbar, hideNotification } = useNotification();
    // Initialize roles loading - load roles once when Users page is accessed
   const { loadRoles, error: rolesError } = useRoles();
 
@@ -74,6 +74,14 @@ const UsersPage = () => {
     handleSave,
     handleConfirmDelete,
   } = useUserDialog();
+
+  // Reload users after successful operation
+  useEffect(() => {
+    if (!dialogOpen && !actionType && !dialogLoading) {
+      // Dialog was closed, reload users
+      loadUsers();
+    }
+  }, [dialogOpen, actionType, dialogLoading]);
 
   // Load roles once when Users page is accessed
   useEffect(() => {
@@ -137,17 +145,6 @@ const UsersPage = () => {
         handleDelete(user);
         break;
     }
-  };
-
-  // Handle successful operations
-  const handleOperationSuccess = (message: string) => {
-    showSuccess(message);
-    loadUsers(); // Reload users after successful operation
-  };
-
-  // Handle operation errors
-  const handleOperationError = (message: string) => {
-    showError(message);
   };
 
   // Show skeleton while loading initial data
@@ -220,7 +217,7 @@ const UsersPage = () => {
         actionType={actionType}
         formData={formData}
         onFormChange={handleFormChange}
-        onSubmit={() => handleSave(handleOperationSuccess, handleOperationError)}
+        onSubmit={handleSave}
         loading={dialogLoading}
         formErrors={formErrors}
       />
@@ -230,7 +227,7 @@ const UsersPage = () => {
         open={actionType === 'delete'}
         onClose={handleCloseDialog}
         user={selectedUser}
-        onConfirm={() => handleConfirmDelete(handleOperationSuccess, handleOperationError)}
+        onConfirm={handleConfirmDelete}
         loading={dialogLoading}
       />
 
