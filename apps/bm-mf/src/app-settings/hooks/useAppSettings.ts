@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import '../i18n/i18n.config'; // Initialize app settings translations
+import '../i18n/translations'; // Initialize app settings translations
 import type { AppSettingQueryParams } from '../services/appSettingService';
 import type { AppSetting } from '../types/app-setting.types';
 import type { PaginatedResponse } from '../../../../shared-lib/src/api/api.types';

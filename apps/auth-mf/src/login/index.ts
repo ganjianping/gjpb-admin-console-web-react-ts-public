@@ -1,11 +1,8 @@
 /**
- * Login Feature Index
- * 
- * Centralized exports for all login-related functionality
+ * Login Feature Entry Point
  */
 
-// Initialize login-specific i18n translations
-import './i18n/i18n.config';
+import './i18n/translations';
 
 // Components
 export { default as LoginForm } from './components/LoginForm';

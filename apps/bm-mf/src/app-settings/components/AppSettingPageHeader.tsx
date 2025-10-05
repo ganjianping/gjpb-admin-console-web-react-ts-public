@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import '../i18n/i18n.config'; // Initialize app settings translations
+import React from 'react';
+import '../i18n/translations'; // Initialize app settings translations
 import {
   Box,
   Button,

@@ -1,5 +1,6 @@
 import { Box, Alert, Card, CardContent, Collapse, useTheme, Snackbar } from '@mui/material';
-import '../i18n/i18n.config'; // Initialize app settings translations
+import React, { useEffect } from 'react';
+import '../i18n/translations'; // Initialize app settings translations
 import { useState } from 'react';
 
 // Import all the refactored components and hooks
