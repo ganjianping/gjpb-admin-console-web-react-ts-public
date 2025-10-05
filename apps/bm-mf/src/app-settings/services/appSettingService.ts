@@ -1,17 +1,17 @@
 // App Settings Service - handles app settings management API calls
-import { apiClient } from '../../../../shared-lib/src/api/api-client';
-import type { 
-  ApiResponse, 
-  PaginatedResponse
-} from '../../../../shared-lib/src/api/api.types';
-import type { AppSetting } from '../types/app-setting.types';
+import { apiClient } from "../../../../shared-lib/src/api/api-client";
+import type {
+  ApiResponse,
+  PaginatedResponse,
+} from "../../../../shared-lib/src/api/api.types";
+import type { AppSetting } from "../types/app-setting.types";
 
 // Query parameters for app settings search
 export interface AppSettingQueryParams {
   page?: number;
   size?: number;
   sort?: string;
-  direction?: 'asc' | 'desc';
+  direction?: "asc" | "desc";
   name?: string;
   lang?: string;
   isSystem?: boolean;
@@ -37,24 +37,26 @@ export interface UpdateAppSettingRequest {
 }
 
 class AppSettingService {
-  private readonly baseUrl = '/v1/app-settings';
+  private readonly baseUrl = "/v1/app-settings";
 
   /**
    * Get all app settings with pagination and search
    */
-  async getAppSettings(params?: AppSettingQueryParams): Promise<ApiResponse<PaginatedResponse<AppSetting>>> {
+  async getAppSettings(
+    params?: AppSettingQueryParams,
+  ): Promise<ApiResponse<PaginatedResponse<AppSetting>>> {
     const searchParams = new URLSearchParams();
-    
+
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
-        if (value !== undefined && value !== null && value !== '') {
+        if (value !== undefined && value !== null && value !== "") {
           searchParams.append(key, String(value));
         }
       });
     }
 
-    const url = searchParams.toString() 
-      ? `${this.baseUrl}?${searchParams}` 
+    const url = searchParams.toString()
+      ? `${this.baseUrl}?${searchParams}`
       : this.baseUrl;
 
     return apiClient.get<PaginatedResponse<AppSetting>>(url);
@@ -70,14 +72,19 @@ class AppSettingService {
   /**
    * Create a new app setting
    */
-  async createAppSetting(data: CreateAppSettingRequest): Promise<ApiResponse<AppSetting>> {
+  async createAppSetting(
+    data: CreateAppSettingRequest,
+  ): Promise<ApiResponse<AppSetting>> {
     return apiClient.post<AppSetting>(this.baseUrl, data);
   }
 
   /**
    * Update an existing app setting
    */
-  async updateAppSetting(id: string, data: UpdateAppSettingRequest): Promise<ApiResponse<AppSetting>> {
+  async updateAppSetting(
+    id: string,
+    data: UpdateAppSettingRequest,
+  ): Promise<ApiResponse<AppSetting>> {
     return apiClient.put<AppSetting>(`${this.baseUrl}/${id}`, data);
   }
 

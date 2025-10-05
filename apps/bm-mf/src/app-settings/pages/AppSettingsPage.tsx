@@ -16,6 +16,7 @@ import {
   useAppSettings,
   useAppSettingSearch,
   useAppSettingDialog,
+  useAppSettingHandlers,
 } from '../hooks';
 
 const AppSettingsPage = () => {
@@ -48,7 +49,7 @@ const AppSettingsPage = () => {
     handleClearSearch,
   } = useAppSettingSearch(allAppSettings);
 
-  // Initialize dialog management
+  // Initialize dialog management (UI state only)
   const {
     dialogOpen,
     selectedAppSetting,
@@ -56,15 +57,29 @@ const AppSettingsPage = () => {
     loading: dialogLoading,
     formData,
     formErrors,
+    setFormErrors,
     handleView,
     handleEdit,
     handleCreate,
     handleDelete,
-    handleCloseDialog,
+    handleClose,
     handleFormChange,
-    handleSave,
-    handleConfirmDelete,
   } = useAppSettingDialog();
+
+  // Initialize business logic handlers
+  const { handleSave, handleDelete: handleConfirmDelete } = useAppSettingHandlers({
+    onSuccess: (message: string) => {
+      showSuccess(message);
+      loadAppSettings();
+      handleClose();
+    },
+    onError: (message: string) => {
+      showError(message);
+    },
+    onRefresh: () => {
+      loadAppSettings();
+    },
+  });
 
   // Enhanced search functionality
   const handleSearch = () => {
@@ -96,30 +111,12 @@ const AppSettingsPage = () => {
   
   // Dialog save handler
   const handleDialogSave = async () => {
-    await handleSave(
-      (message) => {
-        showSuccess(message);
-        // Refresh the data
-        loadAppSettings();
-      },
-      (message) => {
-        showError(message);
-      }
-    );
+    await handleSave(actionType, formData, selectedAppSetting, setFormErrors);
   };
   
   // Dialog delete handler
   const handleDialogDelete = async () => {
-    await handleConfirmDelete(
-      (message) => {
-        showSuccess(message);
-        // Refresh the data
-        loadAppSettings();
-      },
-      (message) => {
-        showError(message);
-      }
-    );
+    await handleConfirmDelete(selectedAppSetting);
   };
 
   const handleAppSettingAction = (appSetting: AppSetting, action: 'view' | 'edit' | 'delete') => {
@@ -196,7 +193,7 @@ const AppSettingsPage = () => {
       {/* App Setting Dialog */}
       <AppSettingDialog
         open={dialogOpen && (actionType === 'create' || actionType === 'edit' || actionType === 'view')}
-        onClose={handleCloseDialog}
+        onClose={handleClose}
         actionType={actionType}
         formData={formData}
         onFormChange={handleFormChange}

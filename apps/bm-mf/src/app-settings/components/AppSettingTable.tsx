@@ -1,5 +1,5 @@
 import { Box, Chip, Typography } from '@mui/material';
-import { Settings as SettingsIcon, Eye, Edit, Trash2, Lock, Globe } from 'lucide-react';
+import { Settings as SettingsIcon, Lock, Globe } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { memo, useMemo } from 'react';
 import '../i18n/translations'; // Initialize app settings translations
@@ -8,6 +8,7 @@ import type { AppSetting } from '../types/app-setting.types';
 import { format, parseISO } from 'date-fns';
 import { STATUS_MAPS } from '../constants';
 import { AppSettingTableSkeleton } from './AppSettingTableSkeleton';
+import { useAppSettingActionMenu } from '../hooks';
 
 interface AppSettingTableProps {
   appSettings: AppSetting[];
@@ -30,6 +31,13 @@ export const AppSettingTable = memo(({
   onAppSettingAction 
 }: AppSettingTableProps) => {
   const { t } = useTranslation();
+
+  // Get action menu items from hook
+  const actionMenuItems = useAppSettingActionMenu({
+    onView: (appSetting: AppSetting) => onAppSettingAction(appSetting, 'view'),
+    onEdit: (appSetting: AppSetting) => onAppSettingAction(appSetting, 'edit'),
+    onDelete: (appSetting: AppSetting) => onAppSettingAction(appSetting, 'delete'),
+  });
 
   // Memoize columns to prevent recreation on every render
   const columns = useMemo(() => [
@@ -110,25 +118,6 @@ export const AppSettingTable = memo(({
       },
     }),
   ], [t]);
-
-  // Memoize action menu items
-  const actionMenuItems = useMemo(() => [
-    { 
-      label: t('appSettings.actions.view'), 
-      icon: <Eye size={16} />, 
-      action: (appSetting: AppSetting) => onAppSettingAction(appSetting, 'view') 
-    },
-    { 
-      label: t('appSettings.actions.edit'), 
-      icon: <Edit size={16} />, 
-      action: (appSetting: AppSetting) => onAppSettingAction(appSetting, 'edit') 
-    },
-    { 
-      label: t('appSettings.actions.delete'), 
-      icon: <Trash2 size={16} />, 
-      action: (appSetting: AppSetting) => onAppSettingAction(appSetting, 'delete') 
-    },
-  ], [t, onAppSettingAction]);
 
   // Show skeleton loader while loading
   if (loading && !appSettings.length) {

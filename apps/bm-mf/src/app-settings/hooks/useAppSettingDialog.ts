@@ -1,31 +1,41 @@
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import '../i18n/translations'; // Initialize app settings translations
-import type { CreateAppSettingRequest, UpdateAppSettingRequest } from '../services/appSettingService';
-import { appSettingService } from '../services/appSettingService';
-import type { AppSetting, AppSettingFormData, AppSettingActionType } from '../types/app-setting.types';
-import { APP_SETTING_CONSTANTS } from '../constants';
-import { handleApiError, extractValidationErrors } from '../utils/error-handler';
+import { useState, useCallback } from 'react';
 
+import '../i18n/translations';
+import type { AppSetting, AppSettingFormData, AppSettingActionType } from '../types/app-setting.types';
+
+/**
+ * Hook to manage app setting dialog state and UI interactions
+ * Business logic is handled by useAppSettingHandlers
+ */
 export const useAppSettingDialog = () => {
-  const { t } = useTranslation();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedAppSetting, setSelectedAppSetting] = useState<AppSetting | null>(null);
-  const [actionType, setActionType] = useState<AppSettingActionType>(null);
+  const [actionType, setActionType] = useState<AppSettingActionType>('view');
   const [loading, setLoading] = useState(false);
-  const [formErrors, setFormErrors] = useState<Record<string, string[] | string>>({});
-  
+
   const [formData, setFormData] = useState<AppSettingFormData>({
     name: '',
     value: '',
-    lang: APP_SETTING_CONSTANTS.DEFAULT_LANGUAGE,
+    lang: '',
     isSystem: false,
     isPublic: true,
   });
 
-  const handleView = (appSetting: AppSetting) => {
+  const [formErrors, setFormErrors] = useState<Partial<Record<keyof AppSettingFormData, string>>>({});
+
+  const resetForm = useCallback(() => {
+    setFormData({
+      name: '',
+      value: '',
+      lang: '',
+      isSystem: false,
+      isPublic: true,
+    });
+    setFormErrors({});
+  }, []);
+
+  const handleView = useCallback((appSetting: AppSetting) => {
     setSelectedAppSetting(appSetting);
-    setFormErrors({}); // Clear any previous errors
     setFormData({
       name: appSetting.name,
       value: appSetting.value,
@@ -35,11 +45,11 @@ export const useAppSettingDialog = () => {
     });
     setActionType('view');
     setDialogOpen(true);
-  };
+    setFormErrors({});
+  }, []);
 
-  const handleEdit = (appSetting: AppSetting) => {
+  const handleEdit = useCallback((appSetting: AppSetting) => {
     setSelectedAppSetting(appSetting);
-    setFormErrors({}); // Clear any previous errors
     setFormData({
       name: appSetting.name,
       value: appSetting.value,
@@ -49,206 +59,51 @@ export const useAppSettingDialog = () => {
     });
     setActionType('edit');
     setDialogOpen(true);
-  };
+    setFormErrors({});
+  }, []);
 
-  const handleCreate = () => {
+  const handleCreate = useCallback(() => {
     setSelectedAppSetting(null);
-    setFormErrors({}); // Clear any previous errors
-    setFormData({
-      name: '',
-      value: '',
-      lang: APP_SETTING_CONSTANTS.DEFAULT_LANGUAGE,
-      isSystem: false,
-      isPublic: true,
-    });
+    resetForm();
     setActionType('create');
     setDialogOpen(true);
-  };
+  }, [resetForm]);
 
-  const handleDelete = (appSetting: AppSetting) => {
+  const handleDelete = useCallback((appSetting: AppSetting) => {
     setSelectedAppSetting(appSetting);
     setActionType('delete');
-    // Don't set dialogOpen(true) for delete - DeleteAppSettingDialog has its own condition
-  };
+    setDialogOpen(true);
+  }, []);
 
-  const handleCloseDialog = () => {
+  const handleClose = useCallback(() => {
+    if (loading) return;
     setDialogOpen(false);
     setSelectedAppSetting(null);
-    setActionType(null);
-    setFormErrors({});
-    setFormData({
-      name: '',
-      value: '',
-      lang: APP_SETTING_CONSTANTS.DEFAULT_LANGUAGE,
-      isSystem: false,
-      isPublic: true,
-    });
-  };
+    resetForm();
+    setActionType('view');
+  }, [loading, resetForm]);
 
-  const handleFormChange = (field: keyof AppSettingFormData, value: any) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value,
-    }));
-    
-    // Clear field-specific error when user starts typing
+  const handleFormChange = useCallback((field: keyof AppSettingFormData, value: string | boolean) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
     if (formErrors[field]) {
-      setFormErrors(prev => ({
-        ...prev,
-        [field]: '',
-      }));
+      setFormErrors(prev => ({ ...prev, [field]: undefined }));
     }
-  };
-
-  const validateForm = (): boolean => {
-    const errors: Record<string, string> = {};
-
-    // Name validation
-    if (!formData.name.trim()) {
-      errors.name = t('appSettings.errors.nameRequired');
-    } else if (formData.name.length < APP_SETTING_CONSTANTS.NAME_MIN_LENGTH) {
-      errors.name = t('appSettings.validation.nameMinLength');
-    } else if (formData.name.length > APP_SETTING_CONSTANTS.NAME_MAX_LENGTH) {
-      errors.name = t('appSettings.validation.nameMaxLength');
-    }
-
-    // Value validation
-    if (!formData.value.trim()) {
-      errors.value = t('appSettings.errors.valueRequired');
-    } else if (formData.value.length > APP_SETTING_CONSTANTS.VALUE_MAX_LENGTH) {
-      errors.value = t('appSettings.validation.valueMaxLength');
-    }
-
-    // Language validation
-    if (!formData.lang.trim()) {
-      errors.lang = t('appSettings.errors.langRequired');
-    }
-
-    setFormErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
-
-  const createAppSetting = async () => {
-    const createRequest: CreateAppSettingRequest = {
-      name: formData.name.trim(),
-      value: formData.value.trim(),
-      lang: formData.lang.trim(),
-      isSystem: formData.isSystem,
-      isPublic: formData.isPublic,
-    };
-    
-    const response = await appSettingService.createAppSetting(createRequest);
-    
-    if (response.status.code === 200 || response.status.code === 201) {
-      handleCloseDialog();
-      return t('appSettings.messages.createSuccess');
-    } else {
-      throw new Error(response.status.message);
-    }
-  };
-
-  const updateAppSetting = async () => {
-    if (!selectedAppSetting) return;
-    
-    const updateRequest: UpdateAppSettingRequest = {
-      name: formData.name.trim(),
-      value: formData.value.trim(),
-      lang: formData.lang.trim(),
-      isSystem: formData.isSystem,
-      isPublic: formData.isPublic,
-    };
-    
-    const response = await appSettingService.updateAppSetting(selectedAppSetting.id, updateRequest);
-    
-    if (response.status.code === 200) {
-      handleCloseDialog();
-      return t('appSettings.messages.updateSuccess');
-    } else {
-      throw new Error(response.status.message);
-    }
-  };
-
-  const handleSave = async (
-    onSuccess: (message: string) => void,
-    onError: (message: string) => void
-  ) => {
-    if (!validateForm()) {
-      return;
-    }
-
-    try {
-      setLoading(true);
-      
-      const successMessage = actionType === 'create' 
-        ? await createAppSetting()
-        : await updateAppSetting();
-        
-      if (successMessage) {
-        onSuccess(successMessage);
-      }
-    } catch (err: any) {
-      console.error('Save app setting error:', err);
-      
-      // Handle validation errors from API
-      const validationErrors = extractValidationErrors(err);
-      if (Object.keys(validationErrors).length > 0) {
-        setFormErrors(validationErrors);
-      } else {
-        const errorMessage = handleApiError(
-          err,
-          t,
-          actionType === 'create' 
-            ? 'appSettings.errors.createFailed' 
-            : 'appSettings.errors.updateFailed'
-        );
-        onError(errorMessage);
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleConfirmDelete = async (
-    onSuccess: (message: string) => void,
-    onError: (message: string) => void
-  ) => {
-    if (!selectedAppSetting) return;
-
-    try {
-      setLoading(true);
-      
-      const response = await appSettingService.deleteAppSetting(selectedAppSetting.id);
-      
-      if (response.status.code === 200 || response.status.code === 204) {
-        setActionType(null);
-        setSelectedAppSetting(null);
-        onSuccess(t('appSettings.messages.deleteSuccess'));
-      } else {
-        throw new Error(response.status.message);
-      }
-    } catch (err: any) {
-      console.error('Delete app setting error:', err);
-      const errorMessage = handleApiError(err, t, 'appSettings.errors.deleteFailed');
-      onError(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [formErrors]);
 
   return {
     dialogOpen,
     selectedAppSetting,
     actionType,
     loading,
+    setLoading,
     formData,
     formErrors,
+    setFormErrors,
     handleView,
     handleEdit,
     handleCreate,
     handleDelete,
-    handleCloseDialog,
+    handleClose,
     handleFormChange,
-    handleSave,
-    handleConfirmDelete,
   };
 };
