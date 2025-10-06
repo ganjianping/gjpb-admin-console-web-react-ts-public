@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import '../i18n/translations'; // Initialize websites translations
 import {
@@ -13,6 +13,8 @@ import {
   TextField,
   Typography,
   useTheme,
+  Chip,
+  OutlinedInput,
 } from '@mui/material';
 import { Search } from 'lucide-react';
 import type { WebsiteSearchFormData } from '../types/website.types';
@@ -33,8 +35,31 @@ export const WebsiteSearchPanel: React.FC<WebsiteSearchPanelProps> = ({
   onSearch,
   onClear,
 }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const theme = useTheme();
+
+  // Get website tags from local storage filtered by current language
+  const availableTags = useMemo(() => {
+    try {
+      const settings = localStorage.getItem('gjpb_app_settings');
+      if (!settings) return [];
+
+      const appSettings = JSON.parse(settings) as Array<{ name: string; value: string; lang: string }>;
+      const currentLang = i18n.language.toUpperCase().startsWith('ZH') ? 'ZH' : 'EN';
+      
+      const websiteTagsSetting = appSettings.find(
+        (setting) => setting.name === 'website_tags' && setting.lang === currentLang
+      );
+
+      if (!websiteTagsSetting) return [];
+
+      // Parse the comma-separated tags
+      return websiteTagsSetting.value.split(',').map((tag) => tag.trim()).filter(Boolean);
+    } catch (error) {
+      console.error('[WebsiteSearchPanel] Error loading tags:', error);
+      return [];
+    }
+  }, [i18n.language]);
   
   return (
     <Card 
@@ -231,17 +256,39 @@ export const WebsiteSearchPanel: React.FC<WebsiteSearchPanelProps> = ({
             </FormControl>
           </Box>
 
-          {/* System Setting */}
+          {/* Tags */}
           <Box>
             <FormLabel sx={{ fontWeight: 500, color: 'text.primary', mb: 1, display: 'block' }}>
-              {t('websites.filters.systemSettings')}
+              {t('websites.form.tags')}
             </FormLabel>
             <FormControl fullWidth size="small">
-              <Select
-                value={searchFormData.tags}
-                onChange={(e) => onFormChange('tags', e.target.value)}
-                disabled={loading}
+              <Select<string[]>
+                multiple
+                value={searchFormData.tags ? searchFormData.tags.split(',').map(t => t.trim()).filter(Boolean) : []}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  const tagsArray = typeof value === 'string' ? value.split(',') : value;
+                  onFormChange('tags', tagsArray.join(','));
+                }}
+                input={<OutlinedInput />}
                 displayEmpty
+                disabled={loading}
+                renderValue={(selected) => {
+                  if (selected.length === 0) {
+                    return (
+                      <Typography variant="body2" color="text.disabled">
+                        {t('websites.filters.all')}
+                      </Typography>
+                    );
+                  }
+                  return (
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                      {selected.map((value) => (
+                        <Chip key={value} label={value} size="small" />
+                      ))}
+                    </Box>
+                  );
+                }}
                 sx={{
                   borderRadius: 2,
                   backgroundColor: theme.palette.mode === 'dark' 
@@ -260,17 +307,27 @@ export const WebsiteSearchPanel: React.FC<WebsiteSearchPanelProps> = ({
                   },
                 }}
               >
-                <MenuItem value="">{t('websites.filters.all')}</MenuItem>
-                <MenuItem value="true">{t('websites.filters.systemOnly')}</MenuItem>
-                <MenuItem value="false">{t('websites.filters.nonSystem')}</MenuItem>
+                {availableTags.length > 0 ? (
+                  availableTags.map((tag) => (
+                    <MenuItem key={tag} value={tag}>
+                      {tag}
+                    </MenuItem>
+                  ))
+                ) : (
+                  <MenuItem disabled>
+                    <Typography variant="body2" color="text.secondary">
+                      No tags available
+                    </Typography>
+                  </MenuItem>
+                )}
               </Select>
             </FormControl>
           </Box>
 
-          {/* Public Setting */}
+          {/* Status */}
           <Box>
             <FormLabel sx={{ fontWeight: 500, color: 'text.primary', mb: 1, display: 'block' }}>
-              {t('websites.filters.publicSettings')}
+              {t('websites.form.status') || 'Status'}
             </FormLabel>
             <FormControl fullWidth size="small">
               <Select
@@ -297,8 +354,8 @@ export const WebsiteSearchPanel: React.FC<WebsiteSearchPanelProps> = ({
                 }}
               >
                 <MenuItem value="">{t('websites.filters.all')}</MenuItem>
-                <MenuItem value="true">{t('websites.filters.publicOnly')}</MenuItem>
-                <MenuItem value="false">{t('websites.filters.private')}</MenuItem>
+                <MenuItem value="true">{t('websites.status.active')}</MenuItem>
+                <MenuItem value="false">{t('websites.status.inactive')}</MenuItem>
               </Select>
             </FormControl>
           </Box>
