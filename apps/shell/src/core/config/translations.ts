@@ -68,6 +68,9 @@ const shellResources = {
       websites: {
         title: 'Websites',
       },
+      logos: {
+        title: 'Logos',
+      },
       appSettings: {
         title: 'App Settings',
       },
@@ -152,6 +155,9 @@ const shellResources = {
       },
       websites: {
         title: '网站管理',
+      },
+      logos: {
+        title: '徽标管理',
       },
       appSettings: {
         title: '应用设置',

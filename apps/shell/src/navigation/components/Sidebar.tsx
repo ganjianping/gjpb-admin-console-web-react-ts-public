@@ -21,6 +21,7 @@ import {
   Activity,
   Settings,
   Globe,
+  Image,
   ChevronLeft, 
   ChevronRight,
   ChevronDown,
@@ -105,6 +106,13 @@ const Sidebar = ({ drawerWidth, collapsedWidth, open, onClose, variant }: Sideba
       title: t('websites.title'),
       path: '/websites',
       icon: Globe,
+      roles: ['ADMIN', 'SUPER_ADMIN'],
+    },
+    {
+      key: 'logos',
+      title: t('logos.title'),
+      path: '/logos',
+      icon: Image,
       roles: ['ADMIN', 'SUPER_ADMIN'],
     },
     {
