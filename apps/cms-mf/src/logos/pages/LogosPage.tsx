@@ -174,7 +174,7 @@ const LogosPage = () => {
   // Render
   // ============================================================================
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ py: 2, minHeight: '100vh' }}>
       {/* Page Header */}
       <LogoPageHeader
         onCreateLogo={handleCreate}
@@ -211,9 +211,10 @@ const LogosPage = () => {
             : 'rgba(0, 0, 0, 0.08)',
         }}
       >
-        <CardContent sx={{ p: 0 }}>
+        <CardContent sx={{ p: 2 }}>
           <LogoTable
             logos={filteredLogos}
+            loading={loading}
             onLogoAction={handleLogoAction}
           />
         </CardContent>

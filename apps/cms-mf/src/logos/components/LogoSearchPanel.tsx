@@ -89,51 +89,161 @@ export const LogoSearchPanel: React.FC<LogoSearchPanelProps> = ({
           backgroundColor: 'primary.main',
           zIndex: 1,
         },
+        '&::after': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: theme.palette.mode === 'dark'
+            ? 'radial-gradient(circle at 20% 20%, rgba(25, 118, 210, 0.08) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(66, 165, 245, 0.06) 0%, transparent 50%)'
+            : 'radial-gradient(circle at 20% 20%, rgba(25, 118, 210, 0.03) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(66, 165, 245, 0.02) 0%, transparent 50%)',
+          zIndex: 0,
+          pointerEvents: 'none',
+        }
       }}
     >
-      <CardContent sx={{ p: 3, '&:last-child': { pb: 3 } }}>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-          {/* Info Text */}
+      <CardContent sx={{ position: 'relative', zIndex: 2, p: 3 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
           <Typography 
-            variant="caption" 
+            variant="subtitle1" 
             sx={{ 
-              color: 'text.secondary',
-              fontStyle: 'italic',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 0.5
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: 1,
+              fontWeight: 600,
+              color: 'primary.main',
+              fontSize: '1rem',
+              '& svg': {
+                color: 'primary.main',
+              }
             }}
           >
-            💡 Filters are applied instantly as you type. Click "Search from API" to fetch fresh data from server.
+            <Search size={18} />
+            {t('logos.search')}
           </Typography>
 
-          {/* Search Fields Row */}
-          <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 2 }}>
-            {/* Name Search */}
-            <FormControl fullWidth>
-              <FormLabel sx={{ mb: 0.5, fontSize: '0.875rem', fontWeight: 500 }}>
-                {t('logos.filters.searchByName')}
-              </FormLabel>
-              <TextField
-                size="small"
-                placeholder={t('logos.filters.searchByName')}
-                value={searchFormData.name}
-                onChange={(e) => onFormChange('name', e.target.value)}
-                disabled={loading}
-              />
-            </FormControl>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={onClear}
+              disabled={loading}
+              sx={{
+                borderRadius: 2,
+                textTransform: 'none',
+                fontWeight: 500,
+                px: 2,
+                py: 0.75,
+                fontSize: '0.875rem',
+                borderColor: 'divider',
+                color: 'text.secondary',
+                '&:hover': {
+                  borderColor: 'primary.main',
+                  backgroundColor: 'primary.main',
+                  color: 'white',
+                },
+              }}
+            >
+              {t('logos.clearFilters')}
+            </Button>
+            
+            <Button
+              variant="contained"
+              size="small"
+              onClick={onSearch}
+              disabled={loading}
+              startIcon={<Search size={16} />}
+              sx={{
+                borderRadius: 2,
+                textTransform: 'none',
+                fontWeight: 500,
+                px: 2.5,
+                py: 0.75,
+                fontSize: '0.875rem',
+                boxShadow: 'none',
+                '&:hover': {
+                  boxShadow: '0 2px 8px rgba(25, 118, 210, 0.3)',
+                },
+              }}
+            >
+              {t('common.search')}
+            </Button>
+          </Box>
+        </Box>
 
-            {/* Language Filter */}
-            <FormControl fullWidth>
-              <FormLabel sx={{ mb: 0.5, fontSize: '0.875rem', fontWeight: 500 }}>
-                {t('logos.filters.language')}
-              </FormLabel>
+        <Box sx={{ 
+          display: 'grid', 
+          gridTemplateColumns: { 
+            xs: '1fr', 
+            sm: 'repeat(2, 1fr)', 
+            md: 'repeat(4, 1fr)' 
+          }, 
+          gap: 2.5 
+        }}>
+          {/* Name */}
+          <Box>
+            <FormLabel sx={{ fontWeight: 500, color: 'text.primary', mb: 1, display: 'block' }}>
+              {t('logos.form.name')}
+            </FormLabel>
+            <TextField
+              fullWidth
+              size="small"
+              value={searchFormData.name}
+              onChange={(e) => onFormChange('name', e.target.value)}
+              placeholder={t('logos.filters.searchByName')}
+              disabled={loading}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 2,
+                  backgroundColor: theme.palette.mode === 'dark' 
+                    ? 'rgba(255, 255, 255, 0.05)' 
+                    : 'rgba(255, 255, 255, 0.8)',
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
+                    backgroundColor: theme.palette.mode === 'dark' 
+                      ? 'rgba(255, 255, 255, 0.08)' 
+                      : 'rgba(255, 255, 255, 1)',
+                  },
+                  '&.Mui-focused': {
+                    backgroundColor: theme.palette.mode === 'dark' 
+                      ? 'rgba(255, 255, 255, 0.1)' 
+                      : 'rgba(255, 255, 255, 1)',
+                  },
+                },
+              }}
+            />
+          </Box>
+
+          {/* Language */}
+          <Box>
+            <FormLabel sx={{ fontWeight: 500, color: 'text.primary', mb: 1, display: 'block' }}>
+              {t('logos.form.lang')}
+            </FormLabel>
+            <FormControl fullWidth size="small">
               <Select
-                size="small"
                 value={searchFormData.lang}
                 onChange={(e) => onFormChange('lang', e.target.value)}
                 disabled={loading}
                 displayEmpty
+                sx={{
+                  borderRadius: 2,
+                  backgroundColor: theme.palette.mode === 'dark' 
+                    ? 'rgba(255, 255, 255, 0.05)' 
+                    : 'rgba(255, 255, 255, 0.8)',
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
+                    backgroundColor: theme.palette.mode === 'dark' 
+                      ? 'rgba(255, 255, 255, 0.08)' 
+                      : 'rgba(255, 255, 255, 1)',
+                  },
+                  '&.Mui-focused': {
+                    backgroundColor: theme.palette.mode === 'dark' 
+                      ? 'rgba(255, 255, 255, 0.1)' 
+                      : 'rgba(255, 255, 255, 1)',
+                  },
+                }}
               >
                 <MenuItem value="">{t('logos.filters.all')}</MenuItem>
                 {LANGUAGE_OPTIONS.map((option) => (
@@ -143,81 +253,110 @@ export const LogoSearchPanel: React.FC<LogoSearchPanelProps> = ({
                 ))}
               </Select>
             </FormControl>
+          </Box>
 
-            {/* Tags Filter */}
-            <FormControl fullWidth>
-              <FormLabel sx={{ mb: 0.5, fontSize: '0.875rem', fontWeight: 500 }}>
-                {t('logos.filters.tags')}
-              </FormLabel>
-              <Select
-                size="small"
-                value={searchFormData.tags}
-                onChange={(e) => onFormChange('tags', e.target.value)}
-                disabled={loading}
-                displayEmpty
+          {/* Tags */}
+          <Box>
+            <FormLabel sx={{ fontWeight: 500, color: 'text.primary', mb: 1, display: 'block' }}>
+              {t('logos.form.tags')}
+            </FormLabel>
+            <FormControl fullWidth size="small">
+              <Select<string[]>
+                multiple
+                value={searchFormData.tags ? searchFormData.tags.split(',').map(t => t.trim()).filter(Boolean) : []}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  const tagsArray = typeof value === 'string' ? value.split(',') : value;
+                  onFormChange('tags', tagsArray.join(','));
+                }}
                 input={<OutlinedInput />}
+                displayEmpty
+                disabled={loading}
                 renderValue={(selected) => {
-                  if (!selected) {
-                    return <em>{t('logos.filters.all')}</em>;
+                  if (selected.length === 0) {
+                    return (
+                      <Typography variant="body2" color="text.disabled">
+                        {t('logos.filters.all')}
+                      </Typography>
+                    );
                   }
-                  return <Chip label={selected} size="small" />;
+                  return (
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                      {selected.map((value) => (
+                        <Chip key={value} label={value} size="small" />
+                      ))}
+                    </Box>
+                  );
+                }}
+                sx={{
+                  borderRadius: 2,
+                  backgroundColor: theme.palette.mode === 'dark' 
+                    ? 'rgba(255, 255, 255, 0.05)' 
+                    : 'rgba(255, 255, 255, 0.8)',
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
+                    backgroundColor: theme.palette.mode === 'dark' 
+                      ? 'rgba(255, 255, 255, 0.08)' 
+                      : 'rgba(255, 255, 255, 1)',
+                  },
+                  '&.Mui-focused': {
+                    backgroundColor: theme.palette.mode === 'dark' 
+                      ? 'rgba(255, 255, 255, 0.1)' 
+                      : 'rgba(255, 255, 255, 1)',
+                  },
                 }}
               >
-                <MenuItem value="">{t('logos.filters.all')}</MenuItem>
-                {availableTags.map((tag) => (
-                  <MenuItem key={tag} value={tag}>
-                    {tag}
+                {availableTags.length > 0 ? (
+                  availableTags.map((tag) => (
+                    <MenuItem key={tag} value={tag}>
+                      {tag}
+                    </MenuItem>
+                  ))
+                ) : (
+                  <MenuItem disabled>
+                    <Typography variant="body2" color="text.secondary">
+                      No tags available
+                    </Typography>
                   </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-
-            {/* Status Filter */}
-            <FormControl fullWidth>
-              <FormLabel sx={{ mb: 0.5, fontSize: '0.875rem', fontWeight: 500 }}>
-                {t('logos.filters.status')}
-              </FormLabel>
-              <Select
-                size="small"
-                value={searchFormData.isActive}
-                onChange={(e) => onFormChange('isActive', e.target.value)}
-                disabled={loading}
-                displayEmpty
-              >
-                <MenuItem value="">{t('logos.filters.all')}</MenuItem>
-                <MenuItem value="true">{t('logos.filters.activeOnly')}</MenuItem>
-                <MenuItem value="false">{t('logos.filters.inactive')}</MenuItem>
+                )}
               </Select>
             </FormControl>
           </Box>
 
-          {/* Action Buttons */}
-          <Box sx={{ display: 'flex', gap: 1.5, justifyContent: 'flex-end' }}>
-            <Button
-              variant="outlined"
-              onClick={onClear}
-              disabled={loading}
-              sx={{
-                textTransform: 'none',
-                fontWeight: 500,
-                borderRadius: 2,
-              }}
-            >
-              {t('logos.clearFilters')}
-            </Button>
-            <Button
-              variant="contained"
-              startIcon={<Search size={16} />}
-              onClick={onSearch}
-              disabled={loading}
-              sx={{
-                textTransform: 'none',
-                fontWeight: 600,
-                borderRadius: 2,
-              }}
-            >
-              Search from API
-            </Button>
+          {/* Status */}
+          <Box>
+            <FormLabel sx={{ fontWeight: 500, color: 'text.primary', mb: 1, display: 'block' }}>
+              {t('logos.form.status') || 'Status'}
+            </FormLabel>
+            <FormControl fullWidth size="small">
+              <Select
+                value={searchFormData.isActive}
+                onChange={(e) => onFormChange('isActive', e.target.value)}
+                disabled={loading}
+                displayEmpty
+                sx={{
+                  borderRadius: 2,
+                  backgroundColor: theme.palette.mode === 'dark' 
+                    ? 'rgba(255, 255, 255, 0.05)' 
+                    : 'rgba(255, 255, 255, 0.8)',
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
+                    backgroundColor: theme.palette.mode === 'dark' 
+                      ? 'rgba(255, 255, 255, 0.08)' 
+                      : 'rgba(255, 255, 255, 1)',
+                  },
+                  '&.Mui-focused': {
+                    backgroundColor: theme.palette.mode === 'dark' 
+                      ? 'rgba(255, 255, 255, 0.1)' 
+                      : 'rgba(255, 255, 255, 1)',
+                  },
+                }}
+              >
+                <MenuItem value="">{t('logos.filters.all')}</MenuItem>
+                <MenuItem value="true">{t('logos.status.active')}</MenuItem>
+                <MenuItem value="false">{t('logos.status.inactive')}</MenuItem>
+              </Select>
+            </FormControl>
           </Box>
         </Box>
       </CardContent>

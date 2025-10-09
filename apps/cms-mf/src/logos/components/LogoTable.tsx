@@ -1,4 +1,5 @@
-import { Box, Chip, Typography } from '@mui/material';
+import { Box, Chip, Typography, Avatar } from '@mui/material';
+import { Image } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { memo, useMemo } from 'react';
 import '../i18n/translations';
@@ -6,9 +7,15 @@ import { DataTable, createColumnHelper, createStatusChip } from '../../../../sha
 import type { Logo } from '../types/logo.types';
 import { format, parseISO } from 'date-fns';
 import { STATUS_MAPS } from '../constants';
+import { LogoTableSkeleton } from './LogoTableSkeleton';
+import { useLogoActionMenu } from '../hooks';
 
 interface LogoTableProps {
   logos: Logo[];
+  loading?: boolean;
+  pagination?: any;
+  onPageChange?: (page: number) => void;
+  onPageSizeChange?: (size: number) => void;
   onLogoAction: (logo: Logo, action: 'view' | 'edit' | 'delete') => void;
 }
 
@@ -17,36 +24,78 @@ const columnHelper = createColumnHelper<Logo>();
 
 export const LogoTable = memo(({ 
   logos, 
+  loading = false, 
+  pagination, 
+  onPageChange, 
+  onPageSizeChange, 
   onLogoAction 
 }: LogoTableProps) => {
   const { t } = useTranslation();
 
-  // Action menu items
-  const actionMenuItems = useMemo(() => [
-    {
-      label: t('logos.actions.view'),
-      action: (logo: Logo) => onLogoAction(logo, 'view'),
-    },
-    {
-      label: t('logos.actions.edit'),
-      action: (logo: Logo) => onLogoAction(logo, 'edit'),
-    },
-    {
-      label: t('logos.actions.delete'),
-      action: (logo: Logo) => onLogoAction(logo, 'delete'),
-      divider: true,
-    },
-  ], [t, onLogoAction]);
+  // Get logo base URL from local storage
+  const logoBaseUrl = useMemo(() => {
+    try {
+      const settings = localStorage.getItem('gjpb_app_settings');
+      if (!settings) return null;
+
+      const appSettings = JSON.parse(settings) as Array<{ name: string; value: string; lang: string }>;
+      const logoBaseUrlSetting = appSettings.find(
+        (setting) => setting.name === 'logo_base_url'
+      );
+
+      if (!logoBaseUrlSetting) return null;
+
+      return logoBaseUrlSetting.value.endsWith('/') 
+        ? logoBaseUrlSetting.value 
+        : `${logoBaseUrlSetting.value}/`;
+    } catch (error) {
+      console.error('[LogoTable] Error loading logo base URL:', error);
+      return null;
+    }
+  }, []);
+
+  // Get action menu items from hook
+  const actionMenuItems = useLogoActionMenu({
+    onView: (logo: Logo) => onLogoAction(logo, 'view'),
+    onEdit: (logo: Logo) => onLogoAction(logo, 'edit'),
+    onDelete: (logo: Logo) => onLogoAction(logo, 'delete'),
+  });
 
   // Memoize columns to prevent recreation on every render
   const columns = useMemo(() => [
     columnHelper.accessor('name', {
       header: t('logos.columns.name'),
-      cell: (info) => (
-        <Typography variant="body2" sx={{ fontWeight: 500 }}>
-          {info.getValue()}
-        </Typography>
-      ),
+      cell: (info) => {
+        const logo = info.row.original;
+        const logoUrl = logoBaseUrl && logo.filename ? `${logoBaseUrl}${logo.filename}` : null;
+        
+        return (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            {logoUrl ? (
+              <Avatar
+                src={logoUrl}
+                alt={info.getValue()}
+                sx={{ width: 32, height: 32 }}
+                variant="rounded"
+              />
+            ) : (
+              <Avatar
+                sx={{ 
+                  width: 32, 
+                  height: 32,
+                  bgcolor: 'primary.main',
+                }}
+                variant="rounded"
+              >
+                <Image size={16} />
+              </Avatar>
+            )}
+            <Typography variant="body2" sx={{ fontWeight: 500 }}>
+              {info.getValue()}
+            </Typography>
+          </Box>
+        );
+      },
     }),
     columnHelper.accessor('filename', {
       header: t('logos.columns.filename'),
@@ -67,20 +116,6 @@ export const LogoTable = memo(({
           </Typography>
         );
       },
-    }),
-    columnHelper.accessor('extension', {
-      header: t('logos.columns.extension'),
-      cell: (info) => (
-        <Chip
-          label={info.getValue()}
-          size="small"
-          variant="outlined"
-          sx={{
-            fontSize: '0.75rem',
-            height: 24,
-          }}
-        />
-      ),
     }),
     columnHelper.accessor('lang', {
       header: t('logos.columns.lang'),
@@ -142,14 +177,39 @@ export const LogoTable = memo(({
         return date ? format(parseISO(date), 'MMM dd, yyyy HH:mm') : '-';
       },
     }),
-  ], [t]);
+  ], [t, logoBaseUrl]);
+
+  // Show skeleton loader while loading
+  if (loading && !logos.length) {
+    return <LogoTableSkeleton rows={5} />;
+  }
+
+  // Show empty state
+  if (!logos?.length) {
+    return (
+      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 8 }}>
+        <Image size={48} style={{ opacity: 0.3, marginBottom: 16 }} />
+        <Typography variant="h6" sx={{ mt: 2, opacity: 0.7 }}>
+          {t('logos.noLogosFound')}
+        </Typography>
+      </Box>
+    );
+  }
 
   return (
     <DataTable
       data={logos}
       columns={columns}
-      actionMenuItems={actionMenuItems}
       showSearch={false}
+      onRowDoubleClick={(logo: Logo) => onLogoAction(logo, 'view')}
+      manualPagination={!!pagination}
+      pageCount={pagination?.totalPages || 0}
+      currentPage={pagination?.page || 0}
+      pageSize={pagination?.size || 20}
+      totalRows={pagination?.totalElements || 0}
+      onPageChange={onPageChange}
+      onPageSizeChange={onPageSizeChange}
+      actionMenuItems={actionMenuItems}
     />
   );
 });
