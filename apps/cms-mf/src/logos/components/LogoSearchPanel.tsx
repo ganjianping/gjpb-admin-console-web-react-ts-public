@@ -248,7 +248,7 @@ export const LogoSearchPanel: React.FC<LogoSearchPanelProps> = ({
                 <MenuItem value="">{t('logos.filters.all')}</MenuItem>
                 {LANGUAGE_OPTIONS.map((option) => (
                   <MenuItem key={option.value} value={option.value}>
-                    {option.label}
+                    {t(`logos.languages.${option.value}`)}
                   </MenuItem>
                 ))}
               </Select>

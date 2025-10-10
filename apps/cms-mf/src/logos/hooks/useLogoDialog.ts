@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import '../i18n/translations';
 import type { Logo, LogoFormData, LogoActionType } from '../types/logo.types';
@@ -32,24 +33,30 @@ import type { Logo, LogoFormData, LogoActionType } from '../types/logo.types';
  * @see {@link LogosPage} for usage example
  */
 export const useLogoDialog = () => {
+  const { i18n } = useTranslation();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedLogo, setSelectedLogo] = useState<Logo | null>(null);
   const [actionType, setActionType] = useState<LogoActionType>('view');
   const [loading, setLoading] = useState(false);
 
-  const [formData, setFormData] = useState<LogoFormData>({
+  // Helper function to get current language in uppercase format
+  const getCurrentLanguage = useCallback(() => {
+    return i18n.language.toUpperCase().startsWith('ZH') ? 'ZH' : 'EN';
+  }, [i18n.language]);
+
+  const [formData, setFormData] = useState<LogoFormData>(() => ({
     name: '',
     originalUrl: '',
     filename: '',
     extension: '',
     logoUrl: '',
-    tags: '',
-    lang: '',
+    tags: 'Website',
+    lang: i18n.language.toUpperCase().startsWith('ZH') ? 'ZH' : 'EN',
     displayOrder: 0,
     isActive: true,
     uploadMethod: 'url',
     file: null,
-  });
+  }));
 
   const [formErrors, setFormErrors] = useState<Partial<Record<keyof LogoFormData, string>>>({});
 
@@ -60,15 +67,15 @@ export const useLogoDialog = () => {
       filename: '',
       extension: '',
       logoUrl: '',
-      tags: '',
-      lang: '',
+      tags: 'Website',
+      lang: getCurrentLanguage(),
       displayOrder: 0,
       isActive: true,
       uploadMethod: 'url',
       file: null,
     });
     setFormErrors({});
-  }, []);
+  }, [getCurrentLanguage]);
 
   const handleView = useCallback((logo: Logo) => {
     setSelectedLogo(logo);

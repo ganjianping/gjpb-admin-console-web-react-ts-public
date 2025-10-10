@@ -53,6 +53,14 @@ const enTranslations = {
       settings: 'Settings',
       isSystem: 'Active',
       isPublic: 'Active',
+      uploadMethod: 'Upload Method',
+      byUrl: 'By URL',
+      uploadFile: 'Upload File',
+      chooseFile: 'Choose File',
+    },
+    languages: {
+      EN: 'English',
+      ZH: 'Chinese',
     },
     filters: {
       searchByName: 'Search by name...',
@@ -87,6 +95,9 @@ const enTranslations = {
       deleteSuccess: 'Logo deleted successfully',
       deleteConfirm: 'Are you sure you want to delete this logo?',
       deleteWarning: 'This action cannot be undone.',
+      uploadingImage: 'Uploading Image...',
+      savingLogo: 'Saving Logo...',
+      pleaseWait: 'Please wait, this may take a moment',
     },
     errors: {
       loadFailed: 'Failed to load logos',
@@ -166,6 +177,14 @@ const zhTranslations = {
       settings: '设置',
       isSystem: '激活',
       isPublic: '激活',
+      uploadMethod: '上传方式',
+      byUrl: '通过URL',
+      uploadFile: '上传文件',
+      chooseFile: '选择文件',
+    },
+    languages: {
+      EN: '英语',
+      ZH: '中文',
     },
     filters: {
       searchByName: '按名称搜索...',
@@ -200,6 +219,9 @@ const zhTranslations = {
       deleteSuccess: '徽标删除成功',
       deleteConfirm: '确定要删除此徽标吗？',
       deleteWarning: '此操作无法撤销。',
+      uploadingImage: '正在上传图片...',
+      savingLogo: '正在保存徽标...',
+      pleaseWait: '请稍候，这可能需要一点时间',
     },
     errors: {
       loadFailed: '加载徽标失败',

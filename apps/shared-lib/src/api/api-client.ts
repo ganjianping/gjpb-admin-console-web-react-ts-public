@@ -194,8 +194,16 @@ class HttpClient {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public post<T = any>(url: string, data?: any): Promise<ApiResponse<T>> {
     console.log('[API Client] POST request:', url, 'Full URL will be:', this.instance.defaults.baseURL + url);
+    
+    // If data is FormData, let the browser set the Content-Type with boundary
+    const config = data instanceof FormData ? {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    } : undefined;
+    
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return this.instance.post<any, ApiResponse<T>>(url, data);
+    return this.instance.post<any, ApiResponse<T>>(url, data, config);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

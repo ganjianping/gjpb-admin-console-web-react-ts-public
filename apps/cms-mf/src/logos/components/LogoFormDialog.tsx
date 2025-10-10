@@ -18,11 +18,14 @@ import {
   Alert,
   OutlinedInput,
   Chip,
+  LinearProgress,
+  Backdrop,
+  CircularProgress,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useMemo } from 'react';
 import '../i18n/translations';
-import { Edit, Plus, Upload } from 'lucide-react';
+import { Edit, Plus, Upload, ImageIcon } from 'lucide-react';
 import type { LogoFormData } from '../types/logo.types';
 import { LANGUAGE_OPTIONS } from '../constants';
 
@@ -95,7 +98,14 @@ export const LogoFormDialog = ({
       maxWidth="md"
       fullWidth
     >
-      <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+      {/* Upload Progress Bar */}
+      {loading && (
+        <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 1 }}>
+          <LinearProgress />
+        </Box>
+      )}
+
+      <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1.5, pt: loading ? 3 : 2 }}>
         {getDialogIcon()}
         <Typography variant="h6" component="span">
           {getDialogTitle()}
@@ -117,7 +127,7 @@ export const LogoFormDialog = ({
           {/* Upload Method Selection - Only show for create mode */}
           {actionType === 'create' && (
             <FormControl component="fieldset">
-              <FormLabel component="legend">Upload Method</FormLabel>
+              <FormLabel component="legend">{t('logos.form.uploadMethod')}</FormLabel>
               <RadioGroup
                 row
                 value={formData.uploadMethod}
@@ -126,12 +136,12 @@ export const LogoFormDialog = ({
                 <FormControlLabel 
                   value="url" 
                   control={<Radio />} 
-                  label="By URL" 
+                  label={t('logos.form.byUrl')} 
                 />
                 <FormControlLabel 
                   value="file" 
                   control={<Radio />} 
-                  label="Upload File" 
+                  label={t('logos.form.uploadFile')} 
                 />
               </RadioGroup>
             </FormControl>
@@ -147,7 +157,7 @@ export const LogoFormDialog = ({
                 fullWidth
                 sx={{ mb: 1 }}
               >
-                {formData.file ? formData.file.name : 'Choose File'}
+                {formData.file ? formData.file.name : t('logos.form.chooseFile')}
                 <input
                   type="file"
                   hidden
@@ -280,7 +290,7 @@ export const LogoFormDialog = ({
             >
               {LANGUAGE_OPTIONS.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
-                  {option.label}
+                  {t(`logos.languages.${option.value}`)}
                 </MenuItem>
               ))}
             </Select>
@@ -318,6 +328,46 @@ export const LogoFormDialog = ({
           {t('logos.actions.save')}
         </Button>
       </DialogActions>
+
+      {/* Upload Progress Backdrop */}
+      <Backdrop
+        sx={{
+          position: 'absolute',
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+          backgroundColor: 'rgba(0, 0, 0, 0.7)',
+          backdropFilter: 'blur(4px)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 2,
+        }}
+        open={loading}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 2,
+            p: 4,
+            borderRadius: 2,
+            backgroundColor: 'background.paper',
+            boxShadow: 3,
+          }}
+        >
+          <CircularProgress size={60} thickness={4} />
+          <Box sx={{ textAlign: 'center' }}>
+            <Typography variant="h6" sx={{ mb: 0.5, display: 'flex', alignItems: 'center', gap: 1 }}>
+              <ImageIcon size={20} />
+              {formData.uploadMethod === 'file' 
+                ? t('logos.messages.uploadingImage') 
+                : t('logos.messages.savingLogo')}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {t('logos.messages.pleaseWait')}
+            </Typography>
+          </Box>
+        </Box>
+      </Backdrop>
     </Dialog>
   );
 };

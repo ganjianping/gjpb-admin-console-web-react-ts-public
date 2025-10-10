@@ -17,7 +17,6 @@ import { useMemo } from 'react';
 import '../i18n/translations';
 import { Eye, Image, Tag, Hash, CheckCircle2, XCircle, ExternalLink } from 'lucide-react';
 import type { LogoFormData } from '../types/logo.types';
-import { LANGUAGE_OPTIONS } from '../constants';
 
 interface LogoViewDialogProps {
   open: boolean;
@@ -193,7 +192,7 @@ export const LogoViewDialog = ({
                     Language
                   </Typography>
                   <Chip 
-                    label={LANGUAGE_OPTIONS.find(opt => opt.value === logo.lang)?.label || logo.lang} 
+                    label={t(`logos.languages.${logo.lang}`)} 
                     size="small"
                     sx={{ fontWeight: 600 }}
                   />
