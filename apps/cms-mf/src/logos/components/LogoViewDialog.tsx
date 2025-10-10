@@ -143,7 +143,7 @@ export const LogoViewDialog = ({
             <Card elevation={0} sx={{ border: '1px solid', borderColor: 'divider' }}>
               <CardContent sx={{ p: 3 }}>
                 <Typography variant="subtitle2" sx={{ mb: 1.5, fontWeight: 600, color: 'text.secondary' }}>
-                  Original URL
+                  {t('logos.viewDialog.originalUrl')}
                 </Typography>
                 <Link
                   href={logo.originalUrl}
@@ -166,17 +166,45 @@ export const LogoViewDialog = ({
             </Card>
           )}
 
+          {/* Logo URL Card */}
+          {logoUrl && (
+            <Card elevation={0} sx={{ border: '1px solid', borderColor: 'divider' }}>
+              <CardContent sx={{ p: 3 }}>
+                <Typography variant="subtitle2" sx={{ mb: 1.5, fontWeight: 600, color: 'text.secondary' }}>
+                  {t('logos.viewDialog.imageUrl')}
+                </Typography>
+                <Link
+                  href={logoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  sx={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: 0.5,
+                    textDecoration: 'none',
+                    color: 'primary.main',
+                    wordBreak: 'break-all',
+                    '&:hover': { textDecoration: 'underline' },
+                  }}
+                >
+                  <ExternalLink size={14} />
+                  <Typography variant="body2">{logoUrl}</Typography>
+                </Link>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Details Grid */}
           <Card elevation={0} sx={{ border: '1px solid', borderColor: 'divider' }}>
             <CardContent sx={{ p: 3 }}>
               <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: 'text.secondary' }}>
-                Details
+                {t('logos.viewDialog.details')}
               </Typography>
               <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2.5 }}>
                 {/* File Extension */}
                 <Box>
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>
-                    File Extension
+                    {t('logos.viewDialog.fileExtension')}
                   </Typography>
                   <Chip 
                     label={logo.extension} 
@@ -189,7 +217,7 @@ export const LogoViewDialog = ({
                 {/* Language */}
                 <Box>
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>
-                    Language
+                    {t('logos.viewDialog.language')}
                   </Typography>
                   <Chip 
                     label={t(`logos.languages.${logo.lang}`)} 
@@ -201,7 +229,7 @@ export const LogoViewDialog = ({
                 {/* Display Order */}
                 <Box>
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>
-                    Display Order
+                    {t('logos.viewDialog.displayOrder')}
                   </Typography>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                     <Hash size={16} />
@@ -215,7 +243,7 @@ export const LogoViewDialog = ({
                 {logo.tags && (
                   <Box sx={{ gridColumn: '1 / -1' }}>
                     <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>
-                      Tags
+                      {t('logos.viewDialog.tags')}
                     </Typography>
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
                       {logo.tags.split(',').map((tag) => {

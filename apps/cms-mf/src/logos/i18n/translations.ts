@@ -58,6 +58,15 @@ const enTranslations = {
       uploadFile: 'Upload File',
       chooseFile: 'Choose File',
     },
+    viewDialog: {
+      originalUrl: 'Original URL',
+      imageUrl: 'Image URL',
+      details: 'Details',
+      fileExtension: 'File Extension',
+      language: 'Language',
+      displayOrder: 'Display Order',
+      tags: 'Tags',
+    },
     languages: {
       EN: 'English',
       ZH: 'Chinese',
@@ -181,6 +190,15 @@ const zhTranslations = {
       byUrl: '通过URL',
       uploadFile: '上传文件',
       chooseFile: '选择文件',
+    },
+    viewDialog: {
+      originalUrl: '原始URL',
+      imageUrl: '图片URL',
+      details: '详细信息',
+      fileExtension: '文件扩展名',
+      language: '语言',
+      displayOrder: '显示顺序',
+      tags: '标签',
     },
     languages: {
       EN: '英语',

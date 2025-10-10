@@ -74,6 +74,7 @@ const LogosPage = () => {
     selectedLogo,
     actionType,
     loading: dialogLoading,
+    setLoading: setDialogLoading,
     formData,
     formErrors,
     setFormErrors,
@@ -115,21 +116,31 @@ const LogosPage = () => {
   };
 
   const handleDialogSubmit = async () => {
-    const success = await handleSave(
-      actionType,
-      formData,
-      selectedLogo,
-      setFormErrors
-    );
-    if (success) {
-      handleClose();
+    setDialogLoading(true);
+    try {
+      const success = await handleSave(
+        actionType,
+        formData,
+        selectedLogo,
+        setFormErrors
+      );
+      if (success) {
+        handleClose();
+      }
+    } finally {
+      setDialogLoading(false);
     }
   };
 
   const handleDeleteConfirm = async () => {
-    const success = await handleConfirmDelete(selectedLogo);
-    if (success) {
-      handleClose();
+    setDialogLoading(true);
+    try {
+      const success = await handleConfirmDelete(selectedLogo);
+      if (success) {
+        handleClose();
+      }
+    } finally {
+      setDialogLoading(false);
     }
   };
 
