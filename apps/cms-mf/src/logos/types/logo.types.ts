@@ -36,6 +36,9 @@ export interface LogoFormData {
   lang: string;
   displayOrder: number;
   isActive: boolean;
+  // New fields for file upload
+  uploadMethod: 'url' | 'file'; // 'url' for originalUrl, 'file' for upload
+  file?: File | null;
 }
 
 // Dialog action types

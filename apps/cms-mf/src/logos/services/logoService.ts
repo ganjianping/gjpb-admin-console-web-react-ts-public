@@ -17,13 +17,20 @@ export interface LogoQueryParams {
   isActive?: boolean;
 }
 
-// Create logo request
+// Create logo request by originalUrl
 export interface CreateLogoRequest {
   name: string;
-  originalUrl?: string | null;
-  filename: string;
-  extension: string;
-  logoUrl: string;
+  originalUrl: string;
+  tags: string;
+  lang: string;
+  displayOrder?: number;
+  isActive?: boolean;
+}
+
+// Create logo request by file upload
+export interface CreateLogoByUploadRequest {
+  file: File;
+  name: string;
   tags: string;
   lang: string;
   displayOrder?: number;
@@ -77,12 +84,34 @@ class LogoService {
   }
 
   /**
-   * Create a new logo
+   * Create a new logo by originalUrl
    */
   async createLogo(
     data: CreateLogoRequest,
   ): Promise<ApiResponse<Logo>> {
     return apiClient.post<Logo>(this.baseUrl, data);
+  }
+
+  /**
+   * Create a new logo by uploading a file
+   */
+  async createLogoByUpload(
+    data: CreateLogoByUploadRequest,
+  ): Promise<ApiResponse<Logo>> {
+    const formData = new FormData();
+    formData.append('file', data.file);
+    formData.append('name', data.name);
+    formData.append('tags', data.tags);
+    formData.append('lang', data.lang);
+    if (data.displayOrder !== undefined) {
+      formData.append('displayOrder', String(data.displayOrder));
+    }
+    if (data.isActive !== undefined) {
+      formData.append('isActive', String(data.isActive));
+    }
+
+    // Note: FormData automatically sets the correct Content-Type with boundary
+    return apiClient.post<Logo>(`${this.baseUrl}/upload`, formData);
   }
 
   /**

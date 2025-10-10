@@ -18,7 +18,7 @@ export const LOGO_CONSTANTS = {
   
   // Validation constraints
   VALIDATION: {
-    NAME_MIN_LENGTH: 2,
+    NAME_MIN_LENGTH: 1,
     NAME_MAX_LENGTH: 200,
     FILENAME_MAX_LENGTH: 255,
     EXTENSION_MAX_LENGTH: 10,
@@ -29,7 +29,7 @@ export const LOGO_CONSTANTS = {
   },
   
   // Keep old keys for backward compatibility
-  NAME_MIN_LENGTH: 2,
+  NAME_MIN_LENGTH: 1,
   NAME_MAX_LENGTH: 200,
   LOGO_URL_MAX_LENGTH: 500,
 } as const;

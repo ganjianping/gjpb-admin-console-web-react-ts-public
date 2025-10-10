@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import '../i18n/translations';
 import type { Logo, LogoActionType, LogoFormData } from '../types/logo.types';
-import type { CreateLogoRequest, UpdateLogoRequest } from '../services/logoService';
+import type { CreateLogoRequest, CreateLogoByUploadRequest, UpdateLogoRequest } from '../services/logoService';
 import { logoService } from '../services/logoService';
 import { LOGO_CONSTANTS } from '../constants';
 
@@ -49,22 +49,44 @@ export const useLogoHandlers = ({
   const { t } = useTranslation();
 
   /**
-   * Create a new logo
+   * Create a new logo (supports both URL and file upload methods)
    */
   const createLogo = useCallback(async (formData: LogoFormData) => {
-    const createRequest: CreateLogoRequest = {
-      name: formData.name.trim(),
-      originalUrl: formData.originalUrl.trim() || null,
-      filename: formData.filename.trim(),
-      extension: formData.extension.trim(),
-      logoUrl: formData.logoUrl.trim(),
-      tags: formData.tags.trim(),
-      lang: formData.lang.trim(),
-      displayOrder: formData.displayOrder,
-      isActive: formData.isActive,
-    };
+    let response;
     
-    const response = await logoService.createLogo(createRequest);
+    if (formData.uploadMethod === 'file') {
+      // Create logo by uploading a file
+      if (!formData.file) {
+        throw new Error(t('logos.errors.fileRequired'));
+      }
+      
+      const createRequest: CreateLogoByUploadRequest = {
+        file: formData.file,
+        name: formData.name.trim(),
+        tags: formData.tags.trim(),
+        lang: formData.lang.trim(),
+        displayOrder: formData.displayOrder,
+        isActive: formData.isActive,
+      };
+      
+      response = await logoService.createLogoByUpload(createRequest);
+    } else {
+      // Create logo by originalUrl
+      if (!formData.originalUrl.trim()) {
+        throw new Error(t('logos.errors.originalUrlRequired'));
+      }
+      
+      const createRequest: CreateLogoRequest = {
+        name: formData.name.trim(),
+        originalUrl: formData.originalUrl.trim(),
+        tags: formData.tags.trim(),
+        lang: formData.lang.trim(),
+        displayOrder: formData.displayOrder,
+        isActive: formData.isActive,
+      };
+      
+      response = await logoService.createLogo(createRequest);
+    }
     
     if (response.status.code === 200 || response.status.code === 201) {
       return t('logos.messages.createSuccess');
@@ -114,7 +136,7 @@ export const useLogoHandlers = ({
   /**
    * Validate form data
    */
-  const validateForm = useCallback((formData: LogoFormData): Record<string, string> => {
+  const validateForm = useCallback((formData: LogoFormData, actionType: LogoActionType): Record<string, string> => {
     const errors: Record<string, string> = {};
 
     // Name validation
@@ -126,30 +148,58 @@ export const useLogoHandlers = ({
       errors.name = t('logos.errors.nameTooLong');
     }
 
-    // Filename validation
-    if (!formData.filename.trim()) {
-      errors.filename = t('logos.errors.filenameRequired');
-    } else if (formData.filename.length > LOGO_CONSTANTS.VALIDATION.FILENAME_MAX_LENGTH) {
-      errors.filename = t('logos.errors.filenameTooLong');
-    }
-
-    // Extension validation
-    if (!formData.extension.trim()) {
-      errors.extension = t('logos.errors.extensionRequired');
-    } else if (formData.extension.length > LOGO_CONSTANTS.VALIDATION.EXTENSION_MAX_LENGTH) {
-      errors.extension = t('logos.errors.extensionTooLong');
-    }
-
-    // Logo URL validation
-    if (!formData.logoUrl.trim()) {
-      errors.logoUrl = t('logos.errors.logoUrlRequired');
-    } else if (formData.logoUrl.length > LOGO_CONSTANTS.VALIDATION.LOGO_URL_MAX_LENGTH) {
-      errors.logoUrl = t('logos.errors.logoUrlTooLong');
-    }
-
     // Language validation
     if (!formData.lang.trim()) {
       errors.lang = t('logos.errors.langRequired');
+    }
+
+    // Tags validation
+    if (!formData.tags.trim()) {
+      errors.tags = t('logos.errors.tagsRequired');
+    }
+
+    // Create mode validation
+    if (actionType === 'create') {
+      if (formData.uploadMethod === 'file') {
+        // File upload validation
+        if (!formData.file) {
+          errors.file = t('logos.errors.fileRequired');
+        }
+      } else if (!formData.originalUrl.trim()) {
+        // URL validation
+        errors.originalUrl = t('logos.errors.originalUrlRequired');
+      } else if (formData.originalUrl.length > LOGO_CONSTANTS.VALIDATION.ORIGINAL_URL_MAX_LENGTH) {
+        errors.originalUrl = t('logos.errors.originalUrlTooLong');
+      }
+    }
+
+    // Edit mode validation - validate the fields that exist in edit mode
+    if (actionType === 'edit') {
+      // Filename validation
+      if (!formData.filename.trim()) {
+        errors.filename = t('logos.errors.filenameRequired');
+      } else if (formData.filename.length > LOGO_CONSTANTS.VALIDATION.FILENAME_MAX_LENGTH) {
+        errors.filename = t('logos.errors.filenameTooLong');
+      }
+
+      // Extension validation
+      if (!formData.extension.trim()) {
+        errors.extension = t('logos.errors.extensionRequired');
+      } else if (formData.extension.length > LOGO_CONSTANTS.VALIDATION.EXTENSION_MAX_LENGTH) {
+        errors.extension = t('logos.errors.extensionTooLong');
+      }
+
+      // Logo URL validation
+      if (!formData.logoUrl.trim()) {
+        errors.logoUrl = t('logos.errors.logoUrlRequired');
+      } else if (formData.logoUrl.length > LOGO_CONSTANTS.VALIDATION.LOGO_URL_MAX_LENGTH) {
+        errors.logoUrl = t('logos.errors.logoUrlTooLong');
+      }
+
+      // Original URL validation (optional in edit mode)
+      if (formData.originalUrl && formData.originalUrl.length > LOGO_CONSTANTS.VALIDATION.ORIGINAL_URL_MAX_LENGTH) {
+        errors.originalUrl = t('logos.errors.originalUrlTooLong');
+      }
     }
 
     return errors;
@@ -165,7 +215,7 @@ export const useLogoHandlers = ({
     setFormErrors: (errors: Record<string, string[] | string>) => void
   ) => {
     // Validate form
-    const validationErrors = validateForm(formData);
+    const validationErrors = validateForm(formData, actionType);
     if (Object.keys(validationErrors).length > 0) {
       setFormErrors(validationErrors);
       return false;

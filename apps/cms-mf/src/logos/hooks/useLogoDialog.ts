@@ -47,6 +47,8 @@ export const useLogoDialog = () => {
     lang: '',
     displayOrder: 0,
     isActive: true,
+    uploadMethod: 'url',
+    file: null,
   });
 
   const [formErrors, setFormErrors] = useState<Partial<Record<keyof LogoFormData, string>>>({});
@@ -62,6 +64,8 @@ export const useLogoDialog = () => {
       lang: '',
       displayOrder: 0,
       isActive: true,
+      uploadMethod: 'url',
+      file: null,
     });
     setFormErrors({});
   }, []);
@@ -78,6 +82,8 @@ export const useLogoDialog = () => {
       lang: logo.lang,
       displayOrder: logo.displayOrder,
       isActive: logo.isActive,
+      uploadMethod: 'url',
+      file: null,
     });
     setActionType('view');
     setDialogOpen(true);
@@ -96,6 +102,8 @@ export const useLogoDialog = () => {
       lang: logo.lang,
       displayOrder: logo.displayOrder,
       isActive: logo.isActive,
+      uploadMethod: 'url',
+      file: null,
     });
     setActionType('edit');
     setDialogOpen(true);
@@ -123,7 +131,7 @@ export const useLogoDialog = () => {
     setActionType('view');
   }, [loading, resetForm]);
 
-  const handleFormChange = useCallback((field: keyof LogoFormData, value: string | boolean) => {
+  const handleFormChange = useCallback((field: keyof LogoFormData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (formErrors[field]) {
       setFormErrors(prev => ({ ...prev, [field]: undefined }));
