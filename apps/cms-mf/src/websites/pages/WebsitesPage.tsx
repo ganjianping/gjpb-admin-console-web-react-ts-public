@@ -86,6 +86,7 @@ const WebsitesPage = () => {
     selectedWebsite,
     actionType,
     loading: dialogLoading,
+    setLoading,
     formData,
     formErrors,
     setFormErrors,
@@ -162,7 +163,9 @@ const WebsitesPage = () => {
    */
   const handleDialogSave = async () => {
     if (actionType === 'create') {
+      setLoading(true);
       await handleCreateSave(formData, setFormErrors);
+      setLoading(false);
     } else if (actionType === 'edit') {
       await handleEditSave(formData, selectedWebsite, setFormErrors);
     }
