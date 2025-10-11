@@ -147,7 +147,6 @@ export const WebsiteCreateDialog = ({
               <FormControl fullWidth error={!!getFieldError('lang')}>
                 <FormLabel sx={{ mb: 1, color: 'text.primary', fontWeight: 500 }}>{t('websites.form.lang')}</FormLabel>
                 <Select value={formData.lang} onChange={(e) => onFormChange('lang', e.target.value)} displayEmpty sx={{ '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: 'primary.main', borderWidth: '2px' } }}>
-                  <MenuItem value="" disabled>{t('websites.form.langPlaceholder')}</MenuItem>
                   {LANGUAGE_OPTIONS.map((option) => (
                     <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>
                   ))}
