@@ -1,7 +1,9 @@
 export * from './WebsitePageHeader';
 export * from './WebsiteSearchPanel';
 export * from './WebsiteTable';
-export * from './WebsiteCreateDialog';
-export * from './WebsiteUpdateDialog';
+export { WebsiteCreateDialog } from './WebsiteCreateDialog';
+export { WebsiteUpdateDialog } from './WebsiteUpdateDialog';
 export * from './DeleteWebsiteDialog';
 export * from './WebsiteTableSkeleton';
+
+export * from './WebsiteViewDialog';

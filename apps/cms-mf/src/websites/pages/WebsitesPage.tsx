@@ -1,8 +1,10 @@
+// ...existing code...
 import { Box, Alert, Card, CardContent, Collapse, useTheme, Snackbar } from '@mui/material';
 import '../i18n/translations'; // Initialize website translations
 import { useNotification } from '../../../../shared-lib/src/data-management/useNotification';
 import type { Website } from '../types/website.types';
 
+// ...existing code...
 // Import all the refactored components and hooks
 import {
   WebsitePageHeader,
@@ -11,7 +13,9 @@ import {
   WebsiteCreateDialog,
   WebsiteUpdateDialog,
   DeleteWebsiteDialog,
-} from '../components';
+      WebsiteViewDialog,
+    } from '../components';
+// ...existing code...
 
 import {
   useWebsites,
@@ -242,6 +246,13 @@ const WebsitesPage = () => {
         </CardContent>
       </Card>
 
+      {/* Website View Dialog */}
+      <WebsiteViewDialog
+        open={dialogOpen && actionType === 'view'}
+        onClose={handleClose}
+        website={formData}
+      />
+
       {/* Website Create Dialog */}
       <WebsiteCreateDialog
         open={dialogOpen && actionType === 'create'}
@@ -263,7 +274,7 @@ const WebsitesPage = () => {
         loading={dialogLoading}
         formErrors={formErrors}
       />
-      
+
       {/* Delete Website Dialog */}
       <DeleteWebsiteDialog
         open={actionType === 'delete' && selectedWebsite !== null}
@@ -272,7 +283,7 @@ const WebsitesPage = () => {
         onConfirm={handleDialogDelete}
         loading={dialogLoading}
       />
-      
+
       {/* Notification Snackbar */}
       <Snackbar
         open={snackbar.open}

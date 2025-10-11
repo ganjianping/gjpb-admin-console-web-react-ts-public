@@ -1,4 +1,5 @@
 import { Box, Chip, Typography, Avatar } from '@mui/material';
+import { getFullLogoUrl } from '../utils/getFullLogoUrl';
 import { Globe } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { memo, useMemo } from 'react';
@@ -49,23 +50,7 @@ export const WebsiteTable = memo(({
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
             {website.logoUrl ? (
               (() => {
-                let logoSrc = website.logoUrl;
-                if (logoSrc && !logoSrc.startsWith('http')) {
-                  try {
-                    const settings = localStorage.getItem('gjpb_app_settings');
-                    if (settings) {
-                      const appSettings = JSON.parse(settings);
-                      const logoBaseUrlSetting = appSettings.find(
-                        (setting: any) => setting.name === 'logo_base_url'
-                      );
-                      if (logoBaseUrlSetting && logoBaseUrlSetting.value) {
-                        logoSrc = logoBaseUrlSetting.value + "/" + logoSrc;
-                      }
-                    }
-                  } catch (err) {
-                    // fallback: use original logoUrl
-                  }
-                }
+                const logoSrc = getFullLogoUrl(website.logoUrl);
                 return (
                   <Avatar
                     src={logoSrc}

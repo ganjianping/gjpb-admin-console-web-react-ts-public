@@ -15,6 +15,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import '../i18n/translations'; // Initialize websites translations
 import { Eye, Globe, Tag, Hash, CheckCircle2, XCircle } from 'lucide-react';
+import { getFullLogoUrl } from '../utils/getFullLogoUrl';
 import type { WebsiteFormData } from '../types/website.types';
 import { LANGUAGE_OPTIONS } from '../constants';
 
@@ -79,7 +80,7 @@ export const WebsiteViewDialog = ({
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                 {website.logoUrl ? (
                   <Avatar
-                    src={website.logoUrl}
+                    src={getFullLogoUrl(website.logoUrl)}
                     alt={website.name}
                     sx={{ width: 64, height: 64 }}
                     variant="rounded"

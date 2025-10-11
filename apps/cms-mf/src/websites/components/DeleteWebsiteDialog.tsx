@@ -65,7 +65,7 @@ export const DeleteWebsiteDialog = ({
       </DialogTitle>
 
       <DialogContent sx={{ pt: 3 }}>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
           <Alert severity="warning" icon={<AlertTriangle size={20} />}>
             <Typography variant="body2" sx={{ fontWeight: 500 }}>
               {t('websites.messages.deleteWarning')}
