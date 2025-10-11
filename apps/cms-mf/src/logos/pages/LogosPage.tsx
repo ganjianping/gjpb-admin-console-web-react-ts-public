@@ -124,6 +124,7 @@ const LogosPage = () => {
     error,
     setError,
     loadLogos,
+    setFilteredLogos,
   } = useLogos();
 
   // ============================================================================
@@ -135,6 +136,7 @@ const LogosPage = () => {
     handleSearchPanelToggle,
     handleSearchFormChange,
     handleClearSearch,
+    applyClientSideFiltersWithData,
   } = useLogoSearch(allLogos);
 
   // =========================================================================
@@ -161,6 +163,8 @@ const LogosPage = () => {
       );
       if (success) {
         handleClose();
+        // Refresh logo table after create/update
+        await loadLogos({ sort: 'updateAt', direction: 'desc' });
       }
     } finally {
       setDialogLoading(false);
@@ -173,6 +177,8 @@ const LogosPage = () => {
       const success = await handleDeleteLogo(selectedLogo);
       if (success) {
         handleClose();
+        // Refresh logo table after delete
+        await loadLogos({ sort: 'updateAt', direction: 'desc' });
       }
     } finally {
       setDialogLoading(false);
@@ -218,7 +224,13 @@ const LogosPage = () => {
         <LogoSearchPanel
             searchFormData={searchFormData}
             loading={loading}
-            onFormChange={handleSearchFormChange}
+            onFormChange={(field, value) => {
+              handleSearchFormChange(field, value);
+              if (["isActive", "name", "lang", "tags"].includes(field)) {
+                const filtered = applyClientSideFiltersWithData({ ...searchFormData, [field]: value });
+                setFilteredLogos(filtered);
+              }
+            }}
             onSearch={handleApiSearch}
             onClear={handleClearSearch}
           />

@@ -51,7 +51,8 @@ export interface UpdateLogoRequest {
 }
 
 class LogoService {
-  private readonly baseUrl = "/v1/logos/search";
+  private readonly getUrl = "/v1/logos/search";
+  private readonly crudUrl = "/v1/logos";
 
   /**
    * Get all logos (no pagination based on API response)
@@ -70,8 +71,8 @@ class LogoService {
     }
 
     const url = searchParams.toString()
-      ? `${this.baseUrl}?${searchParams}`
-      : this.baseUrl;
+      ? `${this.getUrl}?${searchParams}`
+      : this.getUrl;
 
     return apiClient.get<Logo[]>(url);
   }
@@ -80,7 +81,7 @@ class LogoService {
    * Get a specific logo by ID
    */
   async getLogo(id: string): Promise<ApiResponse<Logo>> {
-    return apiClient.get<Logo>(`${this.baseUrl}/${id}`);
+    return apiClient.get<Logo>(`${this.crudUrl}/${id}`);
   }
 
   /**
@@ -89,7 +90,7 @@ class LogoService {
   async createLogo(
     data: CreateLogoRequest,
   ): Promise<ApiResponse<Logo>> {
-    return apiClient.post<Logo>(this.baseUrl, data);
+    return apiClient.post<Logo>(this.crudUrl, data);
   }
 
   /**
@@ -111,7 +112,7 @@ class LogoService {
     }
 
     // Note: FormData automatically sets the correct Content-Type with boundary
-    return apiClient.post<Logo>(`${this.baseUrl}/upload`, formData);
+    return apiClient.post<Logo>(`${this.crudUrl}/upload`, formData);
   }
 
   /**
@@ -121,14 +122,14 @@ class LogoService {
     id: string,
     data: UpdateLogoRequest,
   ): Promise<ApiResponse<Logo>> {
-    return apiClient.put<Logo>(`${this.baseUrl}/${id}`, data);
+    return apiClient.put<Logo>(`${this.crudUrl}/${id}`, data);
   }
 
   /**
    * Delete a logo
    */
   async deleteLogo(id: string): Promise<ApiResponse<void>> {
-    return apiClient.delete<void>(`${this.baseUrl}/${id}`);
+    return apiClient.delete<void>(`${this.crudUrl}/${id}`);
   }
 }
 
