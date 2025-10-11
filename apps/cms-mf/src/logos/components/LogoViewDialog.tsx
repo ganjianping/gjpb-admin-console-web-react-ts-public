@@ -25,12 +25,14 @@ interface LogoViewDialogProps {
   open: boolean;
   onClose: () => void;
   logo: Logo;
+  onEdit?: (logo: Logo) => void;
 }
 
 export const LogoViewDialog = ({
   open,
   onClose,
   logo,
+  onEdit,
 }: LogoViewDialogProps) => {
   const { t } = useTranslation();
   const [copiedField, setCopiedField] = useState<string | null>(null);
@@ -414,6 +416,21 @@ export const LogoViewDialog = ({
       </DialogContent>
 
       <DialogActions sx={{ px: 3, pb: 3, pt: 2, gap: 1 }}>
+        {onEdit && (
+          <Button
+            onClick={() => onEdit(logo)}
+            variant="contained"
+            color="primary"
+            sx={{
+              borderRadius: 2,
+              px: 3,
+              textTransform: 'none',
+              fontWeight: 600,
+            }}
+          >
+            {t('common.edit')}
+          </Button>
+        )}
         <Button
           onClick={onClose}
           variant="outlined"

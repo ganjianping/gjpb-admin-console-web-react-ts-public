@@ -42,6 +42,20 @@ export const LogoDialog = ({
         open={open}
         onClose={onClose}
         logo={selectedLogo}
+        onEdit={() => {
+          // Switch to edit mode with the selected logo
+          if (typeof window !== 'undefined') {
+            // Use a custom event or callback to trigger edit
+            // This assumes LogoDialog is controlled by parent state
+            // You may need to lift state up if not already
+            // For now, just call onClose and let parent open edit dialog
+            onClose();
+            setTimeout(() => {
+              const event = new CustomEvent('logo-edit', { detail: selectedLogo });
+              window.dispatchEvent(event);
+            }, 300);
+          }
+        }}
       />
     );
   }

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import '../i18n/translations'; // Initialize logo translations
 import { useNotification } from '../../../../shared-lib/src/data-management/useNotification';
 import type { Logo } from '../types/logo.types';
+import { useEffect } from 'react';
 
 // Import all the refactored components and hooks
 import {
@@ -35,42 +36,22 @@ import {
  * @component
  */
 const LogosPage = () => {
-  const theme = useTheme();
-  const { t } = useTranslation();
-  
-  // ============================================================================
-  // Notification Management
-  // ============================================================================
-  const { snackbar, showSuccess, showError, hideNotification } = useNotification();
-  
-  // ============================================================================
-  // Data Management
-  // ============================================================================
-  const {
-    allLogos,
-    filteredLogos,
-    setFilteredLogos,
-    loading,
-    error,
-    loadLogos,
-    setError,
-  } = useLogos();
 
-  // ============================================================================
-  // Search Functionality
-  // ============================================================================
-  const {
-    searchPanelOpen,
-    searchFormData,
-    applyClientSideFiltersWithData,
-    handleSearchPanelToggle,
-    handleSearchFormChange,
-    handleClearSearch,
-  } = useLogoSearch(allLogos);
-
-  // ============================================================================
+    // =========================================================================
+    // Notification Management
+    // =========================================================================
+    const { snackbar, showSuccess, showError, hideNotification } = useNotification();
+  // =========================================================================
+  // Business Logic Handlers
+  // =========================================================================
+    const { handleSave, handleDelete: handleDeleteLogo } = useLogoHandlers({
+      onSuccess: showSuccess,
+      onError: showError,
+      onRefresh: () => {}, // Optionally reload logos if needed
+    });
+  // =========================================================================
   // Dialog Management (UI State Only)
-  // ============================================================================
+  // =========================================================================
   const {
     dialogOpen,
     selectedLogo,
@@ -88,25 +69,57 @@ const LogosPage = () => {
     handleFormChange,
   } = useLogoDialog();
 
+  // =========================================================================
+  // Event Handlers
+  // =========================================================================
+  // This enables switching from view to edit dialog
+  // when the Edit button is clicked in LogoViewDialog
+  useEffect(() => {
+    const handleLogoEditEvent = (e: any) => {
+      if (e.detail) {
+        handleEdit(e.detail);
+      }
+    };
+    window.addEventListener('logo-edit', handleLogoEditEvent);
+    return () => {
+      window.removeEventListener('logo-edit', handleLogoEditEvent);
+    };
+  }, [handleEdit]);
+  const theme = useTheme();
+  const { t } = useTranslation();
+  
   // ============================================================================
-  // Business Logic Handlers
+  // Notification Management
   // ============================================================================
-  const { handleSave, handleDelete: handleConfirmDelete } = useLogoHandlers({
-    onSuccess: (message: string) => {
-      showSuccess(message);
-      handleClose();
-    },
-    onError: (message: string) => {
-      showError(message);
-    },
-    onRefresh: () => {
-      loadLogos();
-    },
-  });
+  
+  // ============================================================================
+  // Data Management
+  // ============================================================================
+  const {
+    allLogos,
+    filteredLogos,
+  // setFilteredLogos, // unused
+    loading,
+    error,
+  // loadLogos, // unused
+    setError,
+  } = useLogos();
 
   // ============================================================================
-  // Event Handlers
+  // Search Functionality
   // ============================================================================
+  const {
+    searchPanelOpen,
+    searchFormData,
+    applyClientSideFiltersWithData,
+    handleSearchPanelToggle,
+    handleSearchFormChange,
+    handleClearSearch,
+  } = useLogoSearch(allLogos);
+
+  // =========================================================================
+  // Event Handlers
+  // =========================================================================
   const handleLogoAction = (logo: Logo, action: 'view' | 'edit' | 'delete') => {
     if (action === 'view') {
       handleView(logo);
@@ -137,7 +150,7 @@ const LogosPage = () => {
   const handleDeleteConfirm = async () => {
     setDialogLoading(true);
     try {
-      const success = await handleConfirmDelete(selectedLogo);
+      const success = await handleDeleteLogo(selectedLogo);
       if (success) {
         handleClose();
       }
@@ -156,46 +169,21 @@ const LogosPage = () => {
     }
   };
 
+  // Listen for logo-edit event from LogoViewDialog
+  // This enables switching from view to edit dialog
+  // when the Edit button is clicked in LogoViewDialog
+  // (removed duplicate)
+
   // Immediate client-side filtering (triggered on every input change)
-  const handleImmediateFilter = (field: keyof typeof searchFormData, value: any) => {
-    handleSearchFormChange(field, value);
-    
-    // Apply filter immediately with the updated search data
-    const updatedSearchData = { ...searchFormData, [field]: value };
-    const filtered = applyClientSideFiltersWithData(updatedSearchData);
-    setFilteredLogos(filtered);
-  };
+  // Immediate client-side filtering (triggered on every input change)
+  // Use the handlers from useLogoSearch and useLogos above
 
-  // Server-side API search (triggered by clicking "Search" button)
-  const handleApiSearch = async () => {
-    try {
-      setError(null);
-      // Build query parameters from search form
-      const params: any = {};
-      if (searchFormData.name) params.name = searchFormData.name;
-      if (searchFormData.lang) params.lang = searchFormData.lang;
-      if (searchFormData.tags) params.tags = searchFormData.tags;
-      if (searchFormData.isActive !== '') params.isActive = searchFormData.isActive === 'true';
-      
-      // Load logos with API search parameters
-      await loadLogos(params);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to search logos';
-      showError(errorMessage);
-      console.error('API search error:', err);
-    }
-  };
-
-  const handleClear = () => {
-    handleClearSearch();
-    setFilteredLogos(allLogos);
-    // Reload all logos without filters
-    loadLogos();
-  };
-
-  // ============================================================================
+  // Listen for logo-edit event from LogoViewDialog
+  // This enables switching from view to edit dialog
+  // when the Edit button is clicked in LogoViewDialog
+  // =========================================================================
   // Render
-  // ============================================================================
+  // =========================================================================
   return (
     <Box sx={{ py: 2, minHeight: '100vh' }}>
       {/* Page Header */}
@@ -210,9 +198,9 @@ const LogosPage = () => {
         <LogoSearchPanel
           searchFormData={searchFormData}
           loading={loading}
-          onFormChange={handleImmediateFilter}
-          onSearch={handleApiSearch}
-          onClear={handleClear}
+          onFormChange={handleSearchFormChange}
+          onSearch={() => applyClientSideFiltersWithData(searchFormData)}
+          onClear={handleClearSearch}
         />
       </Collapse>
 
