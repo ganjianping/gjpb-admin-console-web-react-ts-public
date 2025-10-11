@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import '../i18n/translations';
-import type { Website, WebsiteActionType, WebsiteFormData } from '../types/website.types';
+import type { Website, WebsiteFormData } from '../types/website.types';
 import type { CreateWebsiteRequest, UpdateWebsiteRequest } from '../services/websiteService';
 import { websiteService } from '../services/websiteService';
 import { logoService } from '../../logos/services/logoService';
@@ -144,13 +144,11 @@ export const useWebsiteHandlers = ({
   /**
    * Handle save operation (create or update)
    */
-  const handleSave = useCallback(async (
-    actionType: WebsiteActionType,
+  // Create Website Save: Step 1 Save logo, Step 2 Save website
+  const handleCreateSave = useCallback(async (
     formData: WebsiteFormData,
-    selectedWebsite: Website | null,
     setFormErrors: (errors: Record<string, string[] | string>) => void
   ) => {
-    // Validate form
     const validationErrors = validateForm(formData);
     // Logo validation
     if (formData.logoUploadMethod === 'url') {
@@ -166,16 +164,16 @@ export const useWebsiteHandlers = ({
       setFormErrors(validationErrors);
       return false;
     }
-
     try {
       // Step 1: Save logo
       let logoFilename = formData.logoUrl;
+      // Set logo tags value based on lang
+      const logoTags = formData.lang === 'EN' ? 'Website' : '网站';
       if (formData.logoUploadMethod === 'url') {
-        // Save logo by URL
         const logoRes = await logoService.createLogo({
           name: formData.name,
           originalUrl: formData.logoUrl,
-          tags: formData.tags,
+          tags: logoTags,
           lang: formData.lang,
           displayOrder: formData.displayOrder,
           isActive: formData.isActive,
@@ -186,11 +184,10 @@ export const useWebsiteHandlers = ({
           throw new Error(logoRes.status.message || 'Failed to save logo');
         }
       } else if (formData.logoUploadMethod === 'file' && formData.logoFile) {
-        // Save logo by file upload
         const logoRes = await logoService.createLogoByUpload({
           file: formData.logoFile,
           name: formData.name,
-          tags: formData.tags,
+          tags: logoTags,
           lang: formData.lang,
           displayOrder: formData.displayOrder,
           isActive: formData.isActive,
@@ -201,23 +198,14 @@ export const useWebsiteHandlers = ({
           throw new Error(logoRes.status.message || 'Failed to upload logo');
         }
       }
-
       // Step 2: Save website with logo filename
-      let successMessage: string;
       const websiteFormData = { ...formData, logoUrl: logoFilename };
-      if (actionType === 'create') {
-        successMessage = await createWebsite(websiteFormData);
-      } else if (actionType === 'edit' && selectedWebsite) {
-        successMessage = await updateWebsite(selectedWebsite.id, websiteFormData);
-      } else {
-        return false;
-      }
+      const successMessage = await createWebsite(websiteFormData);
       onSuccess(successMessage);
       onRefresh();
       return true;
     } catch (err: any) {
-      console.error('Save app setting error:', err);
-      // Handle validation errors from API
+      console.error('Create website error:', err);
       const apiValidationErrors = extractValidationErrors(err);
       if (Object.keys(apiValidationErrors).length > 0) {
         setFormErrors(apiValidationErrors);
@@ -227,7 +215,42 @@ export const useWebsiteHandlers = ({
       }
       return false;
     }
-  }, [t, validateForm, createWebsite, updateWebsite, onSuccess, onError, onRefresh]);
+  }, [t, validateForm, createWebsite, onSuccess, onError, onRefresh]);
+
+  // Edit Website Save: Only call website API
+  const handleEditSave = useCallback(async (
+    formData: WebsiteFormData,
+    selectedWebsite: Website | null,
+    setFormErrors: (errors: Record<string, string[] | string>) => void
+  ) => {
+    const validationErrors = validateForm(formData);
+    if (!formData.logoUrl?.trim()) {
+      validationErrors.logoUrl = 'Logo URL is required.';
+    }
+    if (Object.keys(validationErrors).length > 0) {
+      setFormErrors(validationErrors);
+      return false;
+    }
+    try {
+      if (selectedWebsite) {
+        const successMessage = await updateWebsite(selectedWebsite.id, formData);
+        onSuccess(successMessage);
+        onRefresh();
+        return true;
+      }
+      return false;
+    } catch (err: any) {
+      console.error('Edit website error:', err);
+      const apiValidationErrors = extractValidationErrors(err);
+      if (Object.keys(apiValidationErrors).length > 0) {
+        setFormErrors(apiValidationErrors);
+      } else {
+        const errorMessage = handleApiError(err);
+        onError(errorMessage);
+      }
+      return false;
+    }
+  }, [t, validateForm, updateWebsite, onSuccess, onError, onRefresh]);
 
   /**
    * Handle delete operation
@@ -249,7 +272,8 @@ export const useWebsiteHandlers = ({
   }, [deleteWebsite, onSuccess, onError, onRefresh, t]);
 
   return {
-    handleSave,
+  handleCreateSave,
+  handleEditSave,
     handleDelete,
     validateForm,
   };

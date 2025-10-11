@@ -101,7 +101,7 @@ const WebsitesPage = () => {
   // Business Logic Handlers
   // ============================================================================
   // Initialize CRUD operation handlers with callbacks
-  const { handleSave, handleDelete: handleConfirmDelete } = useWebsiteHandlers({
+  const { handleCreateSave, handleEditSave, handleDelete: handleConfirmDelete } = useWebsiteHandlers({
     onSuccess: (message: string) => {
       showSuccess(message);
       loadWebsites();
@@ -161,7 +161,11 @@ const WebsitesPage = () => {
    * Save handler - delegates to business logic hook
    */
   const handleDialogSave = async () => {
-    await handleSave(actionType, formData, selectedWebsite, setFormErrors);
+    if (actionType === 'create') {
+      await handleCreateSave(formData, setFormErrors);
+    } else if (actionType === 'edit') {
+      await handleEditSave(formData, selectedWebsite, setFormErrors);
+    }
   };
   
   /**
@@ -250,7 +254,7 @@ const WebsitesPage = () => {
       <WebsiteViewDialog
         open={dialogOpen && actionType === 'view'}
         onClose={handleClose}
-        website={formData}
+        website={selectedWebsite || { id: '', name: '', url: '', logoUrl: '', description: '', tags: '', lang: '', displayOrder: 0, isActive: true, createdAt: '', updatedAt: '', createdBy: '', updatedBy: '', tagsArray: [] }}
       />
 
       {/* Website Create Dialog */}

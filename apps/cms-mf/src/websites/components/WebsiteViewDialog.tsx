@@ -16,13 +16,14 @@ import { useTranslation } from 'react-i18next';
 import '../i18n/translations'; // Initialize websites translations
 import { Eye, Globe, Tag, Hash, CheckCircle2, XCircle } from 'lucide-react';
 import { getFullLogoUrl } from '../utils/getFullLogoUrl';
-import type { WebsiteFormData } from '../types/website.types';
 import { LANGUAGE_OPTIONS } from '../constants';
+
+import type { Website } from '../types/website.types';
 
 interface WebsiteViewDialogProps {
   open: boolean;
   onClose: () => void;
-  website: WebsiteFormData;
+  website: Website;
 }
 
 export const WebsiteViewDialog = ({
@@ -149,54 +150,89 @@ export const WebsiteViewDialog = ({
                 Details
               </Typography>
               <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2.5 }}>
-                {/* Language */}
+                {/* Row 1: ID & Language */}
                 <Box>
-                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>
-                    Language
-                  </Typography>
-                  <Chip 
-                    label={LANGUAGE_OPTIONS.find(opt => opt.value === website.lang)?.label || website.lang} 
-                    size="small"
-                    sx={{ fontWeight: 600 }}
-                  />
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>ID</Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 600 }}>{website.id}</Typography>
                 </Box>
-
-                {/* Display Order */}
                 <Box>
-                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>
-                    Display Order
-                  </Typography>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Language</Typography>
+                  <Chip label={LANGUAGE_OPTIONS.find(opt => opt.value === website.lang)?.label || website.lang} size="small" sx={{ fontWeight: 600 }} />
+                </Box>
+                {/* Row 2: Display Order & Active */}
+                <Box>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Display Order</Typography>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                     <Hash size={16} />
-                    <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                      {website.displayOrder}
-                    </Typography>
+                    <Typography variant="body2" sx={{ fontWeight: 600 }}>{website.displayOrder}</Typography>
                   </Box>
                 </Box>
-
-                {/* Tags */}
+                <Box>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Active</Typography>
+                  <Chip icon={website.isActive ? <CheckCircle2 size={16} /> : <XCircle size={16} />} label={website.isActive ? 'Yes' : 'No'} color={website.isActive ? 'success' : 'default'} sx={{ fontWeight: 600 }} />
+                </Box>
+                {/* Row 3: Logo URL (label, value below with copy icon) */}
+                <Box sx={{ gridColumn: '1 / 3' }}>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Logo URL</Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <a href={getFullLogoUrl(website.logoUrl)} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', wordBreak: 'break-all', fontWeight: 600 }}>
+                      {getFullLogoUrl(website.logoUrl)}
+                    </a>
+                    <button
+                      style={{ marginLeft: 4, padding: '2px 8px', fontSize: 12, cursor: 'pointer', borderRadius: 4, border: '1px solid #ccc', background: '#f5f5f5' }}
+                      onClick={() => navigator.clipboard.writeText(getFullLogoUrl(website.logoUrl))}
+                      title="Copy Logo URL"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M10 1.5A1.5 1.5 0 0 1 11.5 3v1h-1V3a.5.5 0 0 0-.5-.5H4A1.5 1.5 0 0 0 2.5 4v8A1.5 1.5 0 0 0 4 13.5h6A1.5 1.5 0 0 0 11.5 12v-1h1v1A2.5 2.5 0 0 1 10 14.5H4A2.5 2.5 0 0 1 1.5 12V4A2.5 2.5 0 0 1 4 1.5h6z"/><path d="M13.5 2.5A1.5 1.5 0 0 1 15 4v6a1.5 1.5 0 0 1-1.5 1.5H7A1.5 1.5 0 0 1 5.5 10V4A1.5 1.5 0 0 1 7 2.5h6zm-6 1A.5.5 0 0 0 7 4v6a.5.5 0 0 0 .5.5h6a.5.5 0 0 0 .5-.5V4a.5.5 0 0 0-.5-.5h-6z"/></svg>
+                    </button>
+                  </Box>
+                </Box>
+                {/* Row 4: Tags (full row) */}
                 {website.tags && (
-                  <Box sx={{ gridColumn: '1 / -1' }}>
-                    <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>
-                      Tags
-                    </Typography>
+                  <Box sx={{ gridColumn: '1 / 3' }}>
+                    <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Tags</Typography>
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
                       {website.tags.split(',').map((tag) => {
                         const trimmedTag = tag.trim();
                         return (
-                          <Chip
-                            key={trimmedTag}
-                            icon={<Tag size={14} />}
-                            label={trimmedTag}
-                            size="small"
-                            variant="outlined"
-                            sx={{ fontWeight: 500 }}
-                          />
+                          <Chip key={trimmedTag} icon={<Tag size={14} />} label={trimmedTag} size="small" variant="outlined" sx={{ fontWeight: 500 }} />
                         );
                       })}
                     </Box>
                   </Box>
                 )}
+                {/* Tags Array */}
+              </Box>
+            </CardContent>
+          </Card>
+
+          {/* Metadata Card: Created/Updated At/By */}
+          <Card elevation={0} sx={{ border: '1px solid', borderColor: 'divider', mt: 2 }}>
+            <CardContent sx={{ p: 3 }}>
+              <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: 'text.secondary' }}>
+                Metadata
+              </Typography>
+              <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2.5 }}>
+                {/* Created At */}
+                <Box>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Created At</Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 600 }}>{website.createdAt ? website.createdAt : 'N/A'}</Typography>
+                </Box>
+                {/* Updated At */}
+                <Box>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Updated At</Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 600 }}>{website.updatedAt ? website.updatedAt : 'N/A'}</Typography>
+                </Box>
+                {/* Created By */}
+                <Box>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Created By</Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 600 }}>{website.createdBy ? website.createdBy : 'N/A'}</Typography>
+                </Box>
+                {/* Updated By */}
+                <Box>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Updated By</Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 600 }}>{website.updatedBy ? website.updatedBy : 'N/A'}</Typography>
+                </Box>
               </Box>
             </CardContent>
           </Card>
