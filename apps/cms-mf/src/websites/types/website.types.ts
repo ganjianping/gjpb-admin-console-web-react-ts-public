@@ -34,6 +34,9 @@ export interface WebsiteFormData {
   lang: string;
   displayOrder: number;
   isActive: boolean;
+  // For logo upload UI only (not sent to website API)
+  logoUploadMethod?: 'url' | 'file';
+  logoFile?: File | null;
 }
 
 // Dialog action types

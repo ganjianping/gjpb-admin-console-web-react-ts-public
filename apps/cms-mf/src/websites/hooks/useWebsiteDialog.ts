@@ -46,6 +46,8 @@ export const useWebsiteDialog = () => {
     lang: '',
     displayOrder: 0,
     isActive: true,
+    logoUploadMethod: 'url',
+    logoFile: null,
   });
 
   const [formErrors, setFormErrors] = useState<Partial<Record<keyof WebsiteFormData, string>>>({});
@@ -60,6 +62,8 @@ export const useWebsiteDialog = () => {
       lang: '',
       displayOrder: 0,
       isActive: true,
+      logoUploadMethod: 'url',
+      logoFile: null,
     });
     setFormErrors({});
   }, []);
@@ -75,6 +79,8 @@ export const useWebsiteDialog = () => {
       lang: website.lang,
       displayOrder: website.displayOrder,
       isActive: website.isActive,
+      logoUploadMethod: 'url',
+      logoFile: null,
     });
     setActionType('view');
     setDialogOpen(true);
@@ -92,6 +98,8 @@ export const useWebsiteDialog = () => {
       lang: website.lang,
       displayOrder: website.displayOrder,
       isActive: website.isActive,
+      logoUploadMethod: 'url',
+      logoFile: null,
     });
     setActionType('edit');
     setDialogOpen(true);

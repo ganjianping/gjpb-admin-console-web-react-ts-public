@@ -48,12 +48,33 @@ export const WebsiteTable = memo(({
         return (
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
             {website.logoUrl ? (
-              <Avatar
-                src={website.logoUrl}
-                alt={info.getValue()}
-                sx={{ width: 32, height: 32 }}
-                variant="rounded"
-              />
+              (() => {
+                let logoSrc = website.logoUrl;
+                if (logoSrc && !logoSrc.startsWith('http')) {
+                  try {
+                    const settings = localStorage.getItem('gjpb_app_settings');
+                    if (settings) {
+                      const appSettings = JSON.parse(settings);
+                      const logoBaseUrlSetting = appSettings.find(
+                        (setting: any) => setting.name === 'logo_base_url'
+                      );
+                      if (logoBaseUrlSetting && logoBaseUrlSetting.value) {
+                        logoSrc = logoBaseUrlSetting.value + "/" + logoSrc;
+                      }
+                    }
+                  } catch (err) {
+                    // fallback: use original logoUrl
+                  }
+                }
+                return (
+                  <Avatar
+                    src={logoSrc}
+                    alt={info.getValue()}
+                    sx={{ width: 32, height: 32 }}
+                    variant="rounded"
+                  />
+                );
+              })()
             ) : (
               <Avatar
                 sx={{ 

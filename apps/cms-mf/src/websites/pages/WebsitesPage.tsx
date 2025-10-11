@@ -8,7 +8,8 @@ import {
   WebsitePageHeader,
   WebsiteSearchPanel,
   WebsiteTable,
-  WebsiteDialog,
+  WebsiteCreateDialog,
+  WebsiteUpdateDialog,
   DeleteWebsiteDialog,
 } from '../components';
 
@@ -241,11 +242,21 @@ const WebsitesPage = () => {
         </CardContent>
       </Card>
 
-      {/* Website Dialog */}
-      <WebsiteDialog
-        open={dialogOpen && (actionType === 'create' || actionType === 'edit' || actionType === 'view')}
+      {/* Website Create Dialog */}
+      <WebsiteCreateDialog
+        open={dialogOpen && actionType === 'create'}
         onClose={handleClose}
-        actionType={actionType}
+        formData={formData}
+        onFormChange={handleFormChange}
+        onSubmit={handleDialogSave}
+        loading={dialogLoading}
+        formErrors={formErrors}
+      />
+
+      {/* Website Update Dialog */}
+      <WebsiteUpdateDialog
+        open={dialogOpen && actionType === 'edit'}
+        onClose={handleClose}
         formData={formData}
         onFormChange={handleFormChange}
         onSubmit={handleDialogSave}
