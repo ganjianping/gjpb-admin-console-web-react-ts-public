@@ -17,6 +17,7 @@ interface LogoTableProps {
   onPageChange?: (page: number) => void;
   onPageSizeChange?: (size: number) => void;
   onLogoAction: (logo: Logo, action: 'view' | 'edit' | 'delete') => void;
+  onCopyFilename?: (logo: Logo) => void;
 }
 
 // Column helper
@@ -28,7 +29,8 @@ export const LogoTable = memo(({
   pagination, 
   onPageChange, 
   onPageSizeChange, 
-  onLogoAction 
+  onLogoAction,
+  onCopyFilename 
 }: LogoTableProps) => {
   const { t } = useTranslation();
 
@@ -59,6 +61,7 @@ export const LogoTable = memo(({
     onView: (logo: Logo) => onLogoAction(logo, 'view'),
     onEdit: (logo: Logo) => onLogoAction(logo, 'edit'),
     onDelete: (logo: Logo) => onLogoAction(logo, 'delete'),
+    onCopyFilename: (logo: Logo) => onCopyFilename?.(logo),
   });
 
   // Memoize columns to prevent recreation on every render
@@ -174,7 +177,7 @@ export const LogoTable = memo(({
       header: t('logos.columns.updatedAt'),
       cell: (info) => {
         const date = info.getValue();
-        return date ? format(parseISO(date), 'MMM dd, yyyy HH:mm') : '-';
+        return date ? format(parseISO(date), 'MMM dd, yyyy') : '-';
       },
     }),
   ], [t, logoBaseUrl]);

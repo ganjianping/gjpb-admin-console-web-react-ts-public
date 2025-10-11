@@ -13,9 +13,6 @@ import {
   Typography,
   FormControlLabel,
   Switch,
-  RadioGroup,
-  Radio,
-  Alert,
   OutlinedInput,
   Chip,
   LinearProgress,
@@ -25,14 +22,13 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useMemo } from 'react';
 import '../i18n/translations';
-import { Edit, Plus, Upload, ImageIcon } from 'lucide-react';
+import { Edit, ImageIcon } from 'lucide-react';
 import type { LogoFormData } from '../types/logo.types';
 import { LANGUAGE_OPTIONS } from '../constants';
 
-interface LogoFormDialogProps {
+interface LogoEditDialogProps {
   open: boolean;
   onClose: () => void;
-  actionType: 'create' | 'edit';
   formData: LogoFormData;
   onFormChange: (field: keyof LogoFormData, value: any) => void;
   onSubmit: () => void;
@@ -40,16 +36,15 @@ interface LogoFormDialogProps {
   formErrors: Record<string, string[] | string>;
 }
 
-export const LogoFormDialog = ({
+export const LogoEditDialog = ({
   open,
   onClose,
-  actionType,
   formData,
   onFormChange,
   onSubmit,
   loading,
   formErrors,
-}: LogoFormDialogProps) => {
+}: LogoEditDialogProps) => {
   const { t, i18n } = useTranslation();
 
   // Get logo tags from local storage filtered by current language
@@ -70,18 +65,10 @@ export const LogoFormDialog = ({
       // Parse the comma-separated tags
       return logoTagsSetting.value.split(',').map((tag) => tag.trim()).filter(Boolean);
     } catch (error) {
-      console.error('[LogoFormDialog] Error loading tags:', error);
+      console.error('[LogoEditDialog] Error loading tags:', error);
       return [];
     }
   }, [i18n.language]);
-
-  const getDialogTitle = () => {
-    return actionType === 'create' ? t('logos.create') : t('logos.edit');
-  };
-
-  const getDialogIcon = () => {
-    return actionType === 'create' ? <Plus size={20} /> : <Edit size={20} />;
-  };
 
   const getFieldError = (field: string): string => {
     const error = formErrors[field];
@@ -98,7 +85,7 @@ export const LogoFormDialog = ({
       maxWidth="md"
       fullWidth
     >
-      {/* Upload Progress Bar */}
+      {/* Progress Bar */}
       {loading && (
         <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 1 }}>
           <LinearProgress />
@@ -106,14 +93,14 @@ export const LogoFormDialog = ({
       )}
 
       <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1.5, pt: loading ? 3 : 2 }}>
-        {getDialogIcon()}
+        <Edit size={20} />
         <Typography variant="h6" component="span">
-          {getDialogTitle()}
+          {t('logos.edit')}
         </Typography>
       </DialogTitle>
 
       <DialogContent sx={{ pt: 3 }}>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5, pt: 2 }}>
           {/* Logo Name */}
           <TextField
             label={t('logos.form.name')}
@@ -124,112 +111,35 @@ export const LogoFormDialog = ({
             helperText={getFieldError('name')}
           />
 
-          {/* Upload Method Selection - Only show for create mode */}
-          {actionType === 'create' && (
-            <FormControl component="fieldset">
-              <FormLabel component="legend">{t('logos.form.uploadMethod')}</FormLabel>
-              <RadioGroup
-                row
-                value={formData.uploadMethod}
-                onChange={(e) => onFormChange('uploadMethod', e.target.value as 'url' | 'file')}
-              >
-                <FormControlLabel 
-                  value="url" 
-                  control={<Radio />} 
-                  label={t('logos.form.byUrl')} 
-                />
-                <FormControlLabel 
-                  value="file" 
-                  control={<Radio />} 
-                  label={t('logos.form.uploadFile')} 
-                />
-              </RadioGroup>
-            </FormControl>
-          )}
+          {/* Original URL */}
+          <TextField
+            label={t('logos.form.originalUrl')}
+            value={formData.originalUrl}
+            onChange={(e) => onFormChange('originalUrl', e.target.value)}
+            fullWidth
+            error={!!getFieldError('originalUrl')}
+            helperText={getFieldError('originalUrl')}
+            placeholder="https://example.com/logo.jpg"
+          />
 
-          {/* File Upload - Only show when uploadMethod is 'file' and in create mode */}
-          {actionType === 'create' && formData.uploadMethod === 'file' && (
-            <Box>
-              <Button
-                variant="outlined"
-                component="label"
-                startIcon={<Upload size={20} />}
-                fullWidth
-                sx={{ mb: 1 }}
-              >
-                {formData.file ? formData.file.name : t('logos.form.chooseFile')}
-                <input
-                  type="file"
-                  hidden
-                  accept="image/*"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      onFormChange('file', file);
-                    }
-                  }}
-                />
-              </Button>
-              {formData.file && (
-                <Alert severity="info" sx={{ mt: 1 }}>
-                  Selected file: {formData.file.name} ({(formData.file.size / 1024).toFixed(2)} KB)
-                </Alert>
-              )}
-              {getFieldError('file') && (
-                <Alert severity="error" sx={{ mt: 1 }}>
-                  {getFieldError('file')}
-                </Alert>
-              )}
-            </Box>
-          )}
+          {/* Filename - Read-only */}
+          <TextField
+            label={t('logos.form.filename')}
+            value={formData.filename}
+            fullWidth
+            disabled
+            helperText={t('logos.form.filename') + ' (read-only)'}
+          />
 
-          {/* Original URL - Only show when uploadMethod is 'url' or in edit mode */}
-          {(actionType === 'edit' || formData.uploadMethod === 'url') && (
-            <TextField
-              label={t('logos.form.originalUrl')}
-              value={formData.originalUrl}
-              onChange={(e) => onFormChange('originalUrl', e.target.value)}
-              fullWidth
-              error={!!getFieldError('originalUrl')}
-              helperText={getFieldError('originalUrl')}
-              placeholder="https://example.com/logo.jpg"
-            />
-          )}
-
-          {/* Show these fields only in edit mode */}
-          {actionType === 'edit' && (
-            <>
-              {/* Logo URL */}
-              <TextField
-                label={t('logos.form.logoUrl')}
-                value={formData.logoUrl}
-                onChange={(e) => onFormChange('logoUrl', e.target.value)}
-                fullWidth
-                error={!!getFieldError('logoUrl')}
-                helperText={getFieldError('logoUrl')}
-              />
-
-              {/* Filename */}
-              <TextField
-                label={t('logos.form.filename')}
-                value={formData.filename}
-                onChange={(e) => onFormChange('filename', e.target.value)}
-                fullWidth
-                error={!!getFieldError('filename')}
-                helperText={getFieldError('filename')}
-              />
-
-              {/* Extension */}
-              <TextField
-                label={t('logos.form.extension')}
-                value={formData.extension}
-                onChange={(e) => onFormChange('extension', e.target.value)}
-                fullWidth
-                error={!!getFieldError('extension')}
-                helperText={getFieldError('extension')}
-              />
-            </>
-          )}
+          {/* Extension */}
+          <TextField
+            label={t('logos.form.extension')}
+            value={formData.extension}
+            onChange={(e) => onFormChange('extension', e.target.value)}
+            fullWidth
+            error={!!getFieldError('extension')}
+            helperText={getFieldError('extension')}
+          />
 
           {/* Tags */}
           <FormControl fullWidth error={!!getFieldError('tags')}>
@@ -329,7 +239,7 @@ export const LogoFormDialog = ({
         </Button>
       </DialogActions>
 
-      {/* Upload Progress Backdrop */}
+      {/* Save Progress Backdrop */}
       <Backdrop
         sx={{
           position: 'absolute',
@@ -358,9 +268,7 @@ export const LogoFormDialog = ({
           <Box sx={{ textAlign: 'center' }}>
             <Typography variant="h6" sx={{ mb: 0.5, display: 'flex', alignItems: 'center', gap: 1 }}>
               <ImageIcon size={20} />
-              {formData.uploadMethod === 'file' 
-                ? t('logos.messages.uploadingImage') 
-                : t('logos.messages.savingLogo')}
+              {t('logos.messages.savingLogo')}
             </Typography>
             <Typography variant="body2" color="text.secondary">
               {t('logos.messages.pleaseWait')}

@@ -1,4 +1,5 @@
 import { Box, Alert, Card, CardContent, Collapse, useTheme, Snackbar } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import '../i18n/translations'; // Initialize logo translations
 import { useNotification } from '../../../../shared-lib/src/data-management/useNotification';
 import type { Logo } from '../types/logo.types';
@@ -35,6 +36,7 @@ import {
  */
 const LogosPage = () => {
   const theme = useTheme();
+  const { t } = useTranslation();
   
   // ============================================================================
   // Notification Management
@@ -144,6 +146,16 @@ const LogosPage = () => {
     }
   };
 
+  const handleCopyFilename = async (logo: Logo) => {
+    try {
+      await navigator.clipboard.writeText(logo.filename);
+      showSuccess(t('logos.messages.filenameCopied'));
+    } catch (error) {
+      console.error('[LogosPage] Failed to copy filename:', error);
+      showError('Failed to copy filename');
+    }
+  };
+
   // Immediate client-side filtering (triggered on every input change)
   const handleImmediateFilter = (field: keyof typeof searchFormData, value: any) => {
     handleSearchFormChange(field, value);
@@ -227,6 +239,7 @@ const LogosPage = () => {
             logos={filteredLogos}
             loading={loading}
             onLogoAction={handleLogoAction}
+            onCopyFilename={handleCopyFilename}
           />
         </CardContent>
       </Card>
@@ -238,6 +251,7 @@ const LogosPage = () => {
           onClose={handleClose}
           actionType={actionType}
           formData={formData}
+          selectedLogo={selectedLogo}
           onFormChange={handleFormChange}
           onSubmit={handleDialogSubmit}
           loading={dialogLoading}

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Eye, Edit, Trash2 } from 'lucide-react';
+import { Eye, Edit, Trash2, Copy } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import '../i18n/translations';
 import type { Logo } from '../types/logo.types';
@@ -15,6 +15,8 @@ interface UseLogoActionMenuParams {
   onEdit: (logo: Logo) => void;
   /** Callback for deleting a logo */
   onDelete: (logo: Logo) => void;
+  /** Callback for copying filename */
+  onCopyFilename: (logo: Logo) => void;
 }
 
 /**
@@ -41,6 +43,7 @@ export const useLogoActionMenu = ({
   onView,
   onEdit,
   onDelete,
+  onCopyFilename,
 }: UseLogoActionMenuParams) => {
   const { t } = useTranslation();
 
@@ -58,13 +61,19 @@ export const useLogoActionMenu = ({
       color: 'primary' as const,
     },
     {
+      label: t('logos.actions.copyFilename'),
+      icon: <Copy size={16} />,
+      action: onCopyFilename,
+      color: 'secondary' as const,
+    },
+    {
       label: t('logos.actions.delete'),
       icon: <Trash2 size={16} />,
       action: onDelete,
       color: 'error' as const,
       divider: true,
     },
-  ], [t, onView, onEdit, onDelete]);
+  ], [t, onView, onEdit, onDelete, onCopyFilename]);
 
   return actionMenuItems;
 };

@@ -25,7 +25,8 @@ logos/
 │   ├── LogoSearchPanel.tsx      # Search and filter panel
 │   ├── LogoTable.tsx            # Data table with actions
 │   ├── LogoDialog.tsx           # Dialog router component
-│   ├── LogoFormDialog.tsx       # Form for create/edit
+│   ├── LogoCreateDialog.tsx     # Create form with upload options
+│   ├── LogoEditDialog.tsx       # Edit form with read-only filename
 │   ├── LogoViewDialog.tsx       # Read-only view dialog
 │   ├── DeleteLogoDialog.tsx     # Delete confirmation dialog
 │   └── index.ts                 # Component exports
@@ -118,7 +119,7 @@ const newLogo = await logoService.createLogo({
 
 1. Update `Logo` interface in `types/logo.types.ts`
 2. Update `LogoFormData` interface
-3. Add field to `LogoFormDialog.tsx`
+3. Add field to `LogoCreateDialog.tsx` and/or `LogoEditDialog.tsx`
 4. Add column to `LogoTable.tsx`
 5. Update API service types if needed
 6. Add translations in `i18n/translations.ts`
