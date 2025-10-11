@@ -51,7 +51,7 @@ export interface UpdateLogoRequest {
 }
 
 class LogoService {
-  private readonly baseUrl = "/v1/logos";
+  private readonly baseUrl = "/v1/logos/search";
 
   /**
    * Get all logos (no pagination based on API response)

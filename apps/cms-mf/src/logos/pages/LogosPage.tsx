@@ -36,6 +36,28 @@ import {
  * @component
  */
 const LogosPage = () => {
+  // =========================================================================
+  // Search Handler (API-based)
+  // =========================================================================
+  const handleApiSearch = async () => {
+    // Map searchFormData to LogoQueryParams
+  const params: import('../services/logoService').LogoQueryParams = {};
+    if (searchFormData.name && searchFormData.name.trim() !== '') {
+      params.name = searchFormData.name.trim();
+    }
+    if (searchFormData.lang && searchFormData.lang.trim() !== '') {
+      params.lang = searchFormData.lang.trim();
+    }
+    if (searchFormData.tags && searchFormData.tags.trim() !== '') {
+      params.tags = searchFormData.tags.trim();
+    }
+    if (searchFormData.isActive === 'true') {
+      params.isActive = true;
+    } else if (searchFormData.isActive === 'false') {
+      params.isActive = false;
+    }
+    await loadLogos(params);
+  };
 
     // =========================================================================
     // Notification Management
@@ -98,11 +120,10 @@ const LogosPage = () => {
   const {
     allLogos,
     filteredLogos,
-  // setFilteredLogos, // unused
     loading,
     error,
-  // loadLogos, // unused
     setError,
+    loadLogos,
   } = useLogos();
 
   // ============================================================================
@@ -111,7 +132,6 @@ const LogosPage = () => {
   const {
     searchPanelOpen,
     searchFormData,
-    applyClientSideFiltersWithData,
     handleSearchPanelToggle,
     handleSearchFormChange,
     handleClearSearch,
@@ -196,12 +216,12 @@ const LogosPage = () => {
       {/* Search Panel */}
       <Collapse in={searchPanelOpen}>
         <LogoSearchPanel
-          searchFormData={searchFormData}
-          loading={loading}
-          onFormChange={handleSearchFormChange}
-          onSearch={() => applyClientSideFiltersWithData(searchFormData)}
-          onClear={handleClearSearch}
-        />
+            searchFormData={searchFormData}
+            loading={loading}
+            onFormChange={handleSearchFormChange}
+            onSearch={handleApiSearch}
+            onClear={handleClearSearch}
+          />
       </Collapse>
 
       {/* Error Alert */}
