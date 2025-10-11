@@ -184,9 +184,17 @@ export const LogoTable = memo(({
     );
   }
 
+  // Sort logos by updatedAt desc
+  const sortedLogos = [...logos].sort((a, b) => {
+    if (!a.updatedAt && !b.updatedAt) return 0;
+    if (!a.updatedAt) return 1;
+    if (!b.updatedAt) return -1;
+    return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+  });
+
   return (
     <DataTable
-      data={logos}
+      data={sortedLogos}
       columns={columns}
       showSearch={false}
       onRowDoubleClick={(logo: Logo) => onLogoAction(logo, 'view')}

@@ -170,9 +170,17 @@ export const WebsiteTable = memo(({
     );
   }
 
+  // Sort websites by updatedAt desc
+  const sortedWebsites = [...websites].sort((a, b) => {
+    if (!a.updatedAt && !b.updatedAt) return 0;
+    if (!a.updatedAt) return 1;
+    if (!b.updatedAt) return -1;
+    return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+  });
+
   return (
     <DataTable
-      data={websites}
+      data={sortedWebsites}
       columns={columns}
       showSearch={false}
       onRowDoubleClick={(website: Website) => onWebsiteAction(website, 'view')}
