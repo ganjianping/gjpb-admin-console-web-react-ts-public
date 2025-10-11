@@ -100,23 +100,20 @@ export const LogoTable = memo(({
         );
       },
     }),
-    columnHelper.accessor('filename', {
-      header: t('logos.columns.filename'),
+    columnHelper.accessor('extension', {
+      header: t('logos.columns.extension'),
       cell: (info) => {
         const value = info.getValue();
         return (
-          <Typography 
-            variant="body2" 
-            sx={{ 
-              maxWidth: 200,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap'
+          <Chip
+            label={value || '-'}
+            size="small"
+            variant="outlined"
+            sx={{
+              fontSize: '0.75rem',
+              height: 24,
             }}
-            title={value}
-          >
-            {value || '-'}
-          </Typography>
+          />
         );
       },
     }),

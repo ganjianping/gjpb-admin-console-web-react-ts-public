@@ -102,9 +102,7 @@ export const useLogoHandlers = ({
     const updateRequest: UpdateLogoRequest = {
       name: formData.name.trim(),
       originalUrl: formData.originalUrl.trim() || null,
-      filename: formData.filename.trim(),
       extension: formData.extension.trim(),
-      logoUrl: formData.logoUrl.trim(),
       tags: formData.tags.trim(),
       lang: formData.lang.trim(),
       displayOrder: formData.displayOrder,
@@ -173,27 +171,13 @@ export const useLogoHandlers = ({
       }
     }
 
-    // Edit mode validation - validate the fields that exist in edit mode
+    // Edit mode validation - validate only the editable fields
     if (actionType === 'edit') {
-      // Filename validation
-      if (!formData.filename.trim()) {
-        errors.filename = t('logos.errors.filenameRequired');
-      } else if (formData.filename.length > LOGO_CONSTANTS.VALIDATION.FILENAME_MAX_LENGTH) {
-        errors.filename = t('logos.errors.filenameTooLong');
-      }
-
       // Extension validation
-      if (!formData.extension.trim()) {
+      if (!formData.extension?.trim()) {
         errors.extension = t('logos.errors.extensionRequired');
       } else if (formData.extension.length > LOGO_CONSTANTS.VALIDATION.EXTENSION_MAX_LENGTH) {
         errors.extension = t('logos.errors.extensionTooLong');
-      }
-
-      // Logo URL validation
-      if (!formData.logoUrl.trim()) {
-        errors.logoUrl = t('logos.errors.logoUrlRequired');
-      } else if (formData.logoUrl.length > LOGO_CONSTANTS.VALIDATION.LOGO_URL_MAX_LENGTH) {
-        errors.logoUrl = t('logos.errors.logoUrlTooLong');
       }
 
       // Original URL validation (optional in edit mode)
