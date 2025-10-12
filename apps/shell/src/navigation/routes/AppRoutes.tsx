@@ -47,6 +47,11 @@ const LogosPage = lazy(() =>
     default: module.default,
   })),
 );
+const ImagesPage = lazy(() =>
+  import("../../../../cms-mf/src/images/pages/ImagesPage").then((module) => ({
+    default: module.default,
+  })),
+);
 
 // Import dashboard (this also loads dashboard translations)
 import "../../dashboard";
@@ -287,6 +292,15 @@ const AppRoutes = () => {
             element={
               <Suspense fallback={<AppLoading />}>
                 <LogosPage />
+              </Suspense>
+            }
+          />
+          {/* Images */}
+          <Route
+            path="images"
+            element={
+              <Suspense fallback={<AppLoading />}>
+                <ImagesPage />
               </Suspense>
             }
           />

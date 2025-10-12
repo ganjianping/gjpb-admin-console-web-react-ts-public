@@ -74,6 +74,9 @@ const shellResources = {
       appSettings: {
         title: 'App Settings',
       },
+      images: { 
+        title: 'Images',
+      },
       common: {
         goBack: 'Go Back',
         goHome: 'Go Home',
@@ -161,6 +164,9 @@ const shellResources = {
       },
       appSettings: {
         title: '应用设置',
+      },
+      images: {
+        title: '图片管理',
       },
       common: {
         goBack: '返回',

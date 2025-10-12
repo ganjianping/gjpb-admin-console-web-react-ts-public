@@ -115,6 +115,12 @@ const Sidebar = ({ drawerWidth, collapsedWidth, open, onClose, variant }: Sideba
       icon: Image,
       roles: ['ADMIN', 'SUPER_ADMIN'],
     },
+     {
+       key: 'images',
+       title: t('images.title'),
+       path: '/images',
+       icon: Image,
+     },
     {
       key: 'app-settings',
       title: t('appSettings.title'),
