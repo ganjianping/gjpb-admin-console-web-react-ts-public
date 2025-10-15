@@ -7,12 +7,14 @@ import { DataTable, createColumnHelper, createStatusChip } from '../../../../sha
 import type { Image } from '../types/image.types';
 import { format, parseISO } from 'date-fns';
 import { STATUS_MAPS } from '../constants';
+import { getFullImageUrl } from '../utils/getFullImageUrl';
 // import { ImageTableSkeleton } from './ImageTableSkeleton';
 // import { useImageActionMenu } from '../hooks';
 
-function NameCell({ info, imageBaseUrl }: { info: any, imageBaseUrl: string | null }) {
+function NameCell({ info }: { info: any }) {
   const image = info.row.original;
-  const imageUrl = imageBaseUrl && image.filename ? `${imageBaseUrl}${image.filename}` : null;
+  const imageUrl = getFullImageUrl(image.thumbnailFilename || image.filename || '');
+  console.log('Image URL:', imageUrl); // Debug log
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
       {imageUrl ? (
@@ -104,25 +106,6 @@ const ImageTable = memo(({
 }: ImageTableProps) => {
   const { t } = useTranslation();
 
-  // Get image base URL from local storage
-  const imageBaseUrl = useMemo(() => {
-    try {
-      const settings = localStorage.getItem('gjpb_app_settings');
-      if (!settings) return null;
-      const appSettings = JSON.parse(settings) as Array<{ name: string; value: string; lang: string }>;
-      const imageBaseUrlSetting = appSettings.find(
-        (setting) => setting.name === 'image_base_url'
-      );
-      if (!imageBaseUrlSetting) return null;
-      return imageBaseUrlSetting.value.endsWith('/') 
-        ? imageBaseUrlSetting.value 
-        : `${imageBaseUrlSetting.value}/`;
-    } catch (error) {
-      console.error('[ImageTable] Error loading image base URL:', error);
-      return null;
-    }
-  }, []);
-
   // TODO: Add action menu hook for images
   // const actionMenuItems = useImageActionMenu({
   //   onView: (image: Image) => onImageAction(image, 'view'),
@@ -134,7 +117,7 @@ const ImageTable = memo(({
   const columns = useMemo(() => [
     columnHelper.accessor('name', {
       header: t('images.columns.name'),
-      cell: (info) => <NameCell info={info} imageBaseUrl={imageBaseUrl} />,
+      cell: (info) => <NameCell info={info} />,
     }),
     columnHelper.accessor('extension', {
       header: t('images.columns.extension'),
@@ -160,7 +143,7 @@ const ImageTable = memo(({
       header: t('images.columns.updatedAt'),
       cell: (info) => <UpdatedAtCell info={info} />,
     }),
-  ], [t, imageBaseUrl]);
+  ], [t]);
 
   // Show skeleton loader while loading
   // if (loading && !images.length) {

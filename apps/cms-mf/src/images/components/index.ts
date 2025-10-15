@@ -1,3 +1,9 @@
+export { default as ImagePageHeader } from './ImagePageHeader';
 export { default as ImageSearchPanel } from './ImageSearchPanel';
 export { default as ImageTable } from './ImageTable';
-// Add other image components as needed
+export { default as ImageDialog } from './ImageDialog';
+export { default as ImageCreateDialog } from './ImageCreateDialog';
+export { default as ImageEditDialog } from './ImageEditDialog';
+export { default as ImageViewDialog } from './ImageViewDialog';
+export { default as DeleteImageDialog } from './DeleteImageDialog';
+export { default as ImageTableSkeleton } from './ImageTableSkeleton';

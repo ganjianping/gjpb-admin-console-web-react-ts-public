@@ -20,6 +20,7 @@ import { format, parseISO } from 'date-fns';
 import '../i18n/translations';
 import { Eye, Image as LucideImage, Tag, Hash, CheckCircle2, XCircle, ExternalLink, Calendar, User, Copy, Check } from 'lucide-react';
 import type { Image } from '../types/image.types';
+import { getFullImageUrl } from '../utils/getFullImageUrl';
 
 interface ImageViewDialogProps {
   open: boolean;
@@ -37,21 +38,9 @@ const ImageViewDialog = ({
   const { t } = useTranslation();
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const imageUrl = useMemo(() => {
-    try {
-      const settings = localStorage.getItem('gjpb_app_settings');
-      if (!settings || !image.filename) return null;
-      const appSettings = JSON.parse(settings) as Array<{ name: string; value: string; lang: string }>;
-      const imageBaseUrlSetting = appSettings.find(
-        (setting) => setting.name === 'image_base_url'
-      );
-      if (!imageBaseUrlSetting) return null;
-      const baseUrl = imageBaseUrlSetting.value.endsWith('/') ? imageBaseUrlSetting.value : `${imageBaseUrlSetting.value}/`;
-      return `${baseUrl}${image.filename}`;
-    } catch (error) {
-      console.error('[ImageViewDialog] Error constructing image URL:', error);
-      return null;
-    }
-  }, [image.filename]);
+    const resolved = getFullImageUrl(image.thumbnailFilename || image.filename || '');
+    return resolved || image.originalUrl || '';
+  }, [image.filename, image.thumbnailFilename, image.originalUrl]);
   const handleCopy = async (text: string, fieldName: string) => {
     try {
       await navigator.clipboard.writeText(text);
