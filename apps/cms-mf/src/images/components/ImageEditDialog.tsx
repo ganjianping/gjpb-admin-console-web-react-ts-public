@@ -62,6 +62,25 @@ const ImageEditDialog = ({
       return [];
     }
   }, [i18n.language]);
+  const availableLangOptions = useMemo(() => {
+    try {
+      const settings = localStorage.getItem('gjpb_app_settings');
+      if (!settings) return LANGUAGE_OPTIONS;
+      const appSettings = JSON.parse(settings) as Array<{ name: string; value: string; lang: string }>;
+      const currentLang = i18n.language.toUpperCase().startsWith('ZH') ? 'ZH' : 'EN';
+      const langSetting = appSettings.find((s) => s.name === 'lang' && s.lang === currentLang) || appSettings.find((s) => s.name === 'lang');
+      if (!langSetting) return LANGUAGE_OPTIONS;
+      return langSetting.value.split(',').map((item) => {
+        const [code, label] = item.split(':').map((s) => s.trim());
+        if (label) return { value: code, label };
+        const fallback = LANGUAGE_OPTIONS.find((opt) => opt.value === code);
+        return { value: code, label: fallback ? fallback.label : code };
+      });
+    } catch (error) {
+      console.error('[ImageEditDialog] Error loading lang options:', error);
+      return LANGUAGE_OPTIONS;
+    }
+  }, [i18n.language]);
   const getFieldError = (field: string): string => {
     const error = formErrors[field];
     if (Array.isArray(error)) {
@@ -94,7 +113,17 @@ const ImageEditDialog = ({
           <TextField label={t('images.form.sizeBytes')} value={formData.sizeBytes} onChange={(e) => onFormChange('sizeBytes', parseInt(e.target.value) || 0)} type="number" fullWidth error={!!getFieldError('sizeBytes')} helperText={getFieldError('sizeBytes')} />
           <TextField label={t('images.form.width')} value={formData.width} onChange={(e) => onFormChange('width', parseInt(e.target.value) || 0)} type="number" fullWidth error={!!getFieldError('width')} helperText={getFieldError('width')} />
           <TextField label={t('images.form.height')} value={formData.height} onChange={(e) => onFormChange('height', parseInt(e.target.value) || 0)} type="number" fullWidth error={!!getFieldError('height')} helperText={getFieldError('height')} />
-          <TextField label={t('images.form.altText')} value={formData.altText} onChange={(e) => onFormChange('altText', e.target.value)} fullWidth error={!!getFieldError('altText')} helperText={getFieldError('altText')} />
+          <TextField
+            label={t('images.form.altText')}
+            value={formData.altText}
+            onChange={(e) => onFormChange('altText', e.target.value)}
+            fullWidth
+            error={!!getFieldError('altText')}
+            helperText={getFieldError('altText') || `${(formData.altText || '').length}/500`}
+            multiline
+            rows={4}
+            inputProps={{ maxLength: 500 }}
+          />
           <FormControl fullWidth error={!!getFieldError('tags')}>
             <FormLabel sx={{ mb: 1, color: 'text.primary', fontWeight: 500 }}>{t('images.form.tags')}</FormLabel>
             <Select<string[]> multiple value={formData.tags ? formData.tags.split(',').map(t => t.trim()).filter(Boolean) : []} onChange={(e) => {
@@ -125,8 +154,8 @@ const ImageEditDialog = ({
           <FormControl fullWidth>
             <FormLabel>{t('images.form.lang')}</FormLabel>
             <Select value={formData.lang} onChange={(e) => onFormChange('lang', e.target.value)} error={!!getFieldError('lang')}>
-              {LANGUAGE_OPTIONS.map((option) => (
-                <MenuItem key={option.value} value={option.value}>{t(`images.languages.${option.value}`)}</MenuItem>
+              {availableLangOptions.map((option) => (
+                <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>
               ))}
             </Select>
           </FormControl>

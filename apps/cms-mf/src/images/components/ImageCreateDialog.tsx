@@ -65,6 +65,27 @@ const ImageCreateDialog = ({
       return [];
     }
   }, [i18n.language]);
+  const availableLangOptions = useMemo(() => {
+    try {
+      const settings = localStorage.getItem('gjpb_app_settings');
+      if (!settings) return LANGUAGE_OPTIONS;
+      const appSettings = JSON.parse(settings) as Array<{ name: string; value: string; lang: string }>;
+      const currentLang = i18n.language.toUpperCase().startsWith('ZH') ? 'ZH' : 'EN';
+      // Prefer a lang setting that matches currentLang, otherwise take the first 'lang' setting
+      const langSetting = appSettings.find((s) => s.name === 'lang' && s.lang === currentLang) || appSettings.find((s) => s.name === 'lang');
+      if (!langSetting) return LANGUAGE_OPTIONS;
+      // value can be CSV like 'EN,ZH' or 'EN:English,ZH:Chinese'
+      return langSetting.value.split(',').map((item) => {
+        const [code, label] = item.split(':').map((s) => s.trim());
+        if (label) return { value: code, label };
+        const fallback = LANGUAGE_OPTIONS.find((opt) => opt.value === code);
+        return { value: code, label: fallback ? fallback.label : code };
+      });
+    } catch (error) {
+      console.error('[ImageCreateDialog] Error loading lang options:', error);
+      return LANGUAGE_OPTIONS;
+    }
+  }, [i18n.language]);
   const getFieldError = (field: string): string => {
     const error = formErrors[field];
     if (Array.isArray(error)) {
@@ -122,6 +143,17 @@ const ImageCreateDialog = ({
           {formData.uploadMethod === 'url' && (
             <TextField label={t('images.form.originalUrl')} value={formData.originalUrl} onChange={(e) => onFormChange('originalUrl', e.target.value)} fullWidth error={!!getFieldError('originalUrl')} helperText={getFieldError('originalUrl')} placeholder="https://example.com/image.jpg" />
           )}
+          <TextField
+            label={t('images.form.altText')}
+            value={formData.altText}
+            onChange={(e) => onFormChange('altText', e.target.value)}
+            fullWidth
+            error={!!getFieldError('altText')}
+            helperText={getFieldError('altText') || `${(formData.altText || '').length}/500`}
+            multiline
+            rows={4}
+            inputProps={{ maxLength: 500 }}
+          />
           <FormControl fullWidth error={!!getFieldError('tags')}>
             <FormLabel sx={{ mb: 1, color: 'text.primary', fontWeight: 500 }}>{t('images.form.tags')}</FormLabel>
             <Select<string[]> multiple value={formData.tags ? formData.tags.split(',').map(t => t.trim()).filter(Boolean) : []} onChange={(e) => {
@@ -152,8 +184,8 @@ const ImageCreateDialog = ({
           <FormControl fullWidth>
             <FormLabel>{t('images.form.lang')}</FormLabel>
             <Select value={formData.lang} onChange={(e) => onFormChange('lang', e.target.value)} error={!!getFieldError('lang')}>
-              {LANGUAGE_OPTIONS.map((option) => (
-                <MenuItem key={option.value} value={option.value}>{t(`images.languages.${option.value}`)}</MenuItem>
+              {availableLangOptions.map((option) => (
+                <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>
               ))}
             </Select>
           </FormControl>

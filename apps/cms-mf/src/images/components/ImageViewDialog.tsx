@@ -37,10 +37,9 @@ const ImageViewDialog = ({
 }: ImageViewDialogProps) => {
   const { t } = useTranslation();
   const [copiedField, setCopiedField] = useState<string | null>(null);
-  const imageUrl = useMemo(() => {
-    const resolved = getFullImageUrl(image.thumbnailFilename || image.filename || '');
-    return resolved || image.originalUrl || '';
-  }, [image.filename, image.thumbnailFilename, image.originalUrl]);
+  // Full URLs for filename and thumbnailFilename
+  const filenameUrl = useMemo(() => getFullImageUrl(image.filename || ''), [image.filename]);
+  const thumbnailUrl = useMemo(() => getFullImageUrl(image.thumbnailFilename || ''), [image.thumbnailFilename]);
   const handleCopy = async (text: string, fieldName: string) => {
     try {
       await navigator.clipboard.writeText(text);
@@ -58,99 +57,124 @@ const ImageViewDialog = ({
       </DialogTitle>
       <DialogContent sx={{ pt: 3, mt: 2 }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-          <Card elevation={0} sx={{ background: (theme) => theme.palette.mode === 'dark' ? 'linear-gradient(135deg, #1e293b 0%, #334155 100%)' : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)', border: '1px solid', borderColor: 'divider' }}>
-            <CardContent sx={{ p: 3 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                {imageUrl ? (
-                  <Avatar src={imageUrl} alt={image.name} sx={{ width: 64, height: 64 }} variant="rounded" />
-                ) : (
-                  <Avatar sx={{ width: 64, height: 64, bgcolor: 'primary.main' }} variant="rounded">
-                    <LucideImage size={32} />
-                  </Avatar>
-                )}
-                <Box sx={{ flex: 1 }}>
-                  <Typography variant="h5" sx={{ fontWeight: 700, mb: 0.5 }}>{image.name}</Typography>
-                  {imageUrl && (
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 1 }}>
-                      <Link href={imageUrl} target="_blank" rel="noopener noreferrer" sx={{ display: 'flex', alignItems: 'center', gap: 0.5, textDecoration: 'none', color: 'primary.main', wordBreak: 'break-all', flex: 1, '&:hover': { textDecoration: 'underline' } }}>
-                        <ExternalLink size={14} />
-                        <Typography variant="body2">{imageUrl}</Typography>
-                      </Link>
-                      <Tooltip title={copiedField === 'imageUrl' ? t('images.messages.filenameCopied') : 'Copy'}>
-                        <IconButton size="small" onClick={() => handleCopy(imageUrl, 'imageUrl')} sx={{ ml: 0.5 }}>
-                          {copiedField === 'imageUrl' ? <Check size={16} /> : <Copy size={16} />}
-                        </IconButton>
-                      </Tooltip>
-                    </Box>
-                  )}
+          {/* Big image preview */}
+          <Card elevation={0} sx={{ background: (theme) => theme.palette.mode === 'dark' ? 'linear-gradient(135deg, #1e293b 0%, #334155 100%)' : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)', border: '1px solid', borderColor: 'divider', alignItems: 'center', justifyContent: 'center' }}>
+            <CardContent sx={{ p: 3, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+              {filenameUrl ? (
+                <Box sx={{ mb: 2, maxWidth: 800, width: '100%', textAlign: 'center' }}>
+                  <img src={filenameUrl} alt={image.altText || image.name} style={{ maxWidth: '100%', maxHeight: 800, borderRadius: 8, boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }} />
                 </Box>
-                <Chip icon={image.isActive ? <CheckCircle2 size={16} /> : <XCircle size={16} />} label={image.isActive ? t('images.status.active') : t('images.status.inactive')} color={image.isActive ? 'success' : 'default'} sx={{ fontWeight: 600 }} />
+              ) : (
+                <Avatar sx={{ width: 64, height: 64, bgcolor: 'primary.main' }} variant="rounded">
+                  <LucideImage size={32} />
+                </Avatar>
+              )}
+              <Typography variant="h5" sx={{ fontWeight: 700, mb: 0.5 }}>{image.name}</Typography>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '100%' }}>
+                {/* Clickable full URLs for filename and thumbnailFilename */}
+                {filenameUrl && (
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                    <Typography variant="caption" sx={{ color: 'text.secondary' }}>Image URL:</Typography>
+                    <Link href={filenameUrl} target="_blank" rel="noopener noreferrer" sx={{ display: 'flex', alignItems: 'center', gap: 0.5, textDecoration: 'none', color: 'primary.main', wordBreak: 'break-all', flex: 1, fontFamily: 'monospace', fontSize: '0.875rem', '&:hover': { textDecoration: 'underline' } }}>
+                      <ExternalLink size={14} />
+                      <Typography variant="body2" sx={{ fontFamily: 'inherit', fontSize: 'inherit' }}>{filenameUrl}</Typography>
+                    </Link>
+                    <Tooltip title={copiedField === 'filenameUrl' ? t('images.messages.filenameCopied') : 'Copy'}>
+                      <IconButton size="small" onClick={() => handleCopy(filenameUrl, 'filenameUrl')} sx={{ ml: 0.5 }}>
+                        {copiedField === 'filenameUrl' ? <Check size={16} /> : <Copy size={16} />}
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
+                )}
+                {thumbnailUrl && (
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                    <Typography variant="caption" sx={{ color: 'text.secondary' }}>Thumbnail URL:</Typography>
+                    <Link href={thumbnailUrl} target="_blank" rel="noopener noreferrer" sx={{ display: 'flex', alignItems: 'center', gap: 0.5, textDecoration: 'none', color: 'primary.main', wordBreak: 'break-all', flex: 1, fontFamily: 'monospace', fontSize: '0.875rem', '&:hover': { textDecoration: 'underline' } }}>
+                      <ExternalLink size={14} />
+                      <Typography variant="body2" sx={{ fontFamily: 'inherit', fontSize: 'inherit' }}>{thumbnailUrl}</Typography>
+                    </Link>
+                    <Tooltip title={copiedField === 'thumbnailUrl' ? t('images.messages.filenameCopied') : 'Copy'}>
+                      <IconButton size="small" onClick={() => handleCopy(thumbnailUrl, 'thumbnailUrl')} sx={{ ml: 0.5 }}>
+                        {copiedField === 'thumbnailUrl' ? <Check size={16} /> : <Copy size={16} />}
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
+                )}
               </Box>
             </CardContent>
           </Card>
+          {/* Details grid for all metadata fields */}
           <Card elevation={0} sx={{ border: '1px solid', borderColor: 'divider' }}>
             <CardContent sx={{ p: 3 }}>
-              <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: 'text.secondary' }}>{t('images.viewDialog.details')}</Typography>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+              <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: 'text.secondary' }}>Image Details</Typography>
+              <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2.5 }}>
                 <Box>
-                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>{t('images.viewDialog.id')}</Typography>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>ID</Typography>
                   <Typography variant="body2" sx={{ fontFamily: 'monospace', fontSize: '0.875rem', wordBreak: 'break-all', color: 'text.primary' }}>{image.id}</Typography>
                 </Box>
-                <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2.5 }}>
-                  <Box>
-                    <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>{t('images.viewDialog.filename')}</Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <Typography variant="body2" sx={{ fontWeight: 600, wordBreak: 'break-all', flex: 1 }}>{image.filename}</Typography>
-                      <Tooltip title={copiedField === 'filename' ? t('images.messages.filenameCopied') : 'Copy'}>
-                        <IconButton size="small" onClick={() => handleCopy(image.filename, 'filename')}>
-                          {copiedField === 'filename' ? <Check size={16} /> : <Copy size={16} />}
-                        </IconButton>
-                      </Tooltip>
-                    </Box>
+                <Box>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Name</Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 600 }}>{image.name}</Typography>
+                </Box>
+                <Box>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Source Name</Typography>
+                  <Typography variant="body2">{image.sourceName}</Typography>
+                </Box>
+                <Box>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Filename</Typography>
+                  <Typography variant="body2" sx={{ fontFamily: 'monospace', fontSize: '0.875rem', wordBreak: 'break-all' }}>{image.filename}</Typography>
+                </Box>
+                <Box>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Thumbnail Filename</Typography>
+                  <Typography variant="body2" sx={{ fontFamily: 'monospace', fontSize: '0.875rem', wordBreak: 'break-all' }}>{image.thumbnailFilename}</Typography>
+                </Box>
+                <Box>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Extension</Typography>
+                  <Chip label={image.extension} size="small" variant="outlined" sx={{ fontWeight: 600 }} />
+                </Box>
+                <Box>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>MIME Type</Typography>
+                  <Typography variant="body2">{image.mimeType}</Typography>
+                </Box>
+                <Box>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Size (bytes)</Typography>
+                  <Typography variant="body2">{image.sizeBytes}</Typography>
+                </Box>
+                <Box>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Width</Typography>
+                  <Typography variant="body2">{image.width}</Typography>
+                </Box>
+                <Box>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Height</Typography>
+                  <Typography variant="body2">{image.height}</Typography>
+                </Box>
+                <Box>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Language</Typography>
+                  <Chip label={t(`images.languages.${image.lang}`)} size="small" sx={{ fontWeight: 600 }} />
+                </Box>
+                <Box>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Display Order</Typography>
+                  <Typography variant="body2">{image.displayOrder}</Typography>
+                </Box>
+                <Box>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Active</Typography>
+                  <Chip icon={image.isActive ? <CheckCircle2 size={16} /> : <XCircle size={16} />} label={image.isActive ? 'Active' : 'Inactive'} color={image.isActive ? 'success' : 'default'} sx={{ fontWeight: 600 }} />
+                </Box>
+                <Box sx={{ gridColumn: '1 / -1' }}>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Alt Text</Typography>
+                  <Typography variant="body2">{image.altText}</Typography>
+                </Box>
+                <Box sx={{ gridColumn: '1 / -1' }}>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Tags</Typography>
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
+                    {image.tags?.split(',').map((tag: string) => (
+                      <Chip key={tag.trim()} icon={<Tag size={14} />} label={tag.trim()} size="small" variant="outlined" sx={{ fontWeight: 500 }} />
+                    ))}
                   </Box>
-                  <Box>
-                    <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>{t('images.viewDialog.extension')}</Typography>
-                    <Chip label={image.extension} size="small" variant="outlined" sx={{ fontWeight: 600 }} />
-                  </Box>
-                  <Box>
-                    <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>{t('images.viewDialog.language')}</Typography>
-                    <Chip label={t(`images.languages.${image.lang}`)} size="small" sx={{ fontWeight: 600 }} />
-                  </Box>
-                  <Box>
-                    <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>{t('images.viewDialog.displayOrder')}</Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <Hash size={16} />
-                      <Typography variant="body2" sx={{ fontWeight: 600 }}>{image.displayOrder}</Typography>
-                    </Box>
-                  </Box>
-                  {image.originalUrl && (
-                    <Box sx={{ gridColumn: '1 / -1' }}>
-                      <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>{t('images.viewDialog.originalUrl')}</Typography>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                        <Link href={image.originalUrl} target="_blank" rel="noopener noreferrer" sx={{ display: 'flex', alignItems: 'center', gap: 0.5, textDecoration: 'none', color: 'primary.main', wordBreak: 'break-all', flex: 1, fontFamily: 'monospace', fontSize: '0.875rem', '&:hover': { textDecoration: 'underline' } }}>
-                          <Typography variant="body2" sx={{ fontFamily: 'inherit', fontSize: 'inherit' }}>{image.originalUrl}</Typography>
-                        </Link>
-                        <Tooltip title={copiedField === 'originalUrl' ? t('images.messages.filenameCopied') : 'Copy'}>
-                          <IconButton size="small" onClick={() => handleCopy(image.originalUrl || '', 'originalUrl')}>
-                            {copiedField === 'originalUrl' ? <Check size={16} /> : <Copy size={16} />}
-                          </IconButton>
-                        </Tooltip>
-                      </Box>
-                    </Box>
-                  )}
-                  {image.tags && (
-                    <Box sx={{ gridColumn: '1 / -1' }}>
-                      <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>{t('images.viewDialog.tags')}</Typography>
-                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
-                        {image.tags.split(',').map((tag: string) => {
-                          const trimmedTag = tag.trim();
-                          return (
-                            <Chip key={trimmedTag} icon={<Tag size={14} />} label={trimmedTag} size="small" variant="outlined" sx={{ fontWeight: 500 }} />
-                          );
-                        })}
-                      </Box>
-                    </Box>
-                  )}
+                </Box>
+                <Box sx={{ gridColumn: '1 / -1' }}>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Original URL</Typography>
+                  <Link href={image.originalUrl} target="_blank" rel="noopener noreferrer" sx={{ wordBreak: 'break-all', fontFamily: 'monospace', fontSize: '0.875rem' }}>{image.originalUrl}</Link>
                 </Box>
               </Box>
             </CardContent>
