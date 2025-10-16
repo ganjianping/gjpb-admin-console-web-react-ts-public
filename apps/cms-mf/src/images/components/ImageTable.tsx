@@ -91,6 +91,7 @@ interface ImageTableProps {
   onPageSizeChange?: (size: number) => void;
   onImageAction: (image: Image, action: 'view' | 'edit' | 'delete') => void;
   onCopyFilename?: (image: Image) => void;
+  onCopyThumbnail?: (image: Image) => void;
 }
 
 const columnHelper = createColumnHelper<Image>();
@@ -102,6 +103,7 @@ const ImageTable = memo(({
   onPageSizeChange, 
   onImageAction,
   onCopyFilename,
+  onCopyThumbnail,
 }: ImageTableProps) => {
   const { t } = useTranslation();
 
@@ -111,6 +113,7 @@ const ImageTable = memo(({
     onEdit: (image: Image) => onImageAction(image, 'edit'),
     onDelete: (image: Image) => onImageAction(image, 'delete'),
     onCopyFilename: (image: Image) => onCopyFilename?.(image),
+    onCopyThumbnail: (image: Image) => onCopyThumbnail?.(image),
   });
 
   const columns = useMemo(() => [

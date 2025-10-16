@@ -9,6 +9,7 @@ interface UseImageActionMenuParams {
   onEdit: (image: Image) => void;
   onDelete: (image: Image) => void;
   onCopyFilename: (image: Image) => void;
+  onCopyThumbnail: (image: Image) => void;
 }
 
 export const useImageActionMenu = ({
@@ -16,6 +17,7 @@ export const useImageActionMenu = ({
   onEdit,
   onDelete,
   onCopyFilename,
+  onCopyThumbnail,
 }: UseImageActionMenuParams) => {
   const { t } = useTranslation();
   const actionMenuItems = useMemo(() => [
@@ -38,12 +40,18 @@ export const useImageActionMenu = ({
       color: 'secondary' as const,
     },
     {
+      label: t('images.actions.copyThumbnail'),
+      icon: <Copy size={16} />,
+      action: onCopyThumbnail,
+      color: 'secondary' as const,
+    },
+    {
       label: t('images.actions.delete'),
       icon: <Trash2 size={16} />,
       action: onDelete,
       color: 'error' as const,
       divider: true,
     },
-  ], [t, onView, onEdit, onDelete, onCopyFilename]);
+  ], [t, onView, onEdit, onDelete, onCopyFilename, onCopyThumbnail]);
   return actionMenuItems;
 };
