@@ -1,6 +1,7 @@
 import type { WebsiteFormData, WebsiteActionType } from '../types/website.types';
 import { WebsiteViewDialog } from './WebsiteViewDialog';
-import { WebsiteFormDialog } from './WebsiteFormDialog';
+import { WebsiteCreateDialog } from './WebsiteCreateDialog';
+import { WebsiteUpdateDialog } from './WebsiteUpdateDialog';
 
 interface WebsiteDialogProps {
   open: boolean;
@@ -37,18 +38,31 @@ export const WebsiteDialog = ({
       <WebsiteViewDialog
         open={open}
         onClose={onClose}
-        website={formData}
+        // formData is a partial subset when coming from the dialog router; cast to any to satisfy the view component
+        website={formData as any}
       />
     );
   }
 
-  // Edit/Create mode - use the specialized form dialog
-  // Type assertion is safe here because we've already filtered out 'view', 'delete', and null
+  // Edit/Create mode - delegate to concrete dialogs
+  if (actionType === 'create') {
+    return (
+      <WebsiteCreateDialog
+        open={open}
+        onClose={onClose}
+        formData={formData}
+        onFormChange={onFormChange}
+        onSubmit={onSubmit}
+        loading={loading}
+        formErrors={formErrors}
+      />
+    );
+  }
+
   return (
-    <WebsiteFormDialog
+    <WebsiteUpdateDialog
       open={open}
       onClose={onClose}
-      actionType={actionType as 'edit' | 'create'}
       formData={formData}
       onFormChange={onFormChange}
       onSubmit={onSubmit}

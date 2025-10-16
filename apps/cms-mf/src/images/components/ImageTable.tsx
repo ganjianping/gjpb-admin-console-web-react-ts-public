@@ -5,6 +5,7 @@ import { memo, useMemo } from 'react';
 import '../i18n/translations';
 import { DataTable, createColumnHelper, createStatusChip } from '../../../../shared-lib/src/data-management/DataTable';
 import type { Image } from '../types/image.types';
+import { useImageActionMenu } from '../hooks/useImageActionMenu';
 import { format, parseISO } from 'date-fns';
 import { STATUS_MAPS } from '../constants';
 import { getFullImageUrl } from '../utils/getFullImageUrl';
@@ -14,7 +15,6 @@ import { getFullImageUrl } from '../utils/getFullImageUrl';
 function NameCell({ info }: { info: any }) {
   const image = info.row.original;
   const imageUrl = getFullImageUrl(image.thumbnailFilename || image.filename || '');
-  console.log('Image URL:', imageUrl); // Debug log
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
       {imageUrl ? (
@@ -85,8 +85,8 @@ function UpdatedAtCell({ info }: { info: any }) {
 
 interface ImageTableProps {
   images: Image[];
-  loading?: boolean;
   pagination?: any;
+  loading?: boolean;
   onPageChange?: (page: number) => void;
   onPageSizeChange?: (size: number) => void;
   onImageAction: (image: Image, action: 'view' | 'edit' | 'delete') => void;
@@ -97,22 +97,21 @@ const columnHelper = createColumnHelper<Image>();
 
 const ImageTable = memo(({ 
   images, 
-  loading = false, 
   pagination, 
   onPageChange, 
   onPageSizeChange, 
   onImageAction,
-  onCopyFilename 
+  onCopyFilename,
 }: ImageTableProps) => {
   const { t } = useTranslation();
 
   // TODO: Add action menu hook for images
-  // const actionMenuItems = useImageActionMenu({
-  //   onView: (image: Image) => onImageAction(image, 'view'),
-  //   onEdit: (image: Image) => onImageAction(image, 'edit'),
-  //   onDelete: (image: Image) => onImageAction(image, 'delete'),
-  //   onCopyFilename: (image: Image) => onCopyFilename?.(image),
-  // });
+  const actionMenuItems = useImageActionMenu({
+    onView: (image: Image) => onImageAction(image, 'view'),
+    onEdit: (image: Image) => onImageAction(image, 'edit'),
+    onDelete: (image: Image) => onImageAction(image, 'delete'),
+    onCopyFilename: (image: Image) => onCopyFilename?.(image),
+  });
 
   const columns = useMemo(() => [
     columnHelper.accessor('name', {
@@ -183,7 +182,7 @@ const ImageTable = memo(({
       totalRows={pagination?.totalElements || 0}
       onPageChange={onPageChange}
       onPageSizeChange={onPageSizeChange}
-      // actionMenuItems={actionMenuItems}
+      actionMenuItems={actionMenuItems}
     />
   );
 });

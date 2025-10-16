@@ -106,13 +106,6 @@ const ImageEditDialog = ({
           <TextField label={t('images.form.name')} value={formData.name} onChange={(e) => onFormChange('name', e.target.value)} fullWidth error={!!getFieldError('name')} helperText={getFieldError('name')} />
           <TextField label={t('images.form.sourceName')} value={formData.sourceName} onChange={(e) => onFormChange('sourceName', e.target.value)} fullWidth error={!!getFieldError('sourceName')} helperText={getFieldError('sourceName')} />
           <TextField label={t('images.form.originalUrl')} value={formData.originalUrl} onChange={(e) => onFormChange('originalUrl', e.target.value)} fullWidth error={!!getFieldError('originalUrl')} helperText={getFieldError('originalUrl')} placeholder="https://example.com/image.jpg" />
-          <TextField label={t('images.form.filename')} value={formData.filename} fullWidth disabled helperText={t('images.form.filename') + ' (read-only)'} />
-          <TextField label={t('images.form.thumbnailFilename')} value={formData.thumbnailFilename} fullWidth disabled helperText={t('images.form.thumbnailFilename') + ' (read-only)'} />
-          <TextField label={t('images.form.extension')} value={formData.extension} onChange={(e) => onFormChange('extension', e.target.value)} fullWidth error={!!getFieldError('extension')} helperText={getFieldError('extension')} />
-          <TextField label={t('images.form.mimeType')} value={formData.mimeType} onChange={(e) => onFormChange('mimeType', e.target.value)} fullWidth error={!!getFieldError('mimeType')} helperText={getFieldError('mimeType')} />
-          <TextField label={t('images.form.sizeBytes')} value={formData.sizeBytes} onChange={(e) => onFormChange('sizeBytes', parseInt(e.target.value) || 0)} type="number" fullWidth error={!!getFieldError('sizeBytes')} helperText={getFieldError('sizeBytes')} />
-          <TextField label={t('images.form.width')} value={formData.width} onChange={(e) => onFormChange('width', parseInt(e.target.value) || 0)} type="number" fullWidth error={!!getFieldError('width')} helperText={getFieldError('width')} />
-          <TextField label={t('images.form.height')} value={formData.height} onChange={(e) => onFormChange('height', parseInt(e.target.value) || 0)} type="number" fullWidth error={!!getFieldError('height')} helperText={getFieldError('height')} />
           <TextField
             label={t('images.form.altText')}
             value={formData.altText}
@@ -151,6 +144,15 @@ const ImageEditDialog = ({
               <Typography variant="caption" color="error" sx={{ mt: 0.5, ml: 1.5 }}>{getFieldError('tags')}</Typography>
             )}
           </FormControl>
+          <TextField label={t('images.form.filename')} value={formData.filename} fullWidth disabled helperText={t('images.form.filename') + ' (read-only)'} />
+          <TextField label={t('images.form.thumbnailFilename')} value={formData.thumbnailFilename} fullWidth disabled helperText={t('images.form.thumbnailFilename') + ' (read-only)'} />
+          <TextField label={t('images.form.extension')} value={formData.extension} onChange={(e) => onFormChange('extension', e.target.value)} fullWidth error={!!getFieldError('extension')} helperText={getFieldError('extension')} />
+          <TextField label={t('images.form.mimeType')} value={formData.mimeType} onChange={(e) => onFormChange('mimeType', e.target.value)} fullWidth error={!!getFieldError('mimeType')} helperText={getFieldError('mimeType')} disabled />
+          <TextField label={t('images.form.sizeBytes')} value={formData.sizeBytes} onChange={(e) => onFormChange('sizeBytes', parseInt(e.target.value) || 0)} type="number" fullWidth error={!!getFieldError('sizeBytes')} helperText={getFieldError('sizeBytes')} disabled />
+          <TextField label={t('images.form.width')} value={formData.width} onChange={(e) => onFormChange('width', parseInt(e.target.value) || 0)} type="number" fullWidth error={!!getFieldError('width')} helperText={getFieldError('width')} disabled />
+          <TextField label={t('images.form.height')} value={formData.height} onChange={(e) => onFormChange('height', parseInt(e.target.value) || 0)} type="number" fullWidth error={!!getFieldError('height')} helperText={getFieldError('height')} disabled />
+          
+          
           <FormControl fullWidth>
             <FormLabel>{t('images.form.lang')}</FormLabel>
             <Select value={formData.lang} onChange={(e) => onFormChange('lang', e.target.value)} error={!!getFieldError('lang')}>

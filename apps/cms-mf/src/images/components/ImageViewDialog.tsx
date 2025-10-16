@@ -18,7 +18,7 @@ import { useTranslation } from 'react-i18next';
 import { useMemo, useState } from 'react';
 import { format, parseISO } from 'date-fns';
 import '../i18n/translations';
-import { Eye, Image as LucideImage, Tag, Hash, CheckCircle2, XCircle, ExternalLink, Calendar, User, Copy, Check } from 'lucide-react';
+import { Eye, Image as LucideImage, Tag, CheckCircle2, XCircle, ExternalLink, Calendar, User, Copy, Check } from 'lucide-react';
 import type { Image } from '../types/image.types';
 import { getFullImageUrl } from '../utils/getFullImageUrl';
 
@@ -40,6 +40,15 @@ const ImageViewDialog = ({
   // Full URLs for filename and thumbnailFilename
   const filenameUrl = useMemo(() => getFullImageUrl(image.filename || ''), [image.filename]);
   const thumbnailUrl = useMemo(() => getFullImageUrl(image.thumbnailFilename || ''), [image.thumbnailFilename]);
+  const sizeInKB = useMemo(() => {
+    try {
+      const bytes = Number(image.sizeBytes || 0);
+      if (!bytes) return '0.00';
+      return (bytes / 1024).toFixed(2);
+    } catch (e) {
+      return '-';
+    }
+  }, [image.sizeBytes]);
   const handleCopy = async (text: string, fieldName: string) => {
     try {
       await navigator.clipboard.writeText(text);
@@ -137,8 +146,8 @@ const ImageViewDialog = ({
                   <Typography variant="body2">{image.mimeType}</Typography>
                 </Box>
                 <Box>
-                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Size (bytes)</Typography>
-                  <Typography variant="body2">{image.sizeBytes}</Typography>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Size (KB)</Typography>
+                  <Typography variant="body2">{sizeInKB !== '-' ? `${sizeInKB} KB` : '-'}</Typography>
                 </Box>
                 <Box>
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Width</Typography>

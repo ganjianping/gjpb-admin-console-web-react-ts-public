@@ -3,7 +3,10 @@ export const LANGUAGE_OPTIONS = [
   { value: 'ZH', label: 'Chinese' },
 ];
 
-export const STATUS_MAPS = {
+// Explicit typing so usage sites (createStatusChip) get the expected color union
+export const STATUS_MAPS: {
+  active: Record<string, { label: string; color: 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning' }>;
+} = {
   active: {
     true: { label: 'Active', color: 'success' },
     false: { label: 'Inactive', color: 'default' },

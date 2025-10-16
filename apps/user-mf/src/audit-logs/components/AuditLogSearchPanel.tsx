@@ -129,6 +129,7 @@ export const AuditLogSearchPanel: React.FC<AuditLogSearchPanelProps> = ({
               size="small"
               onClick={onSearch}
               startIcon={<Search size={16} />}
+              disabled={loading}
               sx={{
                 borderRadius: 2,
                 textTransform: 'none',

@@ -52,7 +52,7 @@ const updateLocalStorageUserInfo = (updatedData: Partial<User>) => {
 
 export const useProfileHandlers = ({
   user,
-  profileForm,
+  profileForm: _profileForm,
   passwordForm,
   showSuccess,
   showError,

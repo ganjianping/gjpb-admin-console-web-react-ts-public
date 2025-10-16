@@ -23,7 +23,7 @@ import {
   CircularProgress,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import '../i18n/translations';
 import { Plus, Upload, ImageIcon } from 'lucide-react';
 import type { ImageFormData } from '../types/image.types';
@@ -93,6 +93,13 @@ const ImageCreateDialog = ({
     }
     return error || '';
   };
+  // Local saving state to provide immediate feedback when user clicks Save
+  const [localSaving, setLocalSaving] = useState(false);
+
+  // Clear localSaving when parent loading completes/changes
+  useEffect(() => {
+    if (!loading) setLocalSaving(false);
+  }, [loading]);
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       {loading && (
@@ -194,10 +201,21 @@ const ImageCreateDialog = ({
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} disabled={loading}>{t('images.actions.cancel')}</Button>
-        <Button onClick={onSubmit} variant="contained" disabled={loading}>{t('images.actions.save')}</Button>
+        <Button onClick={onClose} disabled={loading || localSaving}>{t('images.actions.cancel')}</Button>
+        <Button
+          onClick={() => {
+            // show immediate saving feedback
+            setLocalSaving(true);
+            onSubmit();
+          }}
+          variant="contained"
+          disabled={loading || localSaving}
+          startIcon={localSaving || loading ? <CircularProgress size={16} color="inherit" /> : undefined}
+        >
+          {t('images.actions.save')}
+        </Button>
       </DialogActions>
-      <Backdrop sx={{ position: 'absolute', zIndex: (theme) => theme.zIndex.drawer + 1, backgroundColor: 'rgba(0, 0, 0, 0.7)', backdropFilter: 'blur(4px)', display: 'flex', flexDirection: 'column', gap: 2 }} open={loading}>
+  <Backdrop sx={{ position: 'absolute', zIndex: (theme) => theme.zIndex.drawer + 1, backgroundColor: 'rgba(0, 0, 0, 0.7)', backdropFilter: 'blur(4px)', display: 'flex', flexDirection: 'column', gap: 2 }} open={loading || localSaving}>
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, p: 4, borderRadius: 2, backgroundColor: 'background.paper', boxShadow: 3 }}>
           <CircularProgress size={60} thickness={4} />
           <Box sx={{ textAlign: 'center' }}>

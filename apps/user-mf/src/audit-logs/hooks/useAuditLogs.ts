@@ -10,7 +10,7 @@ export const useAuditLogs = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
-  const [pageSize, setPageSize] = useState(AUDIT_LOG_CONSTANTS.DEFAULT_PAGE_SIZE);
+  const [pageSize, setPageSize] = useState<number>(AUDIT_LOG_CONSTANTS.DEFAULT_PAGE_SIZE);
   const hasInitiallyLoaded = useRef(false);
 
   // Memoized function to load audit logs

@@ -32,16 +32,17 @@ export const useImageActionMenu = ({
       color: 'primary' as const,
     },
     {
+      label: t('images.actions.copyFilename'),
+      icon: <Copy size={16} />,
+      action: onCopyFilename,
+      color: 'secondary' as const,
+    },
+    {
       label: t('images.actions.delete'),
       icon: <Trash2 size={16} />,
       action: onDelete,
       color: 'error' as const,
-    },
-    {
-      label: t('images.actions.copyFilename'),
-      icon: <Copy size={16} />,
-      action: onCopyFilename,
-      color: 'default' as const,
+      divider: true,
     },
   ], [t, onView, onEdit, onDelete, onCopyFilename]);
   return actionMenuItems;
