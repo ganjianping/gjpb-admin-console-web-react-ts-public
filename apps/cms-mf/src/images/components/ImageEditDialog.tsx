@@ -144,16 +144,8 @@ const ImageEditDialog = ({
               <Typography variant="caption" color="error" sx={{ mt: 0.5, ml: 1.5 }}>{getFieldError('tags')}</Typography>
             )}
           </FormControl>
-          <TextField label={t('images.form.filename')} value={formData.filename} fullWidth disabled helperText={t('images.form.filename') + ' (read-only)'} />
-          <TextField label={t('images.form.thumbnailFilename')} value={formData.thumbnailFilename} fullWidth disabled helperText={t('images.form.thumbnailFilename') + ' (read-only)'} />
           <TextField label={t('images.form.extension')} value={formData.extension} onChange={(e) => onFormChange('extension', e.target.value)} fullWidth error={!!getFieldError('extension')} helperText={getFieldError('extension')} />
-          <TextField label={t('images.form.mimeType')} value={formData.mimeType} onChange={(e) => onFormChange('mimeType', e.target.value)} fullWidth error={!!getFieldError('mimeType')} helperText={getFieldError('mimeType')} disabled />
-          <TextField label={t('images.form.sizeBytes')} value={formData.sizeBytes} onChange={(e) => onFormChange('sizeBytes', parseInt(e.target.value) || 0)} type="number" fullWidth error={!!getFieldError('sizeBytes')} helperText={getFieldError('sizeBytes')} disabled />
-          <TextField label={t('images.form.width')} value={formData.width} onChange={(e) => onFormChange('width', parseInt(e.target.value) || 0)} type="number" fullWidth error={!!getFieldError('width')} helperText={getFieldError('width')} disabled />
-          <TextField label={t('images.form.height')} value={formData.height} onChange={(e) => onFormChange('height', parseInt(e.target.value) || 0)} type="number" fullWidth error={!!getFieldError('height')} helperText={getFieldError('height')} disabled />
-          
-          
-          <FormControl fullWidth>
+            <FormControl fullWidth>
             <FormLabel>{t('images.form.lang')}</FormLabel>
             <Select value={formData.lang} onChange={(e) => onFormChange('lang', e.target.value)} error={!!getFieldError('lang')}>
               {availableLangOptions.map((option) => (
@@ -163,6 +155,14 @@ const ImageEditDialog = ({
           </FormControl>
           <TextField label={t('images.form.displayOrder')} value={formData.displayOrder} onChange={(e) => onFormChange('displayOrder', parseInt(e.target.value) || 0)} type="number" fullWidth error={!!getFieldError('displayOrder')} helperText={getFieldError('displayOrder')} />
           <FormControlLabel control={<Switch checked={formData.isActive} onChange={(e) => onFormChange('isActive', e.target.checked)} />} label={t('images.form.isActive')} />
+          <TextField label={t('images.form.filename')} value={formData.filename} fullWidth disabled helperText={t('images.form.filename') + ' (read-only)'} />
+          <TextField label={t('images.form.thumbnailFilename')} value={formData.thumbnailFilename} fullWidth disabled helperText={t('images.form.thumbnailFilename') + ' (read-only)'} />
+          <TextField label={t('images.form.mimeType')} value={formData.mimeType} onChange={(e) => onFormChange('mimeType', e.target.value)} fullWidth error={!!getFieldError('mimeType')} helperText={getFieldError('mimeType')} disabled />
+          <TextField label={t('images.form.sizeBytes')} value={formData.sizeBytes} onChange={(e) => onFormChange('sizeBytes', parseInt(e.target.value) || 0)} type="number" fullWidth error={!!getFieldError('sizeBytes')} helperText={getFieldError('sizeBytes')} disabled />
+          <TextField label={t('images.form.width')} value={formData.width} onChange={(e) => onFormChange('width', parseInt(e.target.value) || 0)} type="number" fullWidth error={!!getFieldError('width')} helperText={getFieldError('width')} disabled />
+          <TextField label={t('images.form.height')} value={formData.height} onChange={(e) => onFormChange('height', parseInt(e.target.value) || 0)} type="number" fullWidth error={!!getFieldError('height')} helperText={getFieldError('height')} disabled />
+          
+          
         </Box>
       </DialogContent>
       <DialogActions>

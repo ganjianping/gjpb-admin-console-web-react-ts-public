@@ -86,8 +86,9 @@ class ImageService {
     formData.append('lang', data.lang);
     if (data.displayOrder !== undefined) formData.append('displayOrder', String(data.displayOrder));
     if (data.isActive !== undefined) formData.append('isActive', String(data.isActive));
-  // apiClient.post will set multipart Content-Type automatically when data is FormData
-  return apiClient.post(this.crudUrl, formData);
+    // Use dedicated upload endpoint for file uploads
+    // apiClient.post will set multipart Content-Type automatically when data is FormData
+    return apiClient.post(`${this.crudUrl}/upload`, formData);
   }
 
   /**
