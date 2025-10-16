@@ -56,9 +56,11 @@ const enTranslations = {
       cancel: 'Cancel',
       save: 'Save',
       copyFilename: 'Copy Filename',
+      copyThumbnail: 'Copy Thumbnail',
     },
     messages: {
       filenameCopied: 'Filename copied to clipboard',
+      thumbnailFilenameCopied: 'Thumbnail filename copied to clipboard',
       savingImage: 'Saving image...',
       uploadingImage: 'Uploading image...',
       pleaseWait: 'Please wait...',
@@ -154,9 +156,11 @@ const zhTranslations = {
       cancel: '取消',
       save: '保存',
       copyFilename: '复制文件名',
+      copyThumbnail: '复制缩略图文件名',
     },
     messages: {
       filenameCopied: '文件名已复制到剪贴板',
+      thumbnailFilenameCopied: '缩略图文件名已复制到剪贴板',
       savingImage: '正在保存图片...',
       uploadingImage: '正在上传图片...',
       pleaseWait: '请稍候...',

@@ -95,6 +95,10 @@ const ImagesPage: React.FC = () => {
       navigator.clipboard.writeText(image.filename);
       setSnackbar({ open: true, message: t('images.messages.filenameCopied'), severity: 'info' });
     },
+    onCopyThumbnail: (image) => {
+      navigator.clipboard.writeText(image.thumbnailFilename || '');
+      setSnackbar({ open: true, message: t('images.messages.thumbnailFilenameCopied'), severity: 'info' });
+    },
   });
 
   // Listen for programmatic edit requests dispatched from the view dialog
@@ -183,9 +187,10 @@ const ImagesPage: React.FC = () => {
           onImageAction={(image, action) => {
             if (action === 'view') actionMenuItems[0].action(image);
             if (action === 'edit') actionMenuItems[1].action(image);
-            if (action === 'delete') actionMenuItems[3].action(image);
+            if (action === 'delete') actionMenuItems[4].action(image);
           }}
           onCopyFilename={actionMenuItems[2].action}
+          onCopyThumbnail={actionMenuItems[3].action}
         />
       )}
       <ImageDialog
