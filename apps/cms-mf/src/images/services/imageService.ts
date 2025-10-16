@@ -57,7 +57,7 @@ export interface UpdateImageRequest {
 }
 
 class ImageService {
-  private readonly getUrl = "/v1/images";
+  private readonly getUrl = "/v1/images/search";
   private readonly crudUrl = "/v1/images";
 
   /**
