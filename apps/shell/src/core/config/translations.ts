@@ -77,6 +77,9 @@ const shellResources = {
       images: { 
         title: 'Images',
       },
+      videos: {
+        title: 'Videos',
+      },
       common: {
         goBack: 'Go Back',
         goHome: 'Go Home',
@@ -167,6 +170,9 @@ const shellResources = {
       },
       images: {
         title: '图片管理',
+      },
+      videos: {
+        title: '视频管理',
       },
       common: {
         goBack: '返回',
