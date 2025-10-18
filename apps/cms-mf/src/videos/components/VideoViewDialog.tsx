@@ -33,8 +33,8 @@ const VideoViewDialog = ({ open, onClose, video, onEdit }: VideoViewDialogProps)
 	const { t } = useTranslation();
 	const [copiedField, setCopiedField] = useState<string | null>(null);
 	// Full URLs for video and cover
-	const videoUrl = useMemo(() => getFullVideoUrl(video.filename || ''), [video.filename]);
-	const coverUrl = useMemo(() => getFullVideoUrl(`/cover-image/${video.coverImageFilename || ''}`), [video.coverImageFilename]);
+	const videoUrl = useMemo(() => (video.filename ? getFullVideoUrl(video.filename) : ''), [video.filename]);
+	const coverUrl = useMemo(() => (video.coverImageFilename ? getFullVideoUrl(`/cover-image/${video.coverImageFilename}`) : ''), [video.coverImageFilename]);
 	const sizeInMB = useMemo(() => {
 		try {
 			const bytes = Number(video.sizeBytes || 0);

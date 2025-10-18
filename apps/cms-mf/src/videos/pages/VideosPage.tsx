@@ -1,10 +1,15 @@
 import React from 'react';
+// register feature translations early so they are available when dialogs mount
+import '../i18n/translations';
 import type { Video, VideoSearchFormData } from '../types/video.types';
 import type { VideoQueryParams } from '../services/videoService';
 import { Box, Collapse } from '@mui/material';
 import VideoPageHeader from '../components/VideoPageHeader';
 import VideoSearchPanel from '../components/VideoSearchPanel';
 import VideoTable from '../components/VideoTable';
+
+import VideoCreateDialog from '../components/VideoCreateDialog';
+import { getEmptyVideoFormData } from '../utils/getEmptyVideoFormData';
 import VideoTableSkeleton from '../components/VideoTableSkeleton';
 
 import { useVideos } from '../hooks/useVideos';
@@ -35,6 +40,7 @@ const VideosPage: React.FC = () => {
     name: video.name || '',
     filename: video.filename || '',
     coverImageFilename: video.coverImageFilename || '',
+    coverImageFile: null,
     description: video.description || '',
     sizeBytes: video.sizeBytes || 0,
     tags: video.tags || '',
@@ -102,6 +108,8 @@ const VideosPage: React.FC = () => {
   };
 
   const handleCreate = () => {
+    // reset form data before opening create dialog
+    dialog.setFormData(getEmptyVideoFormData());
     dialog.setSelectedVideo(null);
     dialog.setActionType('create');
     dialog.setDialogOpen(true);
@@ -139,6 +147,17 @@ const VideosPage: React.FC = () => {
         />
       )}
 
+      {/* Render the Create Video dialog when actionType is 'create' */}
+      {dialog.actionType === 'create' && dialog.dialogOpen && (
+        <VideoCreateDialog
+          open={dialog.dialogOpen}
+          formData={dialog.formData}
+          onFormChange={(field, value) => dialog.setFormData(prev => ({ ...prev, [field]: value }))}
+          onClose={() => dialog.setDialogOpen(false)}
+          onReset={() => dialog.setFormData(getEmptyVideoFormData())}
+          loading={dialog.loading}
+        />
+      )}
       {/* Render the View Video dialog when actionType is 'view' */}
       {dialog.actionType === 'view' && dialog.selectedVideo && (
         <VideoViewDialog

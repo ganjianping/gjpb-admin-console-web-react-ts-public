@@ -257,7 +257,7 @@ const WebsitesPage = () => {
       <WebsiteViewDialog
         open={dialogOpen && actionType === 'view'}
         onClose={handleClose}
-        website={selectedWebsite || { id: '', name: '', url: '', logoUrl: '', description: '', tags: '', lang: '', displayOrder: 0, isActive: true, createdAt: '', updatedAt: '', createdBy: '', updatedBy: '', tagsArray: [] }}
+        website={selectedWebsite || { id: '', name: '', url: '', logoUrl: '', description: '', tags: '', lang: '', displayOrder: 999, isActive: true, createdAt: '', updatedAt: '', createdBy: '', updatedBy: '', tagsArray: [] }}
       />
 
       {/* Website Create Dialog */}

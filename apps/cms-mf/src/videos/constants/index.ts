@@ -4,3 +4,8 @@ export const STATUS_MAPS = {
     color: 'success',
   },
 };
+
+export const LANGUAGE_OPTIONS = [
+  { value: 'EN', label: 'English' },
+  { value: 'ZH', label: 'Chinese' },
+];

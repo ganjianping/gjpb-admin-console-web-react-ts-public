@@ -32,6 +32,7 @@ export interface VideoFormData {
   isActive: boolean;
   uploadMethod: 'file';
   file: File | null;
+  coverImageFile: File | null;
 }
 
 

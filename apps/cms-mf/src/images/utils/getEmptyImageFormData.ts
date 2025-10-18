@@ -18,7 +18,7 @@ export const getEmptyImageFormData = (lang = 'EN'): ImageFormData => ({
   altText: '',
   tags: '',
   lang,
-  displayOrder: 0,
+  displayOrder: 999,
   isActive: true,
   uploadMethod: 'url',
   file: null,

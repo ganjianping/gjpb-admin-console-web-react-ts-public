@@ -25,6 +25,9 @@ const enTranslations = {
     },
     form: {
       name: 'Video Name',
+      description: 'Description',
+      videoFile: 'Video File',
+      coverImageFile: 'Cover Image File',
       sourceName: 'Source Name',
       originalUrl: 'Original URL',
       filename: 'Filename',

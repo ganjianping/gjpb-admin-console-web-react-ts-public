@@ -36,6 +36,7 @@ export interface CreateVideoByUploadRequest {
   lang: string;
   displayOrder?: number;
   isActive?: boolean;
+  coverImageFile?: File;
 }
 
 
@@ -70,6 +71,11 @@ class VideoService {
     formData.append('name', data.name);
     formData.append('filename', data.filename);
     formData.append('coverImageFilename', data.coverImageFilename);
+    // If a cover image file is provided, append it as 'coverImageFile'
+    // Some backends expect both filename and file field.
+    if ((data as any).coverImageFile) {
+      formData.append('coverImageFile', (data as any).coverImageFile);
+    }
     if (data.description) formData.append('description', data.description);
     formData.append('tags', data.tags);
     formData.append('lang', data.lang);
