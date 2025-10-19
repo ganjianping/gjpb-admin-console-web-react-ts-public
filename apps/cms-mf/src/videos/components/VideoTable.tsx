@@ -58,7 +58,14 @@ const VideoTable = memo(({ images, pagination, onPageChange, onPageSizeChange, o
     }),
     columnHelper.accessor('isActive', {
       header: t('videos.columns.isActive'),
-      cell: (info) => <Typography variant="body2">{info.getValue() ? 'Active' : 'Inactive'}</Typography>,
+      cell: (info) => {
+        const isActive = info.getValue();
+        return (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            {createStatusChip(isActive?.toString?.() ?? String(!!isActive), STATUS_MAPS.active)}
+          </Box>
+        );
+      },
     }),
     columnHelper.accessor('updatedAt', {
       header: t('videos.columns.updatedAt'),

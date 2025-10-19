@@ -35,6 +35,7 @@ interface VideoCreateDialogProps {
 	loading?: boolean;
 	formErrors?: Record<string, string[] | string>;
 	onReset?: () => void;
+	onCreated?: () => void;
 }
 
 const VideoCreateDialog = ({
@@ -128,6 +129,7 @@ const VideoCreateDialog = ({
 
 			// on success: close and reset if provided
 			if (onReset) onReset();
+			if (onCreated) onCreated();
 			onClose();
 		} catch (err: any) {
 			setErrorMsg(err?.message || 'Failed to upload video');
