@@ -3,6 +3,8 @@ export const getEmptyVideoFormData = (lang = 'EN') => ({
   name: '',
   filename: '',
   coverImageFilename: '',
+  sourceName: '',
+  originalUrl: '',
   coverImageFile: null,
   description: '',
   sizeBytes: 0,

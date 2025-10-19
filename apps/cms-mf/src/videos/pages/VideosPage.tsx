@@ -46,6 +46,8 @@ const VideosPage: React.FC = () => {
     coverImageFilename: video.coverImageFilename || '',
     coverImageFile: null,
     description: video.description || '',
+    sourceName: video.sourceName || '',
+    originalUrl: video.originalUrl || '',
     sizeBytes: video.sizeBytes || 0,
     tags: video.tags || '',
     lang: video.lang || (dialog.getCurrentLanguage ? dialog.getCurrentLanguage() : 'EN'),
