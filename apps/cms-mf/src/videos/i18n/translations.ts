@@ -61,7 +61,7 @@ const enTranslations = {
       cancel: 'Cancel',
       save: 'Save',
       copyFilename: 'Copy Filename',
-      copyThumbnail: 'Copy Thumbnail',
+  copyThumbnail: 'Copy Cover Image',
     },
     messages: {
       filenameCopied: 'Filename copied to clipboard',
@@ -163,7 +163,7 @@ const zhTranslations = {
       cancel: '取消',
       save: '保存',
       copyFilename: '复制文件名',
-      copyThumbnail: '复制缩略图文件名',
+  copyThumbnail: '复制封面图片文件名',
     },
     messages: {
       filenameCopied: '文件名已复制到剪贴板',
