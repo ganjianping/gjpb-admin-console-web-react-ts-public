@@ -77,6 +77,9 @@ const shellResources = {
       images: { 
         title: 'Images',
       },
+      audios: {
+        title: 'Audios',
+      },
       videos: {
         title: 'Videos',
       },
@@ -170,6 +173,9 @@ const shellResources = {
       },
       images: {
         title: '图片管理',
+      },
+      audios: {
+        title: '音频管理',
       },
       videos: {
         title: '视频管理',

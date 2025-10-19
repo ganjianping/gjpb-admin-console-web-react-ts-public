@@ -1,5 +1,4 @@
-
-export interface Video {
+export interface Audio {
   id: string;
   name: string;
   filename: string;
@@ -19,11 +18,9 @@ export interface Video {
   updatedAt?: string;
 }
 
+export type AudioActionType = 'create' | 'edit' | 'view';
 
-export type VideoActionType = 'create' | 'edit' | 'view';
-
-
-export interface VideoFormData {
+export interface AudioFormData {
   name: string;
   filename: string;
   coverImageFilename: string;
@@ -40,8 +37,7 @@ export interface VideoFormData {
   coverImageFile: File | null;
 }
 
-
-export interface VideoSearchFormData {
+export interface AudioSearchFormData {
   name?: string;
   lang?: string;
   tags?: string;

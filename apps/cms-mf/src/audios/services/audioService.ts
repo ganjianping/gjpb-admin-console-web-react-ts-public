@@ -1,8 +1,8 @@
 import { apiClient } from "../../../../shared-lib/src/api/api-client";
 import type { ApiResponse } from "../../../../shared-lib/src/api/api.types";
-import type { Video } from "../types/video.types";
+import type { Audio } from "../types/audio.types";
 
-export interface VideoQueryParams {
+export interface AudioQueryParams {
   page?: number;
   size?: number;
   sort?: string;
@@ -14,7 +14,7 @@ export interface VideoQueryParams {
 }
 
 
-export interface CreateVideoRequest {
+export interface CreateAudioRequest {
   name: string;
   filename: string;
   coverImageFilename: string;
@@ -28,7 +28,7 @@ export interface CreateVideoRequest {
 }
 
 
-export interface CreateVideoByUploadRequest {
+export interface CreateAudioByUploadRequest {
   file: File;
   name: string;
   filename: string;
@@ -44,7 +44,7 @@ export interface CreateVideoByUploadRequest {
 }
 
 
-export interface UpdateVideoRequest {
+export interface UpdateAudioRequest {
   name?: string;
   filename?: string;
   coverImageFilename?: string;
@@ -58,20 +58,20 @@ export interface UpdateVideoRequest {
   isActive?: boolean;
 }
 
-class VideoService {
-  private readonly getUrl = "/v1/videos/search";
-  private readonly crudUrl = "/v1/videos";
+class AudioService {
+  private readonly getUrl = "/v1/audios/search";
+  private readonly crudUrl = "/v1/audios";
 
-  async getVideos(params?: VideoQueryParams): Promise<ApiResponse<Video[]>> {
+  async getAudios(params?: AudioQueryParams): Promise<ApiResponse<Audio[]>> {
     return apiClient.get(this.getUrl, { params });
   }
 
 
-  async createVideo(data: CreateVideoRequest): Promise<ApiResponse<Video>> {
+  async createAudio(data: CreateAudioRequest): Promise<ApiResponse<Audio>> {
     return apiClient.post(this.crudUrl, data);
   }
 
-  async createVideoByUpload(data: CreateVideoByUploadRequest): Promise<ApiResponse<Video>> {
+  async createAudioByUpload(data: CreateAudioByUploadRequest): Promise<ApiResponse<Audio>> {
     const formData = new FormData();
     formData.append('file', data.file);
     formData.append('name', data.name);
@@ -102,7 +102,7 @@ class VideoService {
     return apiClient.post(`${this.crudUrl}/upload`, formData);
   }
 
-  async updateVideo(id: string, data: UpdateVideoRequest): Promise<ApiResponse<Video>> {
+  async updateAudio(id: string, data: UpdateAudioRequest): Promise<ApiResponse<Audio>> {
     // Ensure we don't send client-only fields like sizeBytes or uploadMethod in the update payload
     const payload: any = { ...data };
     if (payload.sizeBytes !== undefined) delete payload.sizeBytes;
@@ -111,9 +111,9 @@ class VideoService {
     return apiClient.put(`${this.crudUrl}/${id}`, payload);
   }
 
-  async updateVideoWithFiles(id: string, data: UpdateVideoRequest & { file?: File | null; coverImageFile?: File | null }): Promise<ApiResponse<Video>> {
+  async updateAudioWithFiles(id: string, data: UpdateAudioRequest & { file?: File | null; coverImageFile?: File | null }): Promise<ApiResponse<Audio>> {
     const formData = new FormData();
-    // Do not allow changing the primary video file via Edit — only allow cover image updates here.
+    // Do not allow changing the primary audio file via Edit — only allow cover image updates here.
     if ((data as any).coverImageFile) {
       formData.append('coverImageFile', (data as any).coverImageFile as File);
     }
@@ -152,9 +152,9 @@ class VideoService {
     return apiClient.put(`${this.crudUrl}/${id}`, formData);
   }
 
-  async deleteVideo(id: string): Promise<ApiResponse<void>> {
+  async deleteAudio(id: string): Promise<ApiResponse<void>> {
     return apiClient.delete(`${this.crudUrl}/${id}`);
   }
 }
 
-export const videoService = new VideoService();
+export const audioService = new AudioService();

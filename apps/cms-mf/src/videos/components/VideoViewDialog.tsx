@@ -34,7 +34,7 @@ const VideoViewDialog = ({ open, onClose, video, onEdit }: VideoViewDialogProps)
 	const [copiedField, setCopiedField] = useState<string | null>(null);
 	// Full URLs for video and cover
 	const videoUrl = useMemo(() => (video.filename ? getFullVideoUrl(video.filename) : ''), [video.filename]);
-	const coverUrl = useMemo(() => (video.coverImageFilename ? getFullVideoUrl(`/cover-image/${video.coverImageFilename}`) : ''), [video.coverImageFilename]);
+	const coverUrl = useMemo(() => (video.coverImageFilename ? getFullVideoUrl(`/cover-images/${video.coverImageFilename}`) : ''), [video.coverImageFilename]);
 	const sizeInMB = useMemo(() => {
 		try {
 			const bytes = Number(video.sizeBytes || 0);
@@ -112,7 +112,7 @@ const VideoViewDialog = ({ open, onClose, video, onEdit }: VideoViewDialogProps)
 									<Typography variant="h5" sx={{ fontWeight: 700, mb: 0.5 }}>{video.name}</Typography>
 									<Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '100%' }}>
 										{/* Clickable full URLs for video and cover */}
-										{videoUrl && (
+																				{videoUrl && (
 											<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
 												<Typography variant="caption" sx={{ color: 'text.secondary' }}>Video URL:</Typography>
 												<Link href={videoUrl} target="_blank" rel="noopener noreferrer" sx={{ display: 'flex', alignItems: 'center', gap: 0.5, textDecoration: 'none', color: 'primary.main', wordBreak: 'break-all', flex: 1, fontFamily: 'monospace', fontSize: '0.875rem', '&:hover': { textDecoration: 'underline' } }}>
@@ -122,6 +122,21 @@ const VideoViewDialog = ({ open, onClose, video, onEdit }: VideoViewDialogProps)
 												<Tooltip title={copiedField === 'videoUrl' ? t('videos.messages.filenameCopied') : 'Copy'}>
 													<IconButton size="small" onClick={() => handleCopy(videoUrl, 'videoUrl')} sx={{ ml: 0.5 }}>
 														{copiedField === 'videoUrl' ? <Check size={16} /> : <Copy size={16} />}
+													</IconButton>
+												</Tooltip>
+											</Box>
+										)}										
+										{/* Show original URL (external source) if provided */}
+										{(video as any).originalUrl && (
+											<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.5 }}>
+												<Typography variant="caption" sx={{ color: 'text.secondary' }}>{t('videos.viewDialog.originalUrl') || 'Original URL'}:</Typography>
+												<Link href={(video as any).originalUrl} target="_blank" rel="noopener noreferrer" sx={{ display: 'flex', alignItems: 'center', gap: 0.5, textDecoration: 'none', color: 'primary.main', wordBreak: 'break-all', flex: 1, fontFamily: 'monospace', fontSize: '0.875rem', '&:hover': { textDecoration: 'underline' } }}>
+													<ExternalLink size={14} />
+													<Typography variant="body2" sx={{ fontFamily: 'inherit', fontSize: 'inherit' }}>{(video as any).originalUrl}</Typography>
+												</Link>
+												<Tooltip title={copiedField === 'originalUrl' ? t('videos.messages.filenameCopied') : 'Copy'}>
+													<IconButton size="small" onClick={() => handleCopy((video as any).originalUrl, 'originalUrl')} sx={{ ml: 0.5 }}>
+														{copiedField === 'originalUrl' ? <Check size={16} /> : <Copy size={16} />}
 													</IconButton>
 												</Tooltip>
 											</Box>
@@ -156,7 +171,7 @@ const VideoViewDialog = ({ open, onClose, video, onEdit }: VideoViewDialogProps)
 									<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Name</Typography>
 									<Typography variant="body2" sx={{ fontWeight: 600 }}>{video.name}</Typography>
 								</Box>
-                                <Box sx={{ gridColumn: '1 / -1' }}>
+								<Box sx={{ gridColumn: '1 / -1' }}>
 									<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Description</Typography>
 									<Typography variant="body2">{video.description}</Typography>
 								</Box>
@@ -167,6 +182,10 @@ const VideoViewDialog = ({ open, onClose, video, onEdit }: VideoViewDialogProps)
 											<Chip key={tag.trim()} icon={<Tag size={14} />} label={tag.trim()} size="small" variant="outlined" sx={{ fontWeight: 500 }} />
 										))}
 									</Box>
+								</Box>
+                                <Box>
+									<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Source Name</Typography>
+									<Typography variant="body2" sx={{ fontWeight: 600 }}>{video.sourceName || '-'}</Typography>
 								</Box>
 								<Box>
 									<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Filename</Typography>

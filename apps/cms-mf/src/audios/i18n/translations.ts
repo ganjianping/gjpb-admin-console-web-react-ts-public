@@ -1,18 +1,18 @@
 import i18n from '../../../../shared-lib/src/i18n/i18n';
 
 const enTranslations = {
-  videos: {
-    title: 'Videos',
-    subtitle: 'Manage videos and related information',
-    description: 'Maintain the video library and metadata',
-    pageTitle: 'Videos Management',
-    create: 'Create Video',
-    edit: 'Edit Video',
-    delete: 'Delete Video',
-    view: 'View Video',
-    search: 'Search Videos',
+  audios: {
+    title: 'Audios',
+    subtitle: 'Manage audios and related information',
+    description: 'Maintain the audio library and metadata',
+    pageTitle: 'Audios Management',
+    create: 'Create Audio',
+    edit: 'Edit Audio',
+    delete: 'Delete Audio',
+    view: 'View Audio',
+    search: 'Search Audios',
     clearFilters: 'Clear Filters',
-    noVideosFound: 'No videos found',
+    noAudiosFound: 'No audios found',
     columns: {
       cover: 'Cover',
       name: 'Name',
@@ -24,9 +24,9 @@ const enTranslations = {
       updatedAt: 'Updated At',
     },
     form: {
-      name: 'Video Name',
+      name: 'Audio Name',
       description: 'Description',
-      videoFile: 'Video File',
+      audioFile: 'Audio File',
       coverImageFile: 'Cover Image File',
       coverImageFilename: 'Cover Image Filename',
       sourceName: 'Source Name',
@@ -66,17 +66,17 @@ const enTranslations = {
     messages: {
       filenameCopied: 'Filename copied to clipboard',
       thumbnailFilenameCopied: 'Thumbnail filename copied to clipboard',
-      savingVideo: 'Saving video...',
-      uploadingVideo: 'Uploading video...',
+      savingAudio: 'Saving audio...',
+      uploadingAudio: 'Uploading audio...',
       pleaseWait: 'Please wait...',
       deleteWarning: 'This action cannot be undone.',
-      deleteConfirm: 'Are you sure you want to delete this video?',
-      createSuccess: 'Video created successfully',
-      updateSuccess: 'Video updated successfully',
-      deleteSuccess: 'Video deleted successfully',
+      deleteConfirm: 'Are you sure you want to delete this audio?',
+      createSuccess: 'Audio created successfully',
+      updateSuccess: 'Audio updated successfully',
+      deleteSuccess: 'Audio deleted successfully',
     },
     errors: {
-      loadFailed: 'Failed to load videos',
+      loadFailed: 'Failed to load audios',
       fileRequired: 'Please select a file to upload',
     },
     languages: {
@@ -106,18 +106,18 @@ const enTranslations = {
 };
 
 const zhTranslations = {
-  videos: {
-    title: '视频管理',
-    subtitle: '管理视频及相关信息',
-    description: '维护视频库及其元数据',
-    pageTitle: '视频管理',
-    create: '创建视频',
-    edit: '编辑视频',
-    delete: '删除视频',
-    view: '查看视频',
-    search: '搜索视频',
+  audios: {
+    title: '音频管理',
+    subtitle: '管理音频及相关信息',
+    description: '维护音频库及其元数据',
+    pageTitle: '音频管理',
+    create: '创建音频',
+    edit: '编辑音频',
+    delete: '删除音频',
+    view: '查看音频',
+    search: '搜索音频',
     clearFilters: '清除筛选',
-    noVideosFound: '未找到视频',
+    noAudiosFound: '未找到音频',
     columns: {
       cover: '封面',
       name: '名称',
@@ -129,7 +129,7 @@ const zhTranslations = {
       updatedAt: '更新时间',
     },
     form: {
-      name: '视频名称',
+      name: '音频名称',
       coverImageFilename: '封面图片文件名',
       sourceName: '来源名称',
       originalUrl: '原始链接',
@@ -168,17 +168,17 @@ const zhTranslations = {
     messages: {
       filenameCopied: '文件名已复制到剪贴板',
       thumbnailFilenameCopied: '缩略图文件名已复制到剪贴板',
-      savingVideo: '正在保存视频...',
-      uploadingVideo: '正在上传视频...',
+      savingAudio: '正在保存音频...',
+      uploadingAudio: '正在上传音频...',
       pleaseWait: '请稍候...',
       deleteWarning: '此操作无法撤销。',
-      deleteConfirm: '确定要删除此视频吗？',
-      createSuccess: '视频创建成功',
-      updateSuccess: '视频更新成功',
-      deleteSuccess: '视频删除成功',
+      deleteConfirm: '确定要删除此音频吗？',
+      createSuccess: '音频创建成功',
+      updateSuccess: '音频更新成功',
+      deleteSuccess: '音频删除成功',
     },
     errors: {
-      loadFailed: '加载视频失败',
+      loadFailed: '加载音频失败',
       fileRequired: '请选择要上传的文件',
     },
     languages: {
@@ -206,6 +206,7 @@ const zhTranslations = {
     },
   },
 };
+
 
 i18n.addResourceBundle('en', 'translation', enTranslations, true, true);
 i18n.addResourceBundle('zh', 'translation', zhTranslations, true, true);

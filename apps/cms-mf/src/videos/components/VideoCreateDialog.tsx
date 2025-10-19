@@ -117,11 +117,13 @@ const VideoCreateDialog = ({
 				const file = formData.file;
 				await videoService.createVideoByUpload({
 					file,
-				name: formData.name,
-				filename: formData.filename,
-				coverImageFilename: formData.coverImageFilename,
-						coverImageFile: formData.coverImageFile || undefined,
-				description: formData.description,
+					name: formData.name,
+					filename: formData.filename,
+					coverImageFilename: formData.coverImageFilename,
+					coverImageFile: formData.coverImageFile || undefined,
+					sourceName: (formData as any).sourceName,
+					originalUrl: (formData as any).originalUrl,
+					description: formData.description,
 				tags: formData.tags,
 				lang: formData.lang,
 				displayOrder: formData.displayOrder,
@@ -156,8 +158,10 @@ const VideoCreateDialog = ({
 				<Typography variant="h6" component="div">{t('videos.create') || 'Create Video'}</Typography>
 			</DialogTitle>
 			<DialogContent sx={{ pt: 2 }}>
-				<Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+				<Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
 					<TextField label={t('videos.form.name') || 'Name'} value={formData.name} onChange={(e) => onFormChange('name', e.target.value)} fullWidth error={!!getFieldError('name')} helperText={getFieldError('name')} />
+					<TextField label={t('videos.form.sourceName') || 'Source Name'} value={(formData as any).sourceName || ''} onChange={(e) => onFormChange('sourceName' as any, e.target.value)} fullWidth />
+					<TextField label={t('videos.form.originalUrl') || 'Original URL'} value={(formData as any).originalUrl || ''} onChange={(e) => onFormChange('originalUrl' as any, e.target.value)} fullWidth />
                     <Box>
 						<Typography variant="subtitle2">{t('videos.form.videoFile') || 'Video File'}</Typography>
 						<input type="file" accept="video/*" onChange={(e) => handleFileChange('file', e)} />

@@ -79,6 +79,8 @@ const VideoEditDialog: React.FC<VideoEditDialogProps> = ({ open, formData, onFor
 			<DialogContent>
 				<Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
 					<TextField label={t('videos.form.name') || 'Name'} value={formData.name} onChange={e => onFormChange('name', e.target.value)} fullWidth />
+					<TextField label={t('videos.form.sourceName') || 'Source Name'} value={(formData as any).sourceName || ''} onChange={e => onFormChange('sourceName' as any, e.target.value)} fullWidth />
+					<TextField label={t('videos.form.originalUrl') || 'Original URL'} value={(formData as any).originalUrl || ''} onChange={e => onFormChange('originalUrl' as any, e.target.value)} fullWidth />
 					<Box>
 						<Typography variant="subtitle2">{t('videos.form.coverImageFile') || 'Cover Image File'}</Typography>
 						<input type="file" accept="image/*" onChange={handleCoverFileChange} />

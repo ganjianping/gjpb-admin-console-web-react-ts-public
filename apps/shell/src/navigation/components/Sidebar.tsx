@@ -23,6 +23,7 @@ import {
   Globe,
   Image,
   Film,
+  Music,
   Badge,
   ChevronLeft,
   ChevronRight,
@@ -128,6 +129,12 @@ const Sidebar = ({ drawerWidth, collapsedWidth, open, onClose, variant }: Sideba
       title: t('videos.title'),
       path: '/videos',
       icon: Film,
+    },
+    {
+      key: 'audios',
+      title: t('audios.title'),
+      path: '/audios',
+      icon: Music,
     },
     {
       key: 'app-settings',
