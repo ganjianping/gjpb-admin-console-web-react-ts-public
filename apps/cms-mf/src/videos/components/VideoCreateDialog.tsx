@@ -35,7 +35,7 @@ interface VideoCreateDialogProps {
 	loading?: boolean;
 	formErrors?: Record<string, string[] | string>;
 	onReset?: () => void;
-	onCreated?: () => void;
+	onCreated?: () => Promise<void> | void;
 }
 
 const VideoCreateDialog = ({
@@ -46,6 +46,7 @@ const VideoCreateDialog = ({
 	loading,
 	formErrors = {},
 	onReset,
+	onCreated,
 }: VideoCreateDialogProps) => {
 	const { t, i18n } = useTranslation();
 	const [localSaving, setLocalSaving] = useState(false);
@@ -127,9 +128,15 @@ const VideoCreateDialog = ({
 				isActive: formData.isActive,
 			});
 
-			// on success: close and reset if provided
+			// on success: reset, let parent refresh table and then close
 			if (onReset) onReset();
-			if (onCreated) onCreated();
+			if (onCreated) {
+				try {
+					await onCreated();
+				} catch (err) {
+					console.error('[VideoCreateDialog] onCreated callback failed', err);
+				}
+			}
 			onClose();
 		} catch (err: any) {
 			setErrorMsg(err?.message || 'Failed to upload video');
