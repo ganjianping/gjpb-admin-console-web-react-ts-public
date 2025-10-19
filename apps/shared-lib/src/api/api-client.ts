@@ -209,7 +209,15 @@ class HttpClient {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public put<T = any>(url: string, data?: any): Promise<ApiResponse<T>> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return this.instance.put<any, ApiResponse<T>>(url, data);
+
+    // If data is FormData, let the browser set the Content-Type with boundary
+    const config = data instanceof FormData ? {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    } : undefined;
+
+    return this.instance.put<any, ApiResponse<T>>(url, data, config);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

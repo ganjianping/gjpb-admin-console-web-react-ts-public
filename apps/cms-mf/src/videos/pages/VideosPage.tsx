@@ -9,6 +9,7 @@ import VideoSearchPanel from '../components/VideoSearchPanel';
 import VideoTable from '../components/VideoTable';
 
 import VideoCreateDialog from '../components/VideoCreateDialog';
+import VideoEditDialog from '../components/VideoEditDialog';
 import { getEmptyVideoFormData } from '../utils/getEmptyVideoFormData';
 import VideoTableSkeleton from '../components/VideoTableSkeleton';
 
@@ -17,7 +18,7 @@ import { useVideoDialog } from '../hooks/useVideoDialog';
 import VideoViewDialog from '../components/VideoViewDialog';
 
 import { useVideoSearch } from '../hooks/useVideoSearch';
-import { useVideoActionMenu } from '../hooks/useVideoActionMenu';
+import { videoService } from '../services/videoService';
 const VideosPage: React.FC = () => {
   // Removed unused: const { t } = useTranslation();
   const {
@@ -53,29 +54,7 @@ const VideosPage: React.FC = () => {
 
   // Removed unused: const [deleteTarget, setDeleteTarget] = useState<Video | null>(null);
   // Removed unused: const handlers = useVideoHandlers({ ... });
-  const actionMenuItems = useVideoActionMenu({
-    onView: (video) => {
-      dialog.setSelectedVideo(video);
-      dialog.setFormData(videoToFormData(video));
-      dialog.setActionType('view');
-      dialog.setDialogOpen(true);
-    },
-    onEdit: (video) => {
-      dialog.setSelectedVideo(video);
-      dialog.setFormData(videoToFormData(video));
-      dialog.setActionType('edit');
-      dialog.setDialogOpen(true);
-    },
-    onDelete: () => {
-      // implement delete logic here if needed
-    },
-    onCopyFilename: (video) => {
-      navigator.clipboard.writeText(video.filename || '');
-    },
-    onCopyThumbnail: (video) => {
-      navigator.clipboard.writeText(video.coverImageFilename || '');
-    },
-  });
+  // action menu items are created where needed (useVideoActionMenu can be used by table if required)
 
   const handleSearchFieldChange = (field: keyof VideoSearchFormData, value: any) => {
     const nextFormData = { ...searchFormData, [field]: value };
@@ -138,12 +117,27 @@ const VideosPage: React.FC = () => {
           images={filteredVideos}
           loading={loading}
           onImageAction={(video: Video, action: string) => {
-            if (action === 'view') actionMenuItems[0].action(video);
-            if (action === 'edit') actionMenuItems[1].action(video);
-            if (action === 'delete') actionMenuItems[4].action(video);
+            if (action === 'view') {
+              dialog.setSelectedVideo(video);
+              dialog.setFormData(videoToFormData(video));
+              dialog.setActionType('view');
+              dialog.setDialogOpen(true);
+              return;
+            }
+            if (action === 'edit') {
+              dialog.setSelectedVideo(video);
+              dialog.setFormData(videoToFormData(video));
+              dialog.setActionType('edit');
+              dialog.setDialogOpen(true);
+              return;
+            }
+            if (action === 'delete') {
+              // placeholder for delete: you can wire a delete dialog or handler here
+              return;
+            }
           }}
-          onCopyFilename={actionMenuItems[2].action}
-          onCopyThumbnail={actionMenuItems[3].action}
+          onCopyFilename={(video: Video) => navigator.clipboard.writeText(video.filename || '')}
+          onCopyThumbnail={(video: Video) => navigator.clipboard.writeText(video.coverImageFilename || '')}
         />
       )}
 
@@ -164,6 +158,37 @@ const VideosPage: React.FC = () => {
           open={dialog.dialogOpen}
           video={dialog.selectedVideo}
           onClose={() => dialog.setDialogOpen(false)}
+        />
+      )}
+      {/* Render the Edit Video dialog when actionType is 'edit' */}
+      {dialog.actionType === 'edit' && dialog.selectedVideo && (
+        <VideoEditDialog
+          open={dialog.dialogOpen}
+          formData={dialog.formData}
+          onFormChange={(field, value) => dialog.setFormData(prev => ({ ...prev, [field]: value }))}
+          onClose={() => dialog.setDialogOpen(false)}
+          onSubmit={async (useFormData?: boolean) => {
+            if (!dialog.selectedVideo) return;
+            try {
+              dialog.setLoading(true);
+              // If caller requests FormData (e.g., cover image present) use multipart update
+              if (useFormData) {
+                await videoService.updateVideoWithFiles(dialog.selectedVideo.id, dialog.formData as any);
+              } else {
+                await videoService.updateVideo(dialog.selectedVideo.id, dialog.formData as any);
+              }
+              // refresh list after update
+              await loadVideos();
+              dialog.setLoading(false);
+              dialog.setDialogOpen(false);
+            } catch (err) {
+              dialog.setLoading(false);
+              // set basic form error
+              dialog.setFormErrors({ general: (err as any)?.message || 'Failed to update video' });
+            }
+          }}
+          loading={dialog.loading}
+          formErrors={dialog.formErrors}
         />
       )}
     </Box>

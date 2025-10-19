@@ -18,6 +18,8 @@ import {
 	LinearProgress,
 	Backdrop,
 	CircularProgress,
+	TextareaAutosize,
+	FormHelperText,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import type { VideoFormData } from '../types/video.types';
@@ -147,8 +149,25 @@ const VideoCreateDialog = ({
 			<DialogContent sx={{ pt: 2 }}>
 				<Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
 					<TextField label={t('videos.form.name') || 'Name'} value={formData.name} onChange={(e) => onFormChange('name', e.target.value)} fullWidth error={!!getFieldError('name')} helperText={getFieldError('name')} />
-					<TextField label={t('videos.form.filename') || 'Filename'} value={formData.filename} onChange={(e) => onFormChange('filename', e.target.value)} fullWidth error={!!getFieldError('filename')} helperText={getFieldError('filename')} />
-					<TextField label={t('videos.form.description') || 'Description'} value={formData.description} onChange={(e) => onFormChange('description', e.target.value)} fullWidth multiline rows={3} error={!!getFieldError('description')} helperText={getFieldError('description')} />
+                    <Box>
+						<Typography variant="subtitle2">{t('videos.form.videoFile') || 'Video File'}</Typography>
+						<input type="file" accept="video/*" onChange={(e) => handleFileChange('file', e)} />
+					</Box>
+					<Box>
+						<Typography variant="subtitle2">{t('videos.form.coverImageFile') || 'Cover Image File'}</Typography>
+						<input type="file" accept="image/*" onChange={(e) => handleFileChange('coverImageFile', e)} />
+					</Box>    
+					<Box>
+						<Typography variant="subtitle2">{t('videos.form.description') || 'Description'}</Typography>
+						<TextareaAutosize
+							minRows={3}
+							style={{ width: '100%', padding: '8.5px 14px', borderRadius: 4, border: '1px solid rgba(0,0,0,0.23)', fontFamily: 'inherit' }}
+							value={formData.description || ''}
+							onChange={(e) => onFormChange('description', e.target.value)}
+							aria-label={t('videos.form.description') || 'Description'}
+						/>
+						{getFieldError('description') && <FormHelperText error>{getFieldError('description')}</FormHelperText>}
+					</Box>
 
 					<FormControl fullWidth>
 						<Select multiple value={formData.tags ? formData.tags.split(',').filter(Boolean) : []} onChange={handleTagsChange} input={<OutlinedInput />} renderValue={(selected) => (
@@ -168,15 +187,6 @@ const VideoCreateDialog = ({
 
 					<TextField label={t('videos.form.displayOrder') || 'Display Order'} type="number" value={String(formData.displayOrder)} onChange={(e) => onFormChange('displayOrder', Number(e.target.value) || 0)} fullWidth />
 					<FormControlLabel control={<Switch checked={formData.isActive} onChange={(e) => onFormChange('isActive', e.target.checked)} />} label={t('videos.form.isActive') || 'Active'} />
-
-					<Box>
-						<Typography variant="subtitle2">{t('videos.form.videoFile') || 'Video File'}</Typography>
-						<input type="file" accept="video/*" onChange={(e) => handleFileChange('file', e)} />
-					</Box>
-					<Box>
-						<Typography variant="subtitle2">{t('videos.form.coverImageFile') || 'Cover Image File'}</Typography>
-						<input type="file" accept="image/*" onChange={(e) => handleFileChange('coverImageFile', e)} />
-					</Box>
 
 					{errorMsg && <Typography color="error">{errorMsg}</Typography>}
 				</Box>

@@ -85,7 +85,29 @@ class VideoService {
   }
 
   async updateVideo(id: string, data: UpdateVideoRequest): Promise<ApiResponse<Video>> {
-    return apiClient.put(`${this.crudUrl}/${id}`, data);
+    // Ensure we don't send client-only fields like sizeBytes or uploadMethod in the update payload
+    const payload: any = { ...data };
+    if (payload.sizeBytes !== undefined) delete payload.sizeBytes;
+    if (payload.uploadMethod !== undefined) delete payload.uploadMethod;
+    if (payload.file !== undefined) delete payload.file;
+    return apiClient.put(`${this.crudUrl}/${id}`, payload);
+  }
+
+  async updateVideoWithFiles(id: string, data: UpdateVideoRequest & { file?: File | null; coverImageFile?: File | null }): Promise<ApiResponse<Video>> {
+    const formData = new FormData();
+    // Do not allow changing the primary video file via Edit — only allow cover image updates here.
+    if ((data as any).coverImageFile) formData.append('coverImageFile', (data as any).coverImageFile as File);
+    if (data.name) formData.append('name', data.name);
+    if (data.filename) formData.append('filename', data.filename);
+    if (data.coverImageFilename) formData.append('coverImageFilename', data.coverImageFilename);
+    if (data.description) formData.append('description', data.description);
+    if (data.tags) formData.append('tags', data.tags);
+    if (data.lang) formData.append('lang', data.lang);
+    if (data.displayOrder !== undefined) formData.append('displayOrder', String(data.displayOrder));
+    if (data.isActive !== undefined) formData.append('isActive', String(data.isActive));
+    // Skip client-only fields like sizeBytes and uploadMethod
+    // Use PUT for update; backend should accept multipart PUT. If not, change to POST to an update-upload endpoint.
+    return apiClient.put(`${this.crudUrl}/${id}`, formData);
   }
 
   async deleteVideo(id: string): Promise<ApiResponse<void>> {

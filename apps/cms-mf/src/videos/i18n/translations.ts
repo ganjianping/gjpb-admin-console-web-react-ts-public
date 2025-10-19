@@ -28,6 +28,7 @@ const enTranslations = {
       description: 'Description',
       videoFile: 'Video File',
       coverImageFile: 'Cover Image File',
+      coverImageFilename: 'Cover Image Filename',
       sourceName: 'Source Name',
       originalUrl: 'Original URL',
       filename: 'Filename',
@@ -129,6 +130,7 @@ const zhTranslations = {
     },
     form: {
       name: '视频名称',
+      coverImageFilename: '封面图片文件名',
       sourceName: '来源名称',
       originalUrl: '原始链接',
       filename: '文件名',
