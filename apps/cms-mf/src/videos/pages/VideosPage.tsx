@@ -7,6 +7,7 @@ import { Box, Collapse } from '@mui/material';
 import VideoPageHeader from '../components/VideoPageHeader';
 import VideoSearchPanel from '../components/VideoSearchPanel';
 import VideoTable from '../components/VideoTable';
+import VideoDeleteDialog from '../components/VideoDeleteDialog';
 
 import VideoCreateDialog from '../components/VideoCreateDialog';
 import VideoEditDialog from '../components/VideoEditDialog';
@@ -37,6 +38,8 @@ const VideosPage: React.FC = () => {
     applyClientSideFiltersWithData,
   } = useVideoSearch(allVideos);
   const dialog = useVideoDialog();
+  const [deleteTarget, setDeleteTarget] = React.useState<Video | null>(null);
+  const [deleting, setDeleting] = React.useState(false);
   const videoToFormData = (video: Video) => ({
     name: video.name || '',
     filename: video.filename || '',
@@ -132,7 +135,7 @@ const VideosPage: React.FC = () => {
               return;
             }
             if (action === 'delete') {
-              // placeholder for delete: you can wire a delete dialog or handler here
+              setDeleteTarget(video);
               return;
             }
           }}
@@ -140,6 +143,29 @@ const VideosPage: React.FC = () => {
           onCopyThumbnail={(video: Video) => navigator.clipboard.writeText(video.coverImageFilename || '')}
         />
       )}
+
+        {/* Delete confirmation dialog */}
+        <VideoDeleteDialog
+          open={!!deleteTarget}
+          video={deleteTarget}
+          loading={deleting}
+          onClose={() => setDeleteTarget(null)}
+          onConfirm={async () => {
+            if (!deleteTarget) return;
+            try {
+              setDeleting(true);
+              await videoService.deleteVideo(deleteTarget.id);
+              await loadVideos();
+              setDeleting(false);
+              setDeleteTarget(null);
+            } catch (err) {
+              setDeleting(false);
+              // keep dialog open and show basic console error — for now, set form errors on dialog
+              console.error('Failed to delete video', err);
+              setDeleteTarget(null);
+            }
+          }}
+        />
 
       {/* Render the Create Video dialog when actionType is 'create' */}
       {dialog.actionType === 'create' && dialog.dialogOpen && (
@@ -149,6 +175,7 @@ const VideosPage: React.FC = () => {
           onFormChange={(field, value) => dialog.setFormData(prev => ({ ...prev, [field]: value }))}
           onClose={() => dialog.setDialogOpen(false)}
           onReset={() => dialog.setFormData(getEmptyVideoFormData())}
+          onCreated={async () => { await loadVideos(); }}
           loading={dialog.loading}
         />
       )}
