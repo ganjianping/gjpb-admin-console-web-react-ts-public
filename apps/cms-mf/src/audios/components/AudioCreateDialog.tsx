@@ -157,8 +157,6 @@ const AudioCreateDialog = ({
       <DialogContent sx={{ pt: 2 }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
           <TextField label={t('audios.form.name') || 'Name'} value={formData.name} onChange={(e) => onFormChange('name', e.target.value)} fullWidth error={!!getFieldError('name')} helperText={getFieldError('name')} />
-          <TextField label={t('audios.form.sourceName') || 'Source Name'} value={(formData as any).sourceName || ''} onChange={(e) => onFormChange('sourceName' as any, e.target.value)} fullWidth />
-          <TextField label={t('audios.form.originalUrl') || 'Original URL'} value={(formData as any).originalUrl || ''} onChange={(e) => onFormChange('originalUrl' as any, e.target.value)} fullWidth />
           <Box>
             <Typography variant="subtitle2">{t('audios.form.audioFile') || 'Audio File'}</Typography>
             <input type="file" accept="audio/*" onChange={(e) => handleFileChange('file', e)} />
@@ -178,6 +176,22 @@ const AudioCreateDialog = ({
             />
             {getFieldError('description') && <FormHelperText error>{getFieldError('description')}</FormHelperText>}
           </Box>
+
+          <Box>
+            <Typography variant="subtitle2">{t('audios.form.subtitle') || 'Subtitle'}</Typography>
+            <TextareaAutosize
+              minRows={3}
+              style={{ width: '100%', padding: '8.5px 14px', borderRadius: 4, border: '1px solid rgba(0,0,0,0.23)', fontFamily: 'inherit' }}
+              value={(formData as any).subtitle || ''}
+              onChange={(e) => onFormChange('subtitle' as any, e.target.value)}
+              aria-label={t('audios.form.subtitle') || 'Subtitle'}
+            />
+            {getFieldError('subtitle') && <FormHelperText error>{getFieldError('subtitle')}</FormHelperText>}
+          </Box>
+
+          <TextField label={t('audios.form.sourceName') || 'Source Name'} value={(formData as any).sourceName || ''} onChange={(e) => onFormChange('sourceName' as any, e.target.value)} fullWidth />
+          <TextField label={t('audios.form.originalUrl') || 'Original URL'} value={(formData as any).originalUrl || ''} onChange={(e) => onFormChange('originalUrl' as any, e.target.value)} fullWidth />
+          
 
           <FormControl fullWidth>
             <Select multiple value={formData.tags ? formData.tags.split(',').filter(Boolean) : []} onChange={handleTagsChange} input={<OutlinedInput />} renderValue={(selected) => (

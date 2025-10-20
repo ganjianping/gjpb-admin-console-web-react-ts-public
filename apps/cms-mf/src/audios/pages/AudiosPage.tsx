@@ -44,6 +44,7 @@ const AudiosPage: React.FC = () => {
     name: audio.name || '',
     filename: audio.filename || '',
     coverImageFilename: audio.coverImageFilename || '',
+    subtitle: audio.subtitle || '',
     coverImageFile: null,
     description: audio.description || '',
     sourceName: audio.sourceName || '',
@@ -122,18 +123,13 @@ const AudiosPage: React.FC = () => {
               dialog.setFormData(audioToFormData(audio));
               dialog.setActionType('view');
               dialog.setDialogOpen(true);
-              return;
-            }
-            if (action === 'edit') {
+            } else if (action === 'edit') {
               dialog.setSelectedAudio(audio);
               dialog.setFormData(audioToFormData(audio));
               dialog.setActionType('edit');
               dialog.setDialogOpen(true);
-              return;
-            }
-            if (action === 'delete') {
+            } else if (action === 'delete') {
               setDeleteTarget(audio);
-              return;
             }
           }}
           onCopyFilename={(audio: Audio) => navigator.clipboard.writeText(audio.filename || '')}

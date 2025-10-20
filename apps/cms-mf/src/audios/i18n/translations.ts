@@ -25,6 +25,7 @@ const enTranslations = {
     },
     form: {
       name: 'Audio Name',
+      subtitle: 'Subtitle',
       description: 'Description',
       audioFile: 'Audio File',
       coverImageFile: 'Cover Image File',
@@ -62,6 +63,8 @@ const enTranslations = {
       save: 'Save',
       copyFilename: 'Copy Filename',
   copyThumbnail: 'Copy Cover Image',
+      more: 'More...',
+      less: 'Less',
     },
     messages: {
       filenameCopied: 'Filename copied to clipboard',
@@ -130,6 +133,7 @@ const zhTranslations = {
     },
     form: {
       name: '音频名称',
+      subtitle: '副标题',
       coverImageFilename: '封面图片文件名',
       sourceName: '来源名称',
       originalUrl: '原始链接',
@@ -164,6 +168,8 @@ const zhTranslations = {
       save: '保存',
       copyFilename: '复制文件名',
   copyThumbnail: '复制封面图片文件名',
+      more: '更多',
+      less: '收起',
     },
     messages: {
       filenameCopied: '文件名已复制到剪贴板',

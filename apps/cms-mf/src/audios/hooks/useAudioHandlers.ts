@@ -13,6 +13,7 @@ export const useAudioHandlers = ({ onSuccess, onError, onRefresh }: { onSuccess:
           name: data.name,
           filename,
           coverImageFilename,
+          subtitle: (data as any).subtitle,
           sourceName: data.sourceName,
           originalUrl: data.originalUrl,
           description: data.description,
@@ -23,7 +24,7 @@ export const useAudioHandlers = ({ onSuccess, onError, onRefresh }: { onSuccess:
           coverImageFile: data.coverImageFile || undefined,
         });
       } else {
-        await audioService.createAudio({ name: data.name, filename, coverImageFilename, originalUrl: data.originalUrl, sourceName: data.sourceName, description: data.description, tags: data.tags, lang: data.lang, displayOrder: data.displayOrder, isActive: data.isActive });
+        await audioService.createAudio({ name: data.name, filename, coverImageFilename, subtitle: (data as any).subtitle, originalUrl: data.originalUrl, sourceName: data.sourceName, description: data.description, tags: data.tags, lang: data.lang, displayOrder: data.displayOrder, isActive: data.isActive });
       }
       onSuccess('Audio created successfully');
     } catch (err: any) {

@@ -1,5 +1,6 @@
 export const getEmptyAudioFormData = (lang = 'EN') => ({
   name: '',
+  subtitle: '',
   filename: '',
   coverImageFilename: '',
   sourceName: '',

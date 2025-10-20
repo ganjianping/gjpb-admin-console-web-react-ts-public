@@ -1,6 +1,7 @@
 export interface Audio {
   id: string;
   name: string;
+  subtitle?: string | null;
   filename: string;
   sizeBytes: number;
   coverImageFilename: string;
@@ -22,6 +23,7 @@ export type AudioActionType = 'create' | 'edit' | 'view';
 
 export interface AudioFormData {
   name: string;
+  subtitle?: string;
   filename: string;
   coverImageFilename: string;
   sourceName?: string;

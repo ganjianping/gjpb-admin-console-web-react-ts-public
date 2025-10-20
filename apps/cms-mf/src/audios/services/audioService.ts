@@ -18,6 +18,7 @@ export interface CreateAudioRequest {
   name: string;
   filename: string;
   coverImageFilename: string;
+  subtitle?: string;
   sourceName?: string;
   originalUrl?: string;
   description?: string;
@@ -33,6 +34,7 @@ export interface CreateAudioByUploadRequest {
   name: string;
   filename: string;
   coverImageFilename: string;
+  subtitle?: string;
   sourceName?: string;
   originalUrl?: string;
   description?: string;
@@ -48,6 +50,7 @@ export interface UpdateAudioRequest {
   name?: string;
   filename?: string;
   coverImageFilename?: string;
+  subtitle?: string;
   sourceName?: string;
   originalUrl?: string;
   description?: string;
@@ -77,6 +80,9 @@ class AudioService {
     formData.append('name', data.name);
     formData.append('filename', data.filename);
     formData.append('coverImageFilename', data.coverImageFilename);
+    if ((data as any).subtitle) {
+      formData.append('subtitle', (data as any).subtitle);
+    }
     // If a cover image file is provided, append it as 'coverImageFile'
     // Some backends expect both filename and file field.
     if ((data as any).coverImageFile) {
@@ -92,6 +98,9 @@ class AudioService {
       formData.append('originalUrl', (data as any).originalUrl);
     }
     formData.append('tags', data.tags);
+    if ((data as any).subtitle) {
+      formData.append('subtitle', (data as any).subtitle);
+    }
     formData.append('lang', data.lang);
     if (data.displayOrder !== undefined) {
       formData.append('displayOrder', String(data.displayOrder));
@@ -119,6 +128,9 @@ class AudioService {
     }
     if (data.name) {
       formData.append('name', data.name);
+    }
+    if ((data as any).subtitle) {
+      formData.append('subtitle', (data as any).subtitle);
     }
     if (data.filename) {
       formData.append('filename', data.filename);

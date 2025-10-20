@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useRef, useLayoutEffect } from 'react';
 import {
   Dialog,
   DialogActions,
@@ -32,6 +32,9 @@ interface AudioViewDialogProps {
 const AudioViewDialog = ({ open, onClose, audio, onEdit }: AudioViewDialogProps) => {
   const { t } = useTranslation();
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [subtitleExpanded, setSubtitleExpanded] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [playerHeight, setPlayerHeight] = useState<number | null>(null);
   const audioUrl = useMemo(() => (audio.filename ? getFullAudioUrl(audio.filename) : ''), [audio.filename]);
   const coverUrl = useMemo(() => (audio.coverImageFilename ? getFullAudioUrl(`/cover-images/${audio.coverImageFilename}`) : ''), [audio.coverImageFilename]);
   const sizeInMB = useMemo(() => {
@@ -54,6 +57,22 @@ const AudioViewDialog = ({ open, onClose, audio, onEdit }: AudioViewDialogProps)
     }
   };
 
+  useLayoutEffect(() => {
+    const measure = () => {
+      if (audioRef?.current) {
+        const h = audioRef.current.clientHeight;
+        if (h && h !== playerHeight) setPlayerHeight(h);
+      }
+    };
+    measure();
+    const t = globalThis.setTimeout(measure, 120);
+    globalThis.addEventListener?.('resize', measure);
+    return () => {
+      globalThis.clearTimeout(t as any);
+      globalThis.removeEventListener?.('resize', measure as any);
+    };
+  }, [audioUrl, audioRef]);
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth slotProps={{ paper: { sx: { borderRadius: 3, boxShadow: '0 24px 48px rgba(0, 0, 0, 0.12)' } } }}>
       <DialogTitle sx={{ pb: 2, display: 'flex', alignItems: 'center', gap: 1.5, borderBottom: '1px solid', borderColor: 'divider' }}>
@@ -64,22 +83,64 @@ const AudioViewDialog = ({ open, onClose, audio, onEdit }: AudioViewDialogProps)
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
           <Card elevation={0} sx={{ background: (theme) => theme.palette.mode === 'dark' ? 'linear-gradient(135deg, #1e293b 0%, #334155 100%)' : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)', border: '1px solid', borderColor: 'divider', alignItems: 'center', justifyContent: 'center' }}>
             <CardContent sx={{ p: 3, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-              {coverUrl ? (
-                <Box sx={{ mb: 2, maxWidth: 800, width: '100%', textAlign: 'center' }}>
-                  <img id="audio-cover" src={coverUrl} alt={audio.name} style={{ maxWidth: '100%', maxHeight: 300, borderRadius: 8, boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }} />
-                </Box>
-              ) : (
-                <Avatar sx={{ width: 64, height: 64, bgcolor: 'primary.main' }} variant="rounded">
-                  <Eye size={32} />
-                </Avatar>
-              )}
-              {audioUrl && (
-                <Box sx={{ mb: 2, maxWidth: 800, width: '100%', textAlign: 'center' }}>
-                    <audio id="audio-preview" src={audioUrl} controls aria-label={audio.name} style={{ maxWidth: '100%', borderRadius: 8, boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}>
-                      <track kind="captions" />
-                    </audio>
-                </Box>
-              )}
+              {/* show cover image beside player on wide layouts; stack on small screens */}
+              {(() => {
+                // measure player height in layout effect (component-level hook)
+                // If both cover and audio available, place side-by-side
+                if (coverUrl && audioUrl) {
+                  return (
+                    <Box sx={{ mb: 2, maxWidth: 800, width: '100%', display: 'flex', gap: 2, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+                      <Box sx={{ flex: '0 0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <img
+                          id="audio-cover"
+                          src={coverUrl}
+                          alt={audio.name}
+                          style={{
+                            height: playerHeight ? `${playerHeight}px` : 160,
+                            width: 'auto',
+                            maxWidth: 320,
+                            borderRadius: 8,
+                            objectFit: 'cover',
+                            boxShadow: '0 4px 24px rgba(0,0,0,0.08)'
+                          }}
+                        />
+                      </Box>
+                      <Box sx={{ flex: '1 1 320px', minWidth: 200 }}>
+                        <audio ref={audioRef} id="audio-preview" src={audioUrl} controls aria-label={audio.name} style={{ width: '100%', borderRadius: 8 }}>
+                          <track kind="captions" />
+                        </audio>
+                      </Box>
+                    </Box>
+                  );
+                }
+
+                // Only audio
+                if (audioUrl) {
+                  return (
+                    <Box sx={{ mb: 2, maxWidth: 800, width: '100%', textAlign: 'center' }}>
+                      <audio ref={audioRef} id="audio-preview" src={audioUrl} controls aria-label={audio.name} style={{ maxWidth: '100%', borderRadius: 8, boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}>
+                        <track kind="captions" />
+                      </audio>
+                    </Box>
+                  );
+                }
+
+                // Only cover
+                if (coverUrl) {
+                  return (
+                    <Box sx={{ mb: 2, maxWidth: 800, width: '100%', textAlign: 'center' }}>
+                      <img id="audio-cover" src={coverUrl} alt={audio.name} style={{ maxWidth: '100%', maxHeight: 300, borderRadius: 8, boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }} />
+                    </Box>
+                  );
+                }
+
+                // neither
+                return (
+                  <Avatar sx={{ width: 64, height: 64, bgcolor: 'primary.main' }} variant="rounded">
+                    <Eye size={32} />
+                  </Avatar>
+                );
+              })()}
               <Typography variant="h5" sx={{ fontWeight: 700, mb: 0.5 }}>{audio.name}</Typography>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '100%' }}>
                 {audioUrl && (
@@ -143,6 +204,40 @@ const AudioViewDialog = ({ open, onClose, audio, onEdit }: AudioViewDialogProps)
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Description</Typography>
                   <Typography variant="body2">{audio.description}</Typography>
                 </Box>
+                <Box sx={{ gridColumn: '1 / -1' }}>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>{t('audios.form.subtitle') || 'Subtitle'}</Typography>
+                  {((audio as any).subtitle) ? (
+                    (() => {
+                      const subtitleText = (audio as any).subtitle as string;
+                      const shouldShowToggle = subtitleText.length > 240 || subtitleText.split('\n').length > 4;
+                      return (
+                        <Box>
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              whiteSpace: 'pre-wrap',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              display: '-webkit-box',
+                              WebkitBoxOrient: 'vertical',
+                              WebkitLineClamp: subtitleExpanded ? 'none' : 4,
+                            }}
+                          >
+                            {subtitleText}
+                          </Typography>
+                          {shouldShowToggle && (
+                            <Button size="small" onClick={() => setSubtitleExpanded((s) => !s)} sx={{ mt: 1, textTransform: 'none' }}>
+                              {subtitleExpanded ? (t('audios.actions.less') || 'Less') : (t('audios.actions.more') || 'More...')}
+                            </Button>
+                          )}
+                        </Box>
+                      );
+                    })()
+                  ) : (
+                    <Typography variant="body2">-</Typography>
+                  )}
+                </Box>
+                
                 <Box sx={{ gridColumn: '1 / -1' }}>
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Tags</Typography>
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>

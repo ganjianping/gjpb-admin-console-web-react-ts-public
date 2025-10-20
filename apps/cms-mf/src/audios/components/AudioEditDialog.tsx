@@ -11,10 +11,9 @@ interface AudioEditDialogProps {
   onSubmit: (useFormData?: boolean) => Promise<void>;
   onClose: () => void;
   loading?: boolean;
-  formErrors?: Record<string, string>;
 }
 
-const AudioEditDialog: React.FC<AudioEditDialogProps> = ({ open, formData, onFormChange, onSubmit, onClose, loading, formErrors }) => {
+const AudioEditDialog: React.FC<AudioEditDialogProps> = ({ open, formData, onFormChange, onSubmit, onClose, loading }) => {
   const { i18n, t } = useTranslation();
   const [localSaving, setLocalSaving] = useState(false);
 
@@ -78,6 +77,7 @@ const AudioEditDialog: React.FC<AudioEditDialogProps> = ({ open, formData, onFor
       <DialogContent>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
           <TextField label={t('audios.form.name') || 'Name'} value={formData.name} onChange={e => onFormChange('name', e.target.value)} fullWidth />
+          
           <TextField label={t('audios.form.sourceName') || 'Source Name'} value={(formData as any).sourceName || ''} onChange={e => onFormChange('sourceName' as any, e.target.value)} fullWidth />
           <TextField label={t('audios.form.originalUrl') || 'Original URL'} value={(formData as any).originalUrl || ''} onChange={e => onFormChange('originalUrl' as any, e.target.value)} fullWidth />
           <Box>
@@ -87,6 +87,10 @@ const AudioEditDialog: React.FC<AudioEditDialogProps> = ({ open, formData, onFor
           <Box>
             <Typography variant="subtitle2">{t('audios.form.description') || 'Description'}</Typography>
             <TextareaAutosize minRows={2} style={{ width: '100%', padding: '8.5px 14px', borderRadius: 4, border: '1px solid rgba(0,0,0,0.23)', fontFamily: 'inherit' }} value={formData.description || ''} onChange={e => onFormChange('description', e.target.value)} aria-label={t('audios.form.description') || 'Description'} />
+          </Box>
+          <Box>
+            <Typography variant="subtitle2">{t('audios.form.subtitle') || 'Subtitle'}</Typography>
+            <TextareaAutosize minRows={2} style={{ width: '100%', padding: '8.5px 14px', borderRadius: 4, border: '1px solid rgba(0,0,0,0.23)', fontFamily: 'inherit' }} value={formData.subtitle || ''} onChange={e => onFormChange('subtitle', e.target.value)} aria-label={t('audios.form.subtitle') || 'Subtitle'} />
           </Box>
 
           <FormControl fullWidth>
