@@ -3,6 +3,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, B
 import { useTranslation } from 'react-i18next';
 import type { AudioFormData } from '../types/audio.types';
 import { LANGUAGE_OPTIONS } from '../constants';
+import LexicalTextEditor from '../../../../shared-lib/src/ui-components/rich-text/LexicalTextEditor';
 
 interface AudioEditDialogProps {
   open: boolean;
@@ -90,7 +91,7 @@ const AudioEditDialog: React.FC<AudioEditDialogProps> = ({ open, formData, onFor
           </Box>
           <Box>
             <Typography variant="subtitle2">{t('audios.form.subtitle') || 'Subtitle'}</Typography>
-            <TextareaAutosize minRows={2} style={{ width: '100%', padding: '8.5px 14px', borderRadius: 4, border: '1px solid rgba(0,0,0,0.23)', fontFamily: 'inherit' }} value={formData.subtitle || ''} onChange={e => onFormChange('subtitle', e.target.value)} aria-label={t('audios.form.subtitle') || 'Subtitle'} />
+            <LexicalTextEditor value={(formData as any).subtitle || ''} onChange={(html: string) => onFormChange('subtitle' as any, html)} placeholder={t('audios.form.subtitle') || 'Subtitle'} />
           </Box>
 
           <FormControl fullWidth>
