@@ -20,6 +20,7 @@ import { format, parseISO } from 'date-fns';
 import { Eye, Tag, CheckCircle2, XCircle, ExternalLink, Calendar, User, Copy, Check } from 'lucide-react';
 
 import { getFullAudioUrl } from '../utils/getFullAudioUrl';
+import DOMPurify from 'dompurify';
 import type { Audio } from '../types/audio.types';
 
 interface AudioViewDialogProps {
@@ -208,12 +209,18 @@ const AudioViewDialog = ({ open, onClose, audio, onEdit }: AudioViewDialogProps)
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>{t('audios.form.subtitle') || 'Subtitle'}</Typography>
                   {((audio as any).subtitle) ? (
                     (() => {
-                      const subtitleText = (audio as any).subtitle as string;
-                      const shouldShowToggle = subtitleText.length > 240 || subtitleText.split('\n').length > 4;
+                      const subtitleHtml = (audio as any).subtitle as string;
+                      // sanitize incoming HTML from the editor before rendering
+                      const sanitized = DOMPurify.sanitize(subtitleHtml || '');
+                      // derive plain text to decide whether to show the toggle
+                      const tmp = (typeof document !== 'undefined' && document) ? document.createElement('div') : null;
+                      if (tmp) tmp.innerHTML = sanitized;
+                      const plain = tmp ? (tmp.textContent || tmp.innerText || '') : sanitized.replace(/<[^>]+>/g, '');
+                      const shouldShowToggle = plain.length > 240 || plain.split('\n').length > 4;
+
                       return (
                         <Box>
-                          <Typography
-                            variant="body2"
+                          <Box
                             sx={{
                               whiteSpace: 'pre-wrap',
                               overflow: 'hidden',
@@ -221,10 +228,12 @@ const AudioViewDialog = ({ open, onClose, audio, onEdit }: AudioViewDialogProps)
                               display: '-webkit-box',
                               WebkitBoxOrient: 'vertical',
                               WebkitLineClamp: subtitleExpanded ? 'none' : 4,
+                              '& p': { margin: 0 },
                             }}
-                          >
-                            {subtitleText}
-                          </Typography>
+                            // render sanitized HTML from the editor
+                            dangerouslySetInnerHTML={{ __html: sanitized }}
+                          />
+
                           {shouldShowToggle && (
                             <Button size="small" onClick={() => setSubtitleExpanded((s) => !s)} sx={{ mt: 1, textTransform: 'none' }}>
                               {subtitleExpanded ? (t('audios.actions.less') || 'Less') : (t('audios.actions.more') || 'More...')}
