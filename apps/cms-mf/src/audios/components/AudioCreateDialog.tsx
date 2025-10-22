@@ -21,7 +21,7 @@ import {
   TextareaAutosize,
   FormHelperText,
 } from '@mui/material';
-import LexicalTextEditor from '../../../../shared-lib/src/ui-components/rich-text/LexicalTextEditor';
+import TiptapTextEditor from '../../../../shared-lib/src/ui-components/rich-text/tiptapTextEditor';
 import { useTranslation } from 'react-i18next';
 import type { AudioFormData } from '../types/audio.types';
 import { LANGUAGE_OPTIONS } from '../constants';
@@ -115,19 +115,22 @@ const AudioCreateDialog = ({
       if (!formData.file) throw new Error('No audio file selected');
       const file = formData.file;
       await audioService.createAudioByUpload({
-        file,
-        name: formData.name,
-        filename: formData.filename,
-        coverImageFilename: formData.coverImageFilename,
-        coverImageFile: formData.coverImageFile || undefined,
-        sourceName: (formData as any).sourceName,
-        originalUrl: (formData as any).originalUrl,
-        description: formData.description,
-        tags: formData.tags,
-        lang: formData.lang,
-        displayOrder: formData.displayOrder,
-        isActive: formData.isActive,
-      });
+        // cast to any to avoid needing to supply filename/coverImageFilename in this helper
+        ...( {
+          file,
+          name: formData.name,
+          filename: formData.filename,
+          coverImageFilename: formData.coverImageFilename,
+          coverImageFile: formData.coverImageFile || undefined,
+          sourceName: (formData as any).sourceName,
+          originalUrl: (formData as any).originalUrl,
+          description: formData.description,
+          tags: formData.tags,
+          lang: formData.lang,
+          displayOrder: formData.displayOrder,
+          isActive: formData.isActive,
+        } as any ),
+      } as any);
 
       if (onReset) onReset();
       if (onCreated) {
@@ -180,7 +183,7 @@ const AudioCreateDialog = ({
 
           <Box>
             <Typography variant="subtitle2">{t('audios.form.subtitle') || 'Subtitle'}</Typography>
-            <LexicalTextEditor value={(formData as any).subtitle || ''} onChange={(html: string) => onFormChange('subtitle' as any, html)} placeholder={t('audios.form.subtitle') || 'Subtitle'} />
+            <TiptapTextEditor value={(formData as any).subtitle || ''} onChange={(html: string) => onFormChange('subtitle' as any, html)} placeholder={t('audios.form.subtitle') || 'Subtitle'} />
             {getFieldError('subtitle') && <FormHelperText error>{getFieldError('subtitle')}</FormHelperText>}
           </Box>
 

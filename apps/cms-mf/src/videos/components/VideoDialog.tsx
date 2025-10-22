@@ -13,7 +13,7 @@ interface VideoDialogProps {
   formErrors?: Record<string, string>;
 }
 
-const VideoDialog: React.FC<VideoDialogProps> = (props) => {
+const VideoDialog: React.FC<VideoDialogProps> = () => {
   // Minimal delegator - render nothing for now
   return null;
 };

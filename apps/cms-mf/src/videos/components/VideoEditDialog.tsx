@@ -15,7 +15,7 @@ interface VideoEditDialogProps {
 	formErrors?: Record<string, string>;
 }
 
-const VideoEditDialog: React.FC<VideoEditDialogProps> = ({ open, formData, onFormChange, onSubmit, onClose, loading, formErrors }) => {
+const VideoEditDialog: React.FC<VideoEditDialogProps> = ({ open, formData, onFormChange, onSubmit, onClose, loading }) => {
 	const { i18n, t } = useTranslation();
 	const [localSaving, setLocalSaving] = useState(false);
 

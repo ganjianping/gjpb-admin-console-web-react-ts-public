@@ -1,4 +1,4 @@
-import { Alert } from "@mui/material";
+// no UI imports required here
 
 /**
  * Build a fully qualified video URL.

@@ -1,4 +1,4 @@
-import { Box, Chip, Typography, Avatar } from '@mui/material';
+import { Box, Typography, Avatar } from '@mui/material';
 import { Video as LucideVideo } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { memo, useMemo } from 'react';
@@ -6,7 +6,7 @@ import '../i18n/translations';
 import { DataTable, createColumnHelper, createStatusChip } from '../../../../shared-lib/src/data-management/DataTable';
 import type { Video } from '../types/video.types';
 import { useVideoActionMenu } from '../hooks/useVideoActionMenu';
-import { format, parseISO } from 'date-fns';
+// date-fns not required for simple YYYY-MM-DD extraction here
 import { STATUS_MAPS } from '../constants';
 import { getFullVideoUrl } from '../utils/getFullVideoUrl';
 
@@ -78,8 +78,14 @@ const VideoTable = memo(({ images, pagination, onPageChange, onPageSizeChange, o
           // Handles ISO and datetime strings
           const match = value.match(/\d{4}-\d{2}-\d{2}/);
           dateStr = match ? match[0] : value;
-        } else if (value instanceof Date) {
-          dateStr = value.toISOString().split('T')[0];
+        } else {
+          // If it's not a string, attempt to convert to Date safely
+          try {
+            const d = new Date(value as any);
+            if (!Number.isNaN(d.getTime())) dateStr = d.toISOString().split('T')[0];
+          } catch (error_) {
+            // leave as '-'
+          }
         }
         return <Typography variant="body2">{dateStr}</Typography>;
       },

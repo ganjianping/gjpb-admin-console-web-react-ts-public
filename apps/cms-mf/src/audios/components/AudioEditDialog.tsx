@@ -12,11 +12,17 @@ interface AudioEditDialogProps {
   onSubmit: (useFormData?: boolean) => Promise<void>;
   onClose: () => void;
   loading?: boolean;
+  formErrors?: Record<string, string[] | string>;
 }
-
-const AudioEditDialog: React.FC<AudioEditDialogProps> = ({ open, formData, onFormChange, onSubmit, onClose, loading }) => {
+const AudioEditDialog: React.FC<AudioEditDialogProps> = ({ open, formData, onFormChange, onSubmit, onClose, loading, formErrors = {} }) => {
   const { i18n, t } = useTranslation();
   const [localSaving, setLocalSaving] = useState(false);
+
+  const getFieldError = (field: string) => {
+    const err = formErrors[field];
+    if (Array.isArray(err)) return err.join(', ');
+    return typeof err === 'string' ? err : '';
+  };
 
   const availableTags = useMemo(() => {
     try {
@@ -92,6 +98,7 @@ const AudioEditDialog: React.FC<AudioEditDialogProps> = ({ open, formData, onFor
           <Box>
             <Typography variant="subtitle2">{t('audios.form.subtitle') || 'Subtitle'}</Typography>
             <LexicalTextEditor value={(formData as any).subtitle || ''} onChange={(html: string) => onFormChange('subtitle' as any, html)} placeholder={t('audios.form.subtitle') || 'Subtitle'} />
+            {getFieldError('subtitle') && <Typography variant="caption" color="error">{getFieldError('subtitle')}</Typography>}
           </Box>
 
           <FormControl fullWidth>

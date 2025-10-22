@@ -5,9 +5,25 @@ export const useVideoHandlers = ({ onSuccess, onError, onRefresh }: { onSuccess:
   const createVideo = async (data: VideoFormData) => {
     try {
       if (data.uploadMethod === 'file' && data.file) {
-        await videoService.createVideoByUpload({ file: data.file, name: data.name, sourceName: data.sourceName, tags: data.tags, lang: data.lang, displayOrder: data.displayOrder, isActive: data.isActive });
+        await videoService.createVideoByUpload(({
+          file: data.file,
+          name: data.name,
+          sourceName: data.sourceName,
+          tags: data.tags,
+          lang: data.lang,
+          displayOrder: data.displayOrder,
+          isActive: data.isActive,
+        } as unknown) as any);
       } else {
-        await videoService.createVideo({ name: data.name, originalUrl: data.originalUrl, sourceName: data.sourceName, tags: data.tags, lang: data.lang, displayOrder: data.displayOrder, isActive: data.isActive });
+        await videoService.createVideo(({
+          name: data.name,
+          originalUrl: data.originalUrl,
+          sourceName: data.sourceName,
+          tags: data.tags,
+          lang: data.lang,
+          displayOrder: data.displayOrder,
+          isActive: data.isActive,
+        } as unknown) as any);
       }
       onSuccess('Video created successfully');
     } catch (err: any) {
