@@ -196,6 +196,7 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
         {/* scoped styles to make code blocks look nicer */}
         <style>{`
           .gjp-tiptap-editor pre {
+            position: relative;
             background: #f6f8fa;
             border: 1px solid #e1e4e8;
             padding: 12px;
@@ -217,6 +218,21 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
           .gjp-tiptap-editor pre code { background: transparent; padding: 0; }
           .gjp-tiptap-editor pre::-webkit-scrollbar { height: 8px; }
           .gjp-tiptap-editor pre::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 4px; }
+
+          .gjp-code-copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(0,0,0,0.06);
+            border: 1px solid rgba(0,0,0,0.08);
+            color: rgba(0,0,0,0.8);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+          }
+          .gjp-code-copy-btn.copied { background: #10b981; color: white; border-color: rgba(0,0,0,0.08); }
         `}</style>
 
         <EditorContent
@@ -228,6 +244,62 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
           }}
         />
       </div>
+
+      {/* add copy buttons to code blocks */}
+      <script>{`(function(){
+        const attachButtons = (root = document) => {
+          const pres = root.querySelectorAll('.gjp-tiptap-editor pre');
+          pres.forEach(pre => {
+            if (pre.querySelector('.gjp-code-copy-btn')) return;
+            const btn = document.createElement('button');
+            btn.className = 'gjp-code-copy-btn';
+            btn.type = 'button';
+            btn.textContent = 'Copy';
+            btn.addEventListener('click', async (e) => {
+              e.stopPropagation();
+              const code = pre.innerText;
+              try {
+                await navigator.clipboard.writeText(code);
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+              } catch (err) {
+                // fallback: select and execCommand
+                try {
+                  const range = document.createRange();
+                  range.selectNodeContents(pre);
+                  const sel = window.getSelection();
+                  sel.removeAllRanges();
+                  sel.addRange(range);
+                  document.execCommand('copy');
+                  sel.removeAllRanges();
+                  btn.textContent = 'Copied!';
+                  btn.classList.add('copied');
+                  setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+                } catch (e) {
+                  console.error('copy failed', e);
+                }
+              }
+            });
+            pre.style.position = pre.style.position || 'relative';
+            pre.appendChild(btn);
+          });
+        };
+
+        // initial attach
+        attachButtons(document);
+
+        // observe for dynamic content changes inside tiptap editor
+        const editorRoot = document.querySelector('.gjp-tiptap-editor');
+        if (editorRoot) {
+          const mo = new MutationObserver((mutations) => {
+            mutations.forEach(m => {
+              if (m.addedNodes && m.addedNodes.length) attachButtons(m.addedNodes[0]);
+            });
+          });
+          mo.observe(editorRoot, { childList: true, subtree: true });
+        }
+      })();`}</script>
     </div>
   );
 }
