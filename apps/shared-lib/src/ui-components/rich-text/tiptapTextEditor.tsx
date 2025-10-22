@@ -3,6 +3,7 @@ import { useEditor, EditorContent, Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
 import Link from '@tiptap/extension-link';
+import TextAlign from '@tiptap/extension-text-align';
 import Placeholder from '@tiptap/extension-placeholder';
 import DOMPurify from 'dompurify';
 
@@ -19,6 +20,8 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
     extensions: [
       StarterKit,
       Underline,
+  // enable alignment for headings, paragraphs, list items and blockquotes
+  TextAlign.configure({ types: ['heading', 'paragraph', 'listItem', 'blockquote'] }),
       Link.configure({ openOnClick: true }),
       Placeholder.configure({ placeholder }),
     ],
@@ -84,6 +87,27 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
 
   const clearFormatting = () => editor.chain().focus().clearNodes().unsetAllMarks().run();
 
+  // Fallback: apply alignment by setting style.textAlign on block-level elements within the selection
+  const applyAlignmentFallback = (align: 'left' | 'center' | 'right' | 'justify') => {
+    try {
+      const sel = globalThis.getSelection();
+      if (!sel || sel.rangeCount === 0) return;
+  const root = document.querySelector('.gjp-tiptap-editor');
+      if (!root) return;
+
+      const selector = 'p,h1,h2,h3,h4,h5,h6,li,div,pre';
+      // Simple fallback: set alignment on nearest block ancestor of the selection anchor
+      const anchor = sel.anchorNode;
+      let el: HTMLElement | null = null;
+      if (anchor) el = anchor.nodeType === 3 ? anchor.parentElement : (anchor as HTMLElement | null);
+      while (el && !selector.split(',').includes(el.tagName.toLowerCase())) el = el.parentElement;
+      if (el) el.style.textAlign = align;
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('applyAlignmentFallback failed', err);
+    }
+  };
+
   return (
     <div>
       <div style={toolbarStyle}>
@@ -101,6 +125,8 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
           <option value="1">Heading 1</option>
           <option value="2">Heading 2</option>
           <option value="3">Heading 3</option>
+          <option value="4">Heading 4</option>
+          <option value="5">Heading 5</option>
         </select>
 
         <button
@@ -141,8 +167,75 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
           type="button"
           title="Blockquote"
           style={{ ...buttonStyle, ...(editor.isActive('blockquote') ? activeStyle : {}) }}
-          onClick={() => editor.chain().focus().toggleBlockquote().run()}
+          onClick={() => {
+            try {
+              const sel = globalThis.getSelection();
+              if (sel && !sel.isCollapsed) sel.collapse(sel.anchorNode, sel.anchorOffset);
+              editor.chain().focus().toggleBlockquote().run();
+            } catch (e) {
+              // log the original error then attempt fallback
+              // eslint-disable-next-line no-console
+              console.error('toggleBlockquote failed', e);
+              // fallback: wrap nearest block ancestor in a blockquote element
+              const sel = globalThis.getSelection();
+              const anchor = sel?.anchorNode;
+              const el = anchor && (anchor.nodeType === 3 ? anchor.parentElement : (anchor as HTMLElement | null));
+              const block = el?.closest('p,h1,h2,h3,div') as HTMLElement | null;
+              if (block) {
+                const wrapper = document.createElement('blockquote');
+                wrapper.innerHTML = block.innerHTML;
+                block.parentElement?.replaceChild(wrapper, block);
+              } else {
+                // eslint-disable-next-line no-console
+                console.error('blockquote fallback: no block found');
+              }
+            }
+          }}
         >❝</button>
+
+        {/* Alignment buttons */}
+        <button
+          type="button"
+          title="Align left"
+          style={{ ...buttonStyle }}
+          onClick={() => {
+            try {
+              const sel = globalThis.getSelection();
+              if (sel && !sel.isCollapsed) sel.collapse(sel.anchorNode, sel.anchorOffset);
+              (editor as any).chain().focus().setTextAlign('left').run();
+            } catch {
+              applyAlignmentFallback('left');
+            }
+          }}
+        >⟵</button>
+        <button
+          type="button"
+          title="Align center"
+          style={{ ...buttonStyle }}
+          onClick={() => {
+            try {
+              const sel = globalThis.getSelection();
+              if (sel && !sel.isCollapsed) sel.collapse(sel.anchorNode, sel.anchorOffset);
+              (editor as any).chain().focus().setTextAlign('center').run();
+            } catch {
+              applyAlignmentFallback('center');
+            }
+          }}
+        >↔</button>
+        <button
+          type="button"
+          title="Align right"
+          style={{ ...buttonStyle }}
+          onClick={() => {
+            try {
+              const sel = globalThis.getSelection();
+              if (sel && !sel.isCollapsed) sel.collapse(sel.anchorNode, sel.anchorOffset);
+              (editor as any).chain().focus().setTextAlign('right').run();
+            } catch {
+              applyAlignmentFallback('right');
+            }
+          }}
+        >⟶</button>
 
         <button
           type="button"
@@ -193,46 +286,116 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
       </div>
 
       <div style={{ border: '1px solid rgba(0,0,0,0.12)', borderRadius: 6, padding: 8, minHeight: 140 }}>
-        {/* scoped styles to make code blocks look nicer */}
+        {/* scoped styles: light code block theme with line numbers + improved copy UI */}
         <style>{`
           .gjp-tiptap-editor pre {
             position: relative;
-            background: #f6f8fa;
-            border: 1px solid #e1e4e8;
-            padding: 12px;
-            border-radius: 6px;
+            background: #f5f5f5; /* light gray */
+            border: 1px solid #dddddd;
+            border-radius: 8px;
             overflow: auto;
             font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace;
             font-size: 13px;
-            line-height: 1.5;
+            line-height: 1.6;
             white-space: pre;
-            color: #111827;
+            color: #0f172a;
+            padding: 0; /* inner padding moved to content area */
+            box-shadow: 0 1px 0 rgba(0,0,0,0.02);
+            padding: 8px;
           }
+
+          /* wrapper holds the gutter (line numbers) and code content */
+          .gjp-code-wrap {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            width: 100%;
+          }
+          .gjp-code-gutter {
+            background: #efefef;
+            padding: 12px 10px;
+            text-align: right;
+            user-select: none;
+            color: #6b7280; /* muted */
+            font-size: 12px;
+            border-right: 1px solid #e0e0e0;
+            line-height: 1.6;
+          }
+          .gjp-code-gutter div { padding: 0 6px; }
+
+          .gjp-code-content {
+            padding: 12px 16px;
+            overflow: auto;
+            white-space: pre;
+            color: #0f172a;
+          }
+
           .gjp-tiptap-editor code {
-            background: #f1f3f5;
-            padding: 2px 6px;
+            background: transparent;
+            padding: 0;
             border-radius: 4px;
             font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace;
-            font-size: 12px;
+            font-size: 13px;
+            color: inherit;
           }
-          .gjp-tiptap-editor pre code { background: transparent; padding: 0; }
-          .gjp-tiptap-editor pre::-webkit-scrollbar { height: 8px; }
-          .gjp-tiptap-editor pre::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 4px; }
 
+          /* copy button sits above the pre content */
           .gjp-code-copy-btn {
             position: absolute;
             top: 8px;
             right: 8px;
-            background: rgba(0,0,0,0.06);
-            border: 1px solid rgba(0,0,0,0.08);
-            color: rgba(0,0,0,0.8);
-            padding: 4px 8px;
-            border-radius: 4px;
+            background: white;
+            border: 1px solid #d1d5db;
+            color: #0f172a;
+            padding: 6px 10px;
+            border-radius: 6px;
             font-size: 12px;
             cursor: pointer;
-            backdrop-filter: blur(4px);
+            box-shadow: 0 1px 2px rgba(16,24,40,0.06);
+            transition: transform .12s ease, background .12s ease;
           }
-          .gjp-code-copy-btn.copied { background: #10b981; color: white; border-color: rgba(0,0,0,0.08); }
+          .gjp-code-copy-btn:hover { transform: translateY(-1px); background: #fafafa; }
+          .gjp-code-copy-btn.copied { background: #16a34a; color: white; border-color: rgba(0,0,0,0.06); }
+
+          .gjp-code-lang {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: #f3f4f6; /* subtle chip */
+            color: #374151;
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-size: 11px;
+            text-transform: lowercase;
+            letter-spacing: .2px;
+            border: 1px solid #e6e6e6;
+          }
+
+          .gjp-tiptap-editor blockquote {
+            position: relative;
+            margin: 0 0 14px 0;
+            padding: 14px 18px;
+            border-left: 4px solid rgba(99,102,241,0.85);
+            background: rgba(99,102,241,0.06);
+            color: #0f172a;
+            font-style: normal;
+            border-radius: 8px;
+            font-size: 15px;
+            line-height: 1.6;
+          }
+          .gjp-tiptap-editor blockquote p { margin: 0; }
+          .gjp-tiptap-editor blockquote::before {
+            content: '“';
+            position: absolute;
+            left: 8px;
+            top: 6px;
+            font-size: 28px;
+            color: rgba(99,102,241,0.85);
+            line-height: 1;
+            font-weight: 600;
+            transform: translateY(-2px);
+            opacity: 0.95;
+          }
+          .gjp-blockquote-fallback { border-left-color: #2563eb; background: rgba(37,99,235,0.06); }
         `}</style>
 
         <EditorContent
@@ -245,44 +408,105 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
         />
       </div>
 
-      {/* add copy buttons to code blocks */}
+      {/* add copy buttons and line-number gutters to code blocks */}
       <script>{`(function(){
         const attachButtons = (root = document) => {
-          const pres = root.querySelectorAll('.gjp-tiptap-editor pre');
+          const pres = (root instanceof Element ? root : document).querySelectorAll('.gjp-tiptap-editor pre');
           pres.forEach(pre => {
-            if (pre.querySelector('.gjp-code-copy-btn')) return;
+            if ((pre as HTMLElement).dataset.gjpProcessed) return;
+
+            const codeEl = pre.querySelector('code');
+
+            // create wrapper (gutter + content)
+            const wrap = document.createElement('div');
+            wrap.className = 'gjp-code-wrap';
+
+            const gutter = document.createElement('div');
+            gutter.className = 'gjp-code-gutter';
+
+            const content = document.createElement('div');
+            content.className = 'gjp-code-content';
+
+            if (codeEl) {
+              // compute line count and populate gutter
+              const lines = codeEl.innerText.split('\n');
+              lines.forEach((_, i) => {
+                const ln = document.createElement('div');
+                ln.textContent = String(i + 1);
+                gutter.appendChild(ln);
+              });
+
+              // move code element into content
+              content.appendChild(codeEl);
+            } else {
+              // fallback: use textContent
+              const text = pre.innerText || '';
+              const lines = text.split('\n');
+              lines.forEach((_, i) => {
+                const ln = document.createElement('div');
+                ln.textContent = String(i + 1);
+                gutter.appendChild(ln);
+              });
+              const c = document.createElement('code');
+              c.textContent = text;
+              content.appendChild(c);
+            }
+
+            // clear pre and assemble
+            pre.innerHTML = '';
+            wrap.appendChild(gutter);
+            wrap.appendChild(content);
+            pre.appendChild(wrap);
+
+            // copy button
             const btn = document.createElement('button');
             btn.className = 'gjp-code-copy-btn';
             btn.type = 'button';
+            btn.setAttribute('aria-label', 'Copy code');
             btn.textContent = 'Copy';
             btn.addEventListener('click', async (e) => {
               e.stopPropagation();
-              const code = pre.innerText;
+              const codeText = (content.querySelector('code') || content).innerText;
               try {
-                await navigator.clipboard.writeText(code);
+                await navigator.clipboard.writeText(codeText);
                 btn.textContent = 'Copied!';
                 btn.classList.add('copied');
                 setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
               } catch (err) {
-                // fallback: select and execCommand
                 try {
                   const range = document.createRange();
-                  range.selectNodeContents(pre);
-                  const sel = window.getSelection();
-                  sel.removeAllRanges();
-                  sel.addRange(range);
+                  range.selectNodeContents(content);
+                  const sel = globalThis.getSelection();
+                  sel?.removeAllRanges();
+                  sel?.addRange(range);
                   document.execCommand('copy');
-                  sel.removeAllRanges();
+                  sel?.removeAllRanges();
                   btn.textContent = 'Copied!';
                   btn.classList.add('copied');
                   setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
                 } catch (e) {
+                  // eslint-disable-next-line no-console
                   console.error('copy failed', e);
                 }
               }
             });
+
+            // language label (if present on code element, e.g., <code class="language-js">)
+            if (codeEl) {
+              const langMatch = Array.from(codeEl.classList).find(c => c.startsWith('language-'));
+              if (langMatch) {
+                const label = document.createElement('div');
+                label.className = 'gjp-code-lang';
+                label.textContent = langMatch.replace('language-', '');
+                pre.appendChild(label);
+              }
+            }
+
             pre.style.position = pre.style.position || 'relative';
             pre.appendChild(btn);
+
+            // mark processed
+            (pre as HTMLElement).dataset.gjpProcessed = '1';
           });
         };
 
@@ -294,7 +518,9 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
         if (editorRoot) {
           const mo = new MutationObserver((mutations) => {
             mutations.forEach(m => {
-              if (m.addedNodes && m.addedNodes.length) attachButtons(m.addedNodes[0]);
+              if (m.addedNodes && m.addedNodes.length) {
+                m.addedNodes.forEach(node => attachButtons(node));
+              }
             });
           });
           mo.observe(editorRoot, { childList: true, subtree: true });
