@@ -632,18 +632,36 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
                 e.preventDefault();
                 const { url, width, height, alt } = imageForm;
                 if (!url) return;
+
                 const attrs: any = { src: url };
                 if (width?.toString().trim()) attrs.width = width.toString().trim();
                 if (height?.toString().trim()) attrs.height = height.toString().trim();
                 if (alt?.toString().trim()) attrs.alt = alt.toString().trim();
+
+                const insertRawImg = (reason?: unknown) => {
+                  // eslint-disable-next-line no-console
+                  console.error('setImage failed, inserting raw img', reason);
+                  const styleParts: string[] = [];
+                  if (width?.toString().trim()) styleParts.push(`width:${width.toString().trim()}`);
+                  if (height?.toString().trim()) styleParts.push(`height:${height.toString().trim()}`);
+                  const styleAttr = styleParts.length ? ` style="${styleParts.join(';')}"` : '';
+                  const altAttr = alt?.toString().trim() ? ` alt="${alt.toString().trim()}"` : '';
+                  const html = `<p><img src="${url}"${altAttr}${styleAttr} /></p>`;
+                  try {
+                    editor.chain().focus().insertContent(html).run();
+                  } catch (error_) {
+                    // eslint-disable-next-line no-console
+                    console.error('insertContent fallback failed, trying minimal setImage', error_);
+                    editor.chain().focus().setImage({ src: url }).run();
+                  }
+                };
+
                 try {
                   editor.chain().focus().setImage(attrs).run();
                 } catch (err) {
-                  // fallback
-                  // eslint-disable-next-line no-console
-                  console.error('setImage failed', err);
-                  editor.chain().focus().setImage({ src: url }).run();
+                  insertRawImg(err);
                 }
+
                 setImageDialogOpen(false);
               }}
               style={{
