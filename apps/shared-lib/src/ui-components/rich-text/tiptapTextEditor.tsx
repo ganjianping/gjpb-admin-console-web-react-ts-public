@@ -23,6 +23,12 @@ import ts from 'highlight.js/lib/languages/typescript';
 import css from 'highlight.js/lib/languages/css';
 import Dropcursor from '@tiptap/extension-dropcursor';
 import Gapcursor from '@tiptap/extension-gapcursor';
+// styles are provided to buttons and dialogs via direct imports in those components
+import Toolbar from './tiptap/Toolbar/Toolbar';
+import ImageDialog from './tiptap/Dialogs/ImageDialog';
+import LinkDialog from './tiptap/Dialogs/LinkDialog.tsx';
+import { initCodeEnhancer } from './tiptap/utils/codeEnhancer';
+import './tiptap/editor.css';
 
 // create a lowlight instance and register a few common languages (keep bundle minimal)
 const lowlight = createLowlight();
@@ -95,23 +101,28 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
     }
   }, [value, editor]);
 
-  // selection tooltip state
   const editorContainerRef = useRef<HTMLDivElement | null>(null);
-  const [tooltipVisible, setTooltipVisible] = useState(false);
-  const [tooltipPos, setTooltipPos] = useState({ top: 0, left: 0 });
   // image insertion modal state
   const [imageDialogOpen, setImageDialogOpen] = useState(false);
   const [imageForm, setImageForm] = useState({ url: '', width: '', height: '', alt: '' });
   const imageOverlayRef = useRef<HTMLDialogElement | null>(null);
+  const [imageSelection, setImageSelection] = useState<{ from: number; to: number } | null>(null);
+  // link insertion modal state
+  const [linkDialogOpen, setLinkDialogOpen] = useState(false);
+  const [linkForm, setLinkForm] = useState({ url: '', text: '' });
+  const linkOverlayRef = useRef<HTMLDialogElement | null>(null);
+  const [linkSelection, setLinkSelection] = useState<{ from: number; to: number } | null>(null);
 
   // focus the overlay so Escape key can be handled
   useEffect(() => {
-    if (imageDialogOpen && imageOverlayRef.current) {
-      try { imageOverlayRef.current.showModal?.(); } catch { /* ignore if not supported */ }
-      imageOverlayRef.current.focus();
-    }
-    if (!imageDialogOpen && imageOverlayRef.current) {
-      try { imageOverlayRef.current.close?.(); } catch { /* ignore */ }
+    const el = imageOverlayRef.current;
+    if (!el) return;
+    const otherOpen = document.querySelector('dialog[open]');
+    if (imageDialogOpen) {
+      // Only focus the overlay if there's no other native dialog open or it's this one
+      if (!otherOpen || otherOpen === el) {
+        try { el.focus(); } catch { /* ignore */ }
+      }
     }
   }, [imageDialogOpen]);
 
@@ -122,35 +133,62 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
     return () => document.removeEventListener('keydown', onKey);
   }, [imageDialogOpen]);
 
+  // focus/close handling for link dialog (moved here so hooks run before early return)
   useEffect(() => {
-    const onSelectionChange = () => {
+    const el = linkOverlayRef.current;
+    if (!el) return;
+    const otherOpen = document.querySelector('dialog[open]');
+    if (linkDialogOpen) {
+      if (!otherOpen || otherOpen === el) {
+        try { el.focus(); } catch { /* ignore */ }
+      }
+    }
+  }, [linkDialogOpen]);
+
+  useEffect(() => {
+    const onKeyLink = (e: KeyboardEvent) => { if (e.key === 'Escape') setLinkDialogOpen(false); };
+    if (linkDialogOpen) document.addEventListener('keydown', onKeyLink);
+    return () => document.removeEventListener('keydown', onKeyLink);
+  }, [linkDialogOpen]);
+
+  // listen for toolbar LinkButton custom event to open link dialog
+  useEffect(() => {
+    const handler = (e: Event) => {
       try {
-        const sel = globalThis.getSelection();
-        if (!sel || sel.rangeCount === 0 || sel.isCollapsed) {
-          setTooltipVisible(false);
-          return;
+        const ev = e as CustomEvent<{ selectedText?: string }>;
+        const selected = ev?.detail?.selectedText || '';
+        // capture current editor selection before the dialog steals focus
+        if (editor) {
+          try {
+            const s = editor.state.selection;
+            setLinkSelection({ from: (s as any).from, to: (s as any).to });
+          } catch {
+            setLinkSelection(null);
+          }
         }
-        const range = sel.getRangeAt(0);
-        const rect = range.getBoundingClientRect();
-        if (!rect || (rect.width === 0 && rect.height === 0)) {
-          setTooltipVisible(false);
-          return;
-        }
-        const container = editorContainerRef.current;
-        if (!container) return;
-        // ensure selection is inside the editor
-        if (!container.contains(range.startContainer)) { setTooltipVisible(false); return; }
-        const containerRect = container.getBoundingClientRect();
-        const top = rect.top - containerRect.top - 44; // above selection
-        const left = rect.left - containerRect.left + rect.width / 2;
-        setTooltipPos({ top: Math.max(top, 8), left });
-        setTooltipVisible(true);
-      } catch {
-        setTooltipVisible(false);
+        setLinkForm({ url: 'https://', text: selected });
+        setLinkDialogOpen(true);
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error('failed to open link dialog from event', err);
       }
     };
-    document.addEventListener('selectionchange', onSelectionChange);
-    return () => document.removeEventListener('selectionchange', onSelectionChange);
+    globalThis.addEventListener('gjp-open-link-dialog', handler as EventListener);
+    return () => globalThis.removeEventListener('gjp-open-link-dialog', handler as EventListener);
+  }, []);
+
+  // selection tooltip removed — BubbleMenu extraction deleted. Keep editorContainerRef for other uses.
+
+  // initialize code enhancer (attach copy buttons, gutters) and cleanup on unmount
+  useEffect(() => {
+    let cleanup: (() => void) | undefined;
+    try {
+      cleanup = initCodeEnhancer('.gjp-tiptap-editor');
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('initCodeEnhancer failed', err);
+    }
+    return () => { try { cleanup?.(); } catch { /* ignore */ } };
   }, []);
 
   if (!editor) return null;
@@ -160,411 +198,38 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
   const words = text.trim() ? text.trim().split(/\s+/).length : 0;
   const chars = text.length;
 
-  const toolbarStyle: React.CSSProperties = {
-    display: 'flex',
-    gap: 8,
-    marginBottom: 8,
-    alignItems: 'center',
-    flexWrap: 'wrap',
-  };
+  // styles imported from separate file to keep component focused (see ./tiptap/styles.ts)
 
-  const buttonStyle: React.CSSProperties = {
-    padding: '6px 8px',
-    borderRadius: 6,
-    border: '1px solid rgba(0,0,0,0.08)',
-    background: 'white',
-    cursor: 'pointer',
-  };
-
-  const activeStyle: React.CSSProperties = {
-    background: 'rgba(0,0,0,0.06)',
-  };
-
-  // helper for link insertion
-  const promptForLink = () => {
-    const url = globalThis.prompt('Enter a URL to link to (include http/https):', 'https://');
-    if (!url) return;
-    try {
-      const sel = globalThis.getSelection();
-      const collapsed = !sel || sel.rangeCount === 0 || sel.isCollapsed;
-
-      if (collapsed) {
-        // ask for display text when there's no selection
-        const text = globalThis.prompt('Text to display for the link (leave empty to use the URL):', url) || url;
-        const safeText = DOMPurify.sanitize(text);
-        const html = `<a href="${url}" target="_blank" rel="noopener noreferrer">${safeText}</a>`;
-        // insert as HTML so the link node is created even when selection is collapsed
-        editor.chain().focus().insertContent(html).run();
-      } else {
-        // apply link mark to selected text
-        editor.chain().focus().extendMarkRange('link').setLink({ href: url, target: '_blank', rel: 'noopener noreferrer' }).run();
-      }
-    } catch (e) {
-      // log and bail
-      // eslint-disable-next-line no-console
-      console.error('Failed to insert link', e);
-      return;
-    }
-  };
+  // link insertion is opened by toolbar LinkButton which dispatches an event the parent listens for
 
   const clearFormatting = () => editor.chain().focus().clearNodes().unsetAllMarks().run();
 
-  // Fallback: apply alignment by setting style.textAlign on block-level elements within the selection
-  const applyAlignmentFallback = (align: 'left' | 'center' | 'right' | 'justify') => {
-    try {
-      const sel = globalThis.getSelection();
-      if (!sel || sel.rangeCount === 0) return;
-  const root = document.querySelector('.gjp-tiptap-editor');
-      if (!root) return;
-
-      const selector = 'p,h1,h2,h3,h4,h5,h6,li,div,pre';
-      // Simple fallback: set alignment on nearest block ancestor of the selection anchor
-      const anchor = sel.anchorNode;
-      let el: HTMLElement | null = null;
-      if (anchor) el = anchor.nodeType === 3 ? anchor.parentElement : (anchor as HTMLElement | null);
-      while (el && !selector.split(',').includes(el.tagName.toLowerCase())) el = el.parentElement;
-      if (el) el.style.textAlign = align;
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error('applyAlignmentFallback failed', err);
-    }
-  };
+  // alignment fallback moved to utils/applyAlignmentFallback.ts
 
   return (
     <div>
-      <div style={toolbarStyle}>
-        <select
-          aria-label="Heading"
-          onChange={(e) => {
-            const v = e.target.value;
-            if (v === 'p') editor.chain().focus().setParagraph().run();
-            else editor.chain().focus().setHeading({ level: Number(v) as any }).run();
-          }}
-          defaultValue="p"
-          style={{ padding: 6, borderRadius: 6 }}
-        >
-          <option value="p">Paragraph</option>
-          <option value="1">Heading 1</option>
-          <option value="2">Heading 2</option>
-          <option value="3">Heading 3</option>
-          <option value="4">Heading 4</option>
-          <option value="5">Heading 5</option>
-        </select>
-
-        <button
-          type="button"
-          title="Bold (Ctrl/Cmd+B)"
-          aria-label="Bold"
-          style={{ ...buttonStyle, ...(editor.isActive('bold') ? activeStyle : {}) }}
-          onClick={() => editor.chain().focus().toggleBold().run()}
-        >
-          <strong>B</strong>
-        </button>
-
-        <button
-          type="button"
-          title="Italic (Ctrl/Cmd+I)"
-          aria-label="Italic"
-          style={{ ...buttonStyle, ...(editor.isActive('italic') ? activeStyle : {}) }}
-          onClick={() => editor.chain().focus().toggleItalic().run()}
-        >
-          <em>I</em>
-        </button>
-
-        <button
-          type="button"
-          title="Underline"
-          aria-label="Underline"
-          style={{ ...buttonStyle, ...(editor.isActive('underline') ? activeStyle : {}) }}
-          onClick={() => editor.chain().focus().toggleUnderline().run()}
-        >
-          U
-        </button>
-
-        <button
-          type="button"
-          title="Code block"
-          aria-label="Code block"
-          style={{ ...buttonStyle, ...(editor.isActive('codeBlock') ? activeStyle : {}) }}
-          onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-        >code</button>
-
-        <button
-          type="button"
-          title="Insert image (set size)"
-          aria-label="Insert image"
-          style={buttonStyle}
-          onClick={() => {
-            // prefill from selection or empty
-            setImageForm({ url: '', width: '', height: '', alt: '' });
-            setImageDialogOpen(true);
-          }}
-        >🖼</button>
-
-        <button
-          type="button"
-          title="Insert table"
-          aria-label="Insert table"
-          style={buttonStyle}
-          onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
-        >▦</button>
-
-        <button
-          type="button"
-          title="Toggle task list"
-          aria-label="Toggle task list"
-          style={{ ...buttonStyle, ...(editor.isActive('taskList') ? activeStyle : {}) }}
-          onClick={() => editor.chain().focus().toggleTaskList().run()}
-        >☑</button>
-
-        <button
-          type="button"
-          title="Blockquote"
-          aria-label="Blockquote"
-          style={{ ...buttonStyle, ...(editor.isActive('blockquote') ? activeStyle : {}) }}
-          onClick={() => {
+      <Toolbar
+        editor={editor}
+        onOpenImageDialog={() => {
+          // capture current selection for image insertion
+          if (editor) {
             try {
-              const sel = globalThis.getSelection();
-              if (sel && !sel.isCollapsed) sel.collapse(sel.anchorNode, sel.anchorOffset);
-              editor.chain().focus().toggleBlockquote().run();
-            } catch (e) {
-              // log the original error then attempt fallback
-              // eslint-disable-next-line no-console
-              console.error('toggleBlockquote failed', e);
-              // fallback: wrap nearest block ancestor in a blockquote element
-              const sel = globalThis.getSelection();
-              const anchor = sel?.anchorNode;
-              const el = anchor && (anchor.nodeType === 3 ? anchor.parentElement : (anchor as HTMLElement | null));
-              const block = el?.closest('p,h1,h2,h3,div') as HTMLElement | null;
-              if (block) {
-                const wrapper = document.createElement('blockquote');
-                wrapper.innerHTML = block.innerHTML;
-                block.parentElement?.replaceChild(wrapper, block);
-              } else {
-                // eslint-disable-next-line no-console
-                console.error('blockquote fallback: no block found');
-              }
-            }
-          }}
-        >❝</button>
-
-        {/* Alignment buttons */}
-        <button
-          type="button"
-          title="Align left"
-          aria-label="Align left"
-          style={{ ...buttonStyle }}
-          onClick={() => {
-            try {
-              const sel = globalThis.getSelection();
-              if (sel && !sel.isCollapsed) sel.collapse(sel.anchorNode, sel.anchorOffset);
-              (editor as any).chain().focus().setTextAlign('left').run();
+              const s = editor.state.selection;
+              setImageSelection({ from: (s as any).from, to: (s as any).to });
             } catch {
-              applyAlignmentFallback('left');
+              setImageSelection(null);
             }
-          }}
-        >⟵</button>
-        <button
-          type="button"
-          title="Align center"
-          aria-label="Align center"
-          style={{ ...buttonStyle }}
-          onClick={() => {
-            try {
-              const sel = globalThis.getSelection();
-              if (sel && !sel.isCollapsed) sel.collapse(sel.anchorNode, sel.anchorOffset);
-              (editor as any).chain().focus().setTextAlign('center').run();
-            } catch {
-              applyAlignmentFallback('center');
-            }
-          }}
-        >↔</button>
-        <button
-          type="button"
-          title="Align right"
-          aria-label="Align right"
-          style={{ ...buttonStyle }}
-          onClick={() => {
-            try {
-              const sel = globalThis.getSelection();
-              if (sel && !sel.isCollapsed) sel.collapse(sel.anchorNode, sel.anchorOffset);
-              (editor as any).chain().focus().setTextAlign('right').run();
-            } catch {
-              applyAlignmentFallback('right');
-            }
-          }}
-        >⟶</button>
-
-        <button
-          type="button"
-          title="Bullet list"
-          aria-label="Bullet list"
-          style={{ ...buttonStyle, ...(editor.isActive('bulletList') ? activeStyle : {}) }}
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
-        >• List</button>
-
-        <button
-          type="button"
-          title="Ordered list"
-          aria-label="Ordered list"
-          style={{ ...buttonStyle, ...(editor.isActive('orderedList') ? activeStyle : {}) }}
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
-        >1. List</button>
-
-        <button
-          type="button"
-          title="Horizontal rule"
-          aria-label="Horizontal rule"
-          style={buttonStyle}
-          onClick={() => editor.chain().focus().setHorizontalRule().run()}
-        >—</button>
-
-        <button
-          type="button"
-          title="Insert link"
-          aria-label="Insert link"
-          style={buttonStyle}
-          onClick={promptForLink}
-        >🔗</button>
-
-        <button
-          type="button"
-          title="Remove link"
-          aria-label="Remove link"
-          style={buttonStyle}
-          onClick={() => editor.chain().focus().unsetLink().run()}
-        >⤫</button>
-
-        <div style={{ flex: 1 }} />
-
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          <button type="button" title="Undo" style={buttonStyle} onClick={() => editor.chain().focus().undo().run()}>↺</button>
-          <button type="button" title="Redo" style={buttonStyle} onClick={() => editor.chain().focus().redo().run()}>↻</button>
-          <button type="button" title="Clear formatting" style={buttonStyle} onClick={clearFormatting}>✖</button>
-        </div>
-
-        <div style={{ fontSize: 12, color: 'rgba(0,0,0,0.6)', marginLeft: 8 }}>
-          {words} words • {chars} chars
-        </div>
-      </div>
-
-  <div ref={editorContainerRef} style={{ border: '1px solid rgba(0,0,0,0.12)', borderRadius: 6, padding: 8, minHeight: 140, position: 'relative' }}>
-        {/* scoped styles: light code block theme with line numbers + improved copy UI */}
-        <style>{`
-          .gjp-tiptap-editor pre {
-            position: relative;
-            background: #f5f5f5; /* light gray */
-            border: 1px solid #dddddd;
-            border-radius: 8px;
-            overflow: auto;
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace;
-            font-size: 13px;
-            line-height: 1.6;
-            white-space: pre;
-            color: #0f172a;
-            padding: 0; /* inner padding moved to content area */
-            box-shadow: 0 1px 0 rgba(0,0,0,0.02);
-            padding: 8px;
           }
+          setImageForm({ url: '', width: '', height: '', alt: '' });
+          setImageDialogOpen(true);
+        }}
+        words={words}
+        chars={chars}
+        onClearFormatting={clearFormatting}
+      />
 
-          /* wrapper holds the gutter (line numbers) and code content */
-          .gjp-code-wrap {
-            display: grid;
-            grid-template-columns: auto 1fr;
-            width: 100%;
-          }
-          .gjp-code-gutter {
-            background: #efefef;
-            padding: 12px 10px;
-            text-align: right;
-            user-select: none;
-            color: #6b7280; /* muted */
-            font-size: 12px;
-            border-right: 1px solid #e0e0e0;
-            line-height: 1.6;
-          }
-          .gjp-code-gutter div { padding: 0 6px; }
-
-          .gjp-code-content {
-            padding: 12px 16px;
-            overflow: auto;
-            white-space: pre;
-            color: #0f172a;
-          }
-
-          .gjp-tiptap-editor code {
-            background: transparent;
-            padding: 0;
-            border-radius: 4px;
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace;
-            font-size: 13px;
-            color: inherit;
-          }
-
-          /* copy button sits above the pre content */
-          .gjp-code-copy-btn {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            background: white;
-            border: 1px solid #d1d5db;
-            color: #0f172a;
-            padding: 6px 10px;
-            border-radius: 6px;
-            font-size: 12px;
-            cursor: pointer;
-            box-shadow: 0 1px 2px rgba(16,24,40,0.06);
-            transition: transform .12s ease, background .12s ease;
-          }
-          .gjp-code-copy-btn:hover { transform: translateY(-1px); background: #fafafa; }
-          .gjp-code-copy-btn.copied { background: #16a34a; color: white; border-color: rgba(0,0,0,0.06); }
-
-          .gjp-code-lang {
-            position: absolute;
-            top: 8px;
-            left: 8px;
-            background: #f3f4f6; /* subtle chip */
-            color: #374151;
-            padding: 4px 8px;
-            border-radius: 999px;
-            font-size: 11px;
-            text-transform: lowercase;
-            letter-spacing: .2px;
-            border: 1px solid #e6e6e6;
-          }
-
-          .gjp-tiptap-editor blockquote {
-            position: relative;
-            margin: 0 0 14px 0;
-            padding: 14px 18px;
-            border-left: 4px solid rgba(99,102,241,0.85);
-            background: rgba(99,102,241,0.06);
-            color: #0f172a;
-            font-style: normal;
-            border-radius: 8px;
-            font-size: 15px;
-            line-height: 1.6;
-          }
-          .gjp-tiptap-editor blockquote p { margin: 0; }
-          .gjp-tiptap-editor blockquote::before {
-            content: '“';
-            position: absolute;
-            left: 8px;
-            top: 6px;
-            font-size: 28px;
-            color: rgba(99,102,241,0.85);
-            line-height: 1;
-            font-weight: 600;
-            transform: translateY(-2px);
-            opacity: 0.95;
-          }
-          .gjp-blockquote-fallback { border-left-color: #2563eb; background: rgba(37,99,235,0.06); }
-        `}</style>
-
-        <style>{`
-          .gjp-bubble-menu { background: white; border: 1px solid #e5e7eb; border-radius: 8px; box-shadow: 0 4px 12px rgba(16,24,40,0.08); }
-          .gjp-bubble-menu button { margin: 0; }
-        `}</style>
+      <div ref={editorContainerRef} style={{ border: '1px solid rgba(0,0,0,0.12)', borderRadius: 6, padding: 8, minHeight: 140, position: 'relative' }}>
+        {/* styles moved to tiptap/editor.css */}
 
         {/* Editor content */}
         <EditorContent
@@ -576,284 +241,29 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
           }}
         />
 
-        {/* Custom selection tooltip (appears above selection) */}
-        {tooltipVisible && (
-          <div
-            className="gjp-bubble-menu"
-            style={{
-              position: 'absolute',
-              top: tooltipPos.top,
-              left: tooltipPos.left,
-              transform: 'translateX(-50%)',
-              zIndex: 9999,
-            }}
-          >
-            <div style={{ display: 'flex', gap: 8, padding: 8, alignItems: 'center' }}>
-              <button
-                type="button"
-                aria-label="Bold"
-                style={{ ...buttonStyle, ...(editor.isActive('bold') ? activeStyle : {}) }}
-                onClick={() => editor.chain().focus().toggleBold().run()}
-              >B</button>
-              <button
-                type="button"
-                aria-label="Italic"
-                style={{ ...buttonStyle, ...(editor.isActive('italic') ? activeStyle : {}) }}
-                onClick={() => editor.chain().focus().toggleItalic().run()}
-              ><em>I</em></button>
-              <button
-                type="button"
-                aria-label="Code"
-                style={{ ...buttonStyle, ...(editor.isActive('code') ? activeStyle : {}) }}
-                onClick={() => editor.chain().focus().toggleCode().run()}
-              >code</button>
-              <button
-                type="button"
-                aria-label="Link"
-                style={buttonStyle}
-                onClick={() => promptForLink()}
-              >🔗</button>
-              <button
-                type="button"
-                aria-label="Unlink"
-                style={buttonStyle}
-                onClick={() => editor.chain().focus().unsetLink().run()}
-              >⤫</button>
-            </div>
-          </div>
-        )}
+  {/* BubbleMenu removed — selection tooltip disabled */}
 
-        {/* Image insert modal (single popup for url/width/height/alt) */}
-        {imageDialogOpen && (
-          <dialog
-            ref={imageOverlayRef}
-            open
-            style={{
-              position: 'fixed',
-              inset: 0,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              zIndex: 20000,
-              background: 'rgba(0,0,0,0.35)'
-            }}
-          >
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                const { url, width, height, alt } = imageForm;
-                if (!url) return;
+        <ImageDialog
+          editor={editor}
+          open={imageDialogOpen}
+          overlayRef={imageOverlayRef}
+          form={imageForm}
+          setForm={setImageForm}
+          selection={imageSelection}
+          onClose={() => setImageDialogOpen(false)}
+        />
 
-                const attrs: any = { src: url };
-                if (width?.toString().trim()) attrs.width = width.toString().trim();
-                if (height?.toString().trim()) attrs.height = height.toString().trim();
-                if (alt?.toString().trim()) attrs.alt = alt.toString().trim();
+        <LinkDialog
+          editor={editor}
+          open={linkDialogOpen}
+          overlayRef={linkOverlayRef}
+          form={linkForm}
+          setForm={setLinkForm}
+          selection={linkSelection}
+          onClose={() => setLinkDialogOpen(false)}
+        />
 
-                const insertRawImg = (reason?: unknown) => {
-                  // eslint-disable-next-line no-console
-                  console.error('setImage failed, inserting raw img', reason);
-                  const styleParts: string[] = [];
-                  if (width?.toString().trim()) styleParts.push(`width:${width.toString().trim()}`);
-                  if (height?.toString().trim()) styleParts.push(`height:${height.toString().trim()}`);
-                  const styleAttr = styleParts.length ? ` style="${styleParts.join(';')}"` : '';
-                  const altAttr = alt?.toString().trim() ? ` alt="${alt.toString().trim()}"` : '';
-                  const html = `<p><img src="${url}"${altAttr}${styleAttr} /></p>`;
-                  try {
-                    editor.chain().focus().insertContent(html).run();
-                  } catch (error_) {
-                    // eslint-disable-next-line no-console
-                    console.error('insertContent fallback failed, trying minimal setImage', error_);
-                    editor.chain().focus().setImage({ src: url }).run();
-                  }
-                };
-
-                try {
-                  editor.chain().focus().setImage(attrs).run();
-                } catch (err) {
-                  insertRawImg(err);
-                }
-
-                setImageDialogOpen(false);
-              }}
-              style={{
-                width: 520,
-                background: 'white',
-                borderRadius: 8,
-                padding: 16,
-                boxShadow: '0 8px 24px rgba(16,24,40,0.2)'
-              }}
-            >
-              <h3 style={{ margin: '0 0 8px 0' }}>Insert image</h3>
-              <div style={{ display: 'grid', gap: 8 }}>
-                <label htmlFor="gjp-image-url" style={{ fontSize: 13 }}>URL</label>
-                <input
-                  id="gjp-image-url"
-                  autoFocus
-                  value={imageForm.url}
-                  onChange={(e) => setImageForm({ ...imageForm, url: e.target.value })}
-                  placeholder="https://example.com/image.jpg"
-                  style={{ padding: 8, borderRadius: 6, border: '1px solid #e5e7eb' }}
-                />
-
-                <div style={{ display: 'flex', gap: 8 }}>
-                  <div style={{ flex: 1 }}>
-                    <label htmlFor="gjp-image-width" style={{ fontSize: 13 }}>Width</label>
-                    <input
-                      id="gjp-image-width"
-                      value={imageForm.width}
-                      onChange={(e) => setImageForm({ ...imageForm, width: e.target.value })}
-                      placeholder="e.g. 400 or 50%"
-                      style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #e5e7eb' }}
-                    />
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <label htmlFor="gjp-image-height" style={{ fontSize: 13 }}>Height</label>
-                    <input
-                      id="gjp-image-height"
-                      value={imageForm.height}
-                      onChange={(e) => setImageForm({ ...imageForm, height: e.target.value })}
-                      placeholder="e.g. 300 or 50%"
-                      style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #e5e7eb' }}
-                    />
-                  </div>
-                </div>
-
-                <label htmlFor="gjp-image-alt" style={{ fontSize: 13 }}>Alt text</label>
-                <input
-                  id="gjp-image-alt"
-                  value={imageForm.alt}
-                  onChange={(e) => setImageForm({ ...imageForm, alt: e.target.value })}
-                  placeholder="Short description for accessibility"
-                  style={{ padding: 8, borderRadius: 6, border: '1px solid #e5e7eb' }}
-                />
-
-                <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 6 }}>
-                  <button type="button" style={{ ...buttonStyle }} onClick={() => setImageDialogOpen(false)}>Cancel</button>
-                  <button type="submit" style={{ ...buttonStyle, background: '#0f172a', color: 'white' }}>Insert</button>
-                </div>
-              </div>
-            </form>
-          </dialog>
-        )}
-
-      {/* add copy buttons and line-number gutters to code blocks */}
-      <script>{`(function(){
-        const attachButtons = (root = document) => {
-          const pres = (root instanceof Element ? root : document).querySelectorAll('.gjp-tiptap-editor pre');
-          pres.forEach(pre => {
-            if ((pre as HTMLElement).dataset.gjpProcessed) return;
-
-            const codeEl = pre.querySelector('code');
-
-            // create wrapper (gutter + content)
-            const wrap = document.createElement('div');
-            wrap.className = 'gjp-code-wrap';
-
-            const gutter = document.createElement('div');
-            gutter.className = 'gjp-code-gutter';
-
-            const content = document.createElement('div');
-            content.className = 'gjp-code-content';
-
-            if (codeEl) {
-              // compute line count and populate gutter
-              const lines = codeEl.innerText.split('\n');
-              lines.forEach((_, i) => {
-                const ln = document.createElement('div');
-                ln.textContent = String(i + 1);
-                gutter.appendChild(ln);
-              });
-
-              // move code element into content
-              content.appendChild(codeEl);
-            } else {
-              // fallback: use textContent
-              const text = pre.innerText || '';
-              const lines = text.split('\n');
-              lines.forEach((_, i) => {
-                const ln = document.createElement('div');
-                ln.textContent = String(i + 1);
-                gutter.appendChild(ln);
-              });
-              const c = document.createElement('code');
-              c.textContent = text;
-              content.appendChild(c);
-            }
-
-            // clear pre and assemble
-            pre.innerHTML = '';
-            wrap.appendChild(gutter);
-            wrap.appendChild(content);
-            pre.appendChild(wrap);
-
-            // copy button
-            const btn = document.createElement('button');
-            btn.className = 'gjp-code-copy-btn';
-            btn.type = 'button';
-            btn.setAttribute('aria-label', 'Copy code');
-            btn.textContent = 'Copy';
-            btn.addEventListener('click', async (e) => {
-              e.stopPropagation();
-              const codeText = (content.querySelector('code') || content).innerText;
-              try {
-                await navigator.clipboard.writeText(codeText);
-                btn.textContent = 'Copied!';
-                btn.classList.add('copied');
-                setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
-              } catch (err) {
-                try {
-                  const range = document.createRange();
-                  range.selectNodeContents(content);
-                  const sel = globalThis.getSelection();
-                  sel?.removeAllRanges();
-                  sel?.addRange(range);
-                  document.execCommand('copy');
-                  sel?.removeAllRanges();
-                  btn.textContent = 'Copied!';
-                  btn.classList.add('copied');
-                  setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
-                } catch (e) {
-                  // eslint-disable-next-line no-console
-                  console.error('copy failed', e);
-                }
-              }
-            });
-
-            // language label (if present on code element, e.g., <code class="language-js">)
-            if (codeEl) {
-              const langMatch = Array.from(codeEl.classList).find(c => c.startsWith('language-'));
-              if (langMatch) {
-                const label = document.createElement('div');
-                label.className = 'gjp-code-lang';
-                label.textContent = langMatch.replace('language-', '');
-                pre.appendChild(label);
-              }
-            }
-
-            pre.style.position = pre.style.position || 'relative';
-            pre.appendChild(btn);
-
-            // mark processed
-            (pre as HTMLElement).dataset.gjpProcessed = '1';
-          });
-        };
-
-        // initial attach
-        attachButtons(document);
-
-        // observe for dynamic content changes inside tiptap editor
-        const editorRoot = document.querySelector('.gjp-tiptap-editor');
-        if (editorRoot) {
-          const mo = new MutationObserver((mutations) => {
-            mutations.forEach(m => {
-              if (m.addedNodes && m.addedNodes.length) {
-                m.addedNodes.forEach(node => attachButtons(node));
-              }
-            });
-          });
-          mo.observe(editorRoot, { childList: true, subtree: true });
-        }
-      })();`}</script>
+        {/* code enhancer: attach copy buttons and gutters via a DOM utility */}
     </div>
   </div>
   );

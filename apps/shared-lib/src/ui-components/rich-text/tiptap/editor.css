@@ -1,0 +1,108 @@
+.gjp-tiptap-editor pre {
+  position: relative;
+  background: #f5f5f5; /* light gray */
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+  overflow: auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre;
+  color: #0f172a;
+  padding: 8px;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.02);
+}
+
+.gjp-code-wrap {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  width: 100%;
+}
+.gjp-code-gutter {
+  background: #efefef;
+  padding: 12px 10px;
+  text-align: right;
+  user-select: none;
+  color: #6b7280; /* muted */
+  font-size: 12px;
+  border-right: 1px solid #e0e0e0;
+  line-height: 1.6;
+}
+.gjp-code-gutter div { padding: 0 6px; }
+
+.gjp-code-content {
+  padding: 12px 16px;
+  overflow: auto;
+  white-space: pre;
+  color: #0f172a;
+}
+
+.gjp-tiptap-editor code {
+  background: transparent;
+  padding: 0;
+  border-radius: 4px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace;
+  font-size: 13px;
+  color: inherit;
+}
+
+.gjp-code-copy-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: white;
+  border: 1px solid #d1d5db;
+  color: #0f172a;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(16,24,40,0.06);
+  transition: transform .12s ease, background .12s ease;
+}
+.gjp-code-copy-btn:hover { transform: translateY(-1px); background: #fafafa; }
+.gjp-code-copy-btn.copied { background: #16a34a; color: white; border-color: rgba(0,0,0,0.06); }
+
+.gjp-code-lang {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: #f3f4f6; /* subtle chip */
+  color: #374151;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  text-transform: lowercase;
+  letter-spacing: .2px;
+  border: 1px solid #e6e6e6;
+}
+
+.gjp-tiptap-editor blockquote {
+  position: relative;
+  margin: 0 0 14px 0;
+  padding: 14px 18px;
+  border-left: 4px solid rgba(99,102,241,0.85);
+  background: rgba(99,102,241,0.06);
+  color: #0f172a;
+  font-style: normal;
+  border-radius: 8px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+.gjp-tiptap-editor blockquote p { margin: 0; }
+.gjp-tiptap-editor blockquote::before {
+  content: '“';
+  position: absolute;
+  left: 8px;
+  top: 6px;
+  font-size: 28px;
+  color: rgba(99,102,241,0.85);
+  line-height: 1;
+  font-weight: 600;
+  transform: translateY(-2px);
+  opacity: 0.95;
+}
+.gjp-blockquote-fallback { border-left-color: #2563eb; background: rgba(37,99,235,0.06); }
+
+.gjp-bubble-menu { background: white; border: 1px solid #e5e7eb; border-radius: 8px; box-shadow: 0 4px 12px rgba(16,24,40,0.08); }
+.gjp-bubble-menu button { margin: 0; }
