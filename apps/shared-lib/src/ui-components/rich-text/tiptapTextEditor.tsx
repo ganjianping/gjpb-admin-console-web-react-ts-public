@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useEditor, EditorContent, Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
@@ -6,6 +6,27 @@ import Link from '@tiptap/extension-link';
 import TextAlign from '@tiptap/extension-text-align';
 import Placeholder from '@tiptap/extension-placeholder';
 import DOMPurify from 'dompurify';
+import Image from '@tiptap/extension-image';
+import { Table } from '@tiptap/extension-table';
+import TableRow from '@tiptap/extension-table-row';
+import TableCell from '@tiptap/extension-table-cell';
+import TableHeader from '@tiptap/extension-table-header';
+import TaskList from '@tiptap/extension-task-list';
+import TaskItem from '@tiptap/extension-task-item';
+import Mention from '@tiptap/extension-mention';
+import { TextStyle } from '@tiptap/extension-text-style';
+import Color from '@tiptap/extension-color';
+import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
+import { createLowlight } from 'lowlight';
+import js from 'highlight.js/lib/languages/javascript';
+import ts from 'highlight.js/lib/languages/typescript';
+import css from 'highlight.js/lib/languages/css';
+import Dropcursor from '@tiptap/extension-dropcursor';
+import Gapcursor from '@tiptap/extension-gapcursor';
+
+// create a lowlight instance and register a few common languages (keep bundle minimal)
+const lowlight = createLowlight();
+lowlight.register({ javascript: js as any, typescript: ts as any, css: css as any });
 
 interface TiptapTextEditorProps {
   value?: string;
@@ -24,6 +45,20 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
   TextAlign.configure({ types: ['heading', 'paragraph', 'listItem', 'blockquote'] }),
       Link.configure({ openOnClick: true }),
       Placeholder.configure({ placeholder }),
+      // UX improvements & extra nodes
+      Dropcursor.configure({ color: '#94a3b8' }),
+      Gapcursor,
+      Image,
+      Table.configure({ resizable: true }),
+      TableRow,
+      TableHeader,
+      TableCell,
+      TaskList,
+      TaskItem,
+      Mention,
+      TextStyle,
+      Color,
+      CodeBlockLowlight.configure({ lowlight }),
     ],
     content: value,
     onUpdate: ({ editor }: { editor: Editor }) => {
@@ -41,6 +76,42 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
       (editor.commands as any).setContent(value, { preserveWhitespace: false });
     }
   }, [value, editor]);
+
+  // selection tooltip state
+  const editorContainerRef = useRef<HTMLDivElement | null>(null);
+  const [tooltipVisible, setTooltipVisible] = useState(false);
+  const [tooltipPos, setTooltipPos] = useState({ top: 0, left: 0 });
+
+  useEffect(() => {
+    const onSelectionChange = () => {
+      try {
+        const sel = globalThis.getSelection();
+        if (!sel || sel.rangeCount === 0 || sel.isCollapsed) {
+          setTooltipVisible(false);
+          return;
+        }
+        const range = sel.getRangeAt(0);
+        const rect = range.getBoundingClientRect();
+        if (!rect || (rect.width === 0 && rect.height === 0)) {
+          setTooltipVisible(false);
+          return;
+        }
+        const container = editorContainerRef.current;
+        if (!container) return;
+        // ensure selection is inside the editor
+        if (!container.contains(range.startContainer)) { setTooltipVisible(false); return; }
+        const containerRect = container.getBoundingClientRect();
+        const top = rect.top - containerRect.top - 44; // above selection
+        const left = rect.left - containerRect.left + rect.width / 2;
+        setTooltipPos({ top: Math.max(top, 8), left });
+        setTooltipVisible(true);
+      } catch {
+        setTooltipVisible(false);
+      }
+    };
+    document.addEventListener('selectionchange', onSelectionChange);
+    return () => document.removeEventListener('selectionchange', onSelectionChange);
+  }, []);
 
   if (!editor) return null;
 
@@ -132,6 +203,7 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
         <button
           type="button"
           title="Bold (Ctrl/Cmd+B)"
+          aria-label="Bold"
           style={{ ...buttonStyle, ...(editor.isActive('bold') ? activeStyle : {}) }}
           onClick={() => editor.chain().focus().toggleBold().run()}
         >
@@ -141,6 +213,7 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
         <button
           type="button"
           title="Italic (Ctrl/Cmd+I)"
+          aria-label="Italic"
           style={{ ...buttonStyle, ...(editor.isActive('italic') ? activeStyle : {}) }}
           onClick={() => editor.chain().focus().toggleItalic().run()}
         >
@@ -150,6 +223,7 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
         <button
           type="button"
           title="Underline"
+          aria-label="Underline"
           style={{ ...buttonStyle, ...(editor.isActive('underline') ? activeStyle : {}) }}
           onClick={() => editor.chain().focus().toggleUnderline().run()}
         >
@@ -159,13 +233,42 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
         <button
           type="button"
           title="Code block"
+          aria-label="Code block"
           style={{ ...buttonStyle, ...(editor.isActive('codeBlock') ? activeStyle : {}) }}
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
         >code</button>
 
         <button
           type="button"
+          title="Insert image"
+          aria-label="Insert image"
+          style={buttonStyle}
+          onClick={() => {
+            const url = globalThis.prompt('Image URL:');
+            if (url) editor.chain().focus().setImage({ src: url }).run();
+          }}
+        >🖼</button>
+
+        <button
+          type="button"
+          title="Insert table"
+          aria-label="Insert table"
+          style={buttonStyle}
+          onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
+        >▦</button>
+
+        <button
+          type="button"
+          title="Toggle task list"
+          aria-label="Toggle task list"
+          style={{ ...buttonStyle, ...(editor.isActive('taskList') ? activeStyle : {}) }}
+          onClick={() => editor.chain().focus().toggleTaskList().run()}
+        >☑</button>
+
+        <button
+          type="button"
           title="Blockquote"
+          aria-label="Blockquote"
           style={{ ...buttonStyle, ...(editor.isActive('blockquote') ? activeStyle : {}) }}
           onClick={() => {
             try {
@@ -197,6 +300,7 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
         <button
           type="button"
           title="Align left"
+          aria-label="Align left"
           style={{ ...buttonStyle }}
           onClick={() => {
             try {
@@ -211,6 +315,7 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
         <button
           type="button"
           title="Align center"
+          aria-label="Align center"
           style={{ ...buttonStyle }}
           onClick={() => {
             try {
@@ -225,6 +330,7 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
         <button
           type="button"
           title="Align right"
+          aria-label="Align right"
           style={{ ...buttonStyle }}
           onClick={() => {
             try {
@@ -240,6 +346,7 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
         <button
           type="button"
           title="Bullet list"
+          aria-label="Bullet list"
           style={{ ...buttonStyle, ...(editor.isActive('bulletList') ? activeStyle : {}) }}
           onClick={() => editor.chain().focus().toggleBulletList().run()}
         >• List</button>
@@ -247,6 +354,7 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
         <button
           type="button"
           title="Ordered list"
+          aria-label="Ordered list"
           style={{ ...buttonStyle, ...(editor.isActive('orderedList') ? activeStyle : {}) }}
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
         >1. List</button>
@@ -254,6 +362,7 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
         <button
           type="button"
           title="Horizontal rule"
+          aria-label="Horizontal rule"
           style={buttonStyle}
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
         >—</button>
@@ -261,6 +370,7 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
         <button
           type="button"
           title="Insert link"
+          aria-label="Insert link"
           style={buttonStyle}
           onClick={promptForLink}
         >🔗</button>
@@ -268,6 +378,7 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
         <button
           type="button"
           title="Remove link"
+          aria-label="Remove link"
           style={buttonStyle}
           onClick={() => editor.chain().focus().unsetLink().run()}
         >⤫</button>
@@ -285,7 +396,7 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
         </div>
       </div>
 
-      <div style={{ border: '1px solid rgba(0,0,0,0.12)', borderRadius: 6, padding: 8, minHeight: 140 }}>
+  <div ref={editorContainerRef} style={{ border: '1px solid rgba(0,0,0,0.12)', borderRadius: 6, padding: 8, minHeight: 140, position: 'relative' }}>
         {/* scoped styles: light code block theme with line numbers + improved copy UI */}
         <style>{`
           .gjp-tiptap-editor pre {
@@ -398,6 +509,12 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
           .gjp-blockquote-fallback { border-left-color: #2563eb; background: rgba(37,99,235,0.06); }
         `}</style>
 
+        <style>{`
+          .gjp-bubble-menu { background: white; border: 1px solid #e5e7eb; border-radius: 8px; box-shadow: 0 4px 12px rgba(16,24,40,0.08); }
+          .gjp-bubble-menu button { margin: 0; }
+        `}</style>
+
+        {/* Editor content */}
         <EditorContent
           editor={editor}
           className="gjp-tiptap-editor"
@@ -406,7 +523,53 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
             minHeight: 120,
           }}
         />
-      </div>
+
+        {/* Custom selection tooltip (appears above selection) */}
+        {tooltipVisible && (
+          <div
+            className="gjp-bubble-menu"
+            style={{
+              position: 'absolute',
+              top: tooltipPos.top,
+              left: tooltipPos.left,
+              transform: 'translateX(-50%)',
+              zIndex: 9999,
+            }}
+          >
+            <div style={{ display: 'flex', gap: 8, padding: 8, alignItems: 'center' }}>
+              <button
+                type="button"
+                aria-label="Bold"
+                style={{ ...buttonStyle, ...(editor.isActive('bold') ? activeStyle : {}) }}
+                onClick={() => editor.chain().focus().toggleBold().run()}
+              >B</button>
+              <button
+                type="button"
+                aria-label="Italic"
+                style={{ ...buttonStyle, ...(editor.isActive('italic') ? activeStyle : {}) }}
+                onClick={() => editor.chain().focus().toggleItalic().run()}
+              ><em>I</em></button>
+              <button
+                type="button"
+                aria-label="Code"
+                style={{ ...buttonStyle, ...(editor.isActive('code') ? activeStyle : {}) }}
+                onClick={() => editor.chain().focus().toggleCode().run()}
+              >code</button>
+              <button
+                type="button"
+                aria-label="Link"
+                style={buttonStyle}
+                onClick={() => promptForLink()}
+              >🔗</button>
+              <button
+                type="button"
+                aria-label="Unlink"
+                style={buttonStyle}
+                onClick={() => editor.chain().focus().unsetLink().run()}
+              >⤫</button>
+            </div>
+          </div>
+        )}
 
       {/* add copy buttons and line-number gutters to code blocks */}
       <script>{`(function(){
@@ -527,5 +690,6 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
         }
       })();`}</script>
     </div>
+  </div>
   );
 }
