@@ -185,9 +185,20 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
     const url = globalThis.prompt('Enter a URL to link to (include http/https):', 'https://');
     if (!url) return;
     try {
-      // basic validation
-      // allow relative links too
-      editor.chain().focus().extendMarkRange('link').setLink({ href: url, target: '_blank' }).run();
+      const sel = globalThis.getSelection();
+      const collapsed = !sel || sel.rangeCount === 0 || sel.isCollapsed;
+
+      if (collapsed) {
+        // ask for display text when there's no selection
+        const text = globalThis.prompt('Text to display for the link (leave empty to use the URL):', url) || url;
+        const safeText = DOMPurify.sanitize(text);
+        const html = `<a href="${url}" target="_blank" rel="noopener noreferrer">${safeText}</a>`;
+        // insert as HTML so the link node is created even when selection is collapsed
+        editor.chain().focus().insertContent(html).run();
+      } else {
+        // apply link mark to selected text
+        editor.chain().focus().extendMarkRange('link').setLink({ href: url, target: '_blank', rel: 'noopener noreferrer' }).run();
+      }
     } catch (e) {
       // log and bail
       // eslint-disable-next-line no-console
