@@ -258,12 +258,27 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
 
         <button
           type="button"
-          title="Insert image"
+          title="Insert image (set size)"
           aria-label="Insert image"
           style={buttonStyle}
           onClick={() => {
-            const url = globalThis.prompt('Image URL:');
-            if (url) editor.chain().focus().setImage({ src: url }).run();
+            const url = globalThis.prompt('Image URL (include http/https):', 'https://');
+            if (!url) return;
+            const width = globalThis.prompt('Width (e.g. 400 or 50%, leave empty for auto):', '');
+            const height = globalThis.prompt('Height (e.g. 300 or 50%, leave empty for auto):', '');
+            const alt = globalThis.prompt('Alt text (optional):', '');
+            const attrs: any = { src: url };
+            if (width && width.toString().trim()) attrs.width = width.toString().trim();
+            if (height && height.toString().trim()) attrs.height = height.toString().trim();
+            if (alt && alt.toString().trim()) attrs.alt = alt.toString().trim();
+            try {
+              editor.chain().focus().setImage(attrs as any).run();
+            } catch (e) {
+              // fallback to basic insertion if setImage with attrs fails
+              // eslint-disable-next-line no-console
+              console.error('setImage failed with attrs, falling back', e);
+              editor.chain().focus().setImage({ src: url }).run();
+            }
           }}
         >🖼</button>
 
