@@ -32,11 +32,13 @@ interface TiptapTextEditorProps {
   value?: string;
   onChange?: (html: string) => void;
   placeholder?: string;
+  /** Number of empty paragraph rows to show when editor is initially empty */
+  initialRows?: number;
   lineHeight?: number | string;
 }
 
 export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>) {
-  const { value = '', onChange, placeholder = 'Enter rich text...', lineHeight = 1.4 } = props;
+  const { value = '', onChange, placeholder = 'Enter rich text...', lineHeight = 1.4, initialRows = 3 } = props;
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -71,9 +73,25 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
 
   useEffect(() => {
     if (!editor) return;
-    if (value !== editor.getHTML()) {
-      // setContent may accept options; pass as object to satisfy types
+    // If external value is non-empty, sync it
+    if (value && value !== editor.getHTML()) {
       (editor.commands as any).setContent(value, { preserveWhitespace: false });
+      return;
+    }
+
+    // If value is empty (no external content) and editor is empty, initialize with a few empty paragraphs
+    if (!value) {
+      try {
+        const text = editor.getText?.() ?? '';
+        if (text.trim() === '') {
+          const emptyContent = Array.from({ length: initialRows }).map(() => '<p><br></p>').join('');
+          if (editor.getHTML() !== emptyContent) {
+            (editor.commands as any).setContent(emptyContent, { preserveWhitespace: false });
+          }
+        }
+      } catch {
+        // ignore
+      }
     }
   }, [value, editor]);
 
