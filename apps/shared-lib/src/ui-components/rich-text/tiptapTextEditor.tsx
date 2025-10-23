@@ -99,6 +99,28 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
   const editorContainerRef = useRef<HTMLDivElement | null>(null);
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const [tooltipPos, setTooltipPos] = useState({ top: 0, left: 0 });
+  // image insertion modal state
+  const [imageDialogOpen, setImageDialogOpen] = useState(false);
+  const [imageForm, setImageForm] = useState({ url: '', width: '', height: '', alt: '' });
+  const imageOverlayRef = useRef<HTMLDialogElement | null>(null);
+
+  // focus the overlay so Escape key can be handled
+  useEffect(() => {
+    if (imageDialogOpen && imageOverlayRef.current) {
+      try { imageOverlayRef.current.showModal?.(); } catch { /* ignore if not supported */ }
+      imageOverlayRef.current.focus();
+    }
+    if (!imageDialogOpen && imageOverlayRef.current) {
+      try { imageOverlayRef.current.close?.(); } catch { /* ignore */ }
+    }
+  }, [imageDialogOpen]);
+
+  // close modal on Escape via document listener (accessibility-friendly)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setImageDialogOpen(false); };
+    if (imageDialogOpen) document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [imageDialogOpen]);
 
   useEffect(() => {
     const onSelectionChange = () => {
@@ -262,23 +284,9 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
           aria-label="Insert image"
           style={buttonStyle}
           onClick={() => {
-            const url = globalThis.prompt('Image URL (include http/https):', 'https://');
-            if (!url) return;
-            const width = globalThis.prompt('Width (e.g. 400 or 50%, leave empty for auto):', '');
-            const height = globalThis.prompt('Height (e.g. 300 or 50%, leave empty for auto):', '');
-            const alt = globalThis.prompt('Alt text (optional):', '');
-            const attrs: any = { src: url };
-            if (width && width.toString().trim()) attrs.width = width.toString().trim();
-            if (height && height.toString().trim()) attrs.height = height.toString().trim();
-            if (alt && alt.toString().trim()) attrs.alt = alt.toString().trim();
-            try {
-              editor.chain().focus().setImage(attrs as any).run();
-            } catch (e) {
-              // fallback to basic insertion if setImage with attrs fails
-              // eslint-disable-next-line no-console
-              console.error('setImage failed with attrs, falling back', e);
-              editor.chain().focus().setImage({ src: url }).run();
-            }
+            // prefill from selection or empty
+            setImageForm({ url: '', width: '', height: '', alt: '' });
+            setImageDialogOpen(true);
           }}
         >🖼</button>
 
@@ -602,6 +610,101 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
               >⤫</button>
             </div>
           </div>
+        )}
+
+        {/* Image insert modal (single popup for url/width/height/alt) */}
+        {imageDialogOpen && (
+          <dialog
+            ref={imageOverlayRef}
+            open
+            style={{
+              position: 'fixed',
+              inset: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 20000,
+              background: 'rgba(0,0,0,0.35)'
+            }}
+          >
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const { url, width, height, alt } = imageForm;
+                if (!url) return;
+                const attrs: any = { src: url };
+                if (width?.toString().trim()) attrs.width = width.toString().trim();
+                if (height?.toString().trim()) attrs.height = height.toString().trim();
+                if (alt?.toString().trim()) attrs.alt = alt.toString().trim();
+                try {
+                  editor.chain().focus().setImage(attrs).run();
+                } catch (err) {
+                  // fallback
+                  // eslint-disable-next-line no-console
+                  console.error('setImage failed', err);
+                  editor.chain().focus().setImage({ src: url }).run();
+                }
+                setImageDialogOpen(false);
+              }}
+              style={{
+                width: 520,
+                background: 'white',
+                borderRadius: 8,
+                padding: 16,
+                boxShadow: '0 8px 24px rgba(16,24,40,0.2)'
+              }}
+            >
+              <h3 style={{ margin: '0 0 8px 0' }}>Insert image</h3>
+              <div style={{ display: 'grid', gap: 8 }}>
+                <label htmlFor="gjp-image-url" style={{ fontSize: 13 }}>URL</label>
+                <input
+                  id="gjp-image-url"
+                  autoFocus
+                  value={imageForm.url}
+                  onChange={(e) => setImageForm({ ...imageForm, url: e.target.value })}
+                  placeholder="https://example.com/image.jpg"
+                  style={{ padding: 8, borderRadius: 6, border: '1px solid #e5e7eb' }}
+                />
+
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <div style={{ flex: 1 }}>
+                    <label htmlFor="gjp-image-width" style={{ fontSize: 13 }}>Width</label>
+                    <input
+                      id="gjp-image-width"
+                      value={imageForm.width}
+                      onChange={(e) => setImageForm({ ...imageForm, width: e.target.value })}
+                      placeholder="e.g. 400 or 50%"
+                      style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #e5e7eb' }}
+                    />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <label htmlFor="gjp-image-height" style={{ fontSize: 13 }}>Height</label>
+                    <input
+                      id="gjp-image-height"
+                      value={imageForm.height}
+                      onChange={(e) => setImageForm({ ...imageForm, height: e.target.value })}
+                      placeholder="e.g. 300 or 50%"
+                      style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #e5e7eb' }}
+                    />
+                  </div>
+                </div>
+
+                <label htmlFor="gjp-image-alt" style={{ fontSize: 13 }}>Alt text</label>
+                <input
+                  id="gjp-image-alt"
+                  value={imageForm.alt}
+                  onChange={(e) => setImageForm({ ...imageForm, alt: e.target.value })}
+                  placeholder="Short description for accessibility"
+                  style={{ padding: 8, borderRadius: 6, border: '1px solid #e5e7eb' }}
+                />
+
+                <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 6 }}>
+                  <button type="button" style={{ ...buttonStyle }} onClick={() => setImageDialogOpen(false)}>Cancel</button>
+                  <button type="submit" style={{ ...buttonStyle, background: '#0f172a', color: 'white' }}>Insert</button>
+                </div>
+              </div>
+            </form>
+          </dialog>
         )}
 
       {/* add copy buttons and line-number gutters to code blocks */}
