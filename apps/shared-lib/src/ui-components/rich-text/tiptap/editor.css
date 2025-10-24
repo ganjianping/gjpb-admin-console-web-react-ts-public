@@ -289,3 +289,31 @@
   padding: 0.08rem 0.28rem;
   border-radius: 5px;
 }
+
+/* Table styling so inserted tables are visible in the editor */
+.gjp-tiptap-editor table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8px 0;
+  background: transparent;
+}
+.gjp-tiptap-editor th,
+.gjp-tiptap-editor td {
+  border: 1px solid #e6e6e6; /* visible but subtle */
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: middle;
+  background: #ffffff;
+  color: #0f172a;
+}
+.gjp-tiptap-editor thead th {
+  background: #f7f7fb; /* subtle header background */
+  font-weight: 700;
+}
+.gjp-tiptap-editor tbody tr:nth-child(even) td {
+  background: #fafafa; /* slight zebra for readability */
+}
+.gjp-tiptap-editor table[role="presentation"] td,
+.gjp-tiptap-editor table[role="presentation"] th {
+  border: 1px solid rgba(0,0,0,0.06);
+}
