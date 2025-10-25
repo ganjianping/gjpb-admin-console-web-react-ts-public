@@ -14,7 +14,7 @@ type UseSlashMenuReturn = {
   setSelectedIndex: React.Dispatch<React.SetStateAction<number>>;
   openSlashMenuAt: (pos: number) => void;
   closeSlashMenu: () => void;
-  handleMenuAction: (id: string) => void;
+  handleMenuAction: (id: string) => Promise<void>;
   handleKeyDown: (e: KeyboardEvent | any) => boolean;
 };
 
@@ -59,7 +59,33 @@ export default function useSlashMenu(editor: Editor | null, containerRef: React.
     try { safeChainFocus(editor)?.run?.(); } catch { /* ignore */ }
   };
 
-  const handleMenuAction = (id: string) => {
+  const handleMenuAction = async (id: string) => {
+    // If the selected id is a child of the `code` group (a language), handle language-load + insert
+    try {
+      const codeChild = flattenedActionItems.find((f) => f.id === id && f.parentId === 'code');
+      if (codeChild) {
+        if (!editor || slashPos == null) {
+          closeSlashMenu();
+          return;
+        }
+        try {
+          const selTo = editor!.state.selection.from;
+          deleteRange(editor, slashPos - 1, selTo);
+        } catch {}
+        try {
+          if ((editor as any)?.loadCodeLanguage) {
+            try { await (editor as any).loadCodeLanguage(id); } catch { /* ignore */ }
+          }
+          try { editor?.chain().focus().setCodeBlock({ language: id }).run(); } catch { try { editor?.chain().focus().setNode('codeBlock').run(); } catch {} }
+        } catch {}
+        closeSlashMenu();
+        try { safeChainFocus(editor)?.run?.(); } catch { /* ignore */ }
+        return;
+      }
+    } catch {
+      // ignore and continue with other actions
+    }
+
     switch (id) {
       case 'heading-1':
         applyAndClose(() => {
