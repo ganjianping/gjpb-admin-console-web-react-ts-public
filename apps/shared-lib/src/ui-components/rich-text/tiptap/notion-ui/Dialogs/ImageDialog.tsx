@@ -1,6 +1,6 @@
 import React from 'react';
 import { Editor } from '@tiptap/react';
-import * as tiptapStyles from '../styles';
+import * as tiptapStyles from '../../styles';
 import DialogWrapper from './DialogWrapper';
 
 interface ImageForm { url: string; width: string; height: string; alt: string }

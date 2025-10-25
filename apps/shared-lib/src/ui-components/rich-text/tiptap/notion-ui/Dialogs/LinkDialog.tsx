@@ -1,7 +1,7 @@
 import React from 'react';
 import { Editor } from '@tiptap/react';
 import DOMPurify from 'dompurify';
-import * as tiptapStyles from '../styles';
+import * as tiptapStyles from '../../styles';
 import DialogWrapper from './DialogWrapper';
 
 interface LinkForm { url: string; text: string }
@@ -9,11 +9,10 @@ interface LinkForm { url: string; text: string }
 interface LinkDialogProps {
   editor: Editor | null;
   open: boolean;
-  overlayRef: React.RefObject<HTMLDialogElement | null>;
+    overlayRef: React.RefObject<HTMLDialogElement | null>;
   form: LinkForm;
   setForm: (f: LinkForm) => void;
   onClose: () => void;
-  // optional selection to restore before applying commands (captured by parent before dialog opened)
   selection?: { from: number; to: number } | null;
 }
 
@@ -29,7 +28,6 @@ export default function LinkDialog(props: Readonly<LinkDialogProps>) {
           const { url, text } = form;
           if (!url) return;
           try {
-            // restore editor selection if the parent provided it (modal focus may have cleared DOM selection)
             if (props.selection && editor) {
               try { editor.chain().focus().setTextSelection({ from: props.selection.from, to: props.selection.to }).run(); } catch { /* ignore */ }
             }

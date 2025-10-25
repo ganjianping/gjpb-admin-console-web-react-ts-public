@@ -172,7 +172,6 @@
 .gjp-floating-submenu .gjp-floating-menu__item.is-selected {
   background: #f8fafc;
 }
-/* ensure submenu labels don't force wide layout */
 .gjp-floating-submenu .gjp-floating-menu__label {
   white-space: nowrap;
   overflow: hidden;
@@ -277,10 +276,8 @@
   outline: none;
 }
 
-/* Slightly dim visited links but keep good contrast */
 .gjp-tiptap-editor a:visited { color: #1e40af; }
 
-/* If a link wraps inline code, ensure both styles are readable */
 .gjp-tiptap-editor a code {
   background: rgba(37,99,235,0.04);
   color: #0f172a;
@@ -288,7 +285,6 @@
   border-radius: 5px;
 }
 
-/* Table styling so inserted tables are visible in the editor */
 .gjp-tiptap-editor table {
   width: 100%;
   border-collapse: collapse;
@@ -316,7 +312,6 @@
   border: 1px solid rgba(0,0,0,0.06);
 }
 
-/* Small floating toolbar for table operations */
 .gjp-table-toolbar {
   display: inline-flex;
   gap: 6px;

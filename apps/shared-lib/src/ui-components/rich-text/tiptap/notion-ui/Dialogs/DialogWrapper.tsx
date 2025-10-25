@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import * as tiptapStyles from '../styles';
+import * as tiptapStyles from '../../styles';
 
 interface DialogWrapperProps {
   open: boolean;
