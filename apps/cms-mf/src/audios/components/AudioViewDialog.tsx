@@ -21,6 +21,7 @@ import { Eye, Tag, CheckCircle2, XCircle, ExternalLink, Calendar, User, Copy, Ch
 
 import { getFullAudioUrl } from '../utils/getFullAudioUrl';
 import DOMPurify from 'dompurify';
+import hljs from 'highlight.js';
 import type { Audio } from '../types/audio.types';
 
 interface AudioViewDialogProps {
@@ -38,6 +39,57 @@ const AudioViewDialog = ({ open, onClose, audio, onEdit }: AudioViewDialogProps)
   const [playerHeight, setPlayerHeight] = useState<number | null>(null);
   const audioUrl = useMemo(() => (audio.filename ? getFullAudioUrl(audio.filename) : ''), [audio.filename]);
   const coverUrl = useMemo(() => (audio.coverImageFilename ? getFullAudioUrl(`/cover-images/${audio.coverImageFilename}`) : ''), [audio.coverImageFilename]);
+  const subtitleContainerRef = useRef<HTMLDivElement | null>(null);
+
+  // Prepare sanitized HTML and plain text for subtitle once per audio.subtitle
+  const subtitleHtmlRaw = (audio as any).subtitle as string | undefined;
+  const { sanitizedHtml, plainSubtitle, shouldShowSubtitleToggle } = useMemo(() => {
+    const raw = subtitleHtmlRaw || '';
+    const rawSanitized = DOMPurify.sanitize(raw || '');
+
+    // Ensure links open safely in a new tab
+    let sanitized = rawSanitized;
+    try {
+      if (typeof document !== 'undefined') {
+        const tmpSan = document.createElement('div');
+        tmpSan.innerHTML = rawSanitized;
+        tmpSan.querySelectorAll('a').forEach((a) => {
+          a.setAttribute('target', '_blank');
+          a.setAttribute('rel', 'noopener noreferrer');
+        });
+        sanitized = tmpSan.innerHTML;
+      }
+    } catch (e) {
+      sanitized = rawSanitized;
+    }
+
+    // derive plain text for truncation
+    const tmp = (typeof document !== 'undefined' && document) ? document.createElement('div') : null;
+    if (tmp) tmp.innerHTML = sanitized;
+    const plain = tmp ? (tmp.textContent || tmp.innerText || '') : sanitized.replace(/<[^>]+>/g, '');
+    const shouldShowToggle = plain.length > 240 || plain.split('\n').length > 4;
+
+    return { sanitizedHtml: sanitized, plainSubtitle: plain, shouldShowSubtitleToggle: shouldShowToggle };
+  }, [subtitleHtmlRaw]);
+
+  // Highlight code blocks when subtitle HTML is rendered/expanded
+  useLayoutEffect(() => {
+    if (!subtitleContainerRef.current) return;
+    if (!subtitleExpanded) return;
+    try {
+      const root = subtitleContainerRef.current;
+      const blocks = root.querySelectorAll('pre code');
+      for (const b of Array.from(blocks)) {
+        // highlight.js will add spans for tokens
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (hljs as any).highlightElement(b as HTMLElement);
+      }
+    } catch (err) {
+      // Log highlight errors for debugging but don't break the UI
+      // eslint-disable-next-line no-console
+      console.warn('[AudioViewDialog] highlight.js error', err);
+    }
+  }, [subtitleExpanded, sanitizedHtml]);
   const sizeInMB = useMemo(() => {
     try {
       const bytes = Number(audio.sizeBytes || 0);
@@ -217,44 +269,80 @@ const AudioViewDialog = ({ open, onClose, audio, onEdit }: AudioViewDialogProps)
                 </Box>
                 <Box sx={{ gridColumn: '1 / -1' }}>
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>{t('audios.form.subtitle') || 'Subtitle'}</Typography>
-                  {((audio as any).subtitle) ? (
-                    (() => {
-                      const subtitleHtml = (audio as any).subtitle as string;
-                      // sanitize incoming HTML from the editor before rendering
-                      const sanitized = DOMPurify.sanitize(subtitleHtml || '');
-                      // derive plain text to decide whether to show the toggle
-                      const tmp = (typeof document !== 'undefined' && document) ? document.createElement('div') : null;
-                      if (tmp) tmp.innerHTML = sanitized;
-                      const plain = tmp ? (tmp.textContent || tmp.innerText || '') : sanitized.replace(/<[^>]+>/g, '');
-                      const shouldShowToggle = plain.length > 240 || plain.split('\n').length > 4;
+                  {( (audio as any).subtitle) ? (
+                      (() => {
+                        return (
+                          <Box>
+                            {/* Collapsed: plain text (clamped). Expanded: sanitized HTML (with syntax highlight). */}
+                            {subtitleExpanded ? (
+                              <Box
+                                ref={subtitleContainerRef}
+                                sx={{
+                                  whiteSpace: 'normal',
+                                  '& pre': {
+                                    position: 'relative',
+                                    background: '#f5f5f5',
+                                    border: '1px solid rgba(0,0,0,0.08)',
+                                    borderRadius: 1.5,
+                                    padding: 1.5,
+                                    overflow: 'auto',
+                                    boxShadow: '0 18px 30px rgba(15,23,42,0.12)',
+                                    fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Courier New", monospace',
+                                    fontSize: '0.845rem',
+                                    lineHeight: 1.6,
+                                    color: '#0f172a',
+                                  },
+                                  '& pre code': {
+                                    background: 'transparent',
+                                    padding: 0,
+                                    border: 'none',
+                                    borderRadius: 0,
+                                    display: 'block',
+                                  },
+                                  '& p': { margin: 0, marginBottom: 1 },
+                                  '& ul, & ol': { margin: '0.5rem 0', paddingLeft: 2 },
+                                  '& a': { color: 'primary.main', textDecoration: 'underline' },
+                                  '& img': { maxWidth: '100%', height: 'auto', display: 'block', margin: '8px 0' },
+                                  '& .hljs-comment, & .hljs-quote': { color: '#64748b', fontStyle: 'italic' },
+                                  '& .hljs-keyword, & .hljs-selector-tag, & .hljs-subst': { color: '#2563eb' },
+                                  '& .hljs-number, & .hljs-literal, & .hljs-variable, & .hljs-template-variable': { color: '#db2777' },
+                                  '& .hljs-string, & .hljs-doctag': { color: '#16a34a' },
+                                  '& .hljs-title, & .hljs-section, & .hljs-selector-id, & .hljs-selector-class': { color: '#8b5cf6' },
+                                  '& .hljs-meta': { color: '#0ea5e9' },
+                                  '& .hljs-built_in, & .hljs-builtin-name': { color: '#f97316' },
+                                  '& .hljs-emphasis': { fontStyle: 'italic' },
+                                  '& .hljs-strong': { fontWeight: 600 },
+                                }}
+                                // render sanitized HTML from the editor
+                                dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
+                              />
+                            ) : (
+                              <Box
+                                sx={{
+                                  display: '-webkit-box',
+                                  WebkitBoxOrient: 'vertical',
+                                  WebkitLineClamp: 4,
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  whiteSpace: 'pre-wrap',
+                                  '& p': { margin: 0 },
+                                }}
+                              >
+                                {plainSubtitle}
+                              </Box>
+                            )}
 
-                      return (
-                        <Box>
-                          <Box
-                            sx={{
-                              whiteSpace: 'pre-wrap',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                              display: '-webkit-box',
-                              WebkitBoxOrient: 'vertical',
-                              WebkitLineClamp: subtitleExpanded ? 'none' : 4,
-                              '& p': { margin: 0 },
-                            }}
-                            // render sanitized HTML from the editor
-                            dangerouslySetInnerHTML={{ __html: sanitized }}
-                          />
-
-                          {shouldShowToggle && (
-                            <Button size="small" onClick={() => setSubtitleExpanded((s) => !s)} sx={{ mt: 1, textTransform: 'none' }}>
-                              {subtitleExpanded ? (t('audios.actions.less') || 'Less') : (t('audios.actions.more') || 'More...')}
-                            </Button>
-                          )}
-                        </Box>
-                      );
-                    })()
-                  ) : (
-                    <Typography variant="body2">-</Typography>
-                  )}
+                            {shouldShowSubtitleToggle && (
+                              <Button size="small" onClick={() => setSubtitleExpanded((s) => !s)} sx={{ mt: 1, textTransform: 'none' }}>
+                                {subtitleExpanded ? (t('audios.actions.less') || 'Less') : (t('audios.actions.more') || 'More...')}
+                              </Button>
+                            )}
+                          </Box>
+                        );
+                      })()
+                    ) : (
+                      <Typography variant="body2">-</Typography>
+                    )}
                 </Box>
                 
                 <Box sx={{ gridColumn: '1 / -1' }}>
