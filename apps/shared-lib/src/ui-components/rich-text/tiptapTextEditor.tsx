@@ -1,5 +1,8 @@
 import { useEffect, useState, useRef } from 'react';
 import { EditorContent } from '@tiptap/react';
+import { IconButton } from '@mui/material';
+import FullscreenIcon from '@mui/icons-material/Fullscreen';
+import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 // styles are provided to buttons and dialogs via direct imports in those components
 // FloatingMenu from @tiptap/react isn't available in this build; render our own absolute menu
 import ImageDialog from './tiptap/Dialogs/ImageDialog';
@@ -36,6 +39,28 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
   
 
   const editorContainerRef = useRef<HTMLDivElement | null>(null);
+  // Fullscreen-like (in-page full-window) state: use a fixed-position overlay that stays in the same browser window/screen
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  const toggleFullscreen = () => {
+    setIsFullscreen((prev) => !prev);
+  };
+
+  // When entering fullscreen, lock body scroll and attach Escape handler to exit.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setIsFullscreen(false); };
+    if (isFullscreen) {
+      // lock body scroll
+      const prevOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      document.addEventListener('keydown', onKey);
+      return () => {
+        document.body.style.overflow = prevOverflow;
+        document.removeEventListener('keydown', onKey);
+      };
+    }
+    return undefined;
+  }, [isFullscreen]);
   // Image dialog state (kept in host to manage native <dialog> focus and selection snapshot)
   const [imageDialogOpen, setImageDialogOpen] = useState(false);
   const [imageForm, setImageForm] = useState({ url: '', width: '', height: '', alt: '' });
@@ -168,14 +193,53 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
   // Render the editor container, editor content, toolbars, menus, and dialogs.
   return (
     <div>
-      <div ref={editorContainerRef} style={{ border: '1px solid rgba(0,0,0,0.12)', borderRadius: 6, padding: 8, minHeight: 140, position: 'relative' }}>
+      <div
+        ref={editorContainerRef}
+        style={{
+          border: isFullscreen ? 'none' : '1px solid rgba(0,0,0,0.12)',
+          borderRadius: isFullscreen ? 0 : 6,
+          padding: isFullscreen ? 16 : 8,
+          minHeight: isFullscreen ? '100vh' : 140,
+          position: isFullscreen ? 'fixed' : 'relative',
+          top: isFullscreen ? 0 : undefined,
+          left: isFullscreen ? 0 : undefined,
+          right: isFullscreen ? 0 : undefined,
+          bottom: isFullscreen ? 0 : undefined,
+          width: isFullscreen ? '100%' : undefined,
+          height: isFullscreen ? '100vh' : undefined,
+          zIndex: isFullscreen ? 1400 : undefined,
+          background: isFullscreen ? '#fff' : undefined,
+          boxShadow: isFullscreen ? '0 4px 20px rgba(0,0,0,0.12)' : undefined,
+        }}
+      >
+        <IconButton
+          size="small"
+          aria-pressed={isFullscreen}
+          aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+          onClick={toggleFullscreen}
+          title={isFullscreen ? 'Exit fullscreen (Esc)' : 'Enter fullscreen'}
+          sx={{
+            position: 'absolute',
+            top: 2,
+            right: 12,
+            zIndex: 1401,
+            backgroundColor: 'rgba(255,255,255,0.95)',
+            border: '1px solid rgba(0,0,0,0.08)',
+            padding: '6px',
+            borderRadius: 1,
+            boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
+            '&:hover': { backgroundColor: 'rgba(255,255,255,1)' }
+          }}
+        >
+          {isFullscreen ? <FullscreenExitIcon fontSize="small" /> : <FullscreenIcon fontSize="small" />}
+        </IconButton>
         {/* Editor content */}
         <EditorContent
           editor={editor}
           className="gjp-tiptap-editor"
           style={{
             lineHeight: lineHeight,
-            minHeight: 60,
+            minHeight: isFullscreen ? 'calc(100vh - 96px)' : 60,
           }}
           onKeyDown={(e: any) => {
             // let the slash hook handle navigation/selection when open

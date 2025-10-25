@@ -82,7 +82,7 @@ const AudioEditDialog: React.FC<AudioEditDialogProps> = ({ open, formData, onFor
           onClose();
         }}
         disableEscapeKeyDown
-        maxWidth="sm"
+        maxWidth="lg"
         fullWidth
       >
       {(loading || localSaving) && (
