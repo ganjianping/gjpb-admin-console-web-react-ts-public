@@ -101,6 +101,7 @@ const AudioEditDialog: React.FC<AudioEditDialogProps> = ({ open, formData, onFor
             <Typography variant="subtitle2">{t('audios.form.coverImageFile') || 'Cover Image File'}</Typography>
             <input type="file" accept="image/*" onChange={handleCoverFileChange} />
           </Box>
+          <TextField label={t('audios.form.coverImageFilename') || 'Cover Image Filename'} value={formData.coverImageFilename || ''} onChange={e => onFormChange('coverImageFilename' as any, e.target.value)} fullWidth />
           <Box>
             <Typography variant="subtitle2">{t('audios.form.description') || 'Description'}</Typography>
             <TextareaAutosize minRows={2} style={{ width: '100%', padding: '8.5px 14px', borderRadius: 4, border: '1px solid rgba(0,0,0,0.23)', fontFamily: 'inherit' }} value={formData.description || ''} onChange={e => onFormChange('description', e.target.value)} aria-label={t('audios.form.description') || 'Description'} />
@@ -131,7 +132,6 @@ const AudioEditDialog: React.FC<AudioEditDialogProps> = ({ open, formData, onFor
           <FormControlLabel control={<Checkbox checked={formData.isActive} onChange={e => onFormChange('isActive', e.target.checked)} />} label={t('audios.form.isActive') || 'Active'} />
 
           <TextField label={t('audios.form.filename') || 'Filename'} value={formData.filename} fullWidth disabled />
-          <TextField label={t('audios.form.coverImageFilename') || 'Cover Image Filename'} value={formData.coverImageFilename || ''} fullWidth disabled />
         </Box>
       </DialogContent>
       <DialogActions>

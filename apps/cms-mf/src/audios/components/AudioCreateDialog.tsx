@@ -179,6 +179,7 @@ const AudioCreateDialog = ({
             <Typography variant="subtitle2">{t('audios.form.coverImageFile') || 'Cover Image File'}</Typography>
             <input type="file" accept="image/*" onChange={(e) => handleFileChange('coverImageFile', e)} />
           </Box>
+          <TextField label={t('audios.form.coverImageFilename') || 'Cover Image Filename'} value={formData.coverImageFilename || ''} onChange={(e) => onFormChange('coverImageFilename' as any, e.target.value)} fullWidth />
           <Box>
             <Typography variant="subtitle2">{t('audios.form.description') || 'Description'}</Typography>
             <TextareaAutosize
