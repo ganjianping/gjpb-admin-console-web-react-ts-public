@@ -5,17 +5,17 @@ import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 // styles are provided to buttons and dialogs via direct imports in those components
 // FloatingMenu from @tiptap/react isn't available in this build; render our own absolute menu
-import ImageDialog from './tiptap/dialogs/ImageDialog';
-import LinkDialog from './tiptap/dialogs/LinkDialog';
-import { initCodeEnhancer } from './tiptap/utils/codeEnhancer';
-import './tiptap/styles/editor.css';
+import ImageDialog from './dialogs/ImageDialog';
+import LinkDialog from './dialogs/LinkDialog';
+import { initCodeEnhancer } from './utils/codeEnhancer';
+import './styles/editor.css';
 // icons are provided by menuItems; keep this file focused
-import TableToolbar from './tiptap/components/TableToolbar';
-import SelectionToolbar from './tiptap/components/SelectionToolbar';
-import SlashMenu from './tiptap/components/SlashMenu';
-import useSlashMenu from './tiptap/hooks/useSlashMenu';
-import useToolbarPositioning from './tiptap/hooks/useToolbarPositioning';
-import useTiptapEditor from './tiptap/hooks/useTiptapEditor';
+import TableToolbar from './components/TableToolbar';
+import SelectionToolbar from './components/SelectionToolbar';
+import SlashMenu from './components/SlashMenu';
+import useSlashMenu from './hooks/useSlashMenu';
+import useToolbarPositioning from './hooks/useToolbarPositioning';
+import useTiptapEditor from './hooks/useTiptapEditor';
 
 // TiptapTextEditor
 // - Props: value, onChange, placeholder, initialRows
@@ -153,6 +153,7 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
   }, []);
 
   
+
   // Initialize code enhancer (adds copy buttons/gutters) and cleanup on unmount.
   useEffect(() => {
     let cleanup: (() => void) | undefined;

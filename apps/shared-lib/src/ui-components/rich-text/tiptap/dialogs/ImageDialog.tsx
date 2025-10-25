@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
 import { Editor } from '@tiptap/react';
 import * as tiptapStyles from '../styles/inlineStyles';
 import DialogWrapper from './DialogWrapper';
@@ -19,8 +19,13 @@ export default function ImageDialog(props: Readonly<ImageDialogProps>) {
   const { editor, open, overlayRef, form, setForm, onClose, selection } = props;
   if (!open) return null;
 
+  const [previewError, setPreviewError] = useState(false);
+  const hasUrl = Boolean(form.url?.trim());
+
+  useEffect(() => { setPreviewError(false); }, [form.url]);
+
   return (
-    <DialogWrapper open={open} overlayRef={overlayRef} onClose={onClose} width={520}>
+    <DialogWrapper open={open} overlayRef={overlayRef} onClose={onClose} width={560}>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -62,56 +67,95 @@ export default function ImageDialog(props: Readonly<ImageDialogProps>) {
 
           onClose();
         }}
-        style={tiptapStyles.dialogInnerStyle}
+        style={tiptapStyles.dialogFormStyle}
       >
-        <h3 style={{ margin: '0 0 8px 0' }}>Insert image</h3>
-        <div style={{ display: 'grid', gap: 8 }}>
-          <label htmlFor="gjp-image-url" style={{ fontSize: 13 }}>URL</label>
-          <input
-            id="gjp-image-url"
-            autoFocus
-            value={form.url}
-            onChange={(e) => setForm({ ...form, url: e.target.value })}
-            placeholder="https://example.com/image.jpg"
-            style={tiptapStyles.dialogInputStyle}
-          />
+        <header style={tiptapStyles.dialogHeaderStyle}>
+          <h3 style={tiptapStyles.dialogTitleStyle}>Insert image</h3>
+          <p style={tiptapStyles.dialogDescriptionStyle}>
+            Paste a hosted image URL and adjust optional sizing or descriptive text before inserting it into the editor.
+          </p>
+        </header>
 
-          <div style={{ display: 'flex', gap: 8 }}>
-            <div style={{ flex: 1 }}>
-              <label htmlFor="gjp-image-width" style={{ fontSize: 13 }}>Width</label>
+        <div style={tiptapStyles.dialogBodyStyle}>
+          <div style={tiptapStyles.dialogFieldColumnStyle}>
+            <div style={tiptapStyles.dialogFieldGroupStyle}>
+              <label htmlFor="gjp-image-url" style={tiptapStyles.dialogLabelStyle}>Image URL</label>
               <input
-                id="gjp-image-width"
-                value={form.width}
-                onChange={(e) => setForm({ ...form, width: e.target.value })}
-                placeholder="e.g. 400 or 50%"
-                style={{ width: '100%', ...tiptapStyles.dialogInputStyle }}
+                id="gjp-image-url"
+                autoFocus
+                value={form.url}
+                onChange={(e) => setForm({ ...form, url: e.target.value })}
+                placeholder="https://example.com/image.jpg"
+                style={tiptapStyles.dialogInputStyle}
               />
+              <span style={tiptapStyles.dialogHintStyle}>Supports any publicly accessible HTTPS image.</span>
             </div>
-            <div style={{ flex: 1 }}>
-              <label htmlFor="gjp-image-height" style={{ fontSize: 13 }}>Height</label>
+
+            <div style={tiptapStyles.dialogFieldRowStyle}>
+              <div style={{ flex: '1 1 120px', minWidth: 120 }}>
+                <div style={tiptapStyles.dialogFieldGroupStyle}>
+                  <label htmlFor="gjp-image-width" style={tiptapStyles.dialogLabelStyle}>Width</label>
+                  <input
+                    id="gjp-image-width"
+                    value={form.width}
+                    onChange={(e) => setForm({ ...form, width: e.target.value })}
+                    placeholder="auto"
+                    style={tiptapStyles.dialogInputStyle}
+                  />
+                </div>
+              </div>
+              <div style={{ flex: '1 1 120px', minWidth: 120 }}>
+                <div style={tiptapStyles.dialogFieldGroupStyle}>
+                  <label htmlFor="gjp-image-height" style={tiptapStyles.dialogLabelStyle}>Height</label>
+                  <input
+                    id="gjp-image-height"
+                    value={form.height}
+                    onChange={(e) => setForm({ ...form, height: e.target.value })}
+                    placeholder="auto"
+                    style={tiptapStyles.dialogInputStyle}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div style={tiptapStyles.dialogFieldGroupStyle}>
+              <label htmlFor="gjp-image-alt" style={tiptapStyles.dialogLabelStyle}>Alt text</label>
               <input
-                id="gjp-image-height"
-                value={form.height}
-                onChange={(e) => setForm({ ...form, height: e.target.value })}
-                placeholder="e.g. 300 or 50%"
-                style={{ width: '100%', ...tiptapStyles.dialogInputStyle }}
+                id="gjp-image-alt"
+                value={form.alt}
+                onChange={(e) => setForm({ ...form, alt: e.target.value })}
+                placeholder="Short description for accessibility"
+                style={tiptapStyles.dialogInputStyle}
               />
+              <span style={tiptapStyles.dialogHintStyle}>Tell readers what is shown for better accessibility.</span>
             </div>
           </div>
 
-          <label htmlFor="gjp-image-alt" style={{ fontSize: 13 }}>Alt text</label>
-          <input
-            id="gjp-image-alt"
-            value={form.alt}
-            onChange={(e) => setForm({ ...form, alt: e.target.value })}
-            placeholder="Short description for accessibility"
-            style={tiptapStyles.dialogInputStyle}
-          />
+          <aside style={tiptapStyles.dialogPreviewWrapperStyle}>
+            <div style={tiptapStyles.dialogPreviewSurfaceStyle}>
+              {hasUrl && !previewError ? (
+                <img
+                  src={form.url}
+                  alt={form.alt || 'Preview'}
+                  style={tiptapStyles.dialogPreviewImageStyle}
+                  onError={() => setPreviewError(true)}
+                  onLoad={() => setPreviewError(false)}
+                />
+              ) : (
+                <div style={tiptapStyles.dialogPreviewEmptyStyle}>
+                  {previewError ? 'Unable to load preview.' : 'Image preview will appear here.'}
+                </div>
+              )}
+            </div>
+            <span style={tiptapStyles.dialogHintStyle}>
+              {previewError ? 'Check that the URL is correct and allows direct access.' : 'Preview updates automatically as you type.'}
+            </span>
+          </aside>
+        </div>
 
-          <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 6 }}>
-            <button type="button" style={{ ...tiptapStyles.buttonStyle }} onClick={() => onClose()}>Cancel</button>
-            <button type="submit" style={{ ...tiptapStyles.buttonStyle, background: '#0f172a', color: 'white' }}>Insert</button>
-          </div>
+        <div style={tiptapStyles.dialogFooterStyle}>
+          <button type="button" style={tiptapStyles.secondaryButtonStyle} onClick={() => onClose()}>Cancel</button>
+          <button type="submit" style={tiptapStyles.primaryButtonStyle} disabled={!hasUrl}>Insert image</button>
         </div>
       </form>
     </DialogWrapper>
