@@ -5,17 +5,17 @@ import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 // styles are provided to buttons and dialogs via direct imports in those components
 // FloatingMenu from @tiptap/react isn't available in this build; render our own absolute menu
-import ImageDialog from './tiptap/notion-ui/Dialogs/ImageDialog';
-import LinkDialog from './tiptap/notion-ui/Dialogs/LinkDialog';
-import { initCodeEnhancer } from './tiptap/notion-ui/utils/codeEnhancer';
-import './tiptap/notion-ui/editor.css';
+import ImageDialog from './tiptap/dialogs/ImageDialog';
+import LinkDialog from './tiptap/dialogs/LinkDialog';
+import { initCodeEnhancer } from './tiptap/utils/codeEnhancer';
+import './tiptap/styles/editor.css';
 // icons are provided by menuItems; keep this file focused
-import TableToolbar from './tiptap/notion-ui/TableToolbar';
-import SelectionToolbar from './tiptap/notion-ui/SelectionToolbar';
-import SlashMenu from './tiptap/notion-ui/SlashMenu';
-import useSlashMenu from './tiptap/notion-ui/useSlashMenu';
-import useToolbarPositioning from './tiptap/notion-ui/useToolbarPositioning';
-import useTiptapEditor from './tiptap/notion-ui/useTiptapEditor';
+import TableToolbar from './tiptap/components/TableToolbar';
+import SelectionToolbar from './tiptap/components/SelectionToolbar';
+import SlashMenu from './tiptap/components/SlashMenu';
+import useSlashMenu from './tiptap/hooks/useSlashMenu';
+import useToolbarPositioning from './tiptap/hooks/useToolbarPositioning';
+import useTiptapEditor from './tiptap/hooks/useTiptapEditor';
 
 // TiptapTextEditor
 // - Props: value, onChange, placeholder, initialRows

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Editor } from '@tiptap/react';
 import DOMPurify from 'dompurify';
-import * as tiptapStyles from '../../styles';
+import * as tiptapStyles from '../styles/inlineStyles';
 import DialogWrapper from './DialogWrapper';
 
 interface LinkForm { url: string; text: string }
@@ -9,7 +9,7 @@ interface LinkForm { url: string; text: string }
 interface LinkDialogProps {
   editor: Editor | null;
   open: boolean;
-    overlayRef: React.RefObject<HTMLDialogElement | null>;
+  overlayRef: React.RefObject<HTMLDialogElement | null>;
   form: LinkForm;
   setForm: (f: LinkForm) => void;
   onClose: () => void;
@@ -17,7 +17,7 @@ interface LinkDialogProps {
 }
 
 export default function LinkDialog(props: Readonly<LinkDialogProps>) {
-  const { editor, open, overlayRef, form, setForm, onClose } = props;
+  const { editor, open, overlayRef, form, setForm, onClose, selection } = props;
   if (!open) return null;
 
   return (
@@ -28,8 +28,8 @@ export default function LinkDialog(props: Readonly<LinkDialogProps>) {
           const { url, text } = form;
           if (!url) return;
           try {
-            if (props.selection && editor) {
-              try { editor.chain().focus().setTextSelection({ from: props.selection.from, to: props.selection.to }).run(); } catch { /* ignore */ }
+            if (selection && editor) {
+              try { editor.chain().focus().setTextSelection({ from: selection.from, to: selection.to }).run(); } catch { /* ignore */ }
             }
             const sel = globalThis.getSelection();
             const collapsed = !sel || sel.rangeCount === 0 || sel.isCollapsed;

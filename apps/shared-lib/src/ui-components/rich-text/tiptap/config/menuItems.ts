@@ -17,6 +17,8 @@ export const defaultMenuItems: MenuItem[] = [
       { id: 'heading-1', label: 'Heading 1' },
       { id: 'heading-2', label: 'Heading 2' },
       { id: 'heading-3', label: 'Heading 3' },
+      { id: 'heading-4', label: 'Heading 4' },
+      { id: 'heading-5', label: 'Heading 5' }
     ],
   },
   {

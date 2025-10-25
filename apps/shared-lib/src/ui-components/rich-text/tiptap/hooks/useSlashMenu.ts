@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { Editor } from '@tiptap/react';
-import { defaultMenuItems, type MenuItem } from './menuItems';
-import { coordsAtPosSafe, deleteRange, insertTableFallback, safeChainFocus } from './utils/editorUtils';
+import { defaultMenuItems, type MenuItem } from '../config/menuItems';
+import { coordsAtPosSafe, deleteRange, insertTableFallback, safeChainFocus } from '../utils/editorUtils';
 
 type UseSlashMenuReturn = {
   slashOpen: boolean;
@@ -27,8 +27,6 @@ export default function useSlashMenu(editor: Editor | null, containerRef: React.
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
 
   const menuItems = menuItemsIn;
-  // Build a flattened list that keeps track of parent group id for child items.
-  // Each entry: { id, label, parentId?: string, item }
   type FlatItem = { id: string; label: string; parentId?: string; item: MenuItem };
   const flattenedActionItems: FlatItem[] = menuItems.flatMap((it) => {
     if (it.children && Array.isArray(it.children)) {
@@ -87,6 +85,24 @@ export default function useSlashMenu(editor: Editor | null, containerRef: React.
             const selTo = editor!.state.selection.from;
             deleteRange(editor, slashPos - 1, selTo);
             try { editor?.chain().focus().setNode('heading', { level: 3 }).run(); } catch { /* ignore */ }
+          }
+        });
+        break;
+      case 'heading-4':
+        applyAndClose(() => {
+          if (slashPos != null) {
+            const selTo = editor!.state.selection.from;
+            deleteRange(editor, slashPos - 1, selTo);
+            try { editor?.chain().focus().setNode('heading', { level: 4 }).run(); } catch { /* ignore */ }
+          }
+        });
+        break;
+      case 'heading-5':
+        applyAndClose(() => {
+          if (slashPos != null) {
+            const selTo = editor!.state.selection.from;
+            deleteRange(editor, slashPos - 1, selTo);
+            try { editor?.chain().focus().setNode('heading', { level: 5 }).run(); } catch { /* ignore */ }
           }
         });
         break;
@@ -224,7 +240,6 @@ export default function useSlashMenu(editor: Editor | null, containerRef: React.
       return true;
     }
     if (e.key === 'ArrowRight') {
-      // Open the parent submenu if current selection belongs to a group
       e.preventDefault?.();
       const itm = filteredItems[selectedIndex] || filteredItems[0];
       if (itm && itm.parentId) {
@@ -233,7 +248,6 @@ export default function useSlashMenu(editor: Editor | null, containerRef: React.
       return true;
     }
     if (e.key === 'ArrowLeft') {
-      // Close any open submenu
       e.preventDefault?.();
       if (openSubmenu) setOpenSubmenu(null);
       return true;

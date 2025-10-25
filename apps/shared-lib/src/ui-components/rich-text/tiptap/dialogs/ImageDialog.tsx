@@ -1,6 +1,6 @@
 import React from 'react';
 import { Editor } from '@tiptap/react';
-import * as tiptapStyles from '../../styles';
+import * as tiptapStyles from '../styles/inlineStyles';
 import DialogWrapper from './DialogWrapper';
 
 interface ImageForm { url: string; width: string; height: string; alt: string }
@@ -16,7 +16,7 @@ interface ImageDialogProps {
 }
 
 export default function ImageDialog(props: Readonly<ImageDialogProps>) {
-  const { editor, open, overlayRef, form, setForm, onClose } = props;
+  const { editor, open, overlayRef, form, setForm, onClose, selection } = props;
   if (!open) return null;
 
   return (
@@ -52,8 +52,8 @@ export default function ImageDialog(props: Readonly<ImageDialogProps>) {
 
           try {
             // restore selection if provided (modals steal focus and DOM selection)
-            if (props.selection && editor) {
-              try { editor.chain().focus().setTextSelection({ from: props.selection.from, to: props.selection.to }).run(); } catch { /* ignore */ }
+            if (selection && editor) {
+              try { editor.chain().focus().setTextSelection({ from: selection.from, to: selection.to }).run(); } catch { /* ignore */ }
             }
             editor?.chain().focus().setImage(attrs).run();
           } catch (err) {
@@ -79,22 +79,22 @@ export default function ImageDialog(props: Readonly<ImageDialogProps>) {
           <div style={{ display: 'flex', gap: 8 }}>
             <div style={{ flex: 1 }}>
               <label htmlFor="gjp-image-width" style={{ fontSize: 13 }}>Width</label>
-                    <input
+              <input
                 id="gjp-image-width"
                 value={form.width}
-                      onChange={(e) => setForm({ ...form, width: e.target.value })}
-                      placeholder="e.g. 400 or 50%"
-                      style={{ width: '100%', ...tiptapStyles.dialogInputStyle }}
+                onChange={(e) => setForm({ ...form, width: e.target.value })}
+                placeholder="e.g. 400 or 50%"
+                style={{ width: '100%', ...tiptapStyles.dialogInputStyle }}
               />
             </div>
             <div style={{ flex: 1 }}>
               <label htmlFor="gjp-image-height" style={{ fontSize: 13 }}>Height</label>
-                    <input
+              <input
                 id="gjp-image-height"
                 value={form.height}
-                      onChange={(e) => setForm({ ...form, height: e.target.value })}
-                      placeholder="e.g. 300 or 50%"
-                      style={{ width: '100%', ...tiptapStyles.dialogInputStyle }}
+                onChange={(e) => setForm({ ...form, height: e.target.value })}
+                placeholder="e.g. 300 or 50%"
+                style={{ width: '100%', ...tiptapStyles.dialogInputStyle }}
               />
             </div>
           </div>

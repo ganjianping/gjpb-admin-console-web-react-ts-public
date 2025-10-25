@@ -1,5 +1,3 @@
-import React from 'react';
-
 export const HeadingIcon = ({ size = 16 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19V5"/><path d="M20 12v7"/><path d="M20 5v4"/><path d="M10 12h8"/></svg>
 );
