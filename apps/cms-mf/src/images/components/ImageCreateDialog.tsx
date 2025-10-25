@@ -101,7 +101,16 @@ const ImageCreateDialog = ({
     if (!loading) setLocalSaving(false);
   }, [loading]);
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+    <Dialog
+      open={open}
+      onClose={(_event, reason) => {
+        if (reason === 'backdropClick' || reason === 'escapeKeyDown') return;
+        onClose();
+      }}
+      disableEscapeKeyDown
+      maxWidth="md"
+      fullWidth
+    >
       {loading && (
         <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 1 }}>
           <LinearProgress />

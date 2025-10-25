@@ -90,7 +90,11 @@ export const AppSettingDialog = ({
   return (
     <Dialog
       open={open}
-      onClose={onClose}
+      onClose={(_event, reason) => {
+        if (reason === 'backdropClick' || reason === 'escapeKeyDown') return;
+        onClose();
+      }}
+      disableEscapeKeyDown
       maxWidth="md"
       fullWidth
       slotProps={{

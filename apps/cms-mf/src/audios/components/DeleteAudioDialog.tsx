@@ -11,7 +11,16 @@ interface Props {
 
 const DeleteAudioDialog: React.FC<Props> = ({ open, audio, loading, onClose, onConfirm }) => {
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs">
+    <Dialog
+      open={open}
+      onClose={(_event, reason) => {
+        if (reason === 'backdropClick' || reason === 'escapeKeyDown') return;
+        onClose();
+      }}
+      disableEscapeKeyDown
+      fullWidth
+      maxWidth="xs"
+    >
       <DialogTitle>Delete</DialogTitle>
       <DialogContent>
         <Typography>Are you sure you want to delete "{audio?.name}"?</Typography>

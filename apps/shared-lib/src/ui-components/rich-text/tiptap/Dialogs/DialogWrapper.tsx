@@ -12,7 +12,7 @@ interface DialogWrapperProps {
 // Lightweight, non-native modal overlay implemented with divs. This avoids
 // browser <dialog> interactions which can interfere with other dialogs on the page.
 export default function DialogWrapper(props: Readonly<DialogWrapperProps>) {
-  const { open, overlayRef, onClose, width = 520, children } = props;
+  const { open, overlayRef, onClose: _onClose, width = 520, children } = props;
 
   useEffect(() => {
     const el = overlayRef?.current as HTMLElement | null;
@@ -21,16 +21,10 @@ export default function DialogWrapper(props: Readonly<DialogWrapperProps>) {
     // Focus the overlay for keyboard handling
     try { el.focus(); } catch { /* ignore */ }
 
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
-    const onClick = (e: MouseEvent) => {
-      if (e.target === el) onClose();
-    };
-    document.addEventListener('keydown', onKey);
-    el.addEventListener('click', onClick as EventListener);
-    return () => {
-      document.removeEventListener('keydown', onKey);
-      el.removeEventListener('click', onClick as EventListener);
-    };
+    // Do not close the wrapper on Escape key or overlay clicks —
+    // require callers to explicitly call `onClose` (usually via a Cancel button).
+    // We keep focus behavior but no automatic close handlers.
+    return undefined;
   }, [open, overlayRef]);
 
   if (!open) return null;

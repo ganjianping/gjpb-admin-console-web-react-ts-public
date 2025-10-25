@@ -36,7 +36,11 @@ export const DeleteAppSettingDialog = ({
   return (
     <Dialog
       open={open}
-      onClose={onClose}
+      onClose={(_event, reason) => {
+        if (reason === 'backdropClick' || reason === 'escapeKeyDown') return;
+        onClose();
+      }}
+      disableEscapeKeyDown
       maxWidth="sm"
       fullWidth
       slotProps={{

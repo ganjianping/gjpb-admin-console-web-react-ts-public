@@ -69,7 +69,16 @@ const VideoEditDialog: React.FC<VideoEditDialogProps> = ({ open, formData, onFor
 	};
 
 	return (
-		<Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+		<Dialog
+			open={open}
+			onClose={(_event, reason) => {
+				if (reason === 'backdropClick' || reason === 'escapeKeyDown') return;
+				onClose();
+			}}
+			disableEscapeKeyDown
+			maxWidth="sm"
+			fullWidth
+		>
 			{(loading || localSaving) && (
 				<Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 1200 }}>
 					<LinearProgress />

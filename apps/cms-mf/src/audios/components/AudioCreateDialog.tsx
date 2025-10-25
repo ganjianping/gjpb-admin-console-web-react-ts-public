@@ -149,7 +149,17 @@ const AudioCreateDialog = ({
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+    <Dialog
+      open={open}
+      onClose={(_event, reason) => {
+        // prevent closing via backdrop click or Escape key — only allow explicit Cancel button
+        if (reason === 'backdropClick' || reason === 'escapeKeyDown') return;
+        onClose();
+      }}
+      disableEscapeKeyDown
+      maxWidth="lg"
+      fullWidth
+    >
       {(loading || localSaving) && (
         <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 1 }}>
           <LinearProgress />

@@ -67,10 +67,14 @@ export const RoleDialog: React.FC<RoleDialogProps> = React.memo(({
   };
 
   return (
-    <Dialog 
-      open={open} 
-      onClose={onClose} 
-      maxWidth={actionType === 'delete' ? 'sm' : 'md'} 
+    <Dialog
+      open={open}
+      onClose={(_event, reason) => {
+        if (reason === 'backdropClick' || reason === 'escapeKeyDown') return;
+        onClose();
+      }}
+      disableEscapeKeyDown
+      maxWidth={actionType === 'delete' ? 'sm' : 'md'}
       fullWidth
       slotProps={{
         paper: {

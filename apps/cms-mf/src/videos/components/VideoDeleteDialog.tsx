@@ -16,7 +16,15 @@ const VideoDeleteDialog: React.FC<Props> = ({ open, video, loading = false, onCl
   const { t } = useTranslation();
 
   return (
-    <Dialog open={open} onClose={onClose} aria-labelledby="video-delete-dialog-title">
+    <Dialog
+      open={open}
+      onClose={(_event, reason) => {
+        if (reason === 'backdropClick' || reason === 'escapeKeyDown') return;
+        onClose();
+      }}
+      disableEscapeKeyDown
+      aria-labelledby="video-delete-dialog-title"
+    >
       <DialogTitle id="video-delete-dialog-title">{t('videos.delete')}</DialogTitle>
       <DialogContent>
         <DialogContentText>
