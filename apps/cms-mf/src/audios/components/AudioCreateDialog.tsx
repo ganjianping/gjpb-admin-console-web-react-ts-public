@@ -119,6 +119,8 @@ const AudioCreateDialog = ({
         ...( {
           file,
           name: formData.name,
+          // include subtitle from the rich-text editor
+          subtitle: (formData as any).subtitle,
           filename: formData.filename,
           coverImageFilename: formData.coverImageFilename,
           coverImageFile: formData.coverImageFile || undefined,
