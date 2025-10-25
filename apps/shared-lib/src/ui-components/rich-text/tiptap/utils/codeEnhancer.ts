@@ -2,6 +2,14 @@
 // Exposes an init function that returns a cleanup function which disconnects the observer.
 
 export function initCodeEnhancer(rootSelector = '.gjp-tiptap-editor') {
+  const isEditablePre = (pre: HTMLElement) => {
+    try {
+      return Boolean(pre.closest('[contenteditable="true"]'));
+    } catch {
+      return false;
+    }
+  };
+
   const createGutter = (linesCount: number) => {
     const gutter = document.createElement('div');
     gutter.className = 'gjp-code-gutter';
@@ -21,8 +29,8 @@ export function initCodeEnhancer(rootSelector = '.gjp-tiptap-editor') {
     btn.textContent = 'Copy';
     btn.addEventListener('click', async (e) => {
       e.stopPropagation();
-  const codeNode = content.querySelector('code') || content;
-  const codeText = (codeNode instanceof HTMLElement) ? codeNode.innerText : content.innerText;
+      const codeNode = content.querySelector('code') || content;
+      const codeText = (codeNode instanceof HTMLElement) ? codeNode.innerText : content.innerText;
       try {
         await navigator.clipboard.writeText(codeText);
         btn.textContent = 'Copied!';
@@ -56,6 +64,7 @@ export function initCodeEnhancer(rootSelector = '.gjp-tiptap-editor') {
 
   const processPre = (pre: HTMLElement) => {
     if (pre.dataset.gjpProcessed) return;
+    if (isEditablePre(pre)) return;
     const codeEl = pre.querySelector<HTMLElement>('code');
 
     const wrap = document.createElement('div');
@@ -103,7 +112,9 @@ export function initCodeEnhancer(rootSelector = '.gjp-tiptap-editor') {
 
   const attachButtons = (root: ParentNode | Element | Document = document) => {
     const pres = (root instanceof Element ? root : document).querySelectorAll<HTMLElement>('.gjp-tiptap-editor pre');
-    for (const pre of Array.from(pres)) processPre(pre);
+    for (const pre of Array.from(pres)) {
+      processPre(pre);
+    }
   };
 
   // initial attach

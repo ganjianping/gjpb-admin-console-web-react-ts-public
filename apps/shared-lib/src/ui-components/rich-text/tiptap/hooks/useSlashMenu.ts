@@ -82,6 +82,7 @@ export default function useSlashMenu(editor: Editor | null, containerRef: React.
         try { safeChainFocus(editor)?.run?.(); } catch { /* ignore */ }
         return;
       }
+      const emojiChild = flattenedActionItems.find((f) => f.id === id && f.parentId === 'emoji');
     } catch {
       // ignore and continue with other actions
     }
@@ -200,7 +201,14 @@ export default function useSlashMenu(editor: Editor | null, containerRef: React.
           if (slashPos != null) {
             const selTo = editor!.state.selection.from;
             deleteRange(editor, slashPos - 1, selTo);
-            try { editor?.chain().focus().setNode('codeBlock').run(); } catch { /* ignore */ }
+            try {
+              if ((editor as any)?.loadCodeLanguage) {
+                try { (editor as any).loadCodeLanguage('plaintext'); } catch { /* ignore */ }
+              }
+              editor?.chain().focus().setNode('codeBlock', { language: 'plaintext' }).run();
+            } catch {
+              try { editor?.chain().focus().setNode('codeBlock').run(); } catch { /* ignore */ }
+            }
           }
         });
         break;

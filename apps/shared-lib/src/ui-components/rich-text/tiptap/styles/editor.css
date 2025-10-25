@@ -61,6 +61,60 @@
   color: #0f172a;
 }
 
+.gjp-tiptap-editor pre code.hljs,
+.gjp-tiptap-editor pre code[class*="language-"] {
+  display: block;
+  color: #0f172a;
+}
+
+.gjp-tiptap-editor pre .hljs-comment,
+.gjp-tiptap-editor pre .hljs-quote {
+  color: #64748b;
+  font-style: italic;
+}
+
+.gjp-tiptap-editor pre .hljs-keyword,
+.gjp-tiptap-editor pre .hljs-selector-tag,
+.gjp-tiptap-editor pre .hljs-subst {
+  color: #2563eb;
+}
+
+.gjp-tiptap-editor pre .hljs-number,
+.gjp-tiptap-editor pre .hljs-literal,
+.gjp-tiptap-editor pre .hljs-variable,
+.gjp-tiptap-editor pre .hljs-template-variable {
+  color: #db2777;
+}
+
+.gjp-tiptap-editor pre .hljs-string,
+.gjp-tiptap-editor pre .hljs-doctag {
+  color: #16a34a;
+}
+
+.gjp-tiptap-editor pre .hljs-title,
+.gjp-tiptap-editor pre .hljs-section,
+.gjp-tiptap-editor pre .hljs-selector-id,
+.gjp-tiptap-editor pre .hljs-selector-class {
+  color: #8b5cf6;
+}
+
+.gjp-tiptap-editor pre .hljs-meta {
+  color: #0ea5e9;
+}
+
+.gjp-tiptap-editor pre .hljs-built_in,
+.gjp-tiptap-editor pre .hljs-builtin-name {
+  color: #f97316;
+}
+
+.gjp-tiptap-editor pre .hljs-emphasis {
+  font-style: italic;
+}
+
+.gjp-tiptap-editor pre .hljs-strong {
+  font-weight: 600;
+}
+
 .gjp-code-copy-btn {
   position: absolute;
   top: 8px;
