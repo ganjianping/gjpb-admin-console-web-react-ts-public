@@ -28,6 +28,7 @@ import json from 'highlight.js/lib/languages/json';
 import bash from 'highlight.js/lib/languages/bash';
 import Dropcursor from '@tiptap/extension-dropcursor';
 import Gapcursor from '@tiptap/extension-gapcursor';
+import Youtube from '../extensions/Youtube';
 
 type UseTiptapEditorArgs = {
   value?: string;
@@ -148,6 +149,8 @@ export default function useTiptapEditor({ value = '', onChange, placeholder = 'E
           class: 'gjp-code-block',
         },
       }),
+      // Register the YouTube node so embeds can be inserted as structured nodes
+      Youtube,
     ],
     content: value,
     onUpdate: ({ editor }: { editor: any }) => {

@@ -57,4 +57,5 @@ export const defaultMenuItems: MenuItem[] = [
   { id: 'image', label: 'Image', icon: ImageIcon },
   { id: 'table', label: 'Table', icon: TableIcon },
   { id: 'link', label: 'Link', icon: LinkIcon },
+  { id: 'youtube', label: 'YouTube video' },
 ];

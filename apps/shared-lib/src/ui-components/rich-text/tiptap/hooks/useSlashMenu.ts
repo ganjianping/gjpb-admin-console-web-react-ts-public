@@ -230,6 +230,14 @@ export default function useSlashMenu(editor: Editor | null, containerRef: React.
           insertTableFallback(editor, 3, 3, true);
         });
         break;
+      case 'youtube':
+        applyAndClose(() => {
+          if (slashPos != null) {
+            const selTo = editor!.state.selection.from;
+            deleteRange(editor, slashPos - 1, selTo);
+          }
+        });
+        break;
       case 'link':
         applyAndClose(() => {
           if (slashPos != null) {

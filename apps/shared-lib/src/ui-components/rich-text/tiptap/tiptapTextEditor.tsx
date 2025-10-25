@@ -7,6 +7,7 @@ import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 // FloatingMenu from @tiptap/react isn't available in this build; render our own absolute menu
 import ImageDialog from './dialogs/ImageDialog';
 import LinkDialog from './dialogs/LinkDialog';
+import YoutubeDialog from './dialogs/YoutubeDialog';
 import { initCodeEnhancer } from './utils/codeEnhancer';
 import './styles/editor.css';
 // icons are provided by menuItems; keep this file focused
@@ -71,6 +72,11 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
   const [linkForm, setLinkForm] = useState({ url: '', text: '' });
   const linkOverlayRef = useRef<HTMLDialogElement | null>(null);
   const [linkSelection, setLinkSelection] = useState<{ from: number; to: number } | null>(null);
+  // Youtube dialog state (host-managed for preview + validation)
+  const [youtubeDialogOpen, setYoutubeDialogOpen] = useState(false);
+  const [youtubeForm, setYoutubeForm] = useState({ url: '', start: '', title: '' });
+  const youtubeOverlayRef = useRef<HTMLDialogElement | null>(null);
+  const [youtubeSelection, setYoutubeSelection] = useState<{ from: number; to: number } | null>(null);
 
   // Slash menu handled by `useSlashMenu` (caret coords, query, keyboard, actions); UI is `SlashMenu`.
   const {
@@ -126,6 +132,23 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
     return () => document.removeEventListener('keydown', onKeyLink);
   }, [linkDialogOpen]);
 
+  useEffect(() => {
+    const el = youtubeOverlayRef.current;
+    if (!el) return;
+    const otherOpen = document.querySelector('dialog[open]');
+    if (youtubeDialogOpen) {
+      if (!otherOpen || otherOpen === el) {
+        try { el.focus(); } catch { /* ignore */ }
+      }
+    }
+  }, [youtubeDialogOpen]);
+
+  useEffect(() => {
+    const onKeyYoutube = (e: KeyboardEvent) => { if (e.key === 'Escape') setYoutubeDialogOpen(false); };
+    if (youtubeDialogOpen) document.addEventListener('keydown', onKeyYoutube);
+    return () => document.removeEventListener('keydown', onKeyYoutube);
+  }, [youtubeDialogOpen]);
+
   // Listen for a custom event to open the link dialog (toolbar buttons emit this).
   useEffect(() => {
     const handler = (e: Event) => {
@@ -179,17 +202,27 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
       setImageForm({ url: '', width: '', height: '', alt: '' });
       setImageDialogOpen(true);
     }
-    if (id === 'link') {
-      try {
-        const s = editor.state.selection;
-        setLinkSelection({ from: (s as any).from, to: (s as any).to });
-      } catch {
-        setLinkSelection(null);
-      }
-      setLinkForm({ url: 'https://', text: '' });
-      setLinkDialogOpen(true);
+  if (id === 'link') {
+    try {
+      const s = editor.state.selection;
+      setLinkSelection({ from: (s as any).from, to: (s as any).to });
+    } catch {
+      setLinkSelection(null);
     }
-  };
+    setLinkForm({ url: 'https://', text: '' });
+    setLinkDialogOpen(true);
+  }
+  if (id === 'youtube') {
+    try {
+      const s = editor.state.selection;
+      setYoutubeSelection({ from: (s as any).from, to: (s as any).to });
+    } catch {
+      setYoutubeSelection(null);
+    }
+    setYoutubeForm({ url: '', start: '', title: '' });
+    setYoutubeDialogOpen(true);
+  }
+};
 
   // Render the editor container, editor content, toolbars, menus, and dialogs.
   return (
@@ -303,6 +336,16 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
           setForm={setLinkForm}
           selection={linkSelection}
           onClose={() => setLinkDialogOpen(false)}
+        />
+
+        <YoutubeDialog
+          editor={editor}
+          open={youtubeDialogOpen}
+          overlayRef={youtubeOverlayRef}
+          form={youtubeForm}
+          setForm={setYoutubeForm}
+          selection={youtubeSelection}
+          onClose={() => setYoutubeDialogOpen(false)}
         />
     </div>
   </div>
