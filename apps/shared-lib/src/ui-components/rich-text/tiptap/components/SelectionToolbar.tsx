@@ -12,6 +12,8 @@ export default function SelectionToolbar(props: Readonly<Props>) {
   // local UI state for color/highlight pickers
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [showHighlightPicker, setShowHighlightPicker] = useState(false);
+  const [showCodePicker, setShowCodePicker] = useState(false);
+  const [codeLang, setCodeLang] = useState('javascript');
 
   if (!selToolbarOpen || !editor) return null;
 
@@ -66,6 +68,48 @@ export default function SelectionToolbar(props: Readonly<Props>) {
       >
         <code>{'</>'}</code>
       </button>
+
+      {/* Code block insert with language selector (lazy-loads highlight.js lang on demand) */}
+      <div style={{ position: 'relative' }}>
+        <button
+          type="button"
+          title="Insert code block"
+          onMouseDown={(e) => { e.preventDefault(); setShowCodePicker((s:any) => !s); setShowColorPicker(false); setShowHighlightPicker(false); }}
+        >
+          {'</>\u25BE'}
+        </button>
+        {showCodePicker && (
+          <div className="gjp-code-palette" style={{ position: 'absolute', right: 0, top: '36px', background: '#fff', border: '1px solid #e2e8f0', padding: 8, zIndex: 80 }}>
+            <label style={{ display: 'block', marginBottom: 6 }}>
+              Language
+              <select value={codeLang} onChange={(ev) => setCodeLang(ev.target.value)} style={{ marginLeft: 8 }}>
+                {['javascript','typescript','python','java','json','bash','html','markdown','go','php','sql','xml'].map((l) => (
+                  <option key={l} value={l}>{l}</option>
+                ))}
+              </select>
+            </label>
+            <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+              <button type="button" onMouseDown={(ev) => { ev.preventDefault(); setShowCodePicker(false); }}>Cancel</button>
+              <button
+                type="button"
+                onMouseDown={async (ev) => {
+                  ev.preventDefault();
+                  try {
+                    // ensure language is loaded in lowlight via editor helper
+                    if ((editor as any)?.loadCodeLanguage) {
+                      try { await (editor as any).loadCodeLanguage(codeLang); } catch {}
+                    }
+                    try { (editor.chain() as any).focus().setCodeBlock({ language: codeLang }).run(); } catch { try { editor.chain().focus().setNode('codeBlock').run(); } catch {} }
+                  } catch {}
+                  setShowCodePicker(false);
+                }}
+              >
+                Insert
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Text color picker */}
       <div style={{ position: 'relative' }}>
