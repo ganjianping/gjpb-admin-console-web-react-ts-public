@@ -26,6 +26,7 @@ import ts from 'highlight.js/lib/languages/typescript';
 import css from 'highlight.js/lib/languages/css';
 import json from 'highlight.js/lib/languages/json';
 import bash from 'highlight.js/lib/languages/bash';
+import plaintext from 'highlight.js/lib/languages/plaintext';
 import Dropcursor from '@tiptap/extension-dropcursor';
 import Gapcursor from '@tiptap/extension-gapcursor';
 import Youtube from '../extensions/Youtube';
@@ -78,8 +79,8 @@ const resolveLanguage = (langIn: string) => {
 export default function useTiptapEditor({ value = '', onChange, placeholder = 'Enter rich text...', initialRows = 3 }: UseTiptapEditorArgs) {
   // Memoise lowlight so we don't recreate the registry on every render.
   const lowlight = useMemo(() => {
-    const instance = createLowlight();
-    instance.register({ javascript: js as any, typescript: ts as any, css: css as any, json: json as any, bash: bash as any });
+  const instance = createLowlight();
+  instance.register({ javascript: js as any, typescript: ts as any, css: css as any, json: json as any, bash: bash as any, plaintext: plaintext as any });
     return instance;
   }, []);
 
