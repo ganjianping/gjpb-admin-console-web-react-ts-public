@@ -24,6 +24,16 @@ import { createLowlight } from 'lowlight';
 import js from 'highlight.js/lib/languages/javascript';
 import ts from 'highlight.js/lib/languages/typescript';
 import css from 'highlight.js/lib/languages/css';
+import python from 'highlight.js/lib/languages/python';
+import java from 'highlight.js/lib/languages/java';
+import json from 'highlight.js/lib/languages/json';
+import bash from 'highlight.js/lib/languages/bash';
+import html from 'highlight.js/lib/languages/xml';
+import markdown from 'highlight.js/lib/languages/markdown';
+import go from 'highlight.js/lib/languages/go';
+import php from 'highlight.js/lib/languages/php';
+import sql from 'highlight.js/lib/languages/sql';
+import xml from 'highlight.js/lib/languages/xml';
 import Dropcursor from '@tiptap/extension-dropcursor';
 import Gapcursor from '@tiptap/extension-gapcursor';
 
@@ -37,7 +47,22 @@ type UseTiptapEditorArgs = {
 export default function useTiptapEditor({ value = '', onChange, placeholder = 'Enter rich text...', initialRows = 3 }: UseTiptapEditorArgs) {
   // create a lowlight instance and register a few common languages (keep bundle minimal)
   const lowlight = createLowlight();
-  lowlight.register({ javascript: js as any, typescript: ts as any, css: css as any });
+  // Register a set of common languages for highlighting. Keep bundle reasonable — add more on demand.
+  lowlight.register({
+    javascript: js as any,
+    typescript: ts as any,
+    css: css as any,
+    python: python as any,
+    java: java as any,
+    json: json as any,
+    bash: bash as any,
+    html: html as any,
+    markdown: markdown as any,
+    go: go as any,
+    php: php as any,
+    sql: sql as any,
+    xml: xml as any,
+  });
 
   const editor = useEditor({
     extensions: [
