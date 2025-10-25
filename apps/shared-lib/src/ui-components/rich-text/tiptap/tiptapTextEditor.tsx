@@ -74,7 +74,7 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
   const [linkSelection, setLinkSelection] = useState<{ from: number; to: number } | null>(null);
   // Youtube dialog state (host-managed for preview + validation)
   const [youtubeDialogOpen, setYoutubeDialogOpen] = useState(false);
-  const [youtubeForm, setYoutubeForm] = useState({ url: '', start: '', title: '' });
+  const [youtubeForm, setYoutubeForm] = useState({ url: '', width: '', height: '' });
   const youtubeOverlayRef = useRef<HTMLDialogElement | null>(null);
   const [youtubeSelection, setYoutubeSelection] = useState<{ from: number; to: number } | null>(null);
 
@@ -202,27 +202,27 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
       setImageForm({ url: '', width: '', height: '', alt: '' });
       setImageDialogOpen(true);
     }
-  if (id === 'link') {
-    try {
-      const s = editor.state.selection;
-      setLinkSelection({ from: (s as any).from, to: (s as any).to });
-    } catch {
-      setLinkSelection(null);
+    if (id === 'link') {
+      try {
+        const s = editor.state.selection;
+        setLinkSelection({ from: (s as any).from, to: (s as any).to });
+      } catch {
+        setLinkSelection(null);
+      }
+      setLinkForm({ url: 'https://', text: '' });
+      setLinkDialogOpen(true);
     }
-    setLinkForm({ url: 'https://', text: '' });
-    setLinkDialogOpen(true);
-  }
-  if (id === 'youtube') {
-    try {
-      const s = editor.state.selection;
-      setYoutubeSelection({ from: (s as any).from, to: (s as any).to });
-    } catch {
-      setYoutubeSelection(null);
+    if (id === 'youtube') {
+      try {
+        const s = editor.state.selection;
+        setYoutubeSelection({ from: (s as any).from, to: (s as any).to });
+      } catch {
+        setYoutubeSelection(null);
+      }
+      setYoutubeForm({ url: '', width: '', height: '' });
+      setYoutubeDialogOpen(true);
     }
-    setYoutubeForm({ url: '', start: '', title: '' });
-    setYoutubeDialogOpen(true);
-  }
-};
+  };
 
   // Render the editor container, editor content, toolbars, menus, and dialogs.
   return (
