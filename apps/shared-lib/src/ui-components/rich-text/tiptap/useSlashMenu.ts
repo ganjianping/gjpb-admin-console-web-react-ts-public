@@ -7,7 +7,7 @@ type UseSlashMenuReturn = {
   slashOpen: boolean;
   menuCoords: { left: number; top: number } | null;
   menuItems: MenuItem[];
-  filteredItems: MenuItem[];
+  filteredItems: Array<{ id: string; label: string; parentId?: string; item: MenuItem }>;
   selectedIndex: number;
   openSubmenu: string | null;
   setOpenSubmenu: (s: string | null) => void;
@@ -27,8 +27,16 @@ export default function useSlashMenu(editor: Editor | null, containerRef: React.
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
 
   const menuItems = menuItemsIn;
-  const flattenedActionItems = menuItems.flatMap((it) => (it.children ? it.children : it));
-  const filteredItems = flattenedActionItems.filter((it: any) => it.label.toLowerCase().includes(slashQuery.trim().toLowerCase()));
+  // Build a flattened list that keeps track of parent group id for child items.
+  // Each entry: { id, label, parentId?: string, item }
+  type FlatItem = { id: string; label: string; parentId?: string; item: MenuItem };
+  const flattenedActionItems: FlatItem[] = menuItems.flatMap((it) => {
+    if (it.children && Array.isArray(it.children)) {
+      return (it.children as MenuItem[]).map((ch) => ({ id: ch.id, label: ch.label, parentId: it.id, item: ch }));
+    }
+    return [{ id: it.id, label: it.label, parentId: undefined, item: it } as FlatItem];
+  });
+  const filteredItems: FlatItem[] = flattenedActionItems.filter((it) => it.label.toLowerCase().includes(slashQuery.trim().toLowerCase()));
 
   useEffect(() => { setSelectedIndex(0); }, [slashQuery, slashOpen]);
 
@@ -213,6 +221,21 @@ export default function useSlashMenu(editor: Editor | null, containerRef: React.
     if (e.key === 'ArrowUp') {
       e.preventDefault?.();
       setSelectedIndex((i) => Math.max(0, i - 1));
+      return true;
+    }
+    if (e.key === 'ArrowRight') {
+      // Open the parent submenu if current selection belongs to a group
+      e.preventDefault?.();
+      const itm = filteredItems[selectedIndex] || filteredItems[0];
+      if (itm && itm.parentId) {
+        setOpenSubmenu(itm.parentId);
+      }
+      return true;
+    }
+    if (e.key === 'ArrowLeft') {
+      // Close any open submenu
+      e.preventDefault?.();
+      if (openSubmenu) setOpenSubmenu(null);
       return true;
     }
     if (e.key === 'Enter') {
