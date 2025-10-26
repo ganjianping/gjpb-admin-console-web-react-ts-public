@@ -178,10 +178,34 @@ const ArticleViewDialog = ({ open, article, onClose, onEdit }: ArticleViewDialog
                     </Tooltip>
                   </Box>
                 )}
+
+                {article.coverImageOriginalUrl && (
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                    <Typography variant="caption" sx={{ color: 'text.secondary' }}>{t('articles.form.coverImageOriginalUrl')}:</Typography>
+                    <Link href={article.coverImageOriginalUrl} target="_blank" rel="noopener noreferrer" sx={{ display: 'flex', alignItems: 'center', gap: 0.5, textDecoration: 'none', color: 'primary.main', wordBreak: 'break-all', flex: 1, fontFamily: 'monospace', fontSize: '0.875rem', '&:hover': { textDecoration: 'underline' } }}>
+                      <ExternalLink size={14} />
+                      <Typography variant="body2" sx={{ fontFamily: 'inherit', fontSize: 'inherit' }}>{article.coverImageOriginalUrl}</Typography>
+                    </Link>
+                    <Tooltip title={copiedField === 'coverImageOriginalUrl' ? t('articles.messages.coverImageCopied') : t('articles.actions.copy')}>
+                      <IconButton size="small" onClick={() => handleCopy(article.coverImageOriginalUrl || '', 'coverImageOriginalUrl')} sx={{ ml: 0.5 }}>
+                        {copiedField === 'coverImageOriginalUrl' ? <Check size={16} /> : <Copy size={16} />}
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
+                )
+
+                }
+                
+
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
+                  {article.tags?.split(',').filter(Boolean).map((tag) => (
+                      <Chip key={tag.trim()} icon={<Tag size={14} />} label={tag.trim()} size="small" variant="outlined" sx={{ fontWeight: 500 }} />
+                  ))}
+                </Box>
               </Box>
             </CardContent>
           </Card>
-          
+
           {rawContent ? (
             <Box>
               {/* outer boxed panel for content */}
@@ -238,32 +262,12 @@ const ArticleViewDialog = ({ open, article, onClose, onEdit }: ArticleViewDialog
                   <Typography variant="body2" sx={{ fontFamily: 'monospace', fontSize: '0.875rem', wordBreak: 'break-all', color: 'text.primary' }}>{article.id ?? '-'}</Typography>
                 </Box>
                 <Box>
-                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>{t('articles.form.title')}</Typography>
-                  <Typography variant="body2" sx={{ fontWeight: 600 }}>{article.title}</Typography>
-                </Box>
-                <Box sx={{ gridColumn: '1 / -1' }}>
-                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>{t('articles.form.summary')}</Typography>
-                  <Typography variant="body2">{article.summary || '-'}</Typography>
-                </Box>
-                <Box>
-                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>{t('articles.form.tags')}</Typography>
-                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
-                    {article.tags?.split(',').filter(Boolean).map((tag) => (
-                      <Chip key={tag.trim()} icon={<Tag size={14} />} label={tag.trim()} size="small" variant="outlined" sx={{ fontWeight: 500 }} />
-                    ))}
-                  </Box>
-                </Box>
-                <Box>
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>{t('articles.form.sourceName')}</Typography>
                   <Typography variant="body2" sx={{ fontWeight: 600 }}>{article.sourceName || '-'}</Typography>
                 </Box>
                 <Box>
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>{t('articles.form.coverImageFilename')}</Typography>
                   <Typography variant="body2" sx={{ fontFamily: 'monospace', fontSize: '0.875rem', wordBreak: 'break-all' }}>{article.coverImageFilename || '-'}</Typography>
-                </Box>
-                <Box>
-                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>{t('articles.form.coverImageOriginalUrl')}</Typography>
-                  <Typography variant="body2" sx={{ fontFamily: 'monospace', fontSize: '0.875rem', wordBreak: 'break-all' }}>{article.coverImageOriginalUrl || '-'}</Typography>
                 </Box>
                 <Box>
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Language</Typography>

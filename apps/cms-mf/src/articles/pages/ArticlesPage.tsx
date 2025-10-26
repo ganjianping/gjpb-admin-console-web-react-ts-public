@@ -16,7 +16,7 @@ import { useArticles } from '../hooks/useArticles';
 import { useArticleDialog } from '../hooks/useArticleDialog';
 import { useArticleSearch } from '../hooks/useArticleSearch';
 import { articleService } from '../services/articleService';
-import { getFullArticleCoverImageUrl } from '../utils/getFullArticleImageUrl';
+import { getFullArticleCoverImageUrl } from '../utils/getFullArticleCoverImageUrl';
 
 const ArticlesPage: React.FC = () => {
   const { allArticles, filteredArticles, setFilteredArticles, loading, loadArticles } = useArticles();

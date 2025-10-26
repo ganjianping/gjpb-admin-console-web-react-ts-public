@@ -57,6 +57,11 @@ const VideosPage = lazy(() =>
     default: module.default,
   })),
 );
+const ArticlesPage = lazy(() =>
+  import("../../../../cms-mf/src/articles/pages/ArticlesPage").then((module) => ({
+    default: module.default,
+  })),
+);
 const AudiosPage = lazy(() =>
   import("../../../../cms-mf/src/audios/pages/AudiosPage").then((module) => ({
     default: module.default,
@@ -320,6 +325,16 @@ const AppRoutes = () => {
             element={
               <Suspense fallback={<AppLoading />}>
                 <VideosPage />
+              </Suspense>
+            }
+          />
+
+          {/* Articles */}
+          <Route
+            path="articles"
+            element={
+              <Suspense fallback={<AppLoading />}>
+                <ArticlesPage />
               </Suspense>
             }
           />

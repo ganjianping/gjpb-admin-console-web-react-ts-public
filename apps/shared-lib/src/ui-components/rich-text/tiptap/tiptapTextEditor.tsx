@@ -34,10 +34,8 @@ interface TiptapTextEditorProps {
 }
 
 export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>) {
-  const { value = '', onChange, placeholder = 'Enter rich text...', lineHeight = 1.4, initialRows = 3 } = props;
+  const { value = '', onChange, placeholder = 'Enter rich text...', lineHeight = 1.8, initialRows = 3 } = props;
   const editor = useTiptapEditor({ value, onChange, placeholder, initialRows });
-
-  
 
   const editorContainerRef = useRef<HTMLDivElement | null>(null);
   // Fullscreen-like (in-page full-window) state: use a fixed-position overlay that stays in the same browser window/screen

@@ -76,7 +76,7 @@ const resolveLanguage = (langIn: string) => {
   return key;
 };
 
-export default function useTiptapEditor({ value = '', onChange, placeholder = 'Enter rich text...', initialRows = 3 }: UseTiptapEditorArgs) {
+export default function useTiptapEditor({ value = '', onChange, placeholder = 'Enter rich text...', initialRows = 1 }: UseTiptapEditorArgs) {
   // Memoise lowlight so we don't recreate the registry on every render.
   const lowlight = useMemo(() => {
   const instance = createLowlight();

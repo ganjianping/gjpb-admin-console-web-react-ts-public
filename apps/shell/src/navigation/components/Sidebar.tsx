@@ -24,6 +24,7 @@ import {
   Image,
   Film,
   Music,
+  Newspaper,
   Badge,
   ChevronLeft,
   ChevronRight,
@@ -129,6 +130,12 @@ const Sidebar = ({ drawerWidth, collapsedWidth, open, onClose, variant }: Sideba
       title: t('videos.title'),
       path: '/videos',
       icon: Film,
+    },
+    {
+      key: 'articles',
+      title: t('articles.title'),
+      path: '/articles',
+      icon: Newspaper,
     },
     {
       key: 'audios',

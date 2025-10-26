@@ -7,7 +7,7 @@ import { DataTable, createColumnHelper, createStatusChip } from '../../../../sha
 import type { Article } from '../types/article.types';
 import { useArticleActionMenu } from '../hooks/useArticleActionMenu';
 import { STATUS_MAPS } from '../constants';
-import { getFullArticleCoverImageUrl } from '../utils/getFullArticleImageUrl';
+import { getFullArticleCoverImageUrl } from '../utils/getFullArticleCoverImageUrl';
 
 function TitleCell({ info }: Readonly<{ info: any }>) {
   const article = info.row.original as Article;

@@ -77,6 +77,9 @@ const shellResources = {
       images: { 
         title: 'Images',
       },
+      articles: {
+        title: 'Articles',
+      },
       audios: {
         title: 'Audios',
       },
@@ -171,8 +174,11 @@ const shellResources = {
       appSettings: {
         title: '应用设置',
       },
-      images: {
+      images: { 
         title: '图片管理',
+      },
+      articles: {
+        title: '文章管理',
       },
       audios: {
         title: '音频管理',
