@@ -24,10 +24,6 @@ export interface CreateFileRequest {
   lang: string;
   displayOrder?: number;
   isActive?: boolean;
-  filename?: string;
-  extension?: string;
-  mimeType?: string;
-  sizeBytes?: number;
 }
 
 // Create file request by file upload
@@ -39,10 +35,6 @@ export interface CreateFileByUploadRequest {
   lang: string;
   displayOrder?: number;
   isActive?: boolean;
-  filename?: string;
-  extension?: string;
-  mimeType?: string;
-  sizeBytes?: number;
 }
 
 // Update file request
@@ -88,10 +80,6 @@ class FileService {
     formData.append('sourceName', data.sourceName);
     formData.append('tags', data.tags);
     formData.append('lang', data.lang);
-    if (data.filename) formData.append('filename', data.filename);
-    if (data.extension) formData.append('extension', data.extension);
-    if (data.mimeType) formData.append('mimeType', data.mimeType);
-    if (data.sizeBytes !== undefined) formData.append('sizeBytes', String(data.sizeBytes));
     if (data.displayOrder !== undefined) formData.append('displayOrder', String(data.displayOrder));
     if (data.isActive !== undefined) formData.append('isActive', String(data.isActive));
     // Use dedicated upload endpoint for file uploads

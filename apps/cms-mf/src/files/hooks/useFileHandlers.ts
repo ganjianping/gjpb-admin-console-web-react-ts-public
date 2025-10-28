@@ -30,10 +30,6 @@ export const useFileHandlers = ({
           lang: formData.lang,
           displayOrder: formData.displayOrder,
           isActive: formData.isActive,
-          filename: formData.filename,
-          extension: formData.extension,
-          mimeType: formData.mimeType,
-          sizeBytes: formData.sizeBytes,
         };
         response = await fileService.createFileByUpload(data);
       } else {
@@ -45,10 +41,6 @@ export const useFileHandlers = ({
           lang: formData.lang,
           displayOrder: formData.displayOrder,
           isActive: formData.isActive,
-          filename: formData.filename,
-          extension: formData.extension,
-          mimeType: formData.mimeType,
-          sizeBytes: formData.sizeBytes,
         };
         response = await fileService.createFile(data);
       }

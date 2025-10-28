@@ -10,7 +10,6 @@ import {
   Card,
   CardContent,
   Link,
-  Avatar,
   IconButton,
   Tooltip,
   Stack,
@@ -21,7 +20,6 @@ import { format, parseISO } from 'date-fns';
 import '../i18n/translations';
 import {
   Eye,
-  File as LucideFile,
   Edit,
   Tag,
   CheckCircle2,

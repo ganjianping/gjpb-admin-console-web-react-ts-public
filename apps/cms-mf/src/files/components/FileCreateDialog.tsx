@@ -21,7 +21,7 @@ import {
   LinearProgress,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useRef } from 'react';
 import '../i18n/translations';
 import { Plus, Upload } from 'lucide-react';
 import type { FileFormData } from '../types/file.types';
@@ -47,6 +47,7 @@ const FileCreateDialog = ({
   formErrors,
 }: FileCreateDialogProps) => {
   const { t, i18n } = useTranslation();
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const availableTags = useMemo(() => {
     try {
@@ -158,31 +159,28 @@ const FileCreateDialog = ({
             <Box>
               <Button
                 variant="outlined"
-                component="label"
                 startIcon={<Upload size={20} />}
                 fullWidth
                 sx={{ mb: 1 }}
+                onClick={() => fileInputRef.current?.click()}
               >
                 {formData.file ? formData.file.name : t('files.form.chooseFile')}
-                <input
-                  type="file"
-                  hidden
-                  onChange={(e) => {
-                    const input = e.currentTarget as HTMLInputElement;
-                    const file = input.files?.[0];
-                    if (file) {
-                      onFormChange('file', file);
-                      onFormChange('filename', file.name);
-                      onFormChange('mimeType', file.type || '');
-                      onFormChange('sizeBytes', file.size);
-                      const extension = file.name.includes('.') ? file.name.split('.').pop() || '' : '';
-                      onFormChange('extension', extension);
-                    }
-                    // Clear the input so selecting the same file again will trigger change event
-                    input.value = '';
-                  }}
-                />
               </Button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                hidden
+                onChange={(e) => {
+                  const input = e.target as HTMLInputElement;
+                  const file = input.files?.[0];
+                  if (file) {
+                    onFormChange('file', file);
+                  }
+                  if (fileInputRef.current) {
+                    fileInputRef.current.value = '';
+                  }
+                }}
+              />
               {formData.file && (
                 <Alert severity="info" sx={{ mt: 1 }}>
                   {t('files.form.selectedFile', {
