@@ -21,6 +21,7 @@ import {
   Activity,
   Settings,
   Globe,
+  FileText,
   Image,
   Film,
   Music,
@@ -118,6 +119,12 @@ const Sidebar = ({ drawerWidth, collapsedWidth, open, onClose, variant }: Sideba
       path: '/logos',
       icon: Badge,
       roles: ['ADMIN', 'SUPER_ADMIN'],
+    },
+    {
+      key: 'files',
+      title: t('files.title'),
+      path: '/files',
+      icon: FileText,
     },
     {
       key: 'images',

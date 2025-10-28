@@ -71,6 +71,9 @@ const shellResources = {
       logos: {
         title: 'Logos',
       },
+      files: {
+        title: 'Files',
+      },
       appSettings: {
         title: 'App Settings',
       },
@@ -170,6 +173,9 @@ const shellResources = {
       },
       logos: {
         title: '徽标管理',
+      },
+      files: {
+        title: '文件管理',
       },
       appSettings: {
         title: '应用设置',

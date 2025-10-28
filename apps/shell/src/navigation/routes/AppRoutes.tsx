@@ -47,6 +47,11 @@ const LogosPage = lazy(() =>
     default: module.default,
   })),
 );
+const FilesPage = lazy(() =>
+  import("../../../../cms-mf/src/files/pages/FilesPage").then((module) => ({
+    default: module.default,
+  })),
+);
 const ImagesPage = lazy(() =>
   import("../../../../cms-mf/src/images/pages/ImagesPage").then((module) => ({
     default: module.default,
@@ -307,6 +312,15 @@ const AppRoutes = () => {
             element={
               <Suspense fallback={<AppLoading />}>
                 <LogosPage />
+              </Suspense>
+            }
+          />
+          {/* Files */}
+          <Route
+            path="files"
+            element={
+              <Suspense fallback={<AppLoading />}>
+                <FilesPage />
               </Suspense>
             }
           />
