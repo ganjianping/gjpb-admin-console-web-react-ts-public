@@ -102,6 +102,27 @@ const FileCreateDialog = ({
     if (!loading) setLocalSaving(false);
   }, [loading]);
 
+  // If user enters an originalUrl and filename is empty, try to infer a filename
+  useEffect(() => {
+    if (formData.uploadMethod === 'url' && formData.originalUrl && !formData.filename) {
+      try {
+        const parsed = new URL(formData.originalUrl);
+  const segments = parsed.pathname.split('/').filter(Boolean);
+  const last = segments.at(-1) || '';
+  const decoded = last ? decodeURIComponent(last) : '';
+        if (decoded) {
+          onFormChange('filename', decoded);
+        }
+      } catch (err) {
+        // invalid URL — log for debugging but don't block the user
+        // eslint-disable-next-line no-console
+        console.debug('[FileCreateDialog] failed to parse originalUrl for filename', err);
+      }
+    }
+    // we only want to run when user switches to url upload or originalUrl changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData.uploadMethod, formData.originalUrl]);
+
   return (
     <Dialog
       open={open}
@@ -198,15 +219,27 @@ const FileCreateDialog = ({
           )}
 
           {formData.uploadMethod === 'url' && (
-            <TextField
-              label={t('files.form.originalUrl')}
-              value={formData.originalUrl}
-              onChange={(e) => onFormChange('originalUrl', e.target.value)}
-              fullWidth
-              error={!!getFieldError('originalUrl')}
-              helperText={getFieldError('originalUrl')}
-              placeholder="https://example.com/file.pdf"
-            />
+            <>
+              <TextField
+                label={t('files.form.originalUrl')}
+                value={formData.originalUrl}
+                onChange={(e) => onFormChange('originalUrl', e.target.value)}
+                fullWidth
+                error={!!getFieldError('originalUrl')}
+                helperText={getFieldError('originalUrl')}
+                placeholder="https://example.com/file.pdf"
+                sx={{ mb: 1 }}
+              />
+
+              <TextField
+                label={t('files.form.filename')}
+                value={formData.filename}
+                onChange={(e) => onFormChange('filename', e.target.value)}
+                fullWidth
+                error={!!getFieldError('filename')}
+                helperText={getFieldError('filename')}
+              />
+            </>
           )}
 
           <FormControl fullWidth error={!!getFieldError('tags')}>

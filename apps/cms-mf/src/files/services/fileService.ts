@@ -20,6 +20,7 @@ export interface CreateFileRequest {
   name: string;
   originalUrl: string;
   sourceName: string;
+  filename?: string;
   tags: string;
   lang: string;
   displayOrder?: number;

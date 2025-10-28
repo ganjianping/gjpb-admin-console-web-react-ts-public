@@ -37,6 +37,7 @@ export const useFileHandlers = ({
           name: formData.name,
           originalUrl: formData.originalUrl,
           sourceName: formData.sourceName,
+          filename: formData.filename,
           tags: formData.tags,
           lang: formData.lang,
           displayOrder: formData.displayOrder,
