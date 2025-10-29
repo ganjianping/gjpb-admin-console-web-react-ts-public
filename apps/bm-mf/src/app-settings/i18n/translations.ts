@@ -64,6 +64,7 @@ const enTranslations = {
       deleteSuccess: 'App setting deleted successfully',
       deleteConfirm: 'Are you sure you want to delete this app setting?',
       deleteWarning: 'This action cannot be undone.',
+      copied: 'Copied',
     },
     errors: {
       loadFailed: 'Failed to load app settings',
@@ -82,6 +83,22 @@ const enTranslations = {
       nameMinLength: 'Setting name must be at least 2 characters',
       nameMaxLength: 'Setting name must be less than 100 characters',
       valueMaxLength: 'Setting value must be less than 1000 characters',
+    },
+    viewDialog: {
+      lang: 'Language',
+      flags: 'Flags',
+      createdAt: 'Created At',
+      updatedAt: 'Updated At',
+      createdBy: 'Created By',
+      updatedBy: 'Updated By',
+    },
+    flags: {
+      system: 'System',
+      public: 'Public',
+    },
+    languages: {
+      EN: 'English',
+      ZH: '中文',
     },
   },
 };
@@ -150,6 +167,7 @@ const zhTranslations = {
       deleteSuccess: '应用设置删除成功',
       deleteConfirm: '您确定要删除此应用设置吗？',
       deleteWarning: '此操作不能撤销。',
+      copied: '已复制',
     },
     errors: {
       loadFailed: '加载应用设置失败',
@@ -169,6 +187,22 @@ const zhTranslations = {
       nameMaxLength: '设置名称必须少于100个字符',
       valueMaxLength: '设置值必须少于1000个字符',
     },
+    viewDialog: {
+      lang: '语言',
+      flags: '标记',
+      createdAt: '创建时间',
+      updatedAt: '更新时间',
+      createdBy: '创建者',
+      updatedBy: '更新者',
+    },
+    flags: {
+      system: '系统',
+      public: '公开',
+    },
+    languages: {
+      EN: 'English',
+      ZH: '中文',
+    },
   },
 };
 
@@ -176,4 +210,4 @@ const zhTranslations = {
 i18n.addResourceBundle('en', 'translation', enTranslations, true, true);
 i18n.addResourceBundle('zh', 'translation', zhTranslations, true, true);
 
-export default i18n;
+export { default } from '../../../../shared-lib/src/i18n/i18n';

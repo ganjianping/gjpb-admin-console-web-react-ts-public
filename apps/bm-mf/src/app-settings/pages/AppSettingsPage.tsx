@@ -10,6 +10,7 @@ import {
   AppSettingTable,
   AppSettingDialog,
   DeleteAppSettingDialog,
+  AppSettingViewDialog,
 } from '../components';
 
 import {
@@ -241,17 +242,26 @@ const AppSettingsPage = () => {
         </CardContent>
       </Card>
 
-      {/* App Setting Dialog */}
-      <AppSettingDialog
-        open={dialogOpen && (actionType === 'create' || actionType === 'edit' || actionType === 'view')}
-        onClose={handleClose}
-        actionType={actionType}
-        formData={formData}
-        onFormChange={handleFormChange}
-        onSubmit={handleDialogSave}
-        loading={dialogLoading}
-        formErrors={formErrors}
-      />
+      {/* App Setting Dialog or View */}
+      {actionType === 'view' ? (
+        <AppSettingViewDialog
+          open={dialogOpen && actionType === 'view'}
+          onClose={handleClose}
+          appSetting={selectedAppSetting}
+          onEdit={(s) => handleEdit(s)}
+        />
+      ) : (
+        <AppSettingDialog
+          open={dialogOpen && (actionType === 'create' || actionType === 'edit')}
+          onClose={handleClose}
+          actionType={actionType}
+          formData={formData}
+          onFormChange={handleFormChange}
+          onSubmit={handleDialogSave}
+          loading={dialogLoading}
+          formErrors={formErrors}
+        />
+      )}
       
       {/* Delete App Setting Dialog */}
       <DeleteAppSettingDialog

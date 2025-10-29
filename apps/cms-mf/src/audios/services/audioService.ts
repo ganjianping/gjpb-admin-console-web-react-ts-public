@@ -62,7 +62,7 @@ export interface UpdateAudioRequest {
 }
 
 class AudioService {
-  private readonly getUrl = "/v1/audios/search";
+  private readonly getUrl = "/v1/audios";
   private readonly crudUrl = "/v1/audios";
 
   async getAudios(params?: AudioQueryParams): Promise<ApiResponse<Audio[]>> {
@@ -108,7 +108,7 @@ class AudioService {
     if (data.isActive !== undefined) {
       formData.append('isActive', String(data.isActive));
     }
-    return apiClient.post(`${this.crudUrl}/upload`, formData);
+    return apiClient.post(`${this.crudUrl}`, formData);
   }
 
   async updateAudio(id: string, data: UpdateAudioRequest): Promise<ApiResponse<Audio>> {

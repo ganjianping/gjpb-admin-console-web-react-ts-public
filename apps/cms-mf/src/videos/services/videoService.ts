@@ -59,7 +59,7 @@ export interface UpdateVideoRequest {
 }
 
 class VideoService {
-  private readonly getUrl = "/v1/videos/search";
+  private readonly getUrl = "/v1/videos";
   private readonly crudUrl = "/v1/videos";
 
   async getVideos(params?: VideoQueryParams): Promise<ApiResponse<Video[]>> {
@@ -99,7 +99,7 @@ class VideoService {
     if (data.isActive !== undefined) {
       formData.append('isActive', String(data.isActive));
     }
-    return apiClient.post(`${this.crudUrl}/upload`, formData);
+    return apiClient.post(`${this.crudUrl}`, formData);
   }
 
   async updateVideo(id: string, data: UpdateVideoRequest): Promise<ApiResponse<Video>> {

@@ -51,7 +51,7 @@ export interface UpdateLogoRequest {
 }
 
 class LogoService {
-  private readonly getUrl = "/v1/logos/search";
+  private readonly getUrl = "/v1/logos";
   private readonly crudUrl = "/v1/logos";
 
   /**
@@ -112,7 +112,7 @@ class LogoService {
     }
 
     // Note: FormData automatically sets the correct Content-Type with boundary
-    return apiClient.post<Logo>(`${this.crudUrl}/upload`, formData);
+    return apiClient.post<Logo>(`${this.crudUrl}`, formData);
   }
 
   /**

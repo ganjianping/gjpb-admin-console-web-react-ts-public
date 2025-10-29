@@ -46,7 +46,7 @@ export interface UpdateArticleRequest {
 }
 
 class ArticleService {
-  private readonly getUrl = '/v1/articles/search';
+  private readonly getUrl = '/v1/articles';
   private readonly crudUrl = '/v1/articles';
 
   async getArticles(params?: ArticleQueryParams): Promise<ApiResponse<Article[]>> {

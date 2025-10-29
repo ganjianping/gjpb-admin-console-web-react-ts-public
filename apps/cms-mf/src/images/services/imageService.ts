@@ -57,7 +57,7 @@ export interface UpdateImageRequest {
 }
 
 class ImageService {
-  private readonly getUrl = "/v1/images/search";
+  private readonly getUrl = "/v1/images";
   private readonly crudUrl = "/v1/images";
 
   /**
@@ -88,7 +88,7 @@ class ImageService {
     if (data.isActive !== undefined) formData.append('isActive', String(data.isActive));
     // Use dedicated upload endpoint for file uploads
     // apiClient.post will set multipart Content-Type automatically when data is FormData
-    return apiClient.post(`${this.crudUrl}/upload`, formData);
+    return apiClient.post(`${this.crudUrl}`, formData);
   }
 
   /**
