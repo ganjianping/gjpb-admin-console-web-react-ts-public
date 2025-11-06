@@ -27,8 +27,8 @@ export default defineConfig(({ mode }) => {
       strictPort: true, // Force port 3000, fail if busy
       cors: true, // Enable CORS for the dev server
       proxy: {
-        '/api': {
-          target: 'http://localhost:8081',
+        '/blog': {
+          target: 'http://localhost:8082',
           changeOrigin: true,
           secure: false,
           ws: true, // Enable WebSocket proxying
@@ -72,6 +72,11 @@ export default defineConfig(({ mode }) => {
       target: 'es2020',
       sourcemap: isDev ? 'inline' : false,
       chunkSizeWarningLimit: 1000,
+      // Ensure React is properly handled
+      commonjsOptions: {
+        include: [/node_modules/],
+        transformMixedEsModules: true,
+      },
       rollupOptions: {
         output: {
           // Custom chunk splitting strategy for better control
@@ -79,6 +84,49 @@ export default defineConfig(({ mode }) => {
             // Debug logging (remove in production)
             if (isDev) {
               console.log('📦 Analyzing module:', id);
+            }
+            
+            // CRITICAL: Check React FIRST before any other checks
+            // This prevents React from falling into other vendor chunks
+            // Match any react package (react, react-dom, react-is, scheduler, etc.)
+            if (id.includes('node_modules') && (
+              id.match(/\/node_modules\/(react|scheduler)(\/|$)/) ||
+              id.match(/\/node_modules\/react-dom(\/|$)/)
+            )) {
+              return 'react-vendor';
+            }
+            
+            // React Router - separate from core React
+            if (id.includes('node_modules/react-router-dom/') || 
+                id.includes('node_modules/react-router/') ||
+                id.includes('node_modules/@remix-run/')) {
+              return 'react-router-vendor';
+            }
+            
+            // UI Framework
+            if (id.includes('node_modules/@mui/') ||
+                id.includes('node_modules/@emotion/')) {
+              return 'mui-vendor';
+            }
+            
+            // Redux libraries (check before generic vendor)
+            if (id.includes('node_modules/@reduxjs') ||
+                id.includes('node_modules/react-redux') ||
+                id.includes('node_modules/redux')) {
+              return 'redux-vendor';
+            }
+            
+            // i18n libraries
+            if (id.includes('node_modules/i18next') ||
+                id.includes('node_modules/react-i18next')) {
+              return 'i18n-vendor';
+            }
+            
+            // Utility libraries
+            if (id.includes('node_modules/axios') ||
+                id.includes('node_modules/lodash') ||
+                id.includes('node_modules/date-fns')) {
+              return 'utils-vendor';
             }
             
             // Microfrontend modules - create dedicated chunks
@@ -97,40 +145,8 @@ export default defineConfig(({ mode }) => {
               return 'shared-lib';
             }
             
-            // Core React libraries
-            if (id.includes('node_modules/react') || 
-                id.includes('node_modules/react-dom') || 
-                id.includes('node_modules/react-router')) {
-              return 'react-vendor';
-            }
-            
-            // UI Framework
-            if (id.includes('@mui/material') || 
-                id.includes('@mui/icons-material') || 
-                id.includes('@mui/x-')) {
-              return 'mui-vendor';
-            }
-            
-            // Utility libraries
-            if (id.includes('node_modules/axios') ||
-                id.includes('node_modules/lodash') ||
-                id.includes('node_modules/date-fns')) {
-              return 'utils-vendor';
-            }
-            
-            // i18n libraries
-            if (id.includes('node_modules/i18next') ||
-                id.includes('node_modules/react-i18next')) {
-              return 'i18n-vendor';
-            }
-            
-            // Redux libraries
-            if (id.includes('node_modules/@reduxjs') ||
-                id.includes('node_modules/react-redux')) {
-              return 'redux-vendor';
-            }
-            
             // Other node_modules go to common vendor chunk
+            // React is now excluded from this catch-all
             if (id.includes('node_modules')) {
               return 'vendor';
             }

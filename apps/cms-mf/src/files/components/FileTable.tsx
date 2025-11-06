@@ -1,4 +1,4 @@
-import { Box, Chip, Typography, Avatar } from '@mui/material';
+import { Box, Chip, Typography } from '@mui/material';
 import { File as LucideFile } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { memo, useMemo } from 'react';
@@ -18,17 +18,7 @@ function NameCell({ info }: { info: any }) {
   );
 }
 
-function ExtensionCell({ info }: { info: any }) {
-  const value = info.getValue();
-  return (
-    <Chip
-      label={value || '-'}
-      size="small"
-      variant="outlined"
-      sx={{ fontSize: '0.75rem', height: 24 }}
-    />
-  );
-}
+// ExtensionCell was removed because it was declared but never used
 
 function LangCell({ info }: { info: any }) {
   return (

@@ -30,6 +30,7 @@ interface ArticleViewDialogProps {
   open: boolean;
   article: Article;
   onClose: () => void;
+  onEdit?: (article: Article) => void;
 }
 
 const ArticleViewDialog = ({ open, article, onClose, onEdit }: ArticleViewDialogProps) => {
@@ -87,7 +88,7 @@ const ArticleViewDialog = ({ open, article, onClose, onEdit }: ArticleViewDialog
     }
   }, [contentExpanded, sanitizedHtml]);
 
-  const sizeSafe = (v?: number | null) => (v == null ? '-' : String(v));
+  // removed unused helper `sizeSafe` (was declared but never referenced)
 
   const handleCopy = async (text: string, fieldName: string) => {
     try {

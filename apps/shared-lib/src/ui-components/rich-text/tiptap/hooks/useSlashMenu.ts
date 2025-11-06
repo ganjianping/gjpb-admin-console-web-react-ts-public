@@ -82,7 +82,7 @@ export default function useSlashMenu(editor: Editor | null, containerRef: React.
         try { safeChainFocus(editor)?.run?.(); } catch { /* ignore */ }
         return;
       }
-      const emojiChild = flattenedActionItems.find((f) => f.id === id && f.parentId === 'emoji');
+  // removed unused emojiChild lookup (no handling implemented here)
     } catch {
       // ignore and continue with other actions
     }
