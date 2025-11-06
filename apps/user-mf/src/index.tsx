@@ -12,9 +12,12 @@ if (!rootElement) throw new Error('Failed to find the root element');
 // Initialize React
 const root = createRoot(rootElement);
 
+// Respect Vite BASE_URL when serving under a subpath
+const __basename = (import.meta as any).env?.BASE_URL ?? '/';
+
 root.render(
   <StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename={__basename}>
       <UsersPage />
     </BrowserRouter>
   </StrictMode>

@@ -21,13 +21,19 @@ if (!rootElement) throw new Error('Failed to find the root element');
 
 const root = createRoot(rootElement);
 
+// import.meta.env typing can be missing; safely read BASE_URL at runtime
+const __basename = (import.meta as any).env?.BASE_URL ?? '/';
+
 root.render(
   <StrictMode>
     <Provider store={store}>
-      <BrowserRouter future={{ 
-        v7_startTransition: true,
-        v7_relativeSplatPath: true
-      }}>
+      <BrowserRouter
+        basename={__basename}
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true,
+        }}
+      >
         <ThemeProvider>
           <Suspense fallback={<AppLoading />}>
             <AppRoutes />
