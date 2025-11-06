@@ -13,6 +13,7 @@ export default defineConfig(({ mode }) => {
   const isDev = mode === 'development';
   
   return {
+    base: '/admin/',
     plugins: [react()],
     resolve: {
       alias: {
