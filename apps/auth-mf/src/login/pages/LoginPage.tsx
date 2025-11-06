@@ -45,6 +45,8 @@ const LoginPage = () => {
     enableSystemPreferenceSync: true,
     enableDebugging: true 
   });
+  // Resolve Vite base at runtime so assets load correctly when app is served under a subpath (e.g. /admin/)
+  const __baseUrl = (import.meta as any).env?.BASE_URL ?? '/';
   
   // Get the intended destination from location state
   const from = (location.state?.from?.pathname as string) || APP_CONFIG.ROUTES.HOME;
@@ -169,7 +171,7 @@ const LoginPage = () => {
                     position: 'absolute',
                     width: '96px',
                     height: '96px',
-                    backgroundImage: 'url(/favicon.ico)',
+                    backgroundImage: `url(${__baseUrl}favicon.ico)`,
                     backgroundSize: 'contain',
                     backgroundRepeat: 'no-repeat',
                     backgroundPosition: 'center',
