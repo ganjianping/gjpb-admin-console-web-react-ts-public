@@ -94,6 +94,8 @@ const Header = ({ onDrawerToggle }: HeaderProps) => {
     navigate('/settings');
   };
 
+  const __baseUrl = (import.meta as any).env?.BASE_URL ?? '/';
+
   return (
     <AppBar
       position="fixed"
@@ -162,7 +164,7 @@ const Header = ({ onDrawerToggle }: HeaderProps) => {
             }}
           >
             <img
-              src="/favicon.ico"
+              src={`${__baseUrl}favicon.ico`}
               alt="GJPB Logo"
               style={{
                 width: '48px',
