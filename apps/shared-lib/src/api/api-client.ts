@@ -167,7 +167,10 @@ class HttpClient {
         }
 
         if (error.response?.status === 403) {
-          window.location.href = APP_CONFIG.ROUTES.UNAUTHORIZED;
+          // Respect Vite's BASE_URL when redirecting so apps served under a subpath
+          const __base = (import.meta as any).env?.BASE_URL ?? '/';
+          const normalizedBase = __base.endsWith('/') ? __base.slice(0, -1) : __base;
+          window.location.href = `${normalizedBase}${APP_CONFIG.ROUTES.UNAUTHORIZED}`;
         }
 
         return Promise.reject(error);
@@ -181,8 +184,10 @@ class HttpClient {
     removeCookie(APP_CONFIG.TOKEN.REFRESH_TOKEN_KEY);
     removeCookie(APP_CONFIG.TOKEN.TOKEN_TYPE_KEY);
     
-    // Redirect to login
-    window.location.href = APP_CONFIG.ROUTES.LOGIN;
+    // Redirect to login — ensure we include BASE_URL so redirects work when app is served under a subpath (e.g. /admin/)
+    const __base = (import.meta as any).env?.BASE_URL ?? '/';
+    const normalizedBase = __base.endsWith('/') ? __base.slice(0, -1) : __base;
+    window.location.href = `${normalizedBase}${APP_CONFIG.ROUTES.LOGIN}`;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
