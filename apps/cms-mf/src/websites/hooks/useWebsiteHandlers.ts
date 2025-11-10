@@ -165,39 +165,46 @@ export const useWebsiteHandlers = ({
       return false;
     }
     try {
-      // Step 1: Save logo
+      // Step 1: Save logo (skip if method is 'none')
       let logoFilename = formData.logoUrl;
-      // Set logo tags value based on lang
-      const logoTags = formData.lang === 'EN' ? 'Website' : '网站';
-      if (formData.logoUploadMethod === 'url') {
-        const logoRes = await logoService.createLogo({
-          name: formData.name,
-          originalUrl: formData.logoUrl,
-          tags: logoTags,
-          lang: formData.lang,
-          displayOrder: formData.displayOrder,
-          isActive: formData.isActive,
-        });
-        if (logoRes.status.code === 200 || logoRes.status.code === 201) {
-          logoFilename = logoRes.data.filename;
-        } else {
-          throw new Error(logoRes.status.message || 'Failed to save logo');
-        }
-      } else if (formData.logoUploadMethod === 'file' && formData.logoFile) {
-        const logoRes = await logoService.createLogoByUpload({
-          file: formData.logoFile,
-          name: formData.name,
-          tags: logoTags,
-          lang: formData.lang,
-          displayOrder: formData.displayOrder,
-          isActive: formData.isActive,
-        });
-        if (logoRes.status.code === 200 || logoRes.status.code === 201) {
-          logoFilename = logoRes.data.filename;
-        } else {
-          throw new Error(logoRes.status.message || 'Failed to upload logo');
+      
+      if (formData.logoUploadMethod === 'none') {
+        // Skip logo saving, use empty string or existing logoUrl
+        logoFilename = formData.logoUrl || '';
+      } else {
+        // Set logo tags value based on lang
+        const logoTags = formData.lang === 'EN' ? 'Website' : '网站';
+        if (formData.logoUploadMethod === 'url') {
+          const logoRes = await logoService.createLogo({
+            name: formData.name,
+            originalUrl: formData.logoUrl,
+            tags: logoTags,
+            lang: formData.lang,
+            displayOrder: formData.displayOrder,
+            isActive: formData.isActive,
+          });
+          if (logoRes.status.code === 200 || logoRes.status.code === 201) {
+            logoFilename = logoRes.data.filename;
+          } else {
+            throw new Error(logoRes.status.message || 'Failed to save logo');
+          }
+        } else if (formData.logoUploadMethod === 'file' && formData.logoFile) {
+          const logoRes = await logoService.createLogoByUpload({
+            file: formData.logoFile,
+            name: formData.name,
+            tags: logoTags,
+            lang: formData.lang,
+            displayOrder: formData.displayOrder,
+            isActive: formData.isActive,
+          });
+          if (logoRes.status.code === 200 || logoRes.status.code === 201) {
+            logoFilename = logoRes.data.filename;
+          } else {
+            throw new Error(logoRes.status.message || 'Failed to upload logo');
+          }
         }
       }
+      
       // Step 2: Save website with logo filename
       const websiteFormData = { ...formData, logoUrl: logoFilename };
       const successMessage = await createWebsite(websiteFormData);

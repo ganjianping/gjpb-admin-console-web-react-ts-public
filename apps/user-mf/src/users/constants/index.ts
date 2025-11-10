@@ -9,7 +9,7 @@ export const USER_CONSTANTS = {
   PAGE_SIZE_OPTIONS: [10, 20, 50, 100],
   
   // Sorting
-  SORT_FIELD: 'updatedAt',
+  SORT_FIELD: 'updatedAt' as const,
   SORT_DIRECTION: 'desc' as const,
   
   // Validation constraints - organized in nested object for better maintainability

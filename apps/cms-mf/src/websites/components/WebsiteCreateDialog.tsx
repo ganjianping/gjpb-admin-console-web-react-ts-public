@@ -104,7 +104,8 @@ export const WebsiteCreateDialog = ({
               {/* Logo Upload Method (RadioGroup) */}
               <FormControl component="fieldset" sx={{ mb: 2 }}>
                 <FormLabel component="legend">{t('websites.form.logoUploadMethod')}</FormLabel>
-                <RadioGroup row value={formData.logoUploadMethod || 'url'} onChange={(e) => onFormChange('logoUploadMethod', e.target.value as 'url' | 'file')}>
+                <RadioGroup row value={formData.logoUploadMethod || 'url'} onChange={(e) => onFormChange('logoUploadMethod', e.target.value as 'url' | 'file' | 'none')}>
+                  <FormControlLabel value="none" control={<Radio />} label={t('websites.form.logoUploadByNone') || 'None'} />
                   <FormControlLabel value="url" control={<Radio />} label={t('websites.form.logoUploadByUrl')} />
                   <FormControlLabel value="file" control={<Radio />} label={t('websites.form.logoUploadByFile')} />
                 </RadioGroup>
@@ -133,7 +134,12 @@ export const WebsiteCreateDialog = ({
               {formData.logoUploadMethod === 'url' && (
                 <TextField label={t('websites.form.logoUrl') || 'Logo URL'} value={formData.logoUrl} onChange={(e) => onFormChange('logoUrl', e.target.value)} fullWidth variant="outlined" placeholder={t('websites.form.logoUrlPlaceholder') || 'Enter the logo URL'} error={!!getFieldError('logoUrl')} helperText={getFieldError('logoUrl') || t('websites.form.logoUrlHelper')} sx={{ '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: 'primary.main', borderWidth: '2px' } }} />
               )}
-              <TextField label={t('websites.form.description')} value={formData.description} onChange={(e) => onFormChange('description', e.target.value)} fullWidth multiline rows={4} variant="outlined" placeholder={t('websites.form.descriptionPlaceholder')} error={!!getFieldError('description')} helperText={getFieldError('description') || t('websites.form.descriptionHelper')} sx={{ '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: 'primary.main', borderWidth: '2px' } }} />
+              {/* None option info */}
+              {formData.logoUploadMethod === 'none' && (
+                <Alert severity="info">
+                  {t('websites.form.logoNoneInfo') || 'No logo will be saved for this website'}
+                </Alert>
+              )}
               {/* Tags */}
               <FormControl fullWidth error={!!getFieldError('tags')}>
                 <FormLabel sx={{ mb: 1, color: 'text.primary', fontWeight: 500 }}>{t('websites.form.tags')}</FormLabel>
@@ -166,6 +172,7 @@ export const WebsiteCreateDialog = ({
               </FormControl>
               {/* Display Order */}
               <TextField label={t('websites.form.displayOrder')} type="number" value={formData.displayOrder} onChange={(e) => onFormChange('displayOrder', parseInt(e.target.value) || 0)} fullWidth variant="outlined" placeholder={t('websites.form.displayOrderPlaceholder')} error={!!getFieldError('displayOrder')} helperText={getFieldError('displayOrder') || t('websites.form.displayOrderHelper')} sx={{ '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: 'primary.main', borderWidth: '2px' } }} />
+              <TextField label={t('websites.form.description')} value={formData.description} onChange={(e) => onFormChange('description', e.target.value)} fullWidth multiline rows={4} variant="outlined" placeholder={t('websites.form.descriptionPlaceholder')} error={!!getFieldError('description')} helperText={getFieldError('description') || t('websites.form.descriptionHelper')} sx={{ '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: 'primary.main', borderWidth: '2px' } }} />
             </Box>
           </Box>
           <Divider />

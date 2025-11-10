@@ -13,8 +13,8 @@ export const LOGO_CONSTANTS = {
   DEFAULT_DISPLAY_ORDER: 0,
   
   // Sorting
-  SORT_FIELD: 'displayOrder',
-  SORT_DIRECTION: 'asc' as const,
+  SORT_FIELD: 'updatedAt' as const,
+  SORT_DIRECTION: 'desc' as const,
   
   // Validation constraints
   VALIDATION: {

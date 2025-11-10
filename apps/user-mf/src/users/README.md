@@ -355,8 +355,8 @@ const UserDialog = () => {
 ```typescript
 export const USER_CONSTANTS = {
   DEFAULT_PAGE_SIZE: 10,
-  SORT_FIELD: 'createdAt',
-  SORT_DIRECTION: 'desc',
+  SORT_FIELD: 'updatedAt' as const,
+  SORT_DIRECTION: 'desc' as const,
   
   // Validation rules (Phase 1 enhancement)
   VALIDATION: {

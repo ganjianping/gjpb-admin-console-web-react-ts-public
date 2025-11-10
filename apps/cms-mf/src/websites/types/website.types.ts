@@ -35,7 +35,7 @@ export interface WebsiteFormData {
   displayOrder: number;
   isActive: boolean;
   // For logo upload UI only (not sent to website API)
-  logoUploadMethod?: 'url' | 'file';
+  logoUploadMethod?: 'url' | 'file' | 'none';
   logoFile?: File | null;
 }
 

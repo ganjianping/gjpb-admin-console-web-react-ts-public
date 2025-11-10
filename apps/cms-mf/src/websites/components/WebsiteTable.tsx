@@ -133,6 +133,23 @@ export const WebsiteTable = memo(({
         );
       },
     }),
+    columnHelper.accessor('displayOrder', {
+      header: t('websites.columns.displayOrder'),
+      cell: (info) => {
+        const value = info.getValue();
+        return (
+          <Typography
+            variant="body2"
+            sx={{
+              textAlign: 'right',
+              minWidth: 40,
+            }}
+          >
+            {typeof value === 'number' ? value : '-'}
+          </Typography>
+        );
+      },
+    }),
     columnHelper.accessor('isActive', {
       header: t('websites.columns.isActive'),
       cell: (info) => {

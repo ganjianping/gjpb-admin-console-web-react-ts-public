@@ -61,6 +61,8 @@ const enTranslations = {
       logoUploadMethod: 'Logo Upload Method',
       logoUploadByUrl: 'By URL',
       logoUploadByFile: 'Upload File',
+      logoUploadByNone: 'None',
+      logoNoneInfo: 'No logo will be saved for this website',
     },
     filters: {
       searchByName: 'Search by name...',
@@ -184,6 +186,8 @@ const zhTranslations = {
       logoUploadMethod: 'Logo上传方式',
       logoUploadByUrl: '通过网址',
       logoUploadByFile: '上传文件',
+      logoUploadByNone: '无',
+      logoNoneInfo: '此网站不会保存 Logo',
     },    
     filters: {
       searchByName: '按名称搜索...',

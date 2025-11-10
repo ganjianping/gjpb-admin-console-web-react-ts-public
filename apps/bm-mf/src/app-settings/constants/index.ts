@@ -12,7 +12,7 @@ export const APP_SETTING_CONSTANTS = {
   DEFAULT_LANGUAGE: 'EN',
   
   // Sorting
-  SORT_FIELD: 'updatedAt',
+  SORT_FIELD: 'updatedAt' as const,
   SORT_DIRECTION: 'desc' as const,
   
   // Validation constraints

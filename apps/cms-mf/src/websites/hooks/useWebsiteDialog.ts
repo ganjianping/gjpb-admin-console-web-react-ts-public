@@ -79,7 +79,7 @@ export const useWebsiteDialog = () => {
       description: '',
       tags: '',
       lang: getDefaultLang(),
-  displayOrder: 999,
+      displayOrder: 999,
       isActive: true,
       logoUploadMethod: 'url',
       logoFile: null,
