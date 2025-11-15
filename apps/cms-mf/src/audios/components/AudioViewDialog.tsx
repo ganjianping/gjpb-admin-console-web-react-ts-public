@@ -204,7 +204,7 @@ const AudioViewDialog = ({ open, onClose, audio, onEdit }: AudioViewDialogProps)
                   </Avatar>
                 );
               })()}
-              <Typography variant="h5" sx={{ fontWeight: 700, mb: 0.5 }}>(audio as any).artist {audio.name}</Typography>
+              <Typography variant="h5" sx={{ fontWeight: 700, mb: 0.5 }}>{audio.artist} - {audio.name}</Typography>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '100%' }}>
                 {audioUrl && (
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
