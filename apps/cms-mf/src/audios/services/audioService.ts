@@ -18,6 +18,7 @@ export interface CreateAudioRequest {
   name: string;
   filename: string;
   coverImageFilename: string;
+  artist?: string;
   subtitle?: string;
   sourceName?: string;
   originalUrl?: string;
@@ -34,6 +35,7 @@ export interface CreateAudioByUploadRequest {
   name: string;
   filename: string;
   coverImageFilename: string;
+  artist?: string;
   subtitle?: string;
   sourceName?: string;
   originalUrl?: string;
@@ -47,6 +49,7 @@ export interface CreateAudioByUploadRequest {
 
 
 export interface UpdateAudioRequest {
+  artist?: string;
   name?: string;
   filename?: string;
   coverImageFilename?: string;
@@ -97,6 +100,9 @@ class AudioService {
     if ((data as any).originalUrl) {
       formData.append('originalUrl', (data as any).originalUrl);
     }
+    if ((data as any).artist) {
+      formData.append('artist', (data as any).artist);
+    }
     formData.append('tags', data.tags);
     if ((data as any).subtitle) {
       formData.append('subtitle', (data as any).subtitle);
@@ -146,6 +152,9 @@ class AudioService {
     }
     if ((data as any).originalUrl) {
       formData.append('originalUrl', (data as any).originalUrl);
+    }
+    if ((data as any).artist) {
+      formData.append('artist', (data as any).artist);
     }
     if (data.tags) {
       formData.append('tags', data.tags);
