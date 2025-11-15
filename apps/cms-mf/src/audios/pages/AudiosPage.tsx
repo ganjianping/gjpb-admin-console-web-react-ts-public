@@ -49,6 +49,7 @@ const AudiosPage: React.FC = () => {
     description: audio.description || '',
     sourceName: audio.sourceName || '',
     originalUrl: audio.originalUrl || '',
+    artist: audio.artist || '',
     sizeBytes: audio.sizeBytes || 0,
     tags: audio.tags || '',
     lang: audio.lang || (dialog.getCurrentLanguage ? dialog.getCurrentLanguage() : 'EN'),

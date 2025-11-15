@@ -94,25 +94,12 @@ const AudioEditDialog: React.FC<AudioEditDialogProps> = ({ open, formData, onFor
       <DialogContent>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
           <TextField label={t('audios.form.name') || 'Name'} value={formData.name} onChange={e => onFormChange('name', e.target.value)} fullWidth />
-          
-          <TextField label={t('audios.form.sourceName') || 'Source Name'} value={(formData as any).sourceName || ''} onChange={e => onFormChange('sourceName' as any, e.target.value)} fullWidth />
-          <TextField label={t('audios.form.originalUrl') || 'Original URL'} value={(formData as any).originalUrl || ''} onChange={e => onFormChange('originalUrl' as any, e.target.value)} fullWidth />
           <TextField label={t('audios.form.artist') || 'Artist'} value={(formData as any).artist || ''} onChange={e => onFormChange('artist' as any, e.target.value)} fullWidth />
           <Box>
             <Typography variant="subtitle2">{t('audios.form.coverImageFile') || 'Cover Image File'}</Typography>
             <input type="file" accept="image/*" onChange={handleCoverFileChange} />
           </Box>
           <TextField label={t('audios.form.coverImageFilename') || 'Cover Image Filename'} value={formData.coverImageFilename || ''} onChange={e => onFormChange('coverImageFilename' as any, e.target.value)} fullWidth />
-          <Box>
-            <Typography variant="subtitle2">{t('audios.form.description') || 'Description'}</Typography>
-            <TextareaAutosize minRows={2} style={{ width: '100%', padding: '8.5px 14px', borderRadius: 4, border: '1px solid rgba(0,0,0,0.23)', fontFamily: 'inherit' }} value={formData.description || ''} onChange={e => onFormChange('description', e.target.value)} aria-label={t('audios.form.description') || 'Description'} />
-          </Box>
-          <Box>
-            <Typography variant="subtitle2">{t('audios.form.subtitle') || 'Subtitle'}</Typography>
-            <TiptapTextEditor value={(formData as any).subtitle || ''} onChange={(html: string) => onFormChange('subtitle' as any, html)} placeholder={t('audios.form.subtitle') || 'Subtitle'} />
-            {getFieldError('subtitle') && <Typography variant="caption" color="error">{getFieldError('subtitle')}</Typography>}
-          </Box>
-
           <FormControl fullWidth>
             <Select multiple value={formData.tags ? formData.tags.split(',').filter(Boolean) : []} onChange={handleTagsChange} input={<OutlinedInput />} renderValue={(selected) => (
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
@@ -122,6 +109,17 @@ const AudioEditDialog: React.FC<AudioEditDialogProps> = ({ open, formData, onFor
               {availableTags.length > 0 ? availableTags.map((tOpt) => (<MenuItem key={tOpt} value={tOpt}>{tOpt}</MenuItem>)) : (<MenuItem disabled>No tags</MenuItem>)}
             </Select>
           </FormControl>
+          <Box>
+            <Typography variant="subtitle2">{t('audios.form.subtitle') || 'Subtitle'}</Typography>
+            <TiptapTextEditor value={(formData as any).subtitle || ''} onChange={(html: string) => onFormChange('subtitle' as any, html)} placeholder={t('audios.form.subtitle') || 'Subtitle'} />
+            {getFieldError('subtitle') && <Typography variant="caption" color="error">{getFieldError('subtitle')}</Typography>}
+          </Box>
+          <TextField label={t('audios.form.sourceName') || 'Source Name'} value={(formData as any).sourceName || ''} onChange={e => onFormChange('sourceName' as any, e.target.value)} fullWidth />
+          <TextField label={t('audios.form.originalUrl') || 'Original URL'} value={(formData as any).originalUrl || ''} onChange={e => onFormChange('originalUrl' as any, e.target.value)} fullWidth />
+          <Box>
+            <Typography variant="subtitle2">{t('audios.form.description') || 'Description'}</Typography>
+            <TextareaAutosize minRows={2} style={{ width: '100%', padding: '8.5px 14px', borderRadius: 4, border: '1px solid rgba(0,0,0,0.23)', fontFamily: 'inherit' }} value={formData.description || ''} onChange={e => onFormChange('description', e.target.value)} aria-label={t('audios.form.description') || 'Description'} />
+          </Box>
 
           <FormControl fullWidth>
             <Select value={formData.lang || ''} onChange={handleLangChange}>

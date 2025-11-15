@@ -204,7 +204,7 @@ const AudioViewDialog = ({ open, onClose, audio, onEdit }: AudioViewDialogProps)
                   </Avatar>
                 );
               })()}
-              <Typography variant="h5" sx={{ fontWeight: 700, mb: 0.5 }}>{audio.name}</Typography>
+              <Typography variant="h5" sx={{ fontWeight: 700, mb: 0.5 }}>(audio as any).artist {audio.name}</Typography>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '100%' }}>
                 {audioUrl && (
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
@@ -232,12 +232,6 @@ const AudioViewDialog = ({ open, onClose, audio, onEdit }: AudioViewDialogProps)
                         {copiedField === 'originalUrl' ? <Check size={16} /> : <Copy size={16} />}
                       </IconButton>
                     </Tooltip>
-                  </Box>
-                )}
-                {(audio as any).artist && (
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.5 }}>
-                    <Typography variant="caption" sx={{ color: 'text.secondary' }}>{t('audios.viewDialog.artist') || 'Artist'}:</Typography>
-                    <Typography variant="body2" sx={{ flex: 1 }}>{(audio as any).artist}</Typography>
                   </Box>
                 )}
                 {coverUrl && (

@@ -174,6 +174,7 @@ const AudioCreateDialog = ({
       <DialogContent sx={{ pt: 2 }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
           <TextField label={t('audios.form.name') || 'Name'} value={formData.name} onChange={(e) => onFormChange('name', e.target.value)} fullWidth error={!!getFieldError('name')} helperText={getFieldError('name')} />
+          <TextField label={t('audios.form.artist') || 'Artist'} value={(formData as any).artist || ''} onChange={(e) => onFormChange('artist' as any, e.target.value)} fullWidth />
           <Box>
             <Typography variant="subtitle2">{t('audios.form.audioFile') || 'Audio File'}</Typography>
             <input type="file" accept="audio/*" onChange={(e) => handleFileChange('file', e)} />
@@ -183,6 +184,24 @@ const AudioCreateDialog = ({
             <input type="file" accept="image/*" onChange={(e) => handleFileChange('coverImageFile', e)} />
           </Box>
           <TextField label={t('audios.form.coverImageFilename') || 'Cover Image Filename'} value={formData.coverImageFilename || ''} onChange={(e) => onFormChange('coverImageFilename' as any, e.target.value)} fullWidth />
+          <FormControl fullWidth>
+            <Select multiple value={formData.tags ? formData.tags.split(',').filter(Boolean) : []} onChange={handleTagsChange} input={<OutlinedInput />} renderValue={(selected) => (
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                {Array.isArray(selected) && selected.map((v) => (<Chip key={v} label={v} size="small" />))}
+              </Box>
+            )}>
+              {availableTags.length > 0 ? availableTags.map((t) => (<MenuItem key={t} value={t}>{t}</MenuItem>)) : (<MenuItem disabled>No tags</MenuItem>)}
+            </Select>
+          </FormControl>
+          <Box>
+            <Typography variant="subtitle2">{t('audios.form.subtitle') || 'Subtitle'}</Typography>
+            <TiptapTextEditor value={(formData as any).subtitle || ''} onChange={(html: string) => onFormChange('subtitle' as any, html)} placeholder={t('audios.form.subtitle') || 'Subtitle'} />
+            {getFieldError('subtitle') && <FormHelperText error>{getFieldError('subtitle')}</FormHelperText>}
+          </Box>
+
+          <TextField label={t('audios.form.sourceName') || 'Source Name'} value={(formData as any).sourceName || ''} onChange={(e) => onFormChange('sourceName' as any, e.target.value)} fullWidth />
+          <TextField label={t('audios.form.originalUrl') || 'Original URL'} value={(formData as any).originalUrl || ''} onChange={(e) => onFormChange('originalUrl' as any, e.target.value)} fullWidth />
+          
           <Box>
             <Typography variant="subtitle2">{t('audios.form.description') || 'Description'}</Typography>
             <TextareaAutosize
@@ -194,27 +213,6 @@ const AudioCreateDialog = ({
             />
             {getFieldError('description') && <FormHelperText error>{getFieldError('description')}</FormHelperText>}
           </Box>
-
-          <Box>
-            <Typography variant="subtitle2">{t('audios.form.subtitle') || 'Subtitle'}</Typography>
-            <TiptapTextEditor value={(formData as any).subtitle || ''} onChange={(html: string) => onFormChange('subtitle' as any, html)} placeholder={t('audios.form.subtitle') || 'Subtitle'} />
-            {getFieldError('subtitle') && <FormHelperText error>{getFieldError('subtitle')}</FormHelperText>}
-          </Box>
-
-          <TextField label={t('audios.form.sourceName') || 'Source Name'} value={(formData as any).sourceName || ''} onChange={(e) => onFormChange('sourceName' as any, e.target.value)} fullWidth />
-          <TextField label={t('audios.form.originalUrl') || 'Original URL'} value={(formData as any).originalUrl || ''} onChange={(e) => onFormChange('originalUrl' as any, e.target.value)} fullWidth />
-          <TextField label={t('audios.form.artist') || 'Artist'} value={(formData as any).artist || ''} onChange={(e) => onFormChange('artist' as any, e.target.value)} fullWidth />
-          
-
-          <FormControl fullWidth>
-            <Select multiple value={formData.tags ? formData.tags.split(',').filter(Boolean) : []} onChange={handleTagsChange} input={<OutlinedInput />} renderValue={(selected) => (
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                {Array.isArray(selected) && selected.map((v) => (<Chip key={v} label={v} size="small" />))}
-              </Box>
-            )}>
-              {availableTags.length > 0 ? availableTags.map((t) => (<MenuItem key={t} value={t}>{t}</MenuItem>)) : (<MenuItem disabled>No tags</MenuItem>)}
-            </Select>
-          </FormControl>
 
           <FormControl fullWidth>
             <Select value={formData.lang || ''} onChange={handleLangChange}>
