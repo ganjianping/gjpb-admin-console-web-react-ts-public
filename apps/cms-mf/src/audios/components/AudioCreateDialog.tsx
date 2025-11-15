@@ -126,6 +126,7 @@ const AudioCreateDialog = ({
           coverImageFile: formData.coverImageFile || undefined,
           sourceName: (formData as any).sourceName,
           originalUrl: (formData as any).originalUrl,
+          artist: (formData as any).artist,
           description: formData.description,
           tags: formData.tags,
           lang: formData.lang,
@@ -202,6 +203,7 @@ const AudioCreateDialog = ({
 
           <TextField label={t('audios.form.sourceName') || 'Source Name'} value={(formData as any).sourceName || ''} onChange={(e) => onFormChange('sourceName' as any, e.target.value)} fullWidth />
           <TextField label={t('audios.form.originalUrl') || 'Original URL'} value={(formData as any).originalUrl || ''} onChange={(e) => onFormChange('originalUrl' as any, e.target.value)} fullWidth />
+          <TextField label={t('audios.form.artist') || 'Artist'} value={(formData as any).artist || ''} onChange={(e) => onFormChange('artist' as any, e.target.value)} fullWidth />
           
 
           <FormControl fullWidth>

@@ -97,6 +97,7 @@ const AudioEditDialog: React.FC<AudioEditDialogProps> = ({ open, formData, onFor
           
           <TextField label={t('audios.form.sourceName') || 'Source Name'} value={(formData as any).sourceName || ''} onChange={e => onFormChange('sourceName' as any, e.target.value)} fullWidth />
           <TextField label={t('audios.form.originalUrl') || 'Original URL'} value={(formData as any).originalUrl || ''} onChange={e => onFormChange('originalUrl' as any, e.target.value)} fullWidth />
+          <TextField label={t('audios.form.artist') || 'Artist'} value={(formData as any).artist || ''} onChange={e => onFormChange('artist' as any, e.target.value)} fullWidth />
           <Box>
             <Typography variant="subtitle2">{t('audios.form.coverImageFile') || 'Cover Image File'}</Typography>
             <input type="file" accept="image/*" onChange={handleCoverFileChange} />

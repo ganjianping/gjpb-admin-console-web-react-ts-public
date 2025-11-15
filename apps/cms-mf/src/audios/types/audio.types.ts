@@ -8,6 +8,7 @@ export interface Audio {
   // optional fields returned by the API
   originalUrl?: string | null;
   sourceName?: string | null;
+  artist?: string | null;
   description?: string | null;
   tags?: string;
   lang?: string;
@@ -28,6 +29,7 @@ export interface AudioFormData {
   coverImageFilename: string;
   sourceName?: string;
   originalUrl?: string;
+  artist?: string;
   description: string;
   sizeBytes: number;
   tags: string;

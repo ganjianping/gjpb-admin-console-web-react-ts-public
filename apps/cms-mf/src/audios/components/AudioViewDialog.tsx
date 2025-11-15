@@ -234,6 +234,12 @@ const AudioViewDialog = ({ open, onClose, audio, onEdit }: AudioViewDialogProps)
                     </Tooltip>
                   </Box>
                 )}
+                {(audio as any).artist && (
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.5 }}>
+                    <Typography variant="caption" sx={{ color: 'text.secondary' }}>{t('audios.viewDialog.artist') || 'Artist'}:</Typography>
+                    <Typography variant="body2" sx={{ flex: 1 }}>{(audio as any).artist}</Typography>
+                  </Box>
+                )}
                 {coverUrl && (
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                     <Typography variant="caption" sx={{ color: 'text.secondary' }}>Cover URL:</Typography>
