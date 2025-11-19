@@ -77,6 +77,10 @@ const resolveLanguage = (langIn: string) => {
 };
 
 export default function useTiptapEditor({ value = '', onChange, placeholder = 'Enter rich text...', initialRows = 1 }: UseTiptapEditorArgs) {
+  // Track if we're programmatically updating to avoid cursor jumps
+  const isUpdatingRef = useRef(false);
+  const lastValueRef = useRef(value);
+
   // Memoise lowlight so we don't recreate the registry on every render.
   const lowlight = useMemo(() => {
   const instance = createLowlight();
@@ -154,7 +158,15 @@ export default function useTiptapEditor({ value = '', onChange, placeholder = 'E
       Youtube,
     ],
     content: value,
+    editorProps: {
+      attributes: {
+        class: 'gjp-tiptap-content',
+      },
+    },
     onUpdate: ({ editor }: { editor: any }) => {
+      // Don't trigger onChange when we're programmatically updating
+      if (isUpdatingRef.current) return;
+      
       try {
         const dirty = editor.getHTML();
         const clean = DOMPurify.sanitize(dirty);
@@ -208,27 +220,57 @@ export default function useTiptapEditor({ value = '', onChange, placeholder = 'E
 
   useEffect(() => {
     if (!editor) return;
-    // If external value is non-empty, sync it
-    if (value && value !== editor.getHTML()) {
-      try { (editor.commands as any).setContent(value, { preserveWhitespace: false }); } catch { /* ignore */ }
+    
+    // Only update content if there's a real external change
+    // Don't update just because the editor lost focus (e.g., dialog opened)
+    const currentHTML = editor.getHTML();
+    const valueChanged = lastValueRef.current !== value;
+    const contentChanged = value && value !== currentHTML;
+    
+    // Only sync if:
+    // 1. Value prop actually changed from last known value
+    // 2. Editor is not focused (user not actively typing)
+    // 3. The new value is different from current editor content
+    if (valueChanged && !editor.isFocused && contentChanged) {
+      try { 
+        isUpdatingRef.current = true;
+        (editor.commands as any).setContent(value, { preserveWhitespace: false }); 
+        lastValueRef.current = value;
+        isUpdatingRef.current = false;
+      } catch { 
+        isUpdatingRef.current = false;
+      }
       return;
     }
 
     // If value is empty (no external content) and editor is empty, initialize with a few empty paragraphs
-    if (!value) {
+    // Only do this on initial mount, not when dialog opens
+    if (!value && lastValueRef.current === '' && !editor.isFocused) {
       try {
         const text = editor.getText?.() ?? '';
         if (text.trim() === '') {
           const emptyContent = Array.from({ length: initialRows }).map(() => '<p><br></p>').join('');
           if (editor.getHTML() !== emptyContent) {
-            try { (editor.commands as any).setContent(emptyContent, { preserveWhitespace: false }); } catch { /* ignore */ }
+            try { 
+              isUpdatingRef.current = true;
+              (editor.commands as any).setContent(emptyContent, { preserveWhitespace: false }); 
+              lastValueRef.current = value;
+              isUpdatingRef.current = false;
+            } catch { 
+              isUpdatingRef.current = false;
+            }
           }
         }
       } catch {
         // ignore
       }
     }
-  }, [value, editor]);
+    
+    // Update lastValueRef when value changes
+    if (valueChanged) {
+      lastValueRef.current = value;
+    }
+  }, [value, editor, initialRows]);
 
   return editor;
 }

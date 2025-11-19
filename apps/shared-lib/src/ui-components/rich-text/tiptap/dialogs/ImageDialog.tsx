@@ -58,9 +58,42 @@ export default function ImageDialog(props: Readonly<ImageDialogProps>) {
           try {
             // restore selection if provided (modals steal focus and DOM selection)
             if (selection && editor) {
-              try { editor.chain().focus().setTextSelection({ from: selection.from, to: selection.to }).run(); } catch { /* ignore */ }
+              try { 
+                // Insert at the saved position directly using insertContentAt
+                // Do NOT call focus() first as it may move the cursor
+                const pos = selection.from;
+                editor.chain()
+                  .insertContentAt(pos, {
+                    type: 'image',
+                    attrs
+                  })
+                  .run();
+                
+                // Set cursor position right after the inserted image
+                // Image node typically takes 1 position
+                const cursorPos = pos + 1;
+                editor.chain()
+                  .focus()
+                  .setTextSelection(cursorPos)
+                  .run();
+              } catch { 
+                // Fallback: try with setTextSelection approach
+                try {
+                  editor.chain()
+                    .setTextSelection({ from: selection.from, to: selection.to })
+                    .deleteSelection()
+                    .setImage(attrs)
+                    .focus()
+                    .run();
+                } catch {
+                  // Final fallback: just insert at current position
+                  editor?.chain().focus().setImage(attrs).run();
+                }
+              }
+            } else {
+              // No selection saved, insert at current position
+              editor?.chain().focus().setImage(attrs).run();
             }
-            editor?.chain().focus().setImage(attrs).run();
           } catch (err) {
             insertRawImg(err);
           }

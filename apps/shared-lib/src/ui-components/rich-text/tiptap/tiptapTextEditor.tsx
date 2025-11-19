@@ -189,34 +189,46 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
 
   // Handle slash menu actions that need host intervention (dialogs).
   const handleMenuActionLocal = (id: string) => {
-    try { handleMenuAction(id); } catch { /* ignore */ }
-    if (id === 'image') {
+    // Capture the selection BEFORE handleMenuAction deletes the slash
+    let capturedSelection: { from: number; to: number } | null = null;
+    if (id === 'image' || id === 'link' || id === 'youtube') {
       try {
         const s = editor.state.selection;
-        setImageSelection({ from: (s as any).from, to: (s as any).to });
+        // The handleMenuAction will delete the slash, so we need to save current position
+        capturedSelection = { from: (s as any).from, to: (s as any).to };
       } catch {
-        setImageSelection(null);
+        capturedSelection = null;
       }
+    }
+
+    // Now call handleMenuAction which will delete the slash and query
+    try { handleMenuAction(id); } catch { /* ignore */ }
+    
+    // After handleMenuAction, we need to capture the NEW cursor position
+    // because handleMenuAction deleted the slash and moved the cursor
+    if (id === 'image' || id === 'link' || id === 'youtube') {
+      try {
+        // Get the cursor position AFTER deletion
+        const s = editor.state.selection;
+        capturedSelection = { from: (s as any).from, to: (s as any).to };
+      } catch {
+        // Keep the original captured selection if this fails
+      }
+    }
+    
+    // After handleMenuAction, open dialogs with the captured selection
+    if (id === 'image') {
+      setImageSelection(capturedSelection);
       setImageForm({ url: '', width: '', height: '', alt: '' });
       setImageDialogOpen(true);
     }
     if (id === 'link') {
-      try {
-        const s = editor.state.selection;
-        setLinkSelection({ from: (s as any).from, to: (s as any).to });
-      } catch {
-        setLinkSelection(null);
-      }
+      setLinkSelection(capturedSelection);
       setLinkForm({ url: 'https://', text: '' });
       setLinkDialogOpen(true);
     }
     if (id === 'youtube') {
-      try {
-        const s = editor.state.selection;
-        setYoutubeSelection({ from: (s as any).from, to: (s as any).to });
-      } catch {
-        setYoutubeSelection(null);
-      }
+      setYoutubeSelection(capturedSelection);
       setYoutubeForm({ url: '', width: '', height: '' });
       setYoutubeDialogOpen(true);
     }

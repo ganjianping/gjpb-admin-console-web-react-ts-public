@@ -45,17 +45,54 @@ export default function LinkDialog(props: Readonly<LinkDialogProps>) {
           const { url, text } = form;
           if (!url) return;
           try {
-            if (selection && editor) {
-              try { editor.chain().focus().setTextSelection({ from: selection.from, to: selection.to }).run(); } catch { /* ignore */ }
-            }
-            const sel = globalThis.getSelection();
-            const collapsed = !sel || sel.rangeCount === 0 || sel.isCollapsed;
-            if (collapsed) {
+            // Check if there's selected text at the saved position
+            const hasSelection = selection && selection.from !== selection.to;
+            
+            if (hasSelection && selection && editor) {
+              // If there's selected text, replace it with a link at the exact position
+              try {
+                const safeText = DOMPurify.sanitize(text || url);
+                const html = `<a href="${url}" target="_blank" rel="noopener noreferrer">${safeText}</a>`;
+                editor.chain()
+                  .insertContentAt({ from: selection.from, to: selection.to }, html)
+                  .run();
+                
+                // Set cursor right after the inserted link
+                const linkLength = safeText.length;
+                const cursorPos = selection.from + linkLength;
+                editor.chain()
+                  .focus()
+                  .setTextSelection(cursorPos)
+                  .run();
+              } catch {
+                // Fallback to setTextSelection approach
+                editor.chain()
+                  .setTextSelection({ from: selection.from, to: selection.to })
+                  .extendMarkRange('link')
+                  .setLink({ href: url, target: '_blank', rel: 'noopener noreferrer' })
+                  .focus()
+                  .run();
+              }
+            } else if (selection && editor) {
+              // No selection, insert new link at the saved cursor position
+              const safeText = DOMPurify.sanitize(text || url);
+              const html = `<a href="${url}" target="_blank" rel="noopener noreferrer">${safeText}</a>`;
+              editor.chain()
+                .insertContentAt(selection.from, html)
+                .run();
+              
+              // Set cursor right after the inserted link
+              const linkLength = safeText.length;
+              const cursorPos = selection.from + linkLength;
+              editor.chain()
+                .focus()
+                .setTextSelection(cursorPos)
+                .run();
+            } else {
+              // No saved selection, insert at current position
               const safeText = DOMPurify.sanitize(text || url);
               const html = `<a href="${url}" target="_blank" rel="noopener noreferrer">${safeText}</a>`;
               editor?.chain().focus().insertContent(html).run();
-            } else {
-              editor?.chain().focus().extendMarkRange('link').setLink({ href: url, target: '_blank', rel: 'noopener noreferrer' }).run();
             }
           } catch (err) {
             // eslint-disable-next-line no-console

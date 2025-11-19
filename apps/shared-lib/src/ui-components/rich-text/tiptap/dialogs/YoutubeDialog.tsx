@@ -111,24 +111,67 @@ export default function YoutubeDialog(props: Readonly<YoutubeDialogProps>) {
     if (dimensions.width) attrs.width = dimensions.width;
     if (dimensions.height) attrs.height = dimensions.height;
 
-    if (selection) {
-      try { editor.chain().focus().setTextSelection({ from: selection.from, to: selection.to }).run(); } catch { /* ignore */ }
-    }
-
+    // Insert at the saved position if available
     try {
-      if ((editor.commands as any)?.insertYoutube) {
-        (editor.commands as any).insertYoutube(attrs);
+      if (selection) {
+        // Insert at the exact saved position
+        const pos = selection.from;
+        if ((editor.commands as any)?.insertYoutube) {
+          // First delete any selection, then insert at position
+          if (selection.from !== selection.to) {
+            editor.chain()
+              .deleteRange({ from: selection.from, to: selection.to })
+              .run();
+          }
+          editor.chain().setTextSelection(pos).run();
+          (editor.commands as any).insertYoutube(attrs);
+          // Set cursor right after the inserted video (video node takes 1 position)
+          const cursorPos = pos + 1;
+          editor.chain()
+            .focus()
+            .setTextSelection(cursorPos)
+            .run();
+        } else {
+          editor.chain()
+            .insertContentAt(pos, { type: 'youtube', attrs })
+            .run();
+          // Set cursor right after the inserted video
+          const cursorPos = pos + 1;
+          editor.chain()
+            .focus()
+            .setTextSelection(cursorPos)
+            .run();
+        }
       } else {
-        editor.chain().focus().insertContent({ type: 'youtube', attrs }).run();
+        // No saved selection, insert at current position
+        if ((editor.commands as any)?.insertYoutube) {
+          (editor.commands as any).insertYoutube(attrs);
+          editor.chain().focus().run();
+        } else {
+          editor.chain().focus().insertContent({ type: 'youtube', attrs }).run();
+        }
       }
     } catch {
       try {
+        const pos = selection?.from;
         if (source.provider === 'youtube') {
           const iframe = `<iframe src="${source.src}" frameborder="0" allowfullscreen${dimensions.width ? ` width="${dimensions.width}"` : ''}${dimensions.height ? ` height="${dimensions.height}"` : ''}></iframe>`;
-          editor.chain().focus().insertContent(iframe).run();
+          if (pos !== undefined) {
+            editor.chain().insertContentAt(pos, iframe).run();
+            const cursorPos = pos + 1;
+            editor.chain().focus().setTextSelection(cursorPos).run();
+          } else {
+            editor.chain().focus().insertContent(iframe).run();
+          }
         } else {
           const video = `<video controls src="${source.src}"${dimensions.width ? ` width="${dimensions.width}"` : ''}${dimensions.height ? ` height="${dimensions.height}"` : ''}></video>`;
-          editor.chain().focus().insertContent(video).run();
+          if (pos !== undefined) {
+            editor.chain().insertContentAt(pos, video).run();
+            const cursorPos = pos + 1;
+            editor.chain().focus().setTextSelection(cursorPos).run();
+          } else {
+            editor.chain().focus().insertContent(video).run();
+          }
         }
       } catch {
         // ignore hard failure
