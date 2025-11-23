@@ -48,7 +48,7 @@ const extractVideoId = (input: string) => {
 
 const buildYoutubeEmbedUrl = (videoId: string) => `https://www.youtube.com/embed/${videoId}`;
 
-const isDirectVideoUrl = (input: string) => /\bhttps?:\/\/.+\.(mp4|webm|ogg|ogv|mov|m4v)(?:\?.*)?(?:#.*)?$/i.test(input.trim());
+const isDirectVideoUrl = (input: string) => /\bhttps?:\/\/.+\.(mp4|webm|ogg|ogv|mov|m4v|avi|mkv|flv|wmv|3gp)(?:\?.*)?(?:#.*)?$/i.test(input.trim());
 
 const parseDimension = (input: string) => {
   const trimmed = input.trim();
@@ -108,6 +108,7 @@ export default function YoutubeDialog(props: Readonly<YoutubeDialogProps>) {
       src: source.src,
     };
     if (source.provider === 'youtube') attrs.videoId = source.videoId;
+    // Store dimensions as numbers for the HTML width/height attributes
     if (dimensions.width) attrs.width = dimensions.width;
     if (dimensions.height) attrs.height = dimensions.height;
 
@@ -178,7 +179,9 @@ export default function YoutubeDialog(props: Readonly<YoutubeDialogProps>) {
 
   const errorMessage = (() => {
     if (dimensions.error) return dimensions.error;
-    if (submitAttempted && source.provider == null) return 'Please enter a valid YouTube link or video file URL.';
+    if (submitAttempted && source.provider == null) {
+      return 'Please enter a valid YouTube link (e.g., youtube.com/watch?v=...) or direct video URL (e.g., https://example.com/video.mp4)';
+    }
     return null;
   })();
 
@@ -229,9 +232,11 @@ export default function YoutubeDialog(props: Readonly<YoutubeDialogProps>) {
     <DialogWrapper open={open} overlayRef={overlayRef} onClose={onClose} width={560}>
       <form onSubmit={onSubmit} style={tiptapStyles.dialogFormStyle}>
         <header style={tiptapStyles.dialogHeaderStyle}>
-          <h3 style={tiptapStyles.dialogTitleStyle}>Embed video</h3>
+          <h3 style={tiptapStyles.dialogTitleStyle}>Embed Video</h3>
           <p style={tiptapStyles.dialogDescriptionStyle}>
-            Paste a YouTube link or a direct video URL (mp4, webm, mov, …). Optionally control the embed size.
+            YouTube: Paste a video link, share URL, or just the video ID<br />
+            Direct video: Paste a URL ending in .mp4, .webm, .mov, .ogg, .mkv, etc.<br />
+            Optionally set custom dimensions (default: 16:9 aspect ratio)
           </p>
         </header>
 
@@ -244,10 +249,10 @@ export default function YoutubeDialog(props: Readonly<YoutubeDialogProps>) {
                 autoFocus
                 value={form.url}
                 onChange={(e) => setForm({ ...form, url: e.target.value })}
-                placeholder="https://www.youtube.com/watch?v=abcdefghijk"
+                placeholder="https://youtube.com/watch?v=... or https://example.com/video.mp4"
                 style={tiptapStyles.dialogInputStyle}
               />
-              <span style={tiptapStyles.dialogHintStyle}>Supports YouTube links or direct files ending in .mp4, .webm, .mov, etc.</span>
+              <span style={tiptapStyles.dialogHintStyle}>YouTube (URL or ID) • Direct video files (.mp4, .webm, .mov, .ogg, .mkv, etc.)</span>
             </div>
 
             <div style={tiptapStyles.dialogFieldRowStyle}>

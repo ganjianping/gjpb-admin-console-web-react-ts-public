@@ -67,15 +67,22 @@ export const Youtube = Node.create<YoutubeOptions>({
       class: [...baseClass, ...(attrs.class ? [attrs.class] : [])].join(' '),
       'data-provider': provider,
     };
+    
+    // Apply width/height to wrapper div for proper sizing
+    if (width || height) {
+      let wrapperStyle = '';
+      if (width) wrapperStyle += `width: ${width}px !important; max-width: ${width}px !important;`;
+      if (height) wrapperStyle += ` height: ${height}px !important;`;
+      wrapperAttrs.style = wrapperStyle.trim();
+    }
 
     if (provider === 'file') {
       const videoAttributes: Record<string, any> = {
         src,
         controls: 'controls',
         preload: 'metadata',
+        style: 'width: 100%; height: 100%;',
       };
-      if (width) videoAttributes.width = width;
-      if (height) videoAttributes.height = height;
       return ['div', wrapperAttrs, ['video', videoAttributes]];
     }
 
@@ -85,9 +92,8 @@ export const Youtube = Node.create<YoutubeOptions>({
       allowfullscreen: 'true',
       allow: 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture',
       title,
+      style: 'width: 100%; height: 100%;',
     };
-    if (width) iframeAttributes.width = width;
-    if (height) iframeAttributes.height = height;
 
     return ['div', wrapperAttrs, ['iframe', iframeAttributes]];
   },
