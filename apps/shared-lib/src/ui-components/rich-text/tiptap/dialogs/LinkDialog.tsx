@@ -44,6 +44,7 @@ export default function LinkDialog(props: Readonly<LinkDialogProps>) {
           e.preventDefault();
           const { url, text } = form;
           if (!url) return;
+          
           try {
             // Check if there's selected text at the saved position
             const hasSelection = selection && selection.from !== selection.to;
@@ -53,15 +54,20 @@ export default function LinkDialog(props: Readonly<LinkDialogProps>) {
               try {
                 const safeText = DOMPurify.sanitize(text || url);
                 const html = `<a href="${url}" target="_blank" rel="noopener noreferrer">${safeText}</a>`;
+                const pos = selection.from;
+                
+                // Insert at the saved position, replacing the selection
                 editor.chain()
                   .insertContentAt({ from: selection.from, to: selection.to }, html)
                   .run();
                 
                 // Set cursor right after the inserted link
                 const linkLength = safeText.length;
-                const cursorPos = selection.from + linkLength;
+                const cursorPos = pos + linkLength;
+                
+                // Focus without scrolling and set selection
                 editor.chain()
-                  .focus()
+                  .focus(undefined, { scrollIntoView: false })
                   .setTextSelection(cursorPos)
                   .run();
               } catch {
@@ -70,29 +76,34 @@ export default function LinkDialog(props: Readonly<LinkDialogProps>) {
                   .setTextSelection({ from: selection.from, to: selection.to })
                   .extendMarkRange('link')
                   .setLink({ href: url, target: '_blank', rel: 'noopener noreferrer' })
-                  .focus()
+                  .focus(undefined, { scrollIntoView: false })
                   .run();
               }
             } else if (selection && editor) {
               // No selection, insert new link at the saved cursor position
               const safeText = DOMPurify.sanitize(text || url);
               const html = `<a href="${url}" target="_blank" rel="noopener noreferrer">${safeText}</a>`;
+              const pos = selection.from;
+              
+              // Insert at the saved position
               editor.chain()
-                .insertContentAt(selection.from, html)
+                .insertContentAt(pos, html)
                 .run();
               
               // Set cursor right after the inserted link
               const linkLength = safeText.length;
-              const cursorPos = selection.from + linkLength;
+              const cursorPos = pos + linkLength;
+              
+              // Focus without scrolling and set selection
               editor.chain()
-                .focus()
+                .focus(undefined, { scrollIntoView: false })
                 .setTextSelection(cursorPos)
                 .run();
             } else {
               // No saved selection, insert at current position
               const safeText = DOMPurify.sanitize(text || url);
               const html = `<a href="${url}" target="_blank" rel="noopener noreferrer">${safeText}</a>`;
-              editor?.chain().focus().insertContent(html).run();
+              editor?.chain().focus(undefined, { scrollIntoView: false }).insertContent(html).run();
             }
           } catch (err) {
             // eslint-disable-next-line no-console

@@ -42,7 +42,7 @@ export default defineConfig(({ mode }) => {
             // Add timeout to proxy server
             proxy.on('proxyReq', (proxyReq, req) => {
               proxyReq.setTimeout(10000); // 10 seconds timeout
-              console.log(`[Proxy] ${req.method} ${req.url} -> http://localhost:8081${req.url}`);
+              console.log(`[Proxy] ${req.method} ${req.url} -> https://www.ganjianping.com/${req.url}`);
               console.log(`[Proxy] Headers:`, req.headers);
             });
             

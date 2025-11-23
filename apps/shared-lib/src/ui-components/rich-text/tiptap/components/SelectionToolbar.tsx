@@ -70,6 +70,34 @@ export default function SelectionToolbar(props: Readonly<Props>) {
 
       {/* Code block insertion now available via the SlashMenu (\"/\") — language picker moved there. */}
 
+      <button
+        type="button"
+        title="Insert Link"
+        className={editor.isActive('link') ? 'is-active' : ''}
+        onMouseDown={(e) => {
+          e.preventDefault();
+          try {
+            // Get the selected text
+            const { from, to } = editor.state.selection;
+            const selectedText = editor.state.doc.textBetween(from, to, ' ');
+            
+            // Dispatch custom event to open link dialog with selected text
+            const event = new CustomEvent('gjp-open-link-dialog', {
+              detail: { selectedText }
+            });
+            globalThis.dispatchEvent(event);
+          } catch {
+            // If selection fails, just open the dialog without text
+            const event = new CustomEvent('gjp-open-link-dialog', {
+              detail: { selectedText: '' }
+            });
+            globalThis.dispatchEvent(event);
+          }
+        }}
+      >
+        🔗
+      </button>
+
       {/* Text color picker */}
       <div style={{ position: 'relative' }}>
         <button

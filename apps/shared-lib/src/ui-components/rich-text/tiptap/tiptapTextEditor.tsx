@@ -171,7 +171,7 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
     };
     globalThis.addEventListener('gjp-open-link-dialog', handler as EventListener);
     return () => globalThis.removeEventListener('gjp-open-link-dialog', handler as EventListener);
-  }, []);
+  }, [editor]);
 
   
 
@@ -191,11 +191,22 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
   const handleMenuActionLocal = (id: string) => {
     // Capture the selection BEFORE handleMenuAction deletes the slash
     let capturedSelection: { from: number; to: number } | null = null;
+    let selectedText = '';
+    
     if (id === 'image' || id === 'link' || id === 'youtube') {
       try {
         const s = editor.state.selection;
         // The handleMenuAction will delete the slash, so we need to save current position
         capturedSelection = { from: (s as any).from, to: (s as any).to };
+        
+        // Extract selected text for the link dialog
+        if (id === 'link' && s.from !== s.to) {
+          try {
+            selectedText = editor.state.doc.textBetween(s.from, s.to, ' ');
+          } catch {
+            selectedText = '';
+          }
+        }
       } catch {
         capturedSelection = null;
       }
@@ -224,7 +235,7 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
     }
     if (id === 'link') {
       setLinkSelection(capturedSelection);
-      setLinkForm({ url: 'https://', text: '' });
+      setLinkForm({ url: 'https://', text: selectedText });
       setLinkDialogOpen(true);
     }
     if (id === 'youtube') {
