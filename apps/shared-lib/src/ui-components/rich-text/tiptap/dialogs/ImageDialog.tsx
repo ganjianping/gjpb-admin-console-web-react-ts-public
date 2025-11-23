@@ -47,11 +47,11 @@ export default function ImageDialog(props: Readonly<ImageDialogProps>) {
             const altAttr = alt?.toString().trim() ? ` alt="${alt.toString().trim()}"` : '';
             const html = `<p><img src="${url}"${altAttr}${styleAttr} /></p>`;
             try {
-              editor?.chain().focus().insertContent(html).run();
+              editor?.chain().focus(undefined, { scrollIntoView: false }).insertContent(html).run();
             } catch (error_) {
               // eslint-disable-next-line no-console
               console.error('insertContent fallback failed, trying minimal setImage', error_);
-              editor?.chain().focus().setImage({ src: url }).run();
+              editor?.chain().focus(undefined, { scrollIntoView: false }).setImage({ src: url }).run();
             }
           };
 
@@ -69,12 +69,10 @@ export default function ImageDialog(props: Readonly<ImageDialogProps>) {
                   })
                   .run();
                 
-                // Set cursor position right after the inserted image
-                // Image node typically takes 1 position
-                const cursorPos = pos + 1;
+                // Keep cursor at the insertion position to avoid jumping rows
                 editor.chain()
-                  .focus()
-                  .setTextSelection(cursorPos)
+                  .focus(undefined, { scrollIntoView: false })
+                  .setTextSelection(pos)
                   .run();
               } catch { 
                 // Fallback: try with setTextSelection approach
@@ -83,16 +81,16 @@ export default function ImageDialog(props: Readonly<ImageDialogProps>) {
                     .setTextSelection({ from: selection.from, to: selection.to })
                     .deleteSelection()
                     .setImage(attrs)
-                    .focus()
+                    .focus(undefined, { scrollIntoView: false })
                     .run();
                 } catch {
                   // Final fallback: just insert at current position
-                  editor?.chain().focus().setImage(attrs).run();
+                  editor?.chain().focus(undefined, { scrollIntoView: false }).setImage(attrs).run();
                 }
               }
             } else {
               // No selection saved, insert at current position
-              editor?.chain().focus().setImage(attrs).run();
+              editor?.chain().focus(undefined, { scrollIntoView: false }).setImage(attrs).run();
             }
           } catch (err) {
             insertRawImg(err);

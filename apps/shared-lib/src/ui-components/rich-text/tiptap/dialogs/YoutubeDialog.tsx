@@ -125,30 +125,28 @@ export default function YoutubeDialog(props: Readonly<YoutubeDialogProps>) {
           }
           editor.chain().setTextSelection(pos).run();
           (editor.commands as any).insertYoutube(attrs);
-          // Set cursor right after the inserted video (video node takes 1 position)
-          const cursorPos = pos + 1;
+          // Keep cursor at the insertion position to avoid jumping rows
           editor.chain()
-            .focus()
-            .setTextSelection(cursorPos)
+            .focus(undefined, { scrollIntoView: false })
+            .setTextSelection(pos)
             .run();
         } else {
           editor.chain()
             .insertContentAt(pos, { type: 'youtube', attrs })
             .run();
-          // Set cursor right after the inserted video
-          const cursorPos = pos + 1;
+          // Keep cursor at the insertion position to avoid jumping rows
           editor.chain()
-            .focus()
-            .setTextSelection(cursorPos)
+            .focus(undefined, { scrollIntoView: false })
+            .setTextSelection(pos)
             .run();
         }
       } else {
         // No saved selection, insert at current position
         if ((editor.commands as any)?.insertYoutube) {
           (editor.commands as any).insertYoutube(attrs);
-          editor.chain().focus().run();
+          editor.chain().focus(undefined, { scrollIntoView: false }).run();
         } else {
-          editor.chain().focus().insertContent({ type: 'youtube', attrs }).run();
+          editor.chain().focus(undefined, { scrollIntoView: false }).insertContent({ type: 'youtube', attrs }).run();
         }
       }
     } catch {
@@ -158,19 +156,17 @@ export default function YoutubeDialog(props: Readonly<YoutubeDialogProps>) {
           const iframe = `<iframe src="${source.src}" frameborder="0" allowfullscreen${dimensions.width ? ` width="${dimensions.width}"` : ''}${dimensions.height ? ` height="${dimensions.height}"` : ''}></iframe>`;
           if (pos !== undefined) {
             editor.chain().insertContentAt(pos, iframe).run();
-            const cursorPos = pos + 1;
-            editor.chain().focus().setTextSelection(cursorPos).run();
+            editor.chain().focus(undefined, { scrollIntoView: false }).setTextSelection(pos).run();
           } else {
-            editor.chain().focus().insertContent(iframe).run();
+            editor.chain().focus(undefined, { scrollIntoView: false }).insertContent(iframe).run();
           }
         } else {
           const video = `<video controls src="${source.src}"${dimensions.width ? ` width="${dimensions.width}"` : ''}${dimensions.height ? ` height="${dimensions.height}"` : ''}></video>`;
           if (pos !== undefined) {
             editor.chain().insertContentAt(pos, video).run();
-            const cursorPos = pos + 1;
-            editor.chain().focus().setTextSelection(cursorPos).run();
+            editor.chain().focus(undefined, { scrollIntoView: false }).setTextSelection(pos).run();
           } else {
-            editor.chain().focus().insertContent(video).run();
+            editor.chain().focus(undefined, { scrollIntoView: false }).insertContent(video).run();
           }
         }
       } catch {

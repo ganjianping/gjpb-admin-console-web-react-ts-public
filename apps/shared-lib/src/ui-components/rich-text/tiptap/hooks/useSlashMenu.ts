@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import type { Editor } from '@tiptap/react';
+import { TextSelection } from 'prosemirror-state';
 import { defaultMenuItems, type MenuItem } from '../config/menuItems';
-import { coordsAtPosSafe, deleteRange, insertTableFallback, safeChainFocus } from '../utils/editorUtils';
+import { coordsAtPosSafe, deleteRange, insertTableFallback } from '../utils/editorUtils';
 
 type UseSlashMenuReturn = {
   slashOpen: boolean;
@@ -56,7 +57,7 @@ export default function useSlashMenu(editor: Editor | null, containerRef: React.
   const applyAndClose = (action: () => void) => {
     try { action(); } catch { /* ignore */ }
     closeSlashMenu();
-    try { safeChainFocus(editor)?.run?.(); } catch { /* ignore */ }
+    try { editor?.chain().focus(undefined, { scrollIntoView: false }).run(); } catch { /* ignore */ }
   };
 
   const handleMenuAction = async (id: string) => {
@@ -68,18 +69,40 @@ export default function useSlashMenu(editor: Editor | null, containerRef: React.
           closeSlashMenu();
           return;
         }
-        try {
-          const selTo = editor!.state.selection.from;
-          deleteRange(editor, slashPos - 1, selTo);
-        } catch {}
+        const insertPos = slashPos - 1;
+        const selTo = editor.state.selection.from;
         try {
           if ((editor as any)?.loadCodeLanguage) {
             try { await (editor as any).loadCodeLanguage(id); } catch { /* ignore */ }
           }
-          try { editor?.chain().focus().setCodeBlock({ language: id }).run(); } catch { try { editor?.chain().focus().setNode('codeBlock').run(); } catch {} }
+          // Delete slash and convert block in a single transaction
+          try { 
+            editor.chain()
+              .focus(undefined, { scrollIntoView: false })
+              .command(({ tr }) => {
+                // Delete the slash range
+                tr.delete(insertPos, selTo);
+                // Set cursor to insert position
+                tr.setSelection(TextSelection.near(tr.doc.resolve(insertPos)));
+                return true;
+              })
+              .setCodeBlock({ language: id })
+              .run(); 
+          } catch { 
+            try { 
+              editor.chain()
+                .focus(undefined, { scrollIntoView: false })
+                .command(({ tr }) => {
+                  tr.delete(insertPos, selTo);
+                  tr.setSelection(TextSelection.near(tr.doc.resolve(insertPos)));
+                  return true;
+                })
+                .setNode('codeBlock')
+                .run(); 
+            } catch {} 
+          }
         } catch {}
         closeSlashMenu();
-        try { safeChainFocus(editor)?.run?.(); } catch { /* ignore */ }
         return;
       }
   // removed unused emojiChild lookup (no handling implemented here)
@@ -91,45 +114,95 @@ export default function useSlashMenu(editor: Editor | null, containerRef: React.
       case 'heading-1':
         applyAndClose(() => {
           if (slashPos != null) {
+            const insertPos = slashPos - 1;
             const selTo = editor!.state.selection.from;
-            deleteRange(editor, slashPos - 1, selTo);
-            try { editor?.chain().focus().setNode('heading', { level: 1 }).run(); } catch { /* ignore */ }
+            try {
+              editor?.chain()
+                .focus(undefined, { scrollIntoView: false })
+                .command(({ tr }) => {
+                  tr.delete(insertPos, selTo);
+                  tr.setSelection(TextSelection.near(tr.doc.resolve(insertPos)));
+                  return true;
+                })
+                .setNode('heading', { level: 1 })
+                .run();
+            } catch { /* ignore */ }
           }
         });
         break;
       case 'heading-2':
         applyAndClose(() => {
           if (slashPos != null) {
+            const insertPos = slashPos - 1;
             const selTo = editor!.state.selection.from;
-            deleteRange(editor, slashPos - 1, selTo);
-            try { editor?.chain().focus().setNode('heading', { level: 2 }).run(); } catch { /* ignore */ }
+            try {
+              editor?.chain()
+                .focus(undefined, { scrollIntoView: false })
+                .command(({ tr }) => {
+                  tr.delete(insertPos, selTo);
+                  tr.setSelection(TextSelection.near(tr.doc.resolve(insertPos)));
+                  return true;
+                })
+                .setNode('heading', { level: 2 })
+                .run();
+            } catch { /* ignore */ }
           }
         });
         break;
       case 'heading-3':
         applyAndClose(() => {
           if (slashPos != null) {
+            const insertPos = slashPos - 1;
             const selTo = editor!.state.selection.from;
-            deleteRange(editor, slashPos - 1, selTo);
-            try { editor?.chain().focus().setNode('heading', { level: 3 }).run(); } catch { /* ignore */ }
+            try {
+              editor?.chain()
+                .focus(undefined, { scrollIntoView: false })
+                .command(({ tr }) => {
+                  tr.delete(insertPos, selTo);
+                  tr.setSelection(TextSelection.near(tr.doc.resolve(insertPos)));
+                  return true;
+                })
+                .setNode('heading', { level: 3 })
+                .run();
+            } catch { /* ignore */ }
           }
         });
         break;
       case 'heading-4':
         applyAndClose(() => {
           if (slashPos != null) {
+            const insertPos = slashPos - 1;
             const selTo = editor!.state.selection.from;
-            deleteRange(editor, slashPos - 1, selTo);
-            try { editor?.chain().focus().setNode('heading', { level: 4 }).run(); } catch { /* ignore */ }
+            try {
+              editor?.chain()
+                .focus(undefined, { scrollIntoView: false })
+                .command(({ tr }) => {
+                  tr.delete(insertPos, selTo);
+                  tr.setSelection(TextSelection.near(tr.doc.resolve(insertPos)));
+                  return true;
+                })
+                .setNode('heading', { level: 4 })
+                .run();
+            } catch { /* ignore */ }
           }
         });
         break;
       case 'heading-5':
         applyAndClose(() => {
           if (slashPos != null) {
+            const insertPos = slashPos - 1;
             const selTo = editor!.state.selection.from;
-            deleteRange(editor, slashPos - 1, selTo);
-            try { editor?.chain().focus().setNode('heading', { level: 5 }).run(); } catch { /* ignore */ }
+            try {
+              editor?.chain()
+                .focus(undefined, { scrollIntoView: false })
+                .command(({ tr }) => {
+                  tr.delete(insertPos, selTo);
+                  tr.setSelection(TextSelection.near(tr.doc.resolve(insertPos)));
+                  return true;
+                })
+                .setNode('heading', { level: 5 })
+                .run();
+            } catch { /* ignore */ }
           }
         });
         break;
@@ -138,7 +211,7 @@ export default function useSlashMenu(editor: Editor | null, containerRef: React.
           if (slashPos != null) {
             const selTo = editor!.state.selection.from;
             deleteRange(editor, slashPos - 1, selTo);
-            try { editor?.chain().focus().setTextAlign('left').run(); } catch { /* ignore */ }
+            try { editor?.chain().focus(undefined, { scrollIntoView: false }).setTextAlign('left').run(); } catch { /* ignore */ }
           }
         });
         break;
@@ -147,7 +220,7 @@ export default function useSlashMenu(editor: Editor | null, containerRef: React.
           if (slashPos != null) {
             const selTo = editor!.state.selection.from;
             deleteRange(editor, slashPos - 1, selTo);
-            try { editor?.chain().focus().setTextAlign('center').run(); } catch { /* ignore */ }
+            try { editor?.chain().focus(undefined, { scrollIntoView: false }).setTextAlign('center').run(); } catch { /* ignore */ }
           }
         });
         break;
@@ -156,7 +229,7 @@ export default function useSlashMenu(editor: Editor | null, containerRef: React.
           if (slashPos != null) {
             const selTo = editor!.state.selection.from;
             deleteRange(editor, slashPos - 1, selTo);
-            try { editor?.chain().focus().setTextAlign('right').run(); } catch { /* ignore */ }
+            try { editor?.chain().focus(undefined, { scrollIntoView: false }).setTextAlign('right').run(); } catch { /* ignore */ }
           }
         });
         break;
@@ -165,49 +238,97 @@ export default function useSlashMenu(editor: Editor | null, containerRef: React.
           if (slashPos != null) {
             const selTo = editor!.state.selection.from;
             deleteRange(editor, slashPos - 1, selTo);
-            try { editor?.chain().focus().setTextAlign('justify').run(); } catch { /* ignore */ }
+            try { editor?.chain().focus(undefined, { scrollIntoView: false }).setTextAlign('justify').run(); } catch { /* ignore */ }
           }
         });
         break;
-      case 'bulleted':
+      case 'bulleted-list':
         applyAndClose(() => {
           if (slashPos != null) {
+            const insertPos = slashPos - 1;
             const selTo = editor!.state.selection.from;
-            deleteRange(editor, slashPos - 1, selTo);
-            try { editor?.chain().focus().toggleBulletList().run(); } catch { /* ignore */ }
+            try {
+              editor?.chain()
+                .focus(undefined, { scrollIntoView: false })
+                .command(({ tr }) => {
+                  tr.delete(insertPos, selTo);
+                  tr.setSelection(TextSelection.near(tr.doc.resolve(insertPos)));
+                  return true;
+                })
+                .toggleBulletList()
+                .run();
+            } catch { /* ignore */ }
           }
         });
         break;
-      case 'numbered':
+      case 'numbered-list':
         applyAndClose(() => {
           if (slashPos != null) {
+            const insertPos = slashPos - 1;
             const selTo = editor!.state.selection.from;
-            deleteRange(editor, slashPos - 1, selTo);
-            try { editor?.chain().focus().toggleOrderedList().run(); } catch { /* ignore */ }
+            try {
+              editor?.chain()
+                .focus(undefined, { scrollIntoView: false })
+                .command(({ tr }) => {
+                  tr.delete(insertPos, selTo);
+                  tr.setSelection(TextSelection.near(tr.doc.resolve(insertPos)));
+                  return true;
+                })
+                .toggleOrderedList()
+                .run();
+            } catch { /* ignore */ }
           }
         });
         break;
       case 'quote':
         applyAndClose(() => {
           if (slashPos != null) {
+            const insertPos = slashPos - 1;
             const selTo = editor!.state.selection.from;
-            deleteRange(editor, slashPos - 1, selTo);
-            try { editor?.chain().focus().toggleBlockquote().run(); } catch { /* ignore */ }
+            try {
+              editor?.chain()
+                .focus(undefined, { scrollIntoView: false })
+                .command(({ tr }) => {
+                  tr.delete(insertPos, selTo);
+                  tr.setSelection(TextSelection.near(tr.doc.resolve(insertPos)));
+                  return true;
+                })
+                .toggleBlockquote()
+                .run();
+            } catch { /* ignore */ }
           }
         });
         break;
       case 'code':
         applyAndClose(() => {
           if (slashPos != null) {
+            const insertPos = slashPos - 1;
             const selTo = editor!.state.selection.from;
-            deleteRange(editor, slashPos - 1, selTo);
             try {
               if ((editor as any)?.loadCodeLanguage) {
                 try { (editor as any).loadCodeLanguage('plaintext'); } catch { /* ignore */ }
               }
-              editor?.chain().focus().setNode('codeBlock', { language: 'plaintext' }).run();
+              editor?.chain()
+                .focus(undefined, { scrollIntoView: false })
+                .command(({ tr }) => {
+                  tr.delete(insertPos, selTo);
+                  tr.setSelection(TextSelection.near(tr.doc.resolve(insertPos)));
+                  return true;
+                })
+                .setCodeBlock({ language: 'plaintext' })
+                .run();
             } catch {
-              try { editor?.chain().focus().setNode('codeBlock').run(); } catch { /* ignore */ }
+              try { 
+                editor?.chain()
+                  .focus(undefined, { scrollIntoView: false })
+                  .command(({ tr }) => {
+                    tr.delete(insertPos, selTo);
+                    tr.setSelection(TextSelection.near(tr.doc.resolve(insertPos)));
+                    return true;
+                  })
+                  .setNode('codeBlock')
+                  .run(); 
+              } catch { /* ignore */ }
             }
           }
         });

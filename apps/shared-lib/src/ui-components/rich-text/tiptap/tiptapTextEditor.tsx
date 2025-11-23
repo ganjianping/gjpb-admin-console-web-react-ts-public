@@ -262,6 +262,7 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
           bottom: isFullscreen ? 0 : undefined,
           width: isFullscreen ? '100%' : undefined,
           height: isFullscreen ? '100vh' : undefined,
+          overflow: isFullscreen ? 'auto' : undefined,
           zIndex: isFullscreen ? 1400 : undefined,
           background: isFullscreen ? '#fff' : undefined,
           boxShadow: isFullscreen ? '0 4px 20px rgba(0,0,0,0.12)' : undefined,

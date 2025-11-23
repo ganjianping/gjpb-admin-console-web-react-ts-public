@@ -36,7 +36,7 @@ export async function insertTableFallback(editor: Editor | null, rows = 3, cols 
 export function deleteRange(editor: Editor | null, from: number, to: number) {
   if (!editor) return;
   try {
-    editor.chain().focus().command(({ tr }) => { tr.delete(from, to); return true; }).run();
+    editor.chain().focus(undefined, { scrollIntoView: false }).command(({ tr }) => { tr.delete(from, to); return true; }).run();
   } catch {
     // ignore
   }
