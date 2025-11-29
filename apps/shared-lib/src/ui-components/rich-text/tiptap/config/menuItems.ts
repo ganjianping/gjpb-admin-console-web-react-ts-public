@@ -32,8 +32,8 @@ export const defaultMenuItems: MenuItem[] = [
       { id: 'align-justify', label: 'Justify' },
     ],
   },
-  { id: 'bulleted', label: 'Bulleted list', icon: BulletedIcon },
-  { id: 'numbered', label: 'Numbered list', icon: NumberedIcon },
+  { id: 'bulleted-list', label: 'Bulleted list', icon: BulletedIcon },
+  { id: 'numbered-list', label: 'Numbered list', icon: NumberedIcon },
   { id: 'quote', label: 'Quote', icon: QuoteIcon },
   {
     id: 'code',

@@ -198,23 +198,6 @@ const ArticleCreateDialog = ({
             helperText={getFieldError('title')}
           />
           <Box>
-            <Typography variant="subtitle2">{t('articles.form.summary')}</Typography>
-            <TextareaAutosize
-              minRows={3}
-              style={{
-                width: '100%',
-                padding: '8.5px 14px',
-                borderRadius: 4,
-                border: '1px solid rgba(0,0,0,0.23)',
-                fontFamily: 'inherit',
-              }}
-              value={formData.summary || ''}
-              onChange={(e) => onFormChange('summary', e.target.value)}
-              aria-label={t('articles.form.summary')}
-            />
-            {getFieldError('summary') && <FormHelperText error>{getFieldError('summary')}</FormHelperText>}
-          </Box>
-          <Box>
             <Typography variant="subtitle2">{t('articles.form.content')}</Typography>
             <TiptapTextEditor
               value={formData.content || ''}
@@ -223,18 +206,7 @@ const ArticleCreateDialog = ({
             />
             {getFieldError('content') && <FormHelperText error>{getFieldError('content')}</FormHelperText>}
           </Box>
-          <TextField
-            label={t('articles.form.sourceName')}
-            value={formData.sourceName || ''}
-            onChange={(e) => onFormChange('sourceName', e.target.value)}
-            fullWidth
-          />
-          <TextField
-            label={t('articles.form.originalUrl')}
-            value={formData.originalUrl || ''}
-            onChange={(e) => onFormChange('originalUrl', e.target.value)}
-            fullWidth
-          />
+
           <Box>
             <Typography variant="subtitle2">{t('articles.form.coverImageFile')}</Typography>
             <input type="file" accept="image/*" onChange={handleCoverFileChange} />
@@ -275,6 +247,38 @@ const ArticleCreateDialog = ({
               )}
             </Select>
           </FormControl>
+
+          <Box>
+            <Typography variant="subtitle2">{t('articles.form.summary')}</Typography>
+            <TextareaAutosize
+              minRows={3}
+              style={{
+                width: '100%',
+                padding: '8.5px 14px',
+                borderRadius: 4,
+                border: '1px solid rgba(0,0,0,0.23)',
+                fontFamily: 'inherit',
+              }}
+              value={formData.summary || ''}
+              onChange={(e) => onFormChange('summary', e.target.value)}
+              aria-label={t('articles.form.summary')}
+            />
+            {getFieldError('summary') && <FormHelperText error>{getFieldError('summary')}</FormHelperText>}
+          </Box>
+          
+          <TextField
+            label={t('articles.form.sourceName')}
+            value={formData.sourceName || ''}
+            onChange={(e) => onFormChange('sourceName', e.target.value)}
+            fullWidth
+          />
+          <TextField
+            label={t('articles.form.originalUrl')}
+            value={formData.originalUrl || ''}
+            onChange={(e) => onFormChange('originalUrl', e.target.value)}
+            fullWidth
+          />
+          
 
   <FormControl fullWidth>
             <Select value={formData.lang || ''} onChange={handleLangChange}>

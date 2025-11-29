@@ -21,12 +21,6 @@ function TitleCell({ info }: Readonly<{ info: any }>) {
         <Typography variant="body2" sx={{ fontWeight: 500 }}>
           {info.getValue()}
         </Typography>
-        {article.summary && (
-          <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
-            {article.summary.slice(0, 80)}
-            {article.summary.length > 80 ? '…' : ''}
-          </Typography>
-        )}
       </Box>
     </Box>
   );
