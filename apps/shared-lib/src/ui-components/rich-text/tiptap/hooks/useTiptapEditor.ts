@@ -107,7 +107,7 @@ export default function useTiptapEditor({ value = '', onChange, placeholder = 'E
 
       const meta = languageMap[lang];
       const moduleName = meta?.module ?? lang;
-      const loadPromise = import(/* webpackChunkName: "hljs-[request]" */ `highlight.js/lib/languages/${moduleName}`)
+      const loadPromise = import(/* @vite-ignore */ `highlight.js/lib/languages/${moduleName}`)
         .then((mod) => {
           const fn = (mod as any).default ?? mod;
           lowlight.register({ [lang]: fn as any });
