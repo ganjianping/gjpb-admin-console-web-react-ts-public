@@ -5,8 +5,8 @@
 
 export const APP_SETTING_CONSTANTS = {
   // Pagination
-  DEFAULT_PAGE_SIZE: 20,
-  PAGE_SIZE_OPTIONS: [10, 20, 50, 100],
+  DEFAULT_PAGE_SIZE: 50,
+  PAGE_SIZE_OPTIONS: [10, 20, 50, 100, 500],
   
   // Defaults
   DEFAULT_LANGUAGE: 'EN',
