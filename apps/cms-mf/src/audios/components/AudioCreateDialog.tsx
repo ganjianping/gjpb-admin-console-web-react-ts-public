@@ -106,6 +106,14 @@ const AudioCreateDialog = ({
   const handleFileChange = (field: keyof AudioFormData, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
     onFormChange(field, file);
+    if (file) {
+      if (field === 'file' && !formData.filename) {
+        onFormChange('filename', file.name);
+      }
+      if (field === 'coverImageFile' && !formData.coverImageFilename) {
+        onFormChange('coverImageFilename', file.name);
+      }
+    }
   };
 
   const handleSubmit = async () => {
@@ -179,6 +187,7 @@ const AudioCreateDialog = ({
             <Typography variant="subtitle2">{t('audios.form.audioFile') || 'Audio File'}</Typography>
             <input type="file" accept="audio/*" onChange={(e) => handleFileChange('file', e)} />
           </Box>
+          <TextField label={t('audios.form.filename') || 'Filename'} value={formData.filename || ''} onChange={(e) => onFormChange('filename', e.target.value)} fullWidth />
           <Box>
             <Typography variant="subtitle2">{t('audios.form.coverImageFile') || 'Cover Image File'}</Typography>
             <input type="file" accept="image/*" onChange={(e) => handleFileChange('coverImageFile', e)} />

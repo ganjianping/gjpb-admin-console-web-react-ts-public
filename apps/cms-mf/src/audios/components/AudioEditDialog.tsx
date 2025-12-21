@@ -95,6 +95,7 @@ const AudioEditDialog: React.FC<AudioEditDialogProps> = ({ open, formData, onFor
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
           <TextField label={t('audios.form.name') || 'Name'} value={formData.name} onChange={e => onFormChange('name', e.target.value)} fullWidth />
           <TextField label={t('audios.form.artist') || 'Artist'} value={(formData as any).artist || ''} onChange={e => onFormChange('artist' as any, e.target.value)} fullWidth />
+          <TextField label={t('audios.form.filename') || 'Filename'} value={(formData as any).filename || ''} onChange={e => onFormChange('filename' as any, e.target.value)} fullWidth  />  
           <Box>
             <Typography variant="subtitle2">{t('audios.form.coverImageFile') || 'Cover Image File'}</Typography>
             <input type="file" accept="image/*" onChange={handleCoverFileChange} />
@@ -129,8 +130,6 @@ const AudioEditDialog: React.FC<AudioEditDialogProps> = ({ open, formData, onFor
 
           <TextField label={t('audios.form.displayOrder') || 'Display Order'} type="number" value={String(formData.displayOrder)} onChange={e => onFormChange('displayOrder', Number(e.target.value) || 0)} fullWidth />
           <FormControlLabel control={<Checkbox checked={formData.isActive} onChange={e => onFormChange('isActive', e.target.checked)} />} label={t('audios.form.isActive') || 'Active'} />
-
-          <TextField label={t('audios.form.filename') || 'Filename'} value={formData.filename} fullWidth disabled />
         </Box>
       </DialogContent>
       <DialogActions>
