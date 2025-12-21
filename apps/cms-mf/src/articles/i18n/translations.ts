@@ -68,6 +68,7 @@ const enTranslations = {
       createSuccess: 'Article created successfully',
       updateSuccess: 'Article updated successfully',
       deleteSuccess: 'Article deleted successfully',
+      confirmDeleteImage: 'Are you sure you want to delete this image?',
     },
     errors: {
       loadFailed: 'Failed to load articles',
@@ -169,6 +170,7 @@ const zhTranslations = {
       createSuccess: '文章创建成功',
       updateSuccess: '文章更新成功',
       deleteSuccess: '文章删除成功',
+      confirmDeleteImage: '确定要删除此图片吗？',
     },
     errors: {
       loadFailed: '加载文章失败',

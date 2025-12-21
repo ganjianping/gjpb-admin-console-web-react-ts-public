@@ -28,7 +28,7 @@ import {
   IconButton,
   Tooltip,
 } from '@mui/material';
-import { ContentCopy as ContentCopyIcon } from '@mui/icons-material';
+import { ContentCopy as ContentCopyIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import TiptapTextEditor from '../../../../shared-lib/src/ui-components/rich-text/tiptap/tiptapTextEditor';
 import '../i18n/translations';
@@ -64,6 +64,8 @@ const ArticleEditDialog: React.FC<ArticleEditDialogProps> = ({
   const [uploadFilename, setUploadFilename] = useState('');
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [uploadFileFilename, setUploadFileFilename] = useState('');
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [imageToDelete, setImageToDelete] = useState<string | null>(null);
 
   useEffect(() => {
     if (open && articleId) {
@@ -123,6 +125,26 @@ const ArticleEditDialog: React.FC<ArticleEditDialogProps> = ({
       console.error('Failed to upload image by file', err);
     } finally {
       setLocalSaving(false);
+    }
+  };
+
+  const handleDeleteImageClick = (imageId: string) => {
+    setImageToDelete(imageId);
+    setDeleteConfirmOpen(true);
+  };
+
+  const handleConfirmDeleteImage = async () => {
+    if (!imageToDelete) return;
+    try {
+      setLocalSaving(true);
+      await articleService.deleteArticleImage(imageToDelete);
+      await loadImages();
+    } catch (err) {
+      console.error('Failed to delete image', err);
+    } finally {
+      setLocalSaving(false);
+      setDeleteConfirmOpen(false);
+      setImageToDelete(null);
     }
   };
 
@@ -301,8 +323,8 @@ const ArticleEditDialog: React.FC<ArticleEditDialogProps> = ({
                           {img.filename}
                         </Typography>
                       </CardContent>
-                      {img.fileUrl && (
-                        <Box sx={{ position: 'absolute', top: 0, right: 0, bgcolor: 'rgba(255,255,255,0.7)' }}>
+                      <Box sx={{ position: 'absolute', top: 0, right: 0, bgcolor: 'rgba(255,255,255,0.7)', display: 'flex' }}>
+                        {img.fileUrl && (
                           <Tooltip title="Copy URL">
                             <IconButton
                               size="small"
@@ -313,8 +335,17 @@ const ArticleEditDialog: React.FC<ArticleEditDialogProps> = ({
                               <ContentCopyIcon fontSize="small" />
                             </IconButton>
                           </Tooltip>
-                        </Box>
-                      )}
+                        )}
+                        <Tooltip title="Delete Image">
+                          <IconButton
+                            size="small"
+                            onClick={() => handleDeleteImageClick(img.id)}
+                            color="error"
+                          >
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                      </Box>
                     </Card>
                   </Grid>
                 ))}
@@ -444,6 +475,22 @@ const ArticleEditDialog: React.FC<ArticleEditDialogProps> = ({
           <Typography>{t('articles.messages.pleaseWait')}</Typography>
         </Box>
       </Backdrop>
+
+      <Dialog
+        open={deleteConfirmOpen}
+        onClose={() => setDeleteConfirmOpen(false)}
+      >
+        <DialogTitle>{t('articles.actions.delete')}</DialogTitle>
+        <DialogContent>
+          <Typography>{t('articles.messages.confirmDeleteImage')}</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteConfirmOpen(false)}>{t('articles.actions.cancel')}</Button>
+          <Button onClick={handleConfirmDeleteImage} color="error" variant="contained">
+            {t('articles.actions.delete')}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Dialog>
   );
 };

@@ -161,6 +161,10 @@ class ArticleService {
     formData.append('file', data.file);
     return apiClient.post('/v1/article-images', formData);
   }
+
+  async deleteArticleImage(id: string): Promise<ApiResponse<void>> {
+    return apiClient.delete(`/v1/article-images/${id}/permanent`);
+  }
 }
 
 export const articleService = new ArticleService();
