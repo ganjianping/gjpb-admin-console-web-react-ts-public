@@ -349,7 +349,7 @@ const ArticleViewDialog = ({ open, article, onClose, onEdit }: ArticleViewDialog
               {images.length > 0 ? (
                 <Grid container spacing={2}>
                   {images.map((img) => (
-                    <Grid item xs={6} sm={4} md={3} key={img.id}>
+                    <Grid size={{ xs: 6, sm: 4, md: 3 }} key={img.id}>
                       <Card variant="outlined" sx={{ position: 'relative' }}>
                         <CardMedia
                           component="img"

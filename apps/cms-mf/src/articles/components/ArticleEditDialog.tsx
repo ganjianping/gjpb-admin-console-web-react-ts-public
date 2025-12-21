@@ -316,7 +316,7 @@ const ArticleEditDialog: React.FC<ArticleEditDialogProps> = ({
             </Typography>
 
             <Grid container spacing={2} sx={{ mb: 2 }}>
-              <Grid item xs={12} sm={6} md={4}>
+              <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                 {coverImagePreviewUrl ? (
                   <Card sx={{ position: 'relative' }}>
                     <CardMedia
@@ -394,7 +394,7 @@ const ArticleEditDialog: React.FC<ArticleEditDialogProps> = ({
 
               <Grid container spacing={2} sx={{ mb: 2 }}>
                 {images.map((img) => (
-                  <Grid item xs={4} sm={3} md={2} key={img.id}>
+                  <Grid size={{ xs: 4, sm: 3, md: 2 }} key={img.id}>
                     <Card sx={{ position: 'relative' }}>
                       <CardMedia
                         component="img"
