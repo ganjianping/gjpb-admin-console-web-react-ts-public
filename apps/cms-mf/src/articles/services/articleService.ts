@@ -1,6 +1,11 @@
 import { apiClient } from '../../../../shared-lib/src/api/api-client';
 import type { ApiResponse } from '../../../../shared-lib/src/api/api.types';
-import type { Article } from '../types/article.types';
+import type {
+  Article,
+  ArticleImage,
+  UploadArticleImageByUrlRequest,
+  UploadArticleImageByFileRequest,
+} from '../types/article.types';
 
 export interface ArticleQueryParams {
   page?: number;
@@ -138,6 +143,23 @@ class ArticleService {
 
   async deleteArticle(id: string): Promise<ApiResponse<void>> {
     return apiClient.delete(`${this.crudUrl}/${id}`);
+  }
+
+  async getArticleImages(articleId: string): Promise<ApiResponse<ArticleImage[]>> {
+    return apiClient.get('/v1/article-images', { params: { articleId } });
+  }
+
+  async uploadArticleImageByUrl(data: UploadArticleImageByUrlRequest): Promise<ApiResponse<ArticleImage>> {
+    return apiClient.post('/v1/article-images', data);
+  }
+
+  async uploadArticleImageByFile(data: UploadArticleImageByFileRequest): Promise<ApiResponse<ArticleImage>> {
+    const formData = new FormData();
+    formData.append('articleId', data.articleId);
+    formData.append('articleTitle', data.articleTitle);
+    formData.append('filename', data.filename);
+    formData.append('file', data.file);
+    return apiClient.post('/v1/article-images', formData);
   }
 }
 

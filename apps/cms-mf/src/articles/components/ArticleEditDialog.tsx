@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -20,15 +20,25 @@ import {
   Backdrop,
   CircularProgress,
   FormHelperText,
+  Grid,
+  Card,
+  CardMedia,
+  CardContent,
+  Divider,
+  IconButton,
+  Tooltip,
 } from '@mui/material';
+import { ContentCopy as ContentCopyIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import TiptapTextEditor from '../../../../shared-lib/src/ui-components/rich-text/tiptap/tiptapTextEditor';
 import '../i18n/translations';
-import type { ArticleFormData } from '../types/article.types';
+import type { ArticleFormData, ArticleImage } from '../types/article.types';
 import { ARTICLE_TAG_SETTING_KEY, LANGUAGE_OPTIONS, ARTICLE_LANG_SETTING_KEY } from '../constants';
+import { articleService } from '../services/articleService';
 
 interface ArticleEditDialogProps {
   open: boolean;
+  articleId?: string;
   formData: ArticleFormData;
   onFormChange: (field: keyof ArticleFormData, value: any) => void;
   onSubmit: (useFormData?: boolean) => Promise<void>;
@@ -39,6 +49,7 @@ interface ArticleEditDialogProps {
 
 const ArticleEditDialog: React.FC<ArticleEditDialogProps> = ({
   open,
+  articleId,
   formData,
   onFormChange,
   onSubmit,
@@ -48,6 +59,80 @@ const ArticleEditDialog: React.FC<ArticleEditDialogProps> = ({
 }) => {
   const { i18n, t } = useTranslation();
   const [localSaving, setLocalSaving] = useState(false);
+  const [images, setImages] = useState<ArticleImage[]>([]);
+  const [uploadUrl, setUploadUrl] = useState('');
+  const [uploadFilename, setUploadFilename] = useState('');
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
+  const [uploadFileFilename, setUploadFileFilename] = useState('');
+
+  useEffect(() => {
+    if (open && articleId) {
+      loadImages();
+    } else {
+      setImages([]);
+    }
+  }, [open, articleId]);
+
+  const loadImages = async () => {
+    if (!articleId) return;
+    try {
+      const res = await articleService.getArticleImages(articleId);
+      if (res.data) {
+        setImages(res.data);
+      }
+    } catch (err) {
+      console.error('Failed to load images', err);
+    }
+  };
+
+  const handleUploadByUrl = async () => {
+    if (!articleId || !uploadUrl || !uploadFilename) return;
+    try {
+      setLocalSaving(true);
+      await articleService.uploadArticleImageByUrl({
+        articleId,
+        articleTitle: formData.title,
+        originalUrl: uploadUrl,
+        filename: uploadFilename,
+        lang: formData.lang,
+      });
+      setUploadUrl('');
+      setUploadFilename('');
+      await loadImages();
+    } catch (err) {
+      console.error('Failed to upload image by url', err);
+    } finally {
+      setLocalSaving(false);
+    }
+  };
+
+  const handleUploadByFile = async () => {
+    if (!articleId || !uploadFile || !uploadFileFilename) return;
+    try {
+      setLocalSaving(true);
+      await articleService.uploadArticleImageByFile({
+        articleId,
+        articleTitle: formData.title,
+        file: uploadFile,
+        filename: uploadFileFilename,
+      });
+      setUploadFile(null);
+      setUploadFileFilename('');
+      await loadImages();
+    } catch (err) {
+      console.error('Failed to upload image by file', err);
+    } finally {
+      setLocalSaving(false);
+    }
+  };
+
+  const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    setUploadFile(file);
+    if (file) {
+      setUploadFileFilename(file.name);
+    }
+  };
 
   const getFieldError = (field: string) => {
     const err = formErrors[field];
@@ -194,6 +279,98 @@ const ArticleEditDialog: React.FC<ArticleEditDialogProps> = ({
             onChange={(e) => onFormChange('coverImageOriginalUrl', e.target.value)}
             fullWidth
           />
+
+          {articleId && (
+            <Box sx={{ border: '1px solid #ddd', p: 2, borderRadius: 1 }}>
+              <Typography variant="subtitle1" gutterBottom>
+                Article Images
+              </Typography>
+
+              <Grid container spacing={2} sx={{ mb: 2 }}>
+                {images.map((img) => (
+                  <Grid item xs={4} sm={3} md={2} key={img.id}>
+                    <Card sx={{ position: 'relative' }}>
+                      <CardMedia
+                        component="img"
+                        height="100"
+                        image={img.fileUrl || img.originalUrl || ''}
+                        alt={img.filename}
+                      />
+                      <CardContent sx={{ p: 1, '&:last-child': { pb: 1 } }}>
+                        <Typography variant="caption" noWrap display="block">
+                          {img.filename}
+                        </Typography>
+                      </CardContent>
+                      {img.fileUrl && (
+                        <Box sx={{ position: 'absolute', top: 0, right: 0, bgcolor: 'rgba(255,255,255,0.7)' }}>
+                          <Tooltip title="Copy URL">
+                            <IconButton
+                              size="small"
+                              onClick={() => {
+                                navigator.clipboard.writeText(img.fileUrl!);
+                              }}
+                            >
+                              <ContentCopyIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                        </Box>
+                      )}
+                    </Card>
+                  </Grid>
+                ))}
+              </Grid>
+
+              <Divider sx={{ my: 2 }} />
+
+              <Typography variant="subtitle2" gutterBottom>
+                Upload by URL
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
+                <TextField
+                  label="Original URL"
+                  value={uploadUrl}
+                  onChange={(e) => setUploadUrl(e.target.value)}
+                  size="small"
+                  fullWidth
+                />
+                <TextField
+                  label="Filename"
+                  value={uploadFilename}
+                  onChange={(e) => setUploadFilename(e.target.value)}
+                  size="small"
+                  sx={{ width: 200 }}
+                />
+                <Button
+                  variant="outlined"
+                  onClick={handleUploadByUrl}
+                  disabled={!uploadUrl || !uploadFilename || localSaving}
+                >
+                  Upload
+                </Button>
+              </Box>
+
+              <Typography variant="subtitle2" gutterBottom>
+                Upload by File
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                <input type="file" accept="image/*" onChange={handleImageFileChange} />
+                <TextField
+                  label="Filename"
+                  value={uploadFileFilename}
+                  onChange={(e) => setUploadFileFilename(e.target.value)}
+                  size="small"
+                  sx={{ width: 200 }}
+                />
+                <Button
+                  variant="outlined"
+                  onClick={handleUploadByFile}
+                  disabled={!uploadFile || !uploadFileFilename || localSaving}
+                >
+                  Upload
+                </Button>
+              </Box>
+            </Box>
+          )}
 
           <FormControl fullWidth>
             <Select

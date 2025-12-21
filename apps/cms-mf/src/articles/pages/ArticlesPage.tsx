@@ -184,6 +184,7 @@ const ArticlesPage: React.FC = () => {
       {dialog.actionType === 'edit' && dialog.selectedArticle && (
         <ArticleEditDialog
           open={dialog.dialogOpen}
+          articleId={dialog.selectedArticle.id}
           formData={dialog.formData}
           onFormChange={(field, value) => dialog.setFormData((prev) => ({ ...prev, [field]: value }))}
           onClose={() => dialog.setDialogOpen(false)}

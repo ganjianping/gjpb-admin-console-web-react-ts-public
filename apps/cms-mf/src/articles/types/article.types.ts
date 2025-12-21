@@ -40,3 +40,37 @@ export interface ArticleSearchFormData {
   tags?: string;
   isActive?: string | null;
 }
+
+export interface ArticleImage {
+  id: string;
+  articleId: string;
+  articleTitle?: string;
+  filename: string;
+  fileUrl?: string;
+  originalUrl?: string | null;
+  url?: string;
+  width?: number;
+  height?: number;
+  lang?: string;
+  displayOrder?: number;
+  createdBy?: string;
+  updatedBy?: string;
+  isActive?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface UploadArticleImageByUrlRequest {
+  articleId: string;
+  articleTitle: string;
+  originalUrl: string;
+  filename: string;
+  lang: string;
+}
+
+export interface UploadArticleImageByFileRequest {
+  articleId: string;
+  articleTitle: string;
+  file: File;
+  filename: string;
+}
