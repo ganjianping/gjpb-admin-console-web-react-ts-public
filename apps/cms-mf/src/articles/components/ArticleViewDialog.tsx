@@ -1,4 +1,4 @@
-import { useMemo, useState, useRef, useLayoutEffect } from 'react';
+import { useMemo, useState, useRef, useLayoutEffect, useEffect } from 'react';
 import {
   Dialog,
   DialogActions,
@@ -14,6 +14,8 @@ import {
   Avatar,
   IconButton,
   Tooltip,
+  Grid,
+  CardMedia,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { format, parseISO } from 'date-fns';
@@ -22,9 +24,10 @@ import { Eye, Tag, CheckCircle2, XCircle, ExternalLink, Calendar, User, Copy, Ch
 import { getFullArticleCoverImageUrl } from '../utils/getFullArticleCoverImageUrl';
 import DOMPurify from 'dompurify';
 import hljs from 'highlight.js';
-import type { Article } from '../types/article.types';
+import type { Article, ArticleImage } from '../types/article.types';
 import '../i18n/translations';
 import { LANGUAGE_OPTIONS } from '../constants';
+import { articleService } from '../services/articleService';
 
 interface ArticleViewDialogProps {
   open: boolean;
@@ -37,8 +40,27 @@ const ArticleViewDialog = ({ open, article, onClose, onEdit }: ArticleViewDialog
   const { t } = useTranslation();
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [contentExpanded, setContentExpanded] = useState(false);
+  const [images, setImages] = useState<ArticleImage[]>([]);
   const contentContainerRef = useRef<HTMLDivElement | null>(null);
   const coverUrl = useMemo(() => (article.coverImageFilename ? getFullArticleCoverImageUrl(`/${article.coverImageFilename}`) : article.coverImageOriginalUrl || ''), [article.coverImageFilename, article.coverImageOriginalUrl]);
+
+  useEffect(() => {
+    if (open && article.id) {
+      const loadImages = async () => {
+        try {
+          const res = await articleService.getArticleImages(article.id);
+          if (res.data) {
+            setImages(res.data);
+          }
+        } catch (err) {
+          console.error('Failed to load images', err);
+        }
+      };
+      loadImages();
+    } else {
+      setImages([]);
+    }
+  }, [open, article.id]);
 
   const rawContent = (article as any).content as string | undefined;
   const { sanitizedHtml, plainText, shouldShowToggle } = useMemo(() => {
@@ -318,6 +340,48 @@ const ArticleViewDialog = ({ open, article, onClose, onEdit }: ArticleViewDialog
                   </Box>
                 </Box>
               </Box>
+            </CardContent>
+          </Card>
+
+          <Card elevation={0} sx={{ border: '1px solid', borderColor: 'divider' }}>
+            <CardContent sx={{ p: 3 }}>
+              <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: 'text.secondary' }}>Article Images</Typography>
+              {images.length > 0 ? (
+                <Grid container spacing={2}>
+                  {images.map((img) => (
+                    <Grid item xs={6} sm={4} md={3} key={img.id}>
+                      <Card variant="outlined" sx={{ position: 'relative' }}>
+                        <CardMedia
+                          component="img"
+                          height="140"
+                          image={img.fileUrl || ''}
+                          alt={img.filename}
+                          sx={{ objectFit: 'cover' }}
+                        />
+                        {img.fileUrl && (
+                          <Box sx={{ position: 'absolute', top: 4, right: 4, bgcolor: 'rgba(255,255,255,0.8)', borderRadius: '50%' }}>
+                            <Tooltip title={copiedField === img.id ? "Copied!" : "Copy URL"}>
+                              <IconButton 
+                                size="small" 
+                                onClick={() => handleCopy(img.fileUrl!, img.id)}
+                              >
+                                {copiedField === img.id ? <Check size={14} /> : <Copy size={14} />}
+                              </IconButton>
+                            </Tooltip>
+                          </Box>
+                        )}
+                        <CardContent sx={{ p: 1, '&:last-child': { pb: 1 } }}>
+                          <Typography variant="caption" noWrap display="block" title={img.filename}>
+                            {img.filename}
+                          </Typography>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                  ))}
+                </Grid>
+              ) : (
+                <Typography variant="body2" color="text.secondary">No images found.</Typography>
+              )}
             </CardContent>
           </Card>
         </Box>
