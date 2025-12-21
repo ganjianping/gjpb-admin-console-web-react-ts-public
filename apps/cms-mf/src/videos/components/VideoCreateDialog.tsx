@@ -106,6 +106,14 @@ const VideoCreateDialog = ({
 	const handleFileChange = (field: keyof VideoFormData, e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0] || null;
 		onFormChange(field, file);
+		if (file) {
+			if (field === 'file' && !formData.filename) {
+				onFormChange('filename', file.name);
+			}
+			if (field === 'coverImageFile' && !formData.coverImageFilename) {
+				onFormChange('coverImageFilename', file.name);
+			}
+		}
 	};
 
 		const handleSubmit = async () => {
@@ -175,10 +183,12 @@ const VideoCreateDialog = ({
 						<Typography variant="subtitle2">{t('videos.form.videoFile') || 'Video File'}</Typography>
 						<input type="file" accept="video/*" onChange={(e) => handleFileChange('file', e)} />
 					</Box>
+					<TextField label={t('videos.form.filename') || 'Filename'} value={formData.filename || ''} onChange={(e) => onFormChange('filename', e.target.value)} fullWidth />
 					<Box>
 						<Typography variant="subtitle2">{t('videos.form.coverImageFile') || 'Cover Image File'}</Typography>
 						<input type="file" accept="image/*" onChange={(e) => handleFileChange('coverImageFile', e)} />
-					</Box>    
+					</Box>
+					<TextField label={t('videos.form.coverImageFilename') || 'Cover Image Filename'} value={formData.coverImageFilename || ''} onChange={(e) => onFormChange('coverImageFilename', e.target.value)} fullWidth />    
 					<Box>
 						<Typography variant="subtitle2">{t('videos.form.description') || 'Description'}</Typography>
 						<TextareaAutosize

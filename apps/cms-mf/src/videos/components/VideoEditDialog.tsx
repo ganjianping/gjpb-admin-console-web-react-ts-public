@@ -90,10 +90,12 @@ const VideoEditDialog: React.FC<VideoEditDialogProps> = ({ open, formData, onFor
 					<TextField label={t('videos.form.name') || 'Name'} value={formData.name} onChange={e => onFormChange('name', e.target.value)} fullWidth />
 					<TextField label={t('videos.form.sourceName') || 'Source Name'} value={(formData as any).sourceName || ''} onChange={e => onFormChange('sourceName' as any, e.target.value)} fullWidth />
 					<TextField label={t('videos.form.originalUrl') || 'Original URL'} value={(formData as any).originalUrl || ''} onChange={e => onFormChange('originalUrl' as any, e.target.value)} fullWidth />
+					<TextField label={t('videos.form.filename') || 'Filename'} value={formData.filename} onChange={e => onFormChange('filename' as any, e.target.value)} fullWidth />
 					<Box>
 						<Typography variant="subtitle2">{t('videos.form.coverImageFile') || 'Cover Image File'}</Typography>
 						<input type="file" accept="image/*" onChange={handleCoverFileChange} />
 					</Box>
+					<TextField label={t('videos.form.coverImageFilename') || 'Cover Image Filename'} value={formData.coverImageFilename || ''} onChange={e => onFormChange('coverImageFilename' as any, e.target.value)} fullWidth />    
 					<Box>
 						<Typography variant="subtitle2">{t('videos.form.description') || 'Description'}</Typography>
 						<TextareaAutosize minRows={2} style={{ width: '100%', padding: '8.5px 14px', borderRadius: 4, border: '1px solid rgba(0,0,0,0.23)', fontFamily: 'inherit' }} value={formData.description || ''} onChange={e => onFormChange('description', e.target.value)} aria-label={t('videos.form.description') || 'Description'} />
@@ -117,9 +119,6 @@ const VideoEditDialog: React.FC<VideoEditDialogProps> = ({ open, formData, onFor
 
 					<TextField label={t('videos.form.displayOrder') || 'Display Order'} type="number" value={String(formData.displayOrder)} onChange={e => onFormChange('displayOrder', Number(e.target.value) || 0)} fullWidth />
 					<FormControlLabel control={<Checkbox checked={formData.isActive} onChange={e => onFormChange('isActive', e.target.checked)} />} label={t('videos.form.isActive') || 'Active'} />
-
-                    <TextField label={t('videos.form.filename') || 'Filename'} value={formData.filename} fullWidth disabled />
-					<TextField label={t('videos.form.coverImageFilename') || 'Cover Image Filename'} value={formData.coverImageFilename || ''} fullWidth disabled />    
 				</Box>
 			</DialogContent>
 							<DialogActions>
