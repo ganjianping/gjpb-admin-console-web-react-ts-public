@@ -203,6 +203,7 @@ const ArticlesPage: React.FC = () => {
             } catch (err) {
               dialog.setLoading(false);
               console.error('Failed to update article', err);
+              throw err;
             }
           }}
           loading={dialog.loading}
