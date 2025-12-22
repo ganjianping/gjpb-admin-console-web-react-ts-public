@@ -32,7 +32,7 @@ import { useUserHandlers } from './useUserHandlers';
  * } = useUserDialog();
  * ```
  */
-export const useUserDialog = () => {
+export const useUserDialog = (onOperationSuccess?: () => void) => {
   const { t } = useTranslation();
   const { handleCreateUser, handleUpdateUser, handleDeleteUser } = useUserHandlers();
   
@@ -164,6 +164,7 @@ export const useUserDialog = () => {
         const result = await handleCreateUser(formData);
         if (result.success) {
           handleCloseDialog();
+          onOperationSuccess?.();
         } else if (result.errors) {
           setFormErrors(result.errors);
         }
@@ -171,6 +172,7 @@ export const useUserDialog = () => {
         const result = await handleUpdateUser(selectedUser, formData);
         if (result.success) {
           handleCloseDialog();
+          onOperationSuccess?.();
         } else if (result.errors) {
           setFormErrors(result.errors);
         }
@@ -192,6 +194,7 @@ export const useUserDialog = () => {
       const result = await handleDeleteUser(selectedUser);
       if (result.success) {
         handleCloseDialog();
+        onOperationSuccess?.();
       }
     } finally {
       setLoading(false);

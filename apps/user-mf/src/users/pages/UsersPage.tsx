@@ -45,6 +45,7 @@ const UsersPage = () => {
     setError,
     handlePageChange,
     handlePageSizeChange,
+    pageSize,
   } = useUsers();
 
   // Initialize search functionality
@@ -73,15 +74,7 @@ const UsersPage = () => {
     handleFormChange,
     handleSave,
     handleConfirmDelete,
-  } = useUserDialog();
-
-  // Reload users after successful operation
-  useEffect(() => {
-    if (!dialogOpen && !actionType && !dialogLoading) {
-      // Dialog was closed, reload users
-      loadUsers();
-    }
-  }, [dialogOpen, actionType, dialogLoading]);
+  } = useUserDialog(() => loadUsers());
 
   // Load roles once when Users page is accessed
   useEffect(() => {
@@ -102,7 +95,7 @@ const UsersPage = () => {
   }, [rolesError, showError]);
 
   // Enhanced search functionality
-  const handleSearch = () => {
+  const buildSearchParams = () => {
     const searchParams: any = {};
     
     if (searchFormData.username) searchParams.username = searchFormData.username;
@@ -113,9 +106,25 @@ const UsersPage = () => {
     if (searchFormData.active !== '') {
       searchParams.active = searchFormData.active === 'true';
     }
-    
+    return searchParams;
+  };
+
+  const handleSearch = () => {
+    const searchParams = buildSearchParams();
     // Perform API search
-    loadUsers(searchParams);
+    loadUsers(searchParams, 0, pageSize);
+  };
+
+  const handlePageChangeWithSearch = (newPage: number) => {
+    handlePageChange(newPage);
+    const params = buildSearchParams();
+    loadUsers(params, newPage, pageSize);
+  };
+
+  const handlePageSizeChangeWithSearch = (newPageSize: number) => {
+    handlePageSizeChange(newPageSize);
+    const params = buildSearchParams();
+    loadUsers(params, 0, newPageSize);
   };
 
   // Handle form changes with client-side filtering
@@ -202,8 +211,8 @@ const UsersPage = () => {
             users={filteredUsers}
             loading={loading}
             pagination={pagination}
-            onPageChange={handlePageChange}
-            onPageSizeChange={handlePageSizeChange}
+            onPageChange={handlePageChangeWithSearch}
+            onPageSizeChange={handlePageSizeChangeWithSearch}
             onUserAction={handleUserAction}
           />
         </CardContent>

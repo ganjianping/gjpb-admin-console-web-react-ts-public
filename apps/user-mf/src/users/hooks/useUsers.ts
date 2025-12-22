@@ -114,13 +114,6 @@ export const useUsers = () => {
     setCurrentPage(0);
   }, []);
 
-  // Effect to reload when page or pageSize changes (but not on initial mount)
-  useEffect(() => {
-    if (hasInitiallyLoaded.current) {
-      loadUsers(undefined, currentPage, pageSize);
-    }
-  }, [currentPage, pageSize, loadUsers]);
-
   return {
     allUsers,
     filteredUsers,
