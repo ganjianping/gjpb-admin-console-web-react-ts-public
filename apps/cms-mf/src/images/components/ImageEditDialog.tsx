@@ -113,19 +113,10 @@ const ImageEditDialog = ({
       <DialogContent sx={{ pt: 3 }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5, pt: 2 }}>
           <TextField label={t('images.form.name')} value={formData.name} onChange={(e) => onFormChange('name', e.target.value)} fullWidth error={!!getFieldError('name')} helperText={getFieldError('name')} />
-          <TextField label={t('images.form.sourceName')} value={formData.sourceName} onChange={(e) => onFormChange('sourceName', e.target.value)} fullWidth error={!!getFieldError('sourceName')} helperText={getFieldError('sourceName')} />
           <TextField label={t('images.form.originalUrl')} value={formData.originalUrl} onChange={(e) => onFormChange('originalUrl', e.target.value)} fullWidth error={!!getFieldError('originalUrl')} helperText={getFieldError('originalUrl')} placeholder="https://example.com/image.jpg" />
-          <TextField
-            label={t('images.form.altText')}
-            value={formData.altText}
-            onChange={(e) => onFormChange('altText', e.target.value)}
-            fullWidth
-            error={!!getFieldError('altText')}
-            helperText={getFieldError('altText') || `${(formData.altText || '').length}/500`}
-            multiline
-            rows={4}
-            inputProps={{ maxLength: 500 }}
-          />
+          <TextField label={t('images.form.filename')} value={formData.filename} onChange={(e) => onFormChange('filename', e.target.value)} fullWidth/>
+          <TextField label={t('images.form.thumbnailFilename')} value={formData.thumbnailFilename} onChange={(e) => onFormChange('thumbnailFilename', e.target.value)} fullWidth/>
+
           <FormControl fullWidth error={!!getFieldError('tags')}>
             <FormLabel sx={{ mb: 1, color: 'text.primary', fontWeight: 500 }}>{t('images.form.tags')}</FormLabel>
             <Select<string[]> multiple value={formData.tags ? formData.tags.split(',').map(t => t.trim()).filter(Boolean) : []} onChange={(e) => {
@@ -164,13 +155,24 @@ const ImageEditDialog = ({
           </FormControl>
           <TextField label={t('images.form.displayOrder')} value={formData.displayOrder} onChange={(e) => onFormChange('displayOrder', parseInt(e.target.value) || 0)} type="number" fullWidth error={!!getFieldError('displayOrder')} helperText={getFieldError('displayOrder')} />
           <FormControlLabel control={<Switch checked={formData.isActive} onChange={(e) => onFormChange('isActive', e.target.checked)} />} label={t('images.form.isActive')} />
-          <TextField label={t('images.form.filename')} value={formData.filename} fullWidth disabled helperText={t('images.form.filename') + ' (read-only)'} />
-          <TextField label={t('images.form.thumbnailFilename')} value={formData.thumbnailFilename} fullWidth disabled helperText={t('images.form.thumbnailFilename') + ' (read-only)'} />
+
+          <TextField label={t('images.form.sourceName')} value={formData.sourceName} onChange={(e) => onFormChange('sourceName', e.target.value)} fullWidth error={!!getFieldError('sourceName')} helperText={getFieldError('sourceName')} />  
+          <TextField
+            label={t('images.form.altText')}
+            value={formData.altText}
+            onChange={(e) => onFormChange('altText', e.target.value)}
+            fullWidth
+            error={!!getFieldError('altText')}
+            helperText={getFieldError('altText') || `${(formData.altText || '').length}/500`}
+            multiline
+            rows={4}
+            inputProps={{ maxLength: 500 }}
+          />
+
           <TextField label={t('images.form.mimeType')} value={formData.mimeType} onChange={(e) => onFormChange('mimeType', e.target.value)} fullWidth error={!!getFieldError('mimeType')} helperText={getFieldError('mimeType')} disabled />
           <TextField label={t('images.form.sizeBytes')} value={formData.sizeBytes} onChange={(e) => onFormChange('sizeBytes', parseInt(e.target.value) || 0)} type="number" fullWidth error={!!getFieldError('sizeBytes')} helperText={getFieldError('sizeBytes')} disabled />
           <TextField label={t('images.form.width')} value={formData.width} onChange={(e) => onFormChange('width', parseInt(e.target.value) || 0)} type="number" fullWidth error={!!getFieldError('width')} helperText={getFieldError('width')} disabled />
           <TextField label={t('images.form.height')} value={formData.height} onChange={(e) => onFormChange('height', parseInt(e.target.value) || 0)} type="number" fullWidth error={!!getFieldError('height')} helperText={getFieldError('height')} disabled />
-          
           
         </Box>
       </DialogContent>
