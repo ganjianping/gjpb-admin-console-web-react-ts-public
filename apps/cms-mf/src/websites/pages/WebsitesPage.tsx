@@ -119,20 +119,45 @@ const WebsitesPage = () => {
   // ============================================================================
   // Search Handlers
   // ============================================================================
+  
+  /**
+   * Build search parameters from form data
+   */
+  const buildSearchParams = () => {
+    const searchParams: any = {};
+    if (searchFormData.name) searchParams.name = searchFormData.name;
+    if (searchFormData.lang) searchParams.lang = searchFormData.lang;
+    if (searchFormData.tags) searchParams.tags = searchFormData.tags;
+    if (searchFormData.isActive !== '') searchParams.isActive = searchFormData.isActive === 'true';
+    return searchParams;
+  };
+
   /**
    * Handle server-side search with API call
    * Constructs search parameters and triggers data reload
    */
   const handleSearch = () => {
-    const searchParams: any = {};
-    
-    if (searchFormData.name) searchParams.name = searchFormData.name;
-    if (searchFormData.lang) searchParams.lang = searchFormData.lang;
-    if (searchFormData.tags) searchParams.tags = searchFormData.tags;
-    if (searchFormData.isActive !== '') searchParams.isActive = searchFormData.isActive === 'true';
-    
+    const searchParams = buildSearchParams();
     // Perform API search
-    loadWebsites(searchParams);
+    loadWebsites(searchParams, 0, pageSize);
+  };
+
+  /**
+   * Handle page change - call API with new page
+   */
+  const handlePageChangeWithSearch = (newPage: number) => {
+    handlePageChange(newPage);
+    const searchParams = buildSearchParams();
+    loadWebsites(searchParams, newPage, pageSize);
+  };
+
+  /**
+   * Handle page size change - call API with new page size
+   */
+  const handlePageSizeChangeWithSearch = (newPageSize: number) => {
+    handlePageSizeChange(newPageSize);
+    const searchParams = buildSearchParams();
+    loadWebsites(searchParams, 0, newPageSize);
   };
 
   /**
@@ -246,8 +271,8 @@ const WebsitesPage = () => {
             websites={filteredWebsites}
             loading={loading}
             pagination={pagination}
-            onPageChange={handlePageChange}
-            onPageSizeChange={handlePageSizeChange}
+            onPageChange={handlePageChangeWithSearch}
+            onPageSizeChange={handlePageSizeChangeWithSearch}
             onWebsiteAction={handleWebsiteAction}
           />
         </CardContent>

@@ -58,13 +58,13 @@ export const useWebsites = () => {
     } finally {
       setLoading(false);
     }
-  }, [t]); // Removed currentPage and pageSize from dependencies
+  }, [t, currentPage, pageSize]);
 
   // Load websites only once on initial mount
   useEffect(() => {
     if (!hasInitiallyLoaded.current) {
       hasInitiallyLoaded.current = true;
-      loadWebsites(undefined, 0, WEBSITE_CONSTANTS.DEFAULT_PAGE_SIZE);
+      loadWebsites();
     }
   }, [loadWebsites]);
 
@@ -76,14 +76,6 @@ export const useWebsites = () => {
     setPageSize(newPageSize);
     setCurrentPage(0);
   }, []);
-
-  // Effect to reload when page or pageSize changes (but not on initial mount)
-  useEffect(() => {
-    if (hasInitiallyLoaded.current) {
-      loadWebsites(undefined, currentPage, pageSize);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, pageSize]); // Removed loadWebsites from dependencies
 
   return {
     allWebsites,
