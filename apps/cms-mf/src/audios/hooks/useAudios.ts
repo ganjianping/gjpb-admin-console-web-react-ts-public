@@ -13,8 +13,11 @@ export const useAudios = () => {
     try {
       const res = await audioService.getAudios(params);
       if (res?.data) {
-        setAllAudios(res.data);
-        setFilteredAudios(res.data);
+        // Handle both array (old) and paginated (new) response structures
+        const responseData = res.data as any;
+        const audios = Array.isArray(responseData) ? responseData : responseData.content;
+        setAllAudios(audios || []);
+        setFilteredAudios(audios || []);
       }
     } catch (err: any) {
       setError(err?.message || 'Failed to load audios');

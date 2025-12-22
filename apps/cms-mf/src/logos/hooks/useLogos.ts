@@ -29,8 +29,19 @@ export const useLogos = () => {
       const response = await logoService.getLogos(queryParams);
       
       if (response.status.code === 200) {
+        // Handle both array (legacy) and paginated response (new)
+        const data = response.data;
+        let logos: Logo[] = [];
+        
+        if (Array.isArray(data)) {
+          logos = data;
+        } else if (data && 'content' in data) {
+          // @ts-ignore - we know content exists if check passes
+          logos = data.content;
+        }
+
         // Transform tags string to array for each logo
-        const logosWithTagsArray = response.data.map(logo => ({
+        const logosWithTagsArray = logos.map(logo => ({
           ...logo,
           tagsArray: logo.tags ? logo.tags.split(',').map(tag => tag.trim()) : []
         }));

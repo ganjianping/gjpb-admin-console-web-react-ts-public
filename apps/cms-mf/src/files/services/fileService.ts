@@ -1,7 +1,7 @@
 // File Service - handles file management API calls
 import { apiClient } from "../../../../shared-lib/src/api/api-client";
 import type { ApiResponse } from "../../../../shared-lib/src/api/api.types";
-import type { CmsFile } from "../types/file.types";
+import type { CmsFile, FilePaginatedResponse } from "../types/file.types";
 
 // Query parameters for file search
 export interface FileQueryParams {
@@ -58,9 +58,9 @@ class FileService {
   private readonly crudUrl = "/v1/files";
 
   /**
-   * Get all files (no pagination based on API response)
+   * Get all files (supports pagination)
    */
-  async getFiles(params?: FileQueryParams): Promise<ApiResponse<CmsFile[]>> {
+  async getFiles(params?: FileQueryParams): Promise<ApiResponse<FilePaginatedResponse | CmsFile[]>> {
     return apiClient.get(this.getUrl, { params });
   }
 

@@ -3,7 +3,7 @@ import { apiClient } from "../../../../shared-lib/src/api/api-client";
 import type {
   ApiResponse,
 } from "../../../../shared-lib/src/api/api.types";
-import type { Logo } from "../types/logo.types";
+import type { Logo, LogoPaginatedResponse } from "../types/logo.types";
 
 // Query parameters for logo search
 export interface LogoQueryParams {
@@ -55,11 +55,11 @@ class LogoService {
   private readonly crudUrl = "/v1/logos";
 
   /**
-   * Get all logos (no pagination based on API response)
+   * Get all logos (supports pagination)
    */
   async getLogos(
     params?: LogoQueryParams,
-  ): Promise<ApiResponse<Logo[]>> {
+  ): Promise<ApiResponse<LogoPaginatedResponse | Logo[]>> {
     const searchParams = new URLSearchParams();
 
     if (params) {

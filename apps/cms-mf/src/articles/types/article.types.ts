@@ -17,6 +17,14 @@ export interface Article {
   updatedAt?: string | null;
 }
 
+export interface ArticlePaginatedResponse {
+  content: Article[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+}
+
 export type ArticleActionType = 'create' | 'edit' | 'view';
 
 export interface ArticleFormData {

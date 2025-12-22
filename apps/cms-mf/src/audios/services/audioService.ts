@@ -1,6 +1,6 @@
 import { apiClient } from "../../../../shared-lib/src/api/api-client";
 import type { ApiResponse } from "../../../../shared-lib/src/api/api.types";
-import type { Audio } from "../types/audio.types";
+import type { Audio, AudioPaginatedResponse } from "../types/audio.types";
 
 export interface AudioQueryParams {
   page?: number;
@@ -68,7 +68,7 @@ class AudioService {
   private readonly getUrl = "/v1/audios";
   private readonly crudUrl = "/v1/audios";
 
-  async getAudios(params?: AudioQueryParams): Promise<ApiResponse<Audio[]>> {
+  async getAudios(params?: AudioQueryParams): Promise<ApiResponse<AudioPaginatedResponse>> {
     return apiClient.get(this.getUrl, { params });
   }
 

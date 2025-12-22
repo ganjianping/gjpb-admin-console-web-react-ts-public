@@ -18,8 +18,11 @@ export const useImages = () => {
       setError(null);
       const response = await imageService.getImages(params);
       if (response.status.code === 200) {
-        setAllImages(response.data);
-        setFilteredImages(response.data);
+        // Handle both array (old) and paginated (new) response structures
+        const responseData = response.data as any;
+        const images = Array.isArray(responseData) ? responseData : responseData.content;
+        setAllImages(images || []);
+        setFilteredImages(images || []);
       } else {
         throw new Error(response.status.message);
       }

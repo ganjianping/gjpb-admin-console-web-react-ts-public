@@ -1,7 +1,7 @@
 // Image Service - handles image management API calls
 import { apiClient } from "../../../../shared-lib/src/api/api-client";
 import type { ApiResponse } from "../../../../shared-lib/src/api/api.types";
-import type { Image } from "../types/image.types";
+import type { Image, ImagePaginatedResponse } from "../types/image.types";
 
 // Query parameters for image search
 export interface ImageQueryParams {
@@ -63,7 +63,7 @@ class ImageService {
   /**
    * Get all images (no pagination based on API response)
    */
-  async getImages(params?: ImageQueryParams): Promise<ApiResponse<Image[]>> {
+  async getImages(params?: ImageQueryParams): Promise<ApiResponse<ImagePaginatedResponse>> {
     return apiClient.get(this.getUrl, { params });
   }
 

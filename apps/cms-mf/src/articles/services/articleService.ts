@@ -3,6 +3,7 @@ import type { ApiResponse } from '../../../../shared-lib/src/api/api.types';
 import type {
   Article,
   ArticleImage,
+  ArticlePaginatedResponse,
   UploadArticleImageByUrlRequest,
   UploadArticleImageByFileRequest,
 } from '../types/article.types';
@@ -54,7 +55,7 @@ class ArticleService {
   private readonly getUrl = '/v1/articles';
   private readonly crudUrl = '/v1/articles';
 
-  async getArticles(params?: ArticleQueryParams): Promise<ApiResponse<Article[]>> {
+  async getArticles(params?: ArticleQueryParams): Promise<ApiResponse<ArticlePaginatedResponse>> {
     return apiClient.get(this.getUrl, { params });
   }
 

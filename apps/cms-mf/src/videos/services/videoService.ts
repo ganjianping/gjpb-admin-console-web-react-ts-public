@@ -1,6 +1,6 @@
 import { apiClient } from "../../../../shared-lib/src/api/api-client";
 import type { ApiResponse } from "../../../../shared-lib/src/api/api.types";
-import type { Video } from "../types/video.types";
+import type { Video, VideoPaginatedResponse } from "../types/video.types";
 
 export interface VideoQueryParams {
   page?: number;
@@ -62,7 +62,7 @@ class VideoService {
   private readonly getUrl = "/v1/videos";
   private readonly crudUrl = "/v1/videos";
 
-  async getVideos(params?: VideoQueryParams): Promise<ApiResponse<Video[]>> {
+  async getVideos(params?: VideoQueryParams): Promise<ApiResponse<VideoPaginatedResponse>> {
     return apiClient.get(this.getUrl, { params });
   }
 

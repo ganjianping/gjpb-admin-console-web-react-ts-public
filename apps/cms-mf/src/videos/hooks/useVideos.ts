@@ -13,8 +13,11 @@ export const useVideos = () => {
     try {
       const res = await videoService.getVideos(params);
       if (res?.data) {
-        setAllVideos(res.data);
-        setFilteredVideos(res.data);
+        // Handle both array (old) and paginated (new) response structures
+        const responseData = res.data as any;
+        const videos = Array.isArray(responseData) ? responseData : responseData.content;
+        setAllVideos(videos || []);
+        setFilteredVideos(videos || []);
       }
     } catch (err: any) {
       setError(err?.message || 'Failed to load videos');

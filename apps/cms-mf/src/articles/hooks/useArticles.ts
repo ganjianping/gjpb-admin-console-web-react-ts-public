@@ -13,8 +13,11 @@ export const useArticles = () => {
     try {
       const res = await articleService.getArticles(params);
       if (res?.data) {
-        setAllArticles(res.data);
-        setFilteredArticles(res.data);
+        // Handle both array (old) and paginated (new) response structures
+        const responseData = res.data as any;
+        const articles = Array.isArray(responseData) ? responseData : responseData.content;
+        setAllArticles(articles || []);
+        setFilteredArticles(articles || []);
       }
     } catch (err: any) {
       setError(err?.message || 'Failed to load articles');

@@ -22,6 +22,14 @@ export interface Image {
   updatedAt: string;
 }
 
+export interface ImagePaginatedResponse {
+  content: Image[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+}
+
 // Search form data interface
 export interface ImageSearchFormData {
   name: string;

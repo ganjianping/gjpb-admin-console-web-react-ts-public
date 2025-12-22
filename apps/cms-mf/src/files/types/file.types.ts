@@ -45,3 +45,15 @@ export interface FileFormData {
 
 // Dialog action types
 export type FileActionType = 'view' | 'edit' | 'create' | 'delete' | null;
+
+// Paginated response interface
+export interface FilePaginatedResponse {
+  content: CmsFile[];
+  page: {
+    size: number;
+    number: number;
+    totalElements: number;
+    totalPages: number;
+  };
+}
+

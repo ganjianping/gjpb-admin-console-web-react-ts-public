@@ -19,6 +19,13 @@ export interface Video {
   updatedAt?: string;
 }
 
+export interface VideoPaginatedResponse {
+  content: Video[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+}
 
 export type VideoActionType = 'create' | 'edit' | 'view';
 

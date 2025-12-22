@@ -43,3 +43,15 @@ export interface LogoFormData {
 
 // Dialog action types
 export type LogoActionType = 'view' | 'edit' | 'create' | 'delete' | null;
+
+// Paginated response interface
+export interface LogoPaginatedResponse {
+  content: Logo[];
+  page: {
+    size: number;
+    number: number;
+    totalElements: number;
+    totalPages: number;
+  };
+}
+

@@ -20,6 +20,14 @@ export interface Audio {
   updatedAt?: string;
 }
 
+export interface AudioPaginatedResponse {
+  content: Audio[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+}
+
 export type AudioActionType = 'create' | 'edit' | 'view';
 
 export interface AudioFormData {

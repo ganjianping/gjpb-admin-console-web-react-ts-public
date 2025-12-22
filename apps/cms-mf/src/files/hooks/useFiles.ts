@@ -18,8 +18,19 @@ export const useFiles = () => {
       setError(null);
       const response = await fileService.getFiles(params);
       if (response.status.code === 200) {
-        setAllFiles(response.data);
-        setFilteredFiles(response.data);
+        // Handle both array (legacy) and paginated response (new)
+        const data = response.data;
+        let files: CmsFile[] = [];
+        
+        if (Array.isArray(data)) {
+          files = data;
+        } else if (data && 'content' in data) {
+          // @ts-ignore - we know content exists if check passes
+          files = data.content;
+        }
+        
+        setAllFiles(files);
+        setFilteredFiles(files);
       } else {
         throw new Error(response.status.message);
       }
