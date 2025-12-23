@@ -12,3 +12,10 @@ export const LANGUAGE_OPTIONS = [
   { value: 'EN', label: 'English' },
   { value: 'ZH', label: 'Chinese' },
 ];
+
+export const AUDIO_CONSTANTS = {
+  DEFAULT_PAGE_SIZE: 20,
+  SORT_FIELD: 'updatedAt',
+  SORT_DIRECTION: 'desc' as const,
+};
+

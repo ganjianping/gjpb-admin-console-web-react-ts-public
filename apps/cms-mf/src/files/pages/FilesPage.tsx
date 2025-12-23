@@ -22,9 +22,13 @@ const FilesPage: React.FC = () => {
     allFiles,
     filteredFiles,
     setFilteredFiles,
+    pagination,
     loading,
     error,
     loadFiles,
+    handlePageChange,
+    handlePageSizeChange,
+    pageSize,
   } = useFiles();
   const {
     searchPanelOpen,
@@ -129,7 +133,7 @@ const FilesPage: React.FC = () => {
     setFilteredFiles(allFiles);
   };
 
-  const handleApiSearch = async () => {
+  const buildSearchParams = () => {
     const params: FileQueryParams = {};
     if (searchFormData.name?.trim()) {
       params.name = searchFormData.name.trim();
@@ -145,7 +149,24 @@ const FilesPage: React.FC = () => {
     } else if (searchFormData.isActive === 'false') {
       params.isActive = false;
     }
-    await loadFiles(params);
+    return params;
+  };
+
+  const handleApiSearch = async () => {
+    const params = buildSearchParams();
+    await loadFiles(params, 0, pageSize);
+  };
+
+  const handlePageChangeWithSearch = (newPage: number) => {
+    handlePageChange(newPage);
+    const params = buildSearchParams();
+    loadFiles(params, newPage, pageSize);
+  };
+
+  const handlePageSizeChangeWithSearch = (newPageSize: number) => {
+    handlePageSizeChange(newPageSize);
+    const params = buildSearchParams();
+    loadFiles(params, 0, newPageSize);
   };
 
   const handleCreate = () => {
@@ -175,12 +196,15 @@ const FilesPage: React.FC = () => {
           onClear={handleClearFilters}
         />
       </Collapse>
-      {loading ? (
+      {loading && !filteredFiles.length ? (
         <FileTableSkeleton rows={5} />
       ) : (
         <FileTable
           files={filteredFiles}
           loading={loading}
+          pagination={pagination}
+          onPageChange={handlePageChangeWithSearch}
+          onPageSizeChange={handlePageSizeChangeWithSearch}
           onFileAction={(file, action) => {
             if (action === 'view') actionMenuItems[0].action(file);
             if (action === 'edit') actionMenuItems[1].action(file);

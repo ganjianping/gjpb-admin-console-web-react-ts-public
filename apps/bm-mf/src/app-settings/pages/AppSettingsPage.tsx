@@ -58,6 +58,7 @@ const AppSettingsPage = () => {
     setError,
     handlePageChange,
     handlePageSizeChange,
+    pageSize,
   } = useAppSettings();
 
   // ============================================================================
@@ -114,11 +115,8 @@ const AppSettingsPage = () => {
   // ============================================================================
   // Search Handlers
   // ============================================================================
-  /**
-   * Handle server-side search with API call
-   * Constructs search parameters and triggers data reload
-   */
-  const handleSearch = () => {
+  
+  const buildSearchParams = () => {
     const searchParams: any = {};
     
     if (searchFormData.name) searchParams.name = searchFormData.name;
@@ -126,8 +124,29 @@ const AppSettingsPage = () => {
     if (searchFormData.isSystem !== '') searchParams.isSystem = searchFormData.isSystem === 'true';
     if (searchFormData.isPublic !== '') searchParams.isPublic = searchFormData.isPublic === 'true';
     
+    return searchParams;
+  };
+
+  /**
+   * Handle server-side search with API call
+   * Constructs search parameters and triggers data reload
+   */
+  const handleSearch = () => {
+    const searchParams = buildSearchParams();
     // Perform API search
-    loadAppSettings(searchParams);
+    loadAppSettings(searchParams, 0, pageSize);
+  };
+
+  const handlePageChangeWithSearch = (newPage: number) => {
+    handlePageChange(newPage);
+    const params = buildSearchParams();
+    loadAppSettings(params, newPage, pageSize);
+  };
+
+  const handlePageSizeChangeWithSearch = (newPageSize: number) => {
+    handlePageSizeChange(newPageSize);
+    const params = buildSearchParams();
+    loadAppSettings(params, 0, newPageSize);
   };
 
   /**
@@ -235,8 +254,8 @@ const AppSettingsPage = () => {
             appSettings={filteredAppSettings}
             loading={loading}
             pagination={pagination}
-            onPageChange={handlePageChange}
-            onPageSizeChange={handlePageSizeChange}
+            onPageChange={handlePageChangeWithSearch}
+            onPageSizeChange={handlePageSizeChangeWithSearch}
             onAppSettingAction={handleAppSettingAction}
           />
         </CardContent>

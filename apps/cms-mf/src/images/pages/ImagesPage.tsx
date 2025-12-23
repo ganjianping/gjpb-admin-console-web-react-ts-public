@@ -22,9 +22,13 @@ const ImagesPage: React.FC = () => {
     allImages,
     filteredImages,
     setFilteredImages,
+    pagination,
     loading,
     error,
     loadImages,
+    handlePageChange,
+    handlePageSizeChange,
+    pageSize,
   } = useImages();
   const {
     searchPanelOpen,
@@ -133,7 +137,7 @@ const ImagesPage: React.FC = () => {
     setFilteredImages(allImages);
   };
 
-  const handleApiSearch = async () => {
+  const buildSearchParams = () => {
     const params: ImageQueryParams = {};
     if (searchFormData.name?.trim()) {
       params.name = searchFormData.name.trim();
@@ -149,7 +153,24 @@ const ImagesPage: React.FC = () => {
     } else if (searchFormData.isActive === 'false') {
       params.isActive = false;
     }
-    await loadImages(params);
+    return params;
+  };
+
+  const handleApiSearch = async () => {
+    const params = buildSearchParams();
+    await loadImages(params, 0, pageSize);
+  };
+
+  const handlePageChangeWithSearch = (newPage: number) => {
+    handlePageChange(newPage);
+    const params = buildSearchParams();
+    loadImages(params, newPage, pageSize);
+  };
+
+  const handlePageSizeChangeWithSearch = (newPageSize: number) => {
+    handlePageSizeChange(newPageSize);
+    const params = buildSearchParams();
+    loadImages(params, 0, newPageSize);
   };
 
   const handleCreate = () => {
@@ -178,12 +199,15 @@ const ImagesPage: React.FC = () => {
           onClear={handleClearFilters}
         />
       </Collapse>
-      {loading ? (
+      {loading && !filteredImages.length ? (
         <ImageTableSkeleton rows={5} />
       ) : (
         <ImageTable
           images={filteredImages}
           loading={loading}
+          pagination={pagination}
+          onPageChange={handlePageChangeWithSearch}
+          onPageSizeChange={handlePageSizeChangeWithSearch}
           onImageAction={(image, action) => {
             if (action === 'view') actionMenuItems[0].action(image);
             if (action === 'edit') actionMenuItems[1].action(image);

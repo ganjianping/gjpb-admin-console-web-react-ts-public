@@ -26,8 +26,12 @@ const AudiosPage: React.FC = () => {
     allAudios,
     filteredAudios,
     setFilteredAudios,
+    pagination,
     loading,
+    pageSize,
     loadAudios,
+    handlePageChange,
+    handlePageSizeChange,
   } = useAudios();
   const {
     searchPanelOpen,
@@ -70,7 +74,7 @@ const AudiosPage: React.FC = () => {
     setFilteredAudios(allAudios);
   };
 
-  const handleApiSearch = async () => {
+  const buildSearchParams = () => {
     const params: AudioQueryParams = {};
     if (searchFormData.name?.trim()) {
       params.name = searchFormData.name.trim();
@@ -86,7 +90,24 @@ const AudiosPage: React.FC = () => {
     } else if (searchFormData.isActive === 'false') {
       params.isActive = false;
     }
-    await loadAudios(params);
+    return params;
+  };
+
+  const handleApiSearch = async () => {
+    const params = buildSearchParams();
+    await loadAudios(params, 0, pageSize);
+  };
+
+  const handlePageChangeWithSearch = (newPage: number) => {
+    handlePageChange(newPage);
+    const params = buildSearchParams();
+    loadAudios(params, newPage, pageSize);
+  };
+
+  const handlePageSizeChangeWithSearch = (newPageSize: number) => {
+    handlePageSizeChange(newPageSize);
+    const params = buildSearchParams();
+    loadAudios(params, 0, newPageSize);
   };
 
   const handleCreate = () => {
@@ -112,25 +133,33 @@ const AudiosPage: React.FC = () => {
           onClear={handleClearFilters}
         />
       </Collapse>
-      {loading ? (
-        <AudioTableSkeleton rows={5} />
+      {loading && !filteredAudios.length ? (
+        <AudioTableSkeleton />
       ) : (
         <AudioTable
           audios={filteredAudios}
           loading={loading}
-          onAudioAction={(audio: Audio, action: string) => {
+          pagination={pagination}
+          onPageChange={handlePageChangeWithSearch}
+          onPageSizeChange={handlePageSizeChangeWithSearch}
+          onAudioAction={(audio: Audio, action: 'view' | 'edit' | 'delete') => {
             if (action === 'view') {
               dialog.setSelectedAudio(audio);
               dialog.setFormData(audioToFormData(audio));
               dialog.setActionType('view');
               dialog.setDialogOpen(true);
-            } else if (action === 'edit') {
+              return;
+            }
+            if (action === 'edit') {
               dialog.setSelectedAudio(audio);
               dialog.setFormData(audioToFormData(audio));
               dialog.setActionType('edit');
               dialog.setDialogOpen(true);
-            } else if (action === 'delete') {
+              return;
+            }
+            if (action === 'delete') {
               setDeleteTarget(audio);
+              return;
             }
           }}
           onCopyFilename={(audio: Audio) => navigator.clipboard.writeText(audio.filename || '')}

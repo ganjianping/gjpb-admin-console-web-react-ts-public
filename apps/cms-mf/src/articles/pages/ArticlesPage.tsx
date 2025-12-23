@@ -19,7 +19,17 @@ import { articleService } from '../services/articleService';
 import { getFullArticleCoverImageUrl } from '../utils/getFullArticleCoverImageUrl';
 
 const ArticlesPage: React.FC = () => {
-  const { allArticles, filteredArticles, setFilteredArticles, loading, loadArticles } = useArticles();
+  const { 
+    allArticles, 
+    filteredArticles, 
+    setFilteredArticles, 
+    pagination,
+    loading, 
+    pageSize,
+    loadArticles,
+    handlePageChange,
+    handlePageSizeChange
+  } = useArticles();
   const { searchPanelOpen, searchFormData, handleSearchPanelToggle, handleSearchFormChange, handleClearSearch, applyClientSideFiltersWithData } =
     useArticleSearch(allArticles);
   const dialog = useArticleDialog();
@@ -52,7 +62,7 @@ const ArticlesPage: React.FC = () => {
     setFilteredArticles(allArticles);
   };
 
-  const handleApiSearch = async () => {
+  const buildSearchParams = () => {
     const params: ArticleQueryParams = {};
     if (searchFormData.title?.trim()) {
       params.title = searchFormData.title.trim();
@@ -68,7 +78,24 @@ const ArticlesPage: React.FC = () => {
     } else if (searchFormData.isActive === 'false') {
       params.isActive = false;
     }
-    await loadArticles(params);
+    return params;
+  };
+
+  const handleApiSearch = async () => {
+    const params = buildSearchParams();
+    await loadArticles(params, 0, pageSize);
+  };
+
+  const handlePageChangeWithSearch = (newPage: number) => {
+    handlePageChange(newPage);
+    const params = buildSearchParams();
+    loadArticles(params, newPage, pageSize);
+  };
+
+  const handlePageSizeChangeWithSearch = (newPageSize: number) => {
+    handlePageSizeChange(newPageSize);
+    const params = buildSearchParams();
+    loadArticles(params, 0, newPageSize);
   };
 
   const handleCreate = () => {
@@ -105,35 +132,39 @@ const ArticlesPage: React.FC = () => {
         />
       </Collapse>
 
-      {loading ? (
-        <ArticleTableSkeleton rows={5} />
+      {loading && !filteredArticles.length ? (
+        <ArticleTableSkeleton />
       ) : (
         <ArticleTable
           articles={filteredArticles}
-          loading={loading}
-          onArticleAction={(article: Article, action: string) => {
+          pagination={pagination}
+          onPageChange={handlePageChangeWithSearch}
+          onPageSizeChange={handlePageSizeChangeWithSearch}
+          onArticleAction={(article: Article, action: 'view' | 'edit' | 'delete') => {
             if (action === 'view') {
               dialog.setSelectedArticle(article);
-              dialog.setFormData(articleToFormData(article));
               dialog.setActionType('view');
               dialog.setDialogOpen(true);
-            } else if (action === 'edit') {
+              return;
+            }
+            if (action === 'edit') {
               dialog.setSelectedArticle(article);
               dialog.setFormData(articleToFormData(article));
               dialog.setActionType('edit');
               dialog.setDialogOpen(true);
-            } else if (action === 'delete') {
+              return;
+            }
+            if (action === 'delete') {
               setDeleteTarget(article);
+              return;
             }
           }}
           onCopyCoverImage={(article: Article) => {
             const url = computeCoverImageUrl(article);
-            if (!url) return;
-            navigator.clipboard.writeText(url);
+            if (url) navigator.clipboard.writeText(url);
           }}
           onCopyOriginalUrl={(article: Article) => {
-            if (!article.originalUrl) return;
-            navigator.clipboard.writeText(article.originalUrl);
+            if (article.originalUrl) navigator.clipboard.writeText(article.originalUrl);
           }}
         />
       )}

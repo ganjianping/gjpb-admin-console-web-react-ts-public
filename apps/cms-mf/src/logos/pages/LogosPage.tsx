@@ -36,29 +36,6 @@ import {
  * @component
  */
 const LogosPage = () => {
-  // =========================================================================
-  // Search Handler (API-based)
-  // =========================================================================
-  const handleApiSearch = async () => {
-    // Map searchFormData to LogoQueryParams
-  const params: import('../services/logoService').LogoQueryParams = {};
-    if (searchFormData.name && searchFormData.name.trim() !== '') {
-      params.name = searchFormData.name.trim();
-    }
-    if (searchFormData.lang && searchFormData.lang.trim() !== '') {
-      params.lang = searchFormData.lang.trim();
-    }
-    if (searchFormData.tags && searchFormData.tags.trim() !== '') {
-      params.tags = searchFormData.tags.trim();
-    }
-    if (searchFormData.isActive === 'true') {
-      params.isActive = true;
-    } else if (searchFormData.isActive === 'false') {
-      params.isActive = false;
-    }
-    await loadLogos(params);
-  };
-
     // =========================================================================
     // Notification Management
     // =========================================================================
@@ -120,11 +97,15 @@ const LogosPage = () => {
   const {
     allLogos,
     filteredLogos,
+    pagination,
     loading,
     error,
     setError,
     loadLogos,
     setFilteredLogos,
+    handlePageChange,
+    handlePageSizeChange,
+    pageSize,
   } = useLogos();
 
   // ============================================================================
@@ -139,9 +120,44 @@ const LogosPage = () => {
     applyClientSideFiltersWithData,
   } = useLogoSearch(allLogos);
 
+  const buildSearchParams = () => {
+    const params: import('../services/logoService').LogoQueryParams = {};
+    if (searchFormData.name && searchFormData.name.trim() !== '') {
+      params.name = searchFormData.name.trim();
+    }
+    if (searchFormData.lang && searchFormData.lang.trim() !== '') {
+      params.lang = searchFormData.lang.trim();
+    }
+    if (searchFormData.tags && searchFormData.tags.trim() !== '') {
+      params.tags = searchFormData.tags.trim();
+    }
+    if (searchFormData.isActive === 'true') {
+      params.isActive = true;
+    } else if (searchFormData.isActive === 'false') {
+      params.isActive = false;
+    }
+    return params;
+  };
+
   // =========================================================================
-  // Event Handlers
+  // Search Handler (API-based)
   // =========================================================================
+  const handleApiSearch = async () => {
+    const params = buildSearchParams();
+    await loadLogos(params, 0, pageSize);
+  };
+
+  const handlePageChangeWithSearch = (newPage: number) => {
+    handlePageChange(newPage);
+    const params = buildSearchParams();
+    loadLogos(params, newPage, pageSize);
+  };
+
+  const handlePageSizeChangeWithSearch = (newPageSize: number) => {
+    handlePageSizeChange(newPageSize);
+    const params = buildSearchParams();
+    loadLogos(params, 0, newPageSize);
+  };
   const handleLogoAction = (logo: Logo, action: 'view' | 'edit' | 'delete') => {
     if (action === 'view') {
       handleView(logo);
@@ -258,6 +274,9 @@ const LogosPage = () => {
           <LogoTable
             logos={filteredLogos}
             loading={loading}
+            pagination={pagination}
+            onPageChange={handlePageChangeWithSearch}
+            onPageSizeChange={handlePageSizeChangeWithSearch}
             onLogoAction={handleLogoAction}
             onCopyFilename={handleCopyFilename}
           />

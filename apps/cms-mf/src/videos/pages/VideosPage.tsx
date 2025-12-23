@@ -26,8 +26,12 @@ const VideosPage: React.FC = () => {
     allVideos,
     filteredVideos,
     setFilteredVideos,
+    pagination,
     loading,
+    pageSize,
     loadVideos,
+    handlePageChange,
+    handlePageSizeChange,
   } = useVideos();
   const {
     searchPanelOpen,
@@ -72,7 +76,7 @@ const VideosPage: React.FC = () => {
     setFilteredVideos(allVideos);
   };
 
-  const handleApiSearch = async () => {
+  const buildSearchParams = () => {
     const params: VideoQueryParams = {};
     if (searchFormData.name?.trim()) {
       params.name = searchFormData.name.trim();
@@ -88,7 +92,24 @@ const VideosPage: React.FC = () => {
     } else if (searchFormData.isActive === 'false') {
       params.isActive = false;
     }
-    await loadVideos(params);
+    return params;
+  };
+
+  const handleApiSearch = async () => {
+    const params = buildSearchParams();
+    await loadVideos(params, 0, pageSize);
+  };
+
+  const handlePageChangeWithSearch = (newPage: number) => {
+    handlePageChange(newPage);
+    const params = buildSearchParams();
+    loadVideos(params, newPage, pageSize);
+  };
+
+  const handlePageSizeChangeWithSearch = (newPageSize: number) => {
+    handlePageSizeChange(newPageSize);
+    const params = buildSearchParams();
+    loadVideos(params, 0, newPageSize);
   };
 
   const handleCreate = () => {
@@ -115,13 +136,16 @@ const VideosPage: React.FC = () => {
           onClear={handleClearFilters}
         />
       </Collapse>
-      {loading ? (
-        <VideoTableSkeleton rows={5} />
+      {loading && !filteredVideos.length ? (
+        <VideoTableSkeleton />
       ) : (
         <VideoTable
           images={filteredVideos}
           loading={loading}
-          onImageAction={(video: Video, action: string) => {
+          pagination={pagination}
+          onPageChange={handlePageChangeWithSearch}
+          onPageSizeChange={handlePageSizeChangeWithSearch}
+          onImageAction={(video: Video, action: 'view' | 'edit' | 'delete') => {
             if (action === 'view') {
               dialog.setSelectedVideo(video);
               dialog.setFormData(videoToFormData(video));

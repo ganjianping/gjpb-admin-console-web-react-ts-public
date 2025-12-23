@@ -158,6 +158,8 @@ const ImageCreateDialog = ({
           {formData.uploadMethod === 'url' && (
             <TextField label={t('images.form.originalUrl')} value={formData.originalUrl} onChange={(e) => onFormChange('originalUrl', e.target.value)} fullWidth error={!!getFieldError('originalUrl')} helperText={getFieldError('originalUrl')} placeholder="https://example.com/image.jpg" />
           )}
+
+          <TextField label={t('images.form.filename')} value={formData.filename} onChange={(e) => onFormChange('filename', e.target.value)} fullWidth error={!!getFieldError('filename')} helperText={getFieldError('filename')} placeholder="image.jpg" />
           
           <FormControl fullWidth error={!!getFieldError('tags')}>
             <FormLabel sx={{ mb: 1, color: 'text.primary', fontWeight: 500 }}>{t('images.form.tags')}</FormLabel>

@@ -77,14 +77,6 @@ export const useAppSettings = () => {
     setCurrentPage(0);
   }, []);
 
-  // Effect to reload when page or pageSize changes (but not on initial mount)
-  useEffect(() => {
-    if (hasInitiallyLoaded.current) {
-      loadAppSettings(undefined, currentPage, pageSize);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, pageSize]); // Removed loadAppSettings from dependencies
-
   return {
     allAppSettings,
     filteredAppSettings,

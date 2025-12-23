@@ -60,6 +60,7 @@ const WebsitesPage = () => {
     error,
     loadWebsites,
     setError,
+    pageSize,
     handlePageChange,
     handlePageSizeChange,
   } = useWebsites();
