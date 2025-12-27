@@ -110,18 +110,6 @@ const AudioEditDialog: React.FC<AudioEditDialogProps> = ({ open, formData, onFor
               {availableTags.length > 0 ? availableTags.map((tOpt) => (<MenuItem key={tOpt} value={tOpt}>{tOpt}</MenuItem>)) : (<MenuItem disabled>No tags</MenuItem>)}
             </Select>
           </FormControl>
-          <Box>
-            <Typography variant="subtitle2">{t('audios.form.subtitle') || 'Subtitle'}</Typography>
-            <TiptapTextEditor value={(formData as any).subtitle || ''} onChange={(html: string) => onFormChange('subtitle' as any, html)} placeholder={t('audios.form.subtitle') || 'Subtitle'} />
-            {getFieldError('subtitle') && <Typography variant="caption" color="error">{getFieldError('subtitle')}</Typography>}
-          </Box>
-          <TextField label={t('audios.form.sourceName') || 'Source Name'} value={(formData as any).sourceName || ''} onChange={e => onFormChange('sourceName' as any, e.target.value)} fullWidth />
-          <TextField label={t('audios.form.originalUrl') || 'Original URL'} value={(formData as any).originalUrl || ''} onChange={e => onFormChange('originalUrl' as any, e.target.value)} fullWidth />
-          <Box>
-            <Typography variant="subtitle2">{t('audios.form.description') || 'Description'}</Typography>
-            <TextareaAutosize minRows={2} style={{ width: '100%', padding: '8.5px 14px', borderRadius: 4, border: '1px solid rgba(0,0,0,0.23)', fontFamily: 'inherit' }} value={formData.description || ''} onChange={e => onFormChange('description', e.target.value)} aria-label={t('audios.form.description') || 'Description'} />
-          </Box>
-
           <FormControl fullWidth>
             <Select value={formData.lang || ''} onChange={handleLangChange}>
               {availableLangOptions.map((opt) => (<MenuItem key={opt.value} value={opt.value}>{opt.label}</MenuItem>))}
@@ -129,7 +117,23 @@ const AudioEditDialog: React.FC<AudioEditDialogProps> = ({ open, formData, onFor
           </FormControl>
 
           <TextField label={t('audios.form.displayOrder') || 'Display Order'} type="number" value={String(formData.displayOrder)} onChange={e => onFormChange('displayOrder', Number(e.target.value) || 0)} fullWidth />
+            
+          <Box>
+            <Typography variant="subtitle2">{t('audios.form.subtitle') || 'Subtitle'}</Typography>
+            <TiptapTextEditor value={(formData as any).subtitle || ''} onChange={(html: string) => onFormChange('subtitle' as any, html)} placeholder={t('audios.form.subtitle') || 'Subtitle'} />
+            {getFieldError('subtitle') && <Typography variant="caption" color="error">{getFieldError('subtitle')}</Typography>}
+          </Box>
+
           <FormControlLabel control={<Checkbox checked={formData.isActive} onChange={e => onFormChange('isActive', e.target.checked)} />} label={t('audios.form.isActive') || 'Active'} />
+
+          <TextField label={t('audios.form.sourceName') || 'Source Name'} value={(formData as any).sourceName || ''} onChange={e => onFormChange('sourceName' as any, e.target.value)} fullWidth />
+          <TextField label={t('audios.form.originalUrl') || 'Original URL'} value={(formData as any).originalUrl || ''} onChange={e => onFormChange('originalUrl' as any, e.target.value)} fullWidth />
+          <Box>
+            <Typography variant="subtitle2">{t('audios.form.description') || 'Description'}</Typography>
+            <TextareaAutosize minRows={2} style={{ width: '100%', padding: '8.5px 14px', borderRadius: 4, border: '1px solid rgba(0,0,0,0.23)', fontFamily: 'inherit' }} value={formData.description || ''} onChange={e => onFormChange('description', e.target.value)} aria-label={t('audios.form.description') || 'Description'} />
+          </Box>
+
+          
         </Box>
       </DialogContent>
       <DialogActions>

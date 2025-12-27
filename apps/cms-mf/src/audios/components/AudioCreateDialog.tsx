@@ -193,6 +193,7 @@ const AudioCreateDialog = ({
             <input type="file" accept="image/*" onChange={(e) => handleFileChange('coverImageFile', e)} />
           </Box>
           <TextField label={t('audios.form.coverImageFilename') || 'Cover Image Filename'} value={formData.coverImageFilename || ''} onChange={(e) => onFormChange('coverImageFilename' as any, e.target.value)} fullWidth />
+
           <FormControl fullWidth>
             <Select multiple value={formData.tags ? formData.tags.split(',').filter(Boolean) : []} onChange={handleTagsChange} input={<OutlinedInput />} renderValue={(selected) => (
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
@@ -202,15 +203,23 @@ const AudioCreateDialog = ({
               {availableTags.length > 0 ? availableTags.map((t) => (<MenuItem key={t} value={t}>{t}</MenuItem>)) : (<MenuItem disabled>No tags</MenuItem>)}
             </Select>
           </FormControl>
+          <FormControl fullWidth>
+            <Select value={formData.lang || ''} onChange={handleLangChange}>
+              {availableLangOptions.map((opt) => (<MenuItem key={opt.value} value={opt.value}>{opt.label}</MenuItem>))}
+            </Select>
+          </FormControl>
+          <TextField label={t('audios.form.displayOrder') || 'Display Order'} type="number" value={String(formData.displayOrder)} onChange={(e) => onFormChange('displayOrder', Number(e.target.value) || 0)} fullWidth />
+          
           <Box>
             <Typography variant="subtitle2">{t('audios.form.subtitle') || 'Subtitle'}</Typography>
             <TiptapTextEditor value={(formData as any).subtitle || ''} onChange={(html: string) => onFormChange('subtitle' as any, html)} placeholder={t('audios.form.subtitle') || 'Subtitle'} />
             {getFieldError('subtitle') && <FormHelperText error>{getFieldError('subtitle')}</FormHelperText>}
           </Box>
 
+          <FormControlLabel control={<Switch checked={formData.isActive} onChange={(e) => onFormChange('isActive', e.target.checked)} />} label={t('audios.form.isActive') || 'Active'} />
+
           <TextField label={t('audios.form.sourceName') || 'Source Name'} value={(formData as any).sourceName || ''} onChange={(e) => onFormChange('sourceName' as any, e.target.value)} fullWidth />
           <TextField label={t('audios.form.originalUrl') || 'Original URL'} value={(formData as any).originalUrl || ''} onChange={(e) => onFormChange('originalUrl' as any, e.target.value)} fullWidth />
-          
           <Box>
             <Typography variant="subtitle2">{t('audios.form.description') || 'Description'}</Typography>
             <TextareaAutosize
@@ -222,15 +231,6 @@ const AudioCreateDialog = ({
             />
             {getFieldError('description') && <FormHelperText error>{getFieldError('description')}</FormHelperText>}
           </Box>
-
-          <FormControl fullWidth>
-            <Select value={formData.lang || ''} onChange={handleLangChange}>
-              {availableLangOptions.map((opt) => (<MenuItem key={opt.value} value={opt.value}>{opt.label}</MenuItem>))}
-            </Select>
-          </FormControl>
-
-          <TextField label={t('audios.form.displayOrder') || 'Display Order'} type="number" value={String(formData.displayOrder)} onChange={(e) => onFormChange('displayOrder', Number(e.target.value) || 0)} fullWidth />
-          <FormControlLabel control={<Switch checked={formData.isActive} onChange={(e) => onFormChange('isActive', e.target.checked)} />} label={t('audios.form.isActive') || 'Active'} />
 
           {errorMsg && <Typography color="error">{errorMsg}</Typography>}
         </Box>

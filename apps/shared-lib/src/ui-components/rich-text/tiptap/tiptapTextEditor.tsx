@@ -34,7 +34,7 @@ interface TiptapTextEditorProps {
 }
 
 export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>) {
-  const { value = '', onChange, placeholder = 'Enter rich text...', lineHeight = 1.8, initialRows = 3 } = props;
+  const { value = '', onChange, placeholder = 'Enter rich text...', lineHeight = 1.8, initialRows = 0 } = props;
   const editor = useTiptapEditor({ value, onChange, placeholder, initialRows });
 
   const editorContainerRef = useRef<HTMLDivElement | null>(null);

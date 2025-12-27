@@ -137,7 +137,7 @@ const zhTranslations = {
     },
     form: {
       name: '音频名称',
-      subtitle: '副标题',
+      subtitle: '字幕',
       coverImageFilename: '封面图片文件名',
       sourceName: '来源名称',
       originalUrl: '原始链接',
