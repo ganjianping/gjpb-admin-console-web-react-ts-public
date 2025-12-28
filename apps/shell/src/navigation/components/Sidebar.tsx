@@ -32,6 +32,9 @@ import {
   ChevronDown,
   ChevronUp,
   ExternalLink,
+  Folder,
+  Lock,
+  Database,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -57,8 +60,8 @@ interface NavItem {
   key: string;
   title: string;
   path?: string;
-  icon: React.ElementType;
-  children?: Omit<NavItem, 'children' | 'icon'>[];
+  icon?: React.ElementType;
+  children?: NavItem[];
   roles?: string[];
   divider?: boolean;
   external?: boolean;
@@ -86,81 +89,103 @@ const Sidebar = ({ drawerWidth, collapsedWidth, open, onClose, variant }: Sideba
       icon: LayoutDashboard,
     },
     {
-      key: 'users',
-      title: t('navigation.users'),
-      path: '/users',
-      icon: Users,
+      key: 'access-control',
+      title: t('navigation.accessControl'),
+      icon: Lock,
       roles: ['ADMIN', 'SUPER_ADMIN'],
+      children: [
+        {
+          key: 'users',
+          title: t('navigation.users'),
+          path: '/users',
+          icon: Users,
+        },
+        {
+          key: 'roles',
+          title: t('navigation.roles'),
+          path: '/roles',
+          icon: Shield,
+        },
+      ]
     },
     {
-      key: 'roles',
-      title: t('navigation.roles'),
-      path: '/roles',
-      icon: Shield,
-      roles: ['ADMIN', 'SUPER_ADMIN'],
+      key: 'content',
+      title: t('navigation.content'),
+      icon: Folder,
+      children: [
+        {
+          key: 'websites',
+          title: t('websites.title'),
+          path: '/websites',
+          icon: Globe,
+          roles: ['ADMIN', 'SUPER_ADMIN'],
+        },
+        {
+          key: 'logos',
+          title: t('logos.title'),
+          path: '/logos',
+          icon: Badge,
+          roles: ['ADMIN', 'SUPER_ADMIN'],
+        },
+        {
+          key: 'articles',
+          title: t('articles.title'),
+          path: '/articles',
+          icon: Newspaper,
+        },
+        {
+          key: 'images',
+          title: t('images.title'),
+          path: '/images',
+          icon: Image,
+        },
+        {
+          key: 'audios',
+          title: t('audios.title'),
+          path: '/audios',
+          icon: Music,
+        },
+        {
+          key: 'videos',
+          title: t('videos.title'),
+          path: '/videos',
+          icon: Film,
+        },
+        {
+          key: 'files',
+          title: t('files.title'),
+          path: '/files',
+          icon: FileText,
+        },
+      ]
     },
     {
-      key: 'audit-logs',
-      title: t('auditLogs.title'),
-      path: '/audit-logs',
-      icon: Activity,
-      roles: ['ADMIN', 'SUPER_ADMIN'],
-    },
-    {
-      key: 'websites',
-      title: t('websites.title'),
-      path: '/websites',
-      icon: Globe,
-      roles: ['ADMIN', 'SUPER_ADMIN'],
-    },
-    {
-      key: 'logos',
-      title: t('logos.title'),
-      path: '/logos',
-      icon: Badge,
-      roles: ['ADMIN', 'SUPER_ADMIN'],
-    },
-    {
-      key: 'files',
-      title: t('files.title'),
-      path: '/files',
-      icon: FileText,
-    },
-    {
-      key: 'images',
-      title: t('images.title'),
-      path: '/images',
-      icon: Image,
-    },
-    {
-      key: 'videos',
-      title: t('videos.title'),
-      path: '/videos',
-      icon: Film,
-    },
-    {
-      key: 'articles',
-      title: t('articles.title'),
-      path: '/articles',
-      icon: Newspaper,
-    },
-    {
-      key: 'audios',
-      title: t('audios.title'),
-      path: '/audios',
-      icon: Music,
-    },
-    {
-      key: 'app-settings',
-      title: t('appSettings.title'),
-      path: '/app-settings',
+      key: 'system',
+      title: t('navigation.system'),
       icon: Settings,
       roles: ['ADMIN', 'SUPER_ADMIN'],
+      children: [
+        {
+          key: 'audit-logs',
+          title: t('auditLogs.title'),
+          path: '/audit-logs',
+          icon: Activity,
+        },
+        {
+          key: 'app-settings',
+          title: t('appSettings.title'),
+          path: '/app-settings',
+          icon: Settings,
+        },
+      ]
     },
   ], [t]);
 
   // Toggle sub-menu
   const handleToggleSubMenu = (key: string) => {
+    if (!open) {
+      dispatch(toggleSidebar());
+    }
     setOpenSubMenus(prev => ({
       ...prev,
       [key]: !prev[key]
@@ -216,7 +241,7 @@ const Sidebar = ({ drawerWidth, collapsedWidth, open, onClose, variant }: Sideba
               color: 'inherit',
               justifyContent: 'center' 
             }}>
-              <ItemIcon size={20} />
+              {ItemIcon && <ItemIcon size={20} />}
             </ListItemIcon>
           </ListItemButton>
         </ListItem>
@@ -227,58 +252,86 @@ const Sidebar = ({ drawerWidth, collapsedWidth, open, onClose, variant }: Sideba
   // Helper function to render expanded submenu items
   const renderExpandedSubMenuItem = (item: NavItem) => {
     const ItemIcon = item.icon;
+    const isChildActive = item.children?.some(child => isActive(child.path));
+
     return (
       <Box key={item.key}>
-        <ListItem disablePadding>
+        <ListItem disablePadding sx={{ display: 'block' }}>
           <ListItemButton 
             onClick={() => handleToggleSubMenu(item.key)}
             sx={{
               py: 1.5,
               pl: 3,
-              '&.Mui-selected': {
-                bgcolor: 'primary.main',
-                color: 'common.white',
-                '&:hover': {
-                  bgcolor: 'primary.dark',
-                },
+              justifyContent: 'space-between',
+              color: isChildActive ? 'primary.main' : 'text.primary',
+              '&:hover': {
+                bgcolor: 'action.hover',
               },
             }}
           >
-            <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
-              <ItemIcon size={20} />
-            </ListItemIcon>
-            <ListItemText 
-              primary={item.title}
-              sx={{ opacity: open ? 1 : 0 }}
-            />
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <ListItemIcon sx={{ 
+                minWidth: 40, 
+                color: isChildActive ? 'primary.main' : 'inherit' 
+              }}>
+                {ItemIcon && <ItemIcon size={20} />}
+              </ListItemIcon>
+              <ListItemText 
+                primary={item.title}
+                primaryTypographyProps={{
+                  fontWeight: 600,
+                  fontSize: '0.875rem',
+                }}
+                sx={{ opacity: open ? 1 : 0 }}
+              />
+            </Box>
             {openSubMenus[item.key] ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
           </ListItemButton>
         </ListItem>
         
         <Collapse in={openSubMenus[item.key] && open} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            {item.children?.map((child) => (
-              <ListItem key={child.key} disablePadding>
-                <ListItemButton
-                  component={RouterLink}
-                  to={child.path ?? ''}
-                  selected={isActive(child.path)}
-                  sx={{
-                    pl: 6,
-                    py: 1,
-                    '&.Mui-selected': {
-                      bgcolor: 'primary.main',
-                      color: 'common.white',
-                      '&:hover': {
-                        bgcolor: 'primary.dark',
+            {item.children?.map((child) => {
+              // Skip rendering if role requirements not met
+              if (child.roles && !hasRole(child.roles)) return null;
+              
+              const ChildIcon = child.icon;
+              
+              return (
+                <ListItem key={child.key} disablePadding>
+                  <ListItemButton
+                    component={RouterLink}
+                    to={child.path ?? ''}
+                    selected={isActive(child.path)}
+                    sx={{
+                      pl: ChildIcon ? 3 : 6,
+                      py: 1,
+                      mx: 2,
+                      my: 0.5,
+                      borderRadius: 2,
+                      width: 'auto',
+                      '&.Mui-selected': {
+                        bgcolor: 'primary.main',
+                        color: 'common.white',
+                        '&:hover': {
+                          bgcolor: 'primary.dark',
+                        },
+                        '& .MuiListItemIcon-root': {
+                          color: 'common.white',
+                        },
                       },
-                    },
-                  }}
-                >
-                  <ListItemText primary={child.title} />
-                </ListItemButton>
-              </ListItem>
-            ))}
+                    }}
+                  >
+                    {ChildIcon && (
+                      <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
+                        <ChildIcon size={20} />
+                      </ListItemIcon>
+                    )}
+                    <ListItemText primary={child.title} />
+                  </ListItemButton>
+                </ListItem>
+              );
+            })}
           </List>
         </Collapse>
         {item.divider && <Divider sx={{ mt: 1, mb: 1 }} />}
@@ -299,11 +352,19 @@ const Sidebar = ({ drawerWidth, collapsedWidth, open, onClose, variant }: Sideba
           pl: open ? 3 : 0,
           justifyContent: open ? 'flex-start' : 'center',
           minHeight: 48,
+          ...(open && {
+            mx: 2,
+            borderRadius: 2,
+            width: 'auto',
+          }),
           '&.Mui-selected': {
             bgcolor: 'primary.main',
             color: 'common.white',
             '&:hover': {
               bgcolor: 'primary.dark',
+            },
+            '& .MuiListItemIcon-root': {
+              color: 'common.white',
             },
           },
         }}
@@ -313,7 +374,7 @@ const Sidebar = ({ drawerWidth, collapsedWidth, open, onClose, variant }: Sideba
           color: 'inherit',
           justifyContent: 'center'
         }}>
-          <ItemIcon size={20} />
+          {ItemIcon && <ItemIcon size={20} />}
         </ListItemIcon>
         {open && (
           <ListItemText 
@@ -354,6 +415,11 @@ const Sidebar = ({ drawerWidth, collapsedWidth, open, onClose, variant }: Sideba
           pl: open ? 3 : 0,
           justifyContent: open ? 'flex-start' : 'center',
           minHeight: 48,
+          ...(open && {
+            mx: 2,
+            borderRadius: 2,
+            width: 'auto',
+          }),
         }}
       >
         <ListItemIcon sx={{ 
@@ -361,7 +427,7 @@ const Sidebar = ({ drawerWidth, collapsedWidth, open, onClose, variant }: Sideba
           color: 'inherit',
           justifyContent: 'center'
         }}>
-          <ItemIcon size={20} />
+          {ItemIcon && <ItemIcon size={20} />}
         </ListItemIcon>
         {open && (
           <>

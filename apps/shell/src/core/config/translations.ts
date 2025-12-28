@@ -35,6 +35,10 @@ const shellResources = {
         logout: 'Logout',
         users: 'Users',
         roles: 'Roles',
+        accessControl: 'Access',
+        content: 'CMS',
+        media: 'Media',
+        system: 'System',
       },
       settings: {
         title: 'System Settings',
@@ -138,6 +142,10 @@ const shellResources = {
         logout: '退出登录',
         users: '用户管理',
         roles: '角色管理',
+        accessControl: '访问控制',
+        content: '内容管理',
+        media: '媒体库',
+        system: '系统设置',
       },
       settings: {
         title: '系统设置',
