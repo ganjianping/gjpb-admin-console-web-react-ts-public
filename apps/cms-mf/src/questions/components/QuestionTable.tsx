@@ -36,10 +36,16 @@ const QuestionTable = memo(
           ),
           size: 300,
         }),
+        
         columnHelper.accessor('tags', {
           header: t('questions.fields.tags'),
           cell: (info) => info.getValue(),
           size: 150,
+        }),
+        columnHelper.accessor('displayOrder', {
+          header: t('questions.fields.displayOrder'),
+          cell: (info) => <Typography variant="body2">{info.getValue()}</Typography>,
+          size: 100,
         }),
         columnHelper.accessor('lang', {
           header: t('questions.fields.language'),
@@ -49,10 +55,10 @@ const QuestionTable = memo(
         columnHelper.accessor('isActive', {
           header: t('questions.fields.status'),
           cell: (info) => createStatusChip(String(info.getValue()), STATUS_MAPS.active),
-          size: 120,
+          size: 100,
         }),
         columnHelper.accessor('updatedAt', {
-            header: t('articles.columns.updatedAt'),
+            header: t('questions.fields.updatedAt'),
             cell: (info) => {
                 const value = info.getValue();
                 if (!value) return <Typography variant="body2">-</Typography>;
@@ -65,7 +71,7 @@ const QuestionTable = memo(
                 }
                 return <Typography variant="body2">{dateStr}</Typography>;
             },
-            size: 120,
+            size: 100,
         }),
       ],
       [t]
