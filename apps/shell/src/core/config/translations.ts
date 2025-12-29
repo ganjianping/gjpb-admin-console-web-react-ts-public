@@ -87,6 +87,9 @@ const shellResources = {
       articles: {
         title: 'Articles',
       },
+      questions: {
+        title: 'Questions',
+      },
       audios: {
         title: 'Audios',
       },
@@ -193,6 +196,9 @@ const shellResources = {
       },
       articles: {
         title: '文章管理',
+      },
+      questions: {
+        title: '问题管理',
       },
       audios: {
         title: '音频管理',

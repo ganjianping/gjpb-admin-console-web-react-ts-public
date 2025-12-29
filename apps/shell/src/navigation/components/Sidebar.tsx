@@ -34,6 +34,7 @@ import {
   ExternalLink,
   Folder,
   Lock,
+  HelpCircle,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -131,6 +132,12 @@ const Sidebar = ({ drawerWidth, collapsedWidth, open, onClose, variant }: Sideba
           title: t('articles.title'),
           path: '/articles',
           icon: Newspaper,
+        },
+        {
+          key: 'questions',
+          title: t('questions.title'),
+          path: '/questions',
+          icon: HelpCircle,
         },
         {
           key: 'images',

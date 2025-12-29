@@ -72,6 +72,11 @@ const AudiosPage = lazy(() =>
     default: module.default,
   })),
 );
+const QuestionsPage = lazy(() =>
+  import("../../../../cms-mf/src/questions/pages/QuestionsPage").then((module) => ({
+    default: module.default,
+  })),
+);
 
 // Import dashboard (this also loads dashboard translations)
 import "../../dashboard";
@@ -359,6 +364,16 @@ const AppRoutes = () => {
             element={
               <Suspense fallback={<AppLoading />}>
                 <AudiosPage />
+              </Suspense>
+            }
+          />
+
+          {/* Questions */}
+          <Route
+            path="questions"
+            element={
+              <Suspense fallback={<AppLoading />}>
+                <QuestionsPage />
               </Suspense>
             }
           />
