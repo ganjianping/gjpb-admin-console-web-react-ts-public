@@ -38,6 +38,7 @@ export interface VocabularyFormData {
   word: string;
   wordImageFilename: string;
   wordImageOriginalUrl: string;
+  wordImageUploadMethod?: 'url' | 'file';
   simplePastTense: string;
   pastPerfectTense: string;
   translation: string;
@@ -46,6 +47,7 @@ export interface VocabularyFormData {
   phonetic: string;
   phoneticAudioFilename: string;
   phoneticAudioOriginalUrl: string;
+  phoneticAudioUploadMethod?: 'url' | 'file';
   partOfSpeech: string;
   definition: string;
   example: string;

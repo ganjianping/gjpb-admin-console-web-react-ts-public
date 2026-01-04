@@ -29,8 +29,8 @@ export default defineConfig(({ mode }) => {
       cors: true, // Enable CORS for the dev server
       proxy: {
         '/blog': {
-          // target: 'http://localhost:8082',
-          target: 'https://www.ganjianping.com',
+          target: 'http://localhost:8082',
+          // target: 'https://www.ganjianping.com',
           changeOrigin: true,
           secure: false,
           ws: true, // Enable WebSocket proxying

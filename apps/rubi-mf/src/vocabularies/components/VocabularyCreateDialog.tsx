@@ -16,9 +16,12 @@ import {
   Select,
   OutlinedInput,
   Chip,
+  RadioGroup,
+  Radio,
+  Alert,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { Plus } from 'lucide-react';
+import { Plus, Upload } from 'lucide-react';
 import type { VocabularyFormData } from '../types/vocabulary.types';
 import { getEmptyVocabularyFormData } from '../utils/getEmptyVocabularyFormData';
 import { LANGUAGE_OPTIONS, VOCABULARY_TAG_SETTING_KEY, VOCABULARY_PART_OF_SPEECH_SETTING_KEY } from '../constants';
@@ -140,6 +143,16 @@ const VocabularyCreateDialog = ({ open, onClose, onConfirm }: VocabularyCreateDi
           </FormControl>
 
           <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.phonetic')}</FormLabel>
+            <TextField
+              value={formData.phonetic}
+              onChange={(e) => handleChange('phonetic', e.target.value)}
+              placeholder={t('vocabularies.form.phonetic')}
+              fullWidth
+            />
+          </FormControl>
+
+          <FormControl fullWidth>
             <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.definition')}</FormLabel>
             <TextField
               value={formData.definition}
@@ -222,6 +235,114 @@ const VocabularyCreateDialog = ({ open, onClose, onConfirm }: VocabularyCreateDi
               )}
             </Select>
           </FormControl>
+
+          <FormControl component="fieldset">
+            <FormLabel component="legend">{t('vocabularies.form.wordImageUploadMethod')}</FormLabel>
+            <RadioGroup
+              row
+              value={formData.wordImageUploadMethod || 'url'}
+              onChange={(e) => handleChange('wordImageUploadMethod', e.target.value as 'url' | 'file')}
+            >
+              <FormControlLabel value="url" control={<Radio />} label={t('vocabularies.form.byUrl')} />
+              <FormControlLabel value="file" control={<Radio />} label={t('vocabularies.form.uploadFile')} />
+            </RadioGroup>
+          </FormControl>
+
+          {formData.wordImageUploadMethod === 'file' && (
+            <Box>
+              <Button variant="outlined" component="label" startIcon={<Upload size={20} />} fullWidth sx={{ mb: 1 }}>
+                {formData.wordImageFile ? formData.wordImageFile.name : t('vocabularies.form.chooseWordImageFile')}
+                <input
+                  type="file"
+                  hidden
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      handleChange('wordImageFile', file);
+                    }
+                  }}
+                />
+              </Button>
+              {formData.wordImageFile && (
+                <Alert severity="info" sx={{ mt: 1 }}>
+                  {t('vocabularies.form.selectedFile')}: {formData.wordImageFile.name} ({(formData.wordImageFile.size / 1024).toFixed(2)} KB)
+                </Alert>
+              )}
+            </Box>
+          )}
+
+          {formData.wordImageUploadMethod === 'url' && (
+            <TextField
+              label={t('vocabularies.form.wordImageOriginalUrl')}
+              value={formData.wordImageOriginalUrl}
+              onChange={(e) => handleChange('wordImageOriginalUrl', e.target.value)}
+              fullWidth
+              placeholder="https://example.com/word-image.jpg"
+            />
+          )}
+
+          <TextField
+            label={t('vocabularies.form.wordImageFilename')}
+            value={formData.wordImageFilename}
+            onChange={(e) => handleChange('wordImageFilename', e.target.value)}
+            fullWidth
+            placeholder="word-image.jpg"
+          />
+
+          <FormControl component="fieldset">
+            <FormLabel component="legend">{t('vocabularies.form.phoneticAudioUploadMethod')}</FormLabel>
+            <RadioGroup
+              row
+              value={formData.phoneticAudioUploadMethod || 'url'}
+              onChange={(e) => handleChange('phoneticAudioUploadMethod', e.target.value as 'url' | 'file')}
+            >
+              <FormControlLabel value="url" control={<Radio />} label={t('vocabularies.form.byUrl')} />
+              <FormControlLabel value="file" control={<Radio />} label={t('vocabularies.form.uploadFile')} />
+            </RadioGroup>
+          </FormControl>
+
+          {formData.phoneticAudioUploadMethod === 'file' && (
+            <Box>
+              <Button variant="outlined" component="label" startIcon={<Upload size={20} />} fullWidth sx={{ mb: 1 }}>
+                {formData.phoneticAudioFile ? formData.phoneticAudioFile.name : t('vocabularies.form.choosePhoneticAudioFile')}
+                <input
+                  type="file"
+                  hidden
+                  accept="audio/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      handleChange('phoneticAudioFile', file);
+                    }
+                  }}
+                />
+              </Button>
+              {formData.phoneticAudioFile && (
+                <Alert severity="info" sx={{ mt: 1 }}>
+                  {t('vocabularies.form.selectedFile')}: {formData.phoneticAudioFile.name} ({(formData.phoneticAudioFile.size / 1024).toFixed(2)} KB)
+                </Alert>
+              )}
+            </Box>
+          )}
+
+          {formData.phoneticAudioUploadMethod === 'url' && (
+            <TextField
+              label={t('vocabularies.form.phoneticAudioOriginalUrl')}
+              value={formData.phoneticAudioOriginalUrl}
+              onChange={(e) => handleChange('phoneticAudioOriginalUrl', e.target.value)}
+              fullWidth
+              placeholder="https://example.com/phonetic-audio.mp3"
+            />
+          )}
+
+          <TextField
+            label={t('vocabularies.form.phoneticAudioFilename')}
+            value={formData.phoneticAudioFilename}
+            onChange={(e) => handleChange('phoneticAudioFilename', e.target.value)}
+            fullWidth
+            placeholder="phonetic-audio.mp3"
+          />
 
           <FormControl fullWidth error={!!errors.lang}>
             <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.lang')}</FormLabel>
