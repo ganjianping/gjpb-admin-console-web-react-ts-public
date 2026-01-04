@@ -176,6 +176,16 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
           </FormControl>
 
           <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.dictionaryUrl')}</FormLabel>
+            <TextField
+              value={formData.dictionaryUrl}
+              onChange={(e) => handleChange('dictionaryUrl', e.target.value)}
+              placeholder="https://dictionary.cambridge.org/dictionary/english/"
+              fullWidth
+            />
+          </FormControl>
+
+          <FormControl fullWidth>
             <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.phonetic')}</FormLabel>
             <TextField
               value={formData.phonetic}
@@ -223,6 +233,16 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
           </FormControl>
 
           <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.synonyms')}</FormLabel>
+            <TextField
+              value={formData.synonyms}
+              onChange={(e) => handleChange('synonyms', e.target.value)}
+              placeholder={t('vocabularies.form.synonyms')}
+              fullWidth
+            />
+          </FormControl>
+
+          <FormControl fullWidth>
             <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.translation')}</FormLabel>
             <TextField
               value={formData.translation}
@@ -265,31 +285,11 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
           </FormControl>
 
           <FormControl fullWidth>
-            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.dictionaryUrl')}</FormLabel>
-            <TextField
-              value={formData.dictionaryUrl}
-              onChange={(e) => handleChange('dictionaryUrl', e.target.value)}
-              placeholder="https://dictionary.example.com/word"
-              fullWidth
-            />
-          </FormControl>
-
-          <FormControl fullWidth>
             <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.pluralForm')}</FormLabel>
             <TextField
               value={formData.pluralForm}
               onChange={(e) => handleChange('pluralForm', e.target.value)}
               placeholder={t('vocabularies.form.pluralForm')}
-              fullWidth
-            />
-          </FormControl>
-
-          <FormControl fullWidth>
-            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.synonyms')}</FormLabel>
-            <TextField
-              value={formData.synonyms}
-              onChange={(e) => handleChange('synonyms', e.target.value)}
-              placeholder={t('vocabularies.form.synonyms')}
               fullWidth
             />
           </FormControl>

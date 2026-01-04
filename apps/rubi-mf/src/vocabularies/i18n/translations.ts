@@ -2,7 +2,7 @@ import i18n from '../../../../shared-lib/src/i18n/i18n';
 
 const enTranslations = {
   vocabularies: {
-    title: 'Vocabularies',
+    title: 'Vocabulary',
     subtitle: 'Manage vocabulary words and their definitions',
     description: 'Maintain the vocabulary library with word images and audio',
     pageTitle: 'Vocabulary Management',
