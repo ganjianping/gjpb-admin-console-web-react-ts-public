@@ -14,6 +14,7 @@ export const getEmptyVocabularyFormData = (): VocabularyFormData => ({
   phoneticAudioFilename: '',
   phoneticAudioOriginalUrl: '',
   phoneticAudioUploadMethod: 'url',
+  dictionaryUrl: '',
   partOfSpeech: '',
   definition: '',
   example: '',

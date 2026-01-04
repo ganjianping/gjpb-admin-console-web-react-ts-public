@@ -11,6 +11,7 @@ export interface Vocabulary {
   phonetic?: string | null;
   phoneticAudioFilename?: string | null;
   phoneticAudioOriginalUrl?: string | null;
+  dictionaryUrl?: string | null;
   partOfSpeech?: string | null;
   definition?: string | null;
   example?: string | null;
@@ -48,6 +49,7 @@ export interface VocabularyFormData {
   phoneticAudioFilename: string;
   phoneticAudioOriginalUrl: string;
   phoneticAudioUploadMethod?: 'url' | 'file';
+  dictionaryUrl: string;
   partOfSpeech: string;
   definition: string;
   example: string;

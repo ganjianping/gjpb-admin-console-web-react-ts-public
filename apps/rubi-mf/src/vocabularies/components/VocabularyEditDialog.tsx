@@ -94,6 +94,7 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
         isActive: vocabulary.isActive ?? true,
         wordImageFile: null,
         phoneticAudioFile: null,
+        dictionaryUrl: vocabulary.dictionaryUrl || '',
       });
       setErrors({});
     }
@@ -144,7 +145,16 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth disableEscapeKeyDown>
+    <Dialog 
+      open={open} 
+      onClose={(_event, reason) => {
+        if (reason === 'backdropClick' || reason === 'escapeKeyDown') return;
+        onClose();
+      }}
+      maxWidth="md" 
+      fullWidth 
+      disableEscapeKeyDown
+    >
       <DialogTitle sx={{ pb: 2, display: 'flex', alignItems: 'center', gap: 1.5, borderBottom: '1px solid', borderColor: 'divider' }}>
         <Edit size={20} />
         <Typography variant="h6" component="span">
@@ -163,6 +173,150 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
               helperText={errors.word}
               fullWidth
             />
+          </FormControl>
+
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.phonetic')}</FormLabel>
+            <TextField
+              value={formData.phonetic}
+              onChange={(e) => handleChange('phonetic', e.target.value)}
+              placeholder={t('vocabularies.form.phonetic')}
+              fullWidth
+            />
+          </FormControl>
+
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.partOfSpeech')}</FormLabel>
+            <Select
+              multiple
+              value={formData.partOfSpeech ? formData.partOfSpeech.split(',').filter(Boolean) : []}
+              onChange={handlePartOfSpeechChange}
+              input={<OutlinedInput />}
+              renderValue={(selected) => (
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                  {Array.isArray(selected) && selected.map((v) => <Chip key={v} label={v} size="small" />)}
+                </Box>
+              )}
+            >
+              {availablePartOfSpeech.length > 0 ? (
+                availablePartOfSpeech.map((pos) => (
+                  <MenuItem key={pos} value={pos}>
+                    {pos}
+                  </MenuItem>
+                ))
+              ) : (
+                <MenuItem disabled>No part of speech options</MenuItem>
+              )}
+            </Select>
+          </FormControl>
+
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.definition')}</FormLabel>
+            <TextField
+              value={formData.definition}
+              onChange={(e) => handleChange('definition', e.target.value)}
+              multiline
+              rows={3}
+              placeholder={t('vocabularies.form.definition')}
+              fullWidth
+            />
+          </FormControl>
+
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.translation')}</FormLabel>
+            <TextField
+              value={formData.translation}
+              onChange={(e) => handleChange('translation', e.target.value)}
+              placeholder={t('vocabularies.form.translation')}
+              fullWidth
+            />
+          </FormControl>
+
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.example')}</FormLabel>
+            <TextField
+              value={formData.example}
+              onChange={(e) => handleChange('example', e.target.value)}
+              multiline
+              rows={2}
+              placeholder={t('vocabularies.form.example')}
+              fullWidth
+            />
+          </FormControl>
+
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.simplePastTense')}</FormLabel>
+            <TextField
+              value={formData.simplePastTense}
+              onChange={(e) => handleChange('simplePastTense', e.target.value)}
+              placeholder={t('vocabularies.form.simplePastTense')}
+              fullWidth
+            />
+          </FormControl>
+
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.pastPerfectTense')}</FormLabel>
+            <TextField
+              value={formData.pastPerfectTense}
+              onChange={(e) => handleChange('pastPerfectTense', e.target.value)}
+              placeholder={t('vocabularies.form.pastPerfectTense')}
+              fullWidth
+            />
+          </FormControl>
+
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.dictionaryUrl')}</FormLabel>
+            <TextField
+              value={formData.dictionaryUrl}
+              onChange={(e) => handleChange('dictionaryUrl', e.target.value)}
+              placeholder="https://dictionary.example.com/word"
+              fullWidth
+            />
+          </FormControl>
+
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.pluralForm')}</FormLabel>
+            <TextField
+              value={formData.pluralForm}
+              onChange={(e) => handleChange('pluralForm', e.target.value)}
+              placeholder={t('vocabularies.form.pluralForm')}
+              fullWidth
+            />
+          </FormControl>
+
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.synonyms')}</FormLabel>
+            <TextField
+              value={formData.synonyms}
+              onChange={(e) => handleChange('synonyms', e.target.value)}
+              placeholder={t('vocabularies.form.synonyms')}
+              fullWidth
+            />
+          </FormControl>
+
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.tags')}</FormLabel>
+            <Select
+              multiple
+              value={formData.tags ? formData.tags.split(',').filter(Boolean) : []}
+              onChange={handleTagsChange}
+              input={<OutlinedInput />}
+              renderValue={(selected) => (
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                  {Array.isArray(selected) && selected.map((v) => <Chip key={v} label={v} size="small" />)}
+                </Box>
+              )}
+            >
+              {availableTags.length > 0 ? (
+                availableTags.map((tag) => (
+                  <MenuItem key={tag} value={tag}>
+                    {tag}
+                  </MenuItem>
+                ))
+              ) : (
+                <MenuItem disabled>No tags</MenuItem>
+              )}
+            </Select>
           </FormControl>
 
           <FormControl component="fieldset">
@@ -219,61 +373,6 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
             placeholder="word-image.jpg"
           />
 
-          <FormControl fullWidth error={!!errors.lang}>
-            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.lang')}</FormLabel>
-            <Select value={formData.lang} onChange={(e) => handleChange('lang', e.target.value)}>
-              {LANGUAGE_OPTIONS.map((opt) => (
-                <MenuItem key={opt.value} value={opt.value}>
-                  {opt.label}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-          <FormControl fullWidth>
-            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.definition')}</FormLabel>
-            <TextField
-              value={formData.definition}
-              onChange={(e) => handleChange('definition', e.target.value)}
-              multiline
-              rows={3}
-              placeholder={t('vocabularies.form.definition')}
-              fullWidth
-            />
-          </FormControl>
-
-          <FormControl fullWidth>
-            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.translation')}</FormLabel>
-            <TextField
-              value={formData.translation}
-              onChange={(e) => handleChange('translation', e.target.value)}
-              placeholder={t('vocabularies.form.translation')}
-              fullWidth
-            />
-          </FormControl>
-
-          <FormControl fullWidth>
-            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.example')}</FormLabel>
-            <TextField
-              value={formData.example}
-              onChange={(e) => handleChange('example', e.target.value)}
-              multiline
-              rows={2}
-              placeholder={t('vocabularies.form.example')}
-              fullWidth
-            />
-          </FormControl>
-
-          <FormControl fullWidth>
-            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.phonetic')}</FormLabel>
-            <TextField
-              value={formData.phonetic}
-              onChange={(e) => handleChange('phonetic', e.target.value)}
-              placeholder={t('vocabularies.form.phonetic')}
-              fullWidth
-            />
-          </FormControl>
-
           <FormControl component="fieldset">
             <FormLabel component="legend">{t('vocabularies.form.phoneticAudioUploadMethod')}</FormLabel>
             <RadioGroup
@@ -328,53 +427,14 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
             placeholder="phonetic-audio.mp3"
           />
 
-          <FormControl fullWidth>
-            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.partOfSpeech')}</FormLabel>
-            <Select
-              multiple
-              value={formData.partOfSpeech ? formData.partOfSpeech.split(',').filter(Boolean) : []}
-              onChange={handlePartOfSpeechChange}
-              input={<OutlinedInput />}
-              renderValue={(selected) => (
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                  {Array.isArray(selected) && selected.map((v) => <Chip key={v} label={v} size="small" />)}
-                </Box>
-              )}
-            >
-              {availablePartOfSpeech.length > 0 ? (
-                availablePartOfSpeech.map((pos) => (
-                  <MenuItem key={pos} value={pos}>
-                    {pos}
-                  </MenuItem>
-                ))
-              ) : (
-                <MenuItem disabled>No part of speech options</MenuItem>
-              )}
-            </Select>
-          </FormControl>
-
-          <FormControl fullWidth>
-            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.tags')}</FormLabel>
-            <Select
-              multiple
-              value={formData.tags ? formData.tags.split(',').filter(Boolean) : []}
-              onChange={handleTagsChange}
-              input={<OutlinedInput />}
-              renderValue={(selected) => (
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                  {Array.isArray(selected) && selected.map((v) => <Chip key={v} label={v} size="small" />)}
-                </Box>
-              )}
-            >
-              {availableTags.length > 0 ? (
-                availableTags.map((tag) => (
-                  <MenuItem key={tag} value={tag}>
-                    {tag}
-                  </MenuItem>
-                ))
-              ) : (
-                <MenuItem disabled>No tags</MenuItem>
-              )}
+          <FormControl fullWidth error={!!errors.lang}>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.lang')}</FormLabel>
+            <Select value={formData.lang} onChange={(e) => handleChange('lang', e.target.value)}>
+              {LANGUAGE_OPTIONS.map((opt) => (
+                <MenuItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
 
@@ -399,7 +459,7 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
           {t('common.cancel')}
         </Button>
         <Button onClick={handleSubmit} variant="contained" disabled={loading}>
-          {t('common.update')}
+          {t('common.save')}
         </Button>
       </DialogActions>
     </Dialog>

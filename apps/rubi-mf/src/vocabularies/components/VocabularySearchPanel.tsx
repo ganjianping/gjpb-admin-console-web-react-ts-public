@@ -14,7 +14,6 @@ import {
   Typography,
   useTheme,
   Chip,
-  OutlinedInput,
 } from '@mui/material';
 import { Search } from 'lucide-react';
 import type { VocabularySearchFormData } from '../types/vocabulary.types';

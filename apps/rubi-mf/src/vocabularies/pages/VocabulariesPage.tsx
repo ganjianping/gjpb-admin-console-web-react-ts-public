@@ -1,7 +1,6 @@
 import React from 'react';
 import '../i18n/translations';
-import type { Vocabulary, VocabularySearchFormData } from '../types/vocabulary.types';
-import type { VocabularyQueryParams } from '../services/vocabularyService';
+import type { Vocabulary } from '../types/vocabulary.types';
 import { Box, Collapse } from '@mui/material';
 import VocabularyPageHeader from '../components/VocabularyPageHeader';
 import VocabularySearchPanel from '../components/VocabularySearchPanel';
@@ -25,7 +24,6 @@ const VocabulariesPage: React.FC = () => {
     setFilteredVocabularies, 
     pagination,
     loading, 
-    pageSize,
     loadVocabularies,
     handlePageChange,
     handlePageSizeChange
@@ -34,7 +32,6 @@ const VocabulariesPage: React.FC = () => {
     useVocabularySearch(allVocabularies);
   const dialog = useVocabularyDialog();
   const [deleteTarget, setDeleteTarget] = React.useState<Vocabulary | null>(null);
-  const [deleting, setDeleting] = React.useState(false);
 
   const vocabularyToFormData = (vocabulary: Vocabulary) => ({
     word: vocabulary.word || '',
@@ -57,6 +54,7 @@ const VocabulariesPage: React.FC = () => {
     isActive: Boolean(vocabulary.isActive),
     wordImageFile: null,
     phoneticAudioFile: null,
+    dictionaryUrl: vocabulary.dictionaryUrl || '',
   });
 
   const handleSearch = () => {
@@ -104,6 +102,7 @@ const VocabulariesPage: React.FC = () => {
         lang: formData.lang,
         displayOrder: formData.displayOrder,
         isActive: formData.isActive,
+        dictionaryUrl: formData.dictionaryUrl,
       });
       await loadVocabularies();
       dialog.setDialogOpen(false);
@@ -137,6 +136,7 @@ const VocabulariesPage: React.FC = () => {
         lang: formData.lang,
         displayOrder: formData.displayOrder,
         isActive: formData.isActive,
+        dictionaryUrl: formData.dictionaryUrl,
       });
       await loadVocabularies();
       dialog.setDialogOpen(false);
@@ -148,15 +148,12 @@ const VocabulariesPage: React.FC = () => {
   };
 
   const handleDeleteConfirm = async (vocabulary: Vocabulary) => {
-    setDeleting(true);
     try {
       await vocabularyService.deleteVocabulary(vocabulary.id);
       await loadVocabularies();
       setDeleteTarget(null);
     } catch (err) {
       console.error('Failed to delete vocabulary', err);
-    } finally {
-      setDeleting(false);
     }
   };
 

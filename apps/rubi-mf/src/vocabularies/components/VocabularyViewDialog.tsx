@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   Dialog,
   DialogActions,
@@ -116,21 +115,83 @@ const VocabularyViewDialog = ({ open, vocabulary, onClose, onEdit }: VocabularyV
                 </Box>
                 <Box>
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>
-                    {t('vocabularies.form.translation')}
+                    {t('vocabularies.form.phonetic')}
                   </Typography>
-                  <Typography variant="body2">{vocabulary.translation || '-'}</Typography>
+                  <Typography variant="body2">{vocabulary.phonetic || '-'}</Typography>
                 </Box>
                 <Box>
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>
-                    {t('vocabularies.form.partOfSpeech')}
+                    Phonetic Audio
                   </Typography>
-                  <Typography variant="body2">{vocabulary.partOfSpeech || '-'}</Typography>
+                  {vocabulary.phoneticAudioOriginalUrl ? (
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <audio controls style={{ height: '32px' }}>
+                        <source src={vocabulary.phoneticAudioOriginalUrl} type="audio/mpeg" />
+                        <source src={vocabulary.phoneticAudioOriginalUrl} type="audio/wav" />
+                        Your browser does not support the audio element.
+                      </audio>
+                      <Button
+                        size="small"
+                        onClick={() => handleCopy(vocabulary.phoneticAudioOriginalUrl!, 'phoneticAudio')}
+                        sx={{ minWidth: 'auto', px: 1 }}
+                      >
+                        {copiedField === 'phoneticAudio' ? <Check size={14} /> : <Copy size={14} />}
+                      </Button>
+                    </Box>
+                  ) : (
+                    <Typography variant="body2">-</Typography>
+                  )}
                 </Box>
                 <Box sx={{ gridColumn: '1 / -1' }}>
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>
                     {t('vocabularies.form.example')}
                   </Typography>
                   <Typography variant="body2">{vocabulary.example || '-'}</Typography>
+                </Box>
+                <Box>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>
+                    {t('vocabularies.form.simplePastTense')}
+                  </Typography>
+                  <Typography variant="body2">{vocabulary.simplePastTense || '-'}</Typography>
+                </Box>
+                <Box>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>
+                    {t('vocabularies.form.pastPerfectTense')}
+                  </Typography>
+                  <Typography variant="body2">{vocabulary.pastPerfectTense || '-'}</Typography>
+                </Box>
+                <Box sx={{ gridColumn: '1 / -1' }}>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>
+                    {t('vocabularies.form.dictionaryUrl')}
+                  </Typography>
+                  {vocabulary.dictionaryUrl ? (
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Typography variant="body2" sx={{ wordBreak: 'break-all' }}>
+                        {vocabulary.dictionaryUrl}
+                      </Typography>
+                      <Button
+                        size="small"
+                        onClick={() => handleCopy(vocabulary.dictionaryUrl!, 'dictionaryUrl')}
+                        sx={{ minWidth: 'auto', px: 1 }}
+                      >
+                        {copiedField === 'dictionaryUrl' ? <Check size={14} /> : <Copy size={14} />}
+                      </Button>
+                    </Box>
+                  ) : (
+                    <Typography variant="body2">-</Typography>
+                  )}
+                </Box>
+                <Box>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>
+                    {t('vocabularies.form.pluralForm')}
+                  </Typography>
+                  <Typography variant="body2">{vocabulary.pluralForm || '-'}</Typography>
+                </Box>
+                <Box sx={{ gridColumn: '1 / -1' }}>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>
+                    {t('vocabularies.form.synonyms')}
+                  </Typography>
+                  <Typography variant="body2">{vocabulary.synonyms || '-'}</Typography>
                 </Box>
                 <Box>
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>

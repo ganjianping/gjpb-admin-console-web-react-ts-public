@@ -19,11 +19,6 @@ function WordCell({ info }: Readonly<{ info: any }>) {
         <Typography variant="body2" sx={{ fontWeight: 600 }}>
           {info.getValue()}
         </Typography>
-        {vocabulary.definition && (
-          <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-            {vocabulary.definition.substring(0, 60)}...
-          </Typography>
-        )}
       </Box>
     </Box>
   );
@@ -54,8 +49,8 @@ const VocabularyTable = memo(
           cell: (info) => <WordCell info={info} />,
           size: 280,
         }),
-        columnHelper.accessor('definition', {
-          header: t('vocabularies.columns.definition'),
+        columnHelper.accessor('phonetic', {
+          header: t('vocabularies.columns.phonetic'),
           cell: (info) => {
             const def = info.getValue();
             return <Typography variant="body2">{def ? def.substring(0, 50) + (def.length > 50 ? '...' : '') : '-'}</Typography>;
@@ -117,8 +112,14 @@ const VocabularyTable = memo(
       <DataTable
         columns={columns}
         data={vocabularies}
-        actionMenu={actionMenuItems}
-        pagination={pagination}
+        actionMenuItems={actionMenuItems}
+        showSearch={false}
+        onRowDoubleClick={(vocabulary: Vocabulary) => onVocabularyAction(vocabulary, 'view')}
+        manualPagination={!!pagination}
+        pageCount={pagination?.totalPages || 0}
+        currentPage={pagination?.page || 0}
+        pageSize={pagination?.size || 20}
+        totalRows={pagination?.totalElements || 0}
         onPageChange={onPageChange}
         onPageSizeChange={onPageSizeChange}
       />

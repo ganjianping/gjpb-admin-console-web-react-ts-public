@@ -121,7 +121,16 @@ const VocabularyCreateDialog = ({ open, onClose, onConfirm }: VocabularyCreateDi
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth disableEscapeKeyDown>
+    <Dialog 
+      open={open} 
+      onClose={(_event, reason) => {
+        if (reason === 'backdropClick' || reason === 'escapeKeyDown') return;
+        onClose();
+      }}
+      maxWidth="md" 
+      fullWidth 
+      disableEscapeKeyDown
+    >
       <DialogTitle sx={{ pb: 2, display: 'flex', alignItems: 'center', gap: 1.5, borderBottom: '1px solid', borderColor: 'divider' }}>
         <Plus size={20} />
         <Typography variant="h6" component="span">
@@ -150,6 +159,31 @@ const VocabularyCreateDialog = ({ open, onClose, onConfirm }: VocabularyCreateDi
               placeholder={t('vocabularies.form.phonetic')}
               fullWidth
             />
+          </FormControl>
+
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.partOfSpeech')}</FormLabel>
+            <Select
+              multiple
+              value={formData.partOfSpeech ? formData.partOfSpeech.split(',').filter(Boolean) : []}
+              onChange={handlePartOfSpeechChange}
+              input={<OutlinedInput />}
+              renderValue={(selected) => (
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                  {Array.isArray(selected) && selected.map((v) => <Chip key={v} label={v} size="small" />)}
+                </Box>
+              )}
+            >
+              {availablePartOfSpeech.length > 0 ? (
+                availablePartOfSpeech.map((pos) => (
+                  <MenuItem key={pos} value={pos}>
+                    {pos}
+                  </MenuItem>
+                ))
+              ) : (
+                <MenuItem disabled>No part of speech options</MenuItem>
+              )}
+            </Select>
           </FormControl>
 
           <FormControl fullWidth>
@@ -187,28 +221,53 @@ const VocabularyCreateDialog = ({ open, onClose, onConfirm }: VocabularyCreateDi
           </FormControl>
 
           <FormControl fullWidth>
-            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.partOfSpeech')}</FormLabel>
-            <Select
-              multiple
-              value={formData.partOfSpeech ? formData.partOfSpeech.split(',').filter(Boolean) : []}
-              onChange={handlePartOfSpeechChange}
-              input={<OutlinedInput />}
-              renderValue={(selected) => (
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                  {Array.isArray(selected) && selected.map((v) => <Chip key={v} label={v} size="small" />)}
-                </Box>
-              )}
-            >
-              {availablePartOfSpeech.length > 0 ? (
-                availablePartOfSpeech.map((pos) => (
-                  <MenuItem key={pos} value={pos}>
-                    {pos}
-                  </MenuItem>
-                ))
-              ) : (
-                <MenuItem disabled>No part of speech options</MenuItem>
-              )}
-            </Select>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.simplePastTense')}</FormLabel>
+            <TextField
+              value={formData.simplePastTense}
+              onChange={(e) => handleChange('simplePastTense', e.target.value)}
+              placeholder={t('vocabularies.form.simplePastTense')}
+              fullWidth
+            />
+          </FormControl>
+
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.pastPerfectTense')}</FormLabel>
+            <TextField
+              value={formData.pastPerfectTense}
+              onChange={(e) => handleChange('pastPerfectTense', e.target.value)}
+              placeholder={t('vocabularies.form.pastPerfectTense')}
+              fullWidth
+            />
+          </FormControl>
+
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.dictionaryUrl')}</FormLabel>
+            <TextField
+              value={formData.dictionaryUrl}
+              onChange={(e) => handleChange('dictionaryUrl', e.target.value)}
+              placeholder="https://dictionary.example.com/word"
+              fullWidth
+            />
+          </FormControl>
+
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.pluralForm')}</FormLabel>
+            <TextField
+              value={formData.pluralForm}
+              onChange={(e) => handleChange('pluralForm', e.target.value)}
+              placeholder={t('vocabularies.form.pluralForm')}
+              fullWidth
+            />
+          </FormControl>
+
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.synonyms')}</FormLabel>
+            <TextField
+              value={formData.synonyms}
+              onChange={(e) => handleChange('synonyms', e.target.value)}
+              placeholder={t('vocabularies.form.synonyms')}
+              fullWidth
+            />
           </FormControl>
 
           <FormControl fullWidth>

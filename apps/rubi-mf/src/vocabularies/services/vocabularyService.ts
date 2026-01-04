@@ -35,6 +35,7 @@ export interface CreateVocabularyRequest {
   lang: string;
   displayOrder?: number;
   isActive?: boolean;
+  dictionaryUrl?: string;
 }
 
 export interface CreateVocabularyByUploadRequest extends CreateVocabularyRequest {
@@ -61,6 +62,7 @@ export interface UpdateVocabularyRequest {
   lang?: string;
   displayOrder?: number;
   isActive?: boolean;
+  dictionaryUrl?: string;
 }
 
 class VocabularyService {
@@ -133,6 +135,9 @@ class VocabularyService {
     }
     if (data.isActive !== undefined) {
       formData.append('isActive', String(data.isActive));
+    }
+    if (data.dictionaryUrl) {
+      formData.append('dictionaryUrl', data.dictionaryUrl);
     }
 
     return apiClient.post(`${this.crudUrl}`, formData);
@@ -207,6 +212,9 @@ class VocabularyService {
     }
     if (data.isActive !== undefined) {
       formData.append('isActive', String(data.isActive));
+    }
+    if (data.dictionaryUrl !== undefined) {
+      formData.append('dictionaryUrl', data.dictionaryUrl);
     }
 
     return apiClient.put(`${this.crudUrl}/${id}`, formData);
