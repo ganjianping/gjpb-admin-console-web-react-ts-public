@@ -77,6 +77,11 @@ const QuestionsPage = lazy(() =>
     default: module.default,
   })),
 );
+const VocabulariesPage = lazy(() =>
+  import("../../../../rubi-mf/src/public-api").then((module) => ({
+    default: module.VocabulariesPage,
+  })),
+);
 
 // Import dashboard (this also loads dashboard translations)
 import "../../dashboard";
@@ -374,6 +379,16 @@ const AppRoutes = () => {
             element={
               <Suspense fallback={<AppLoading />}>
                 <QuestionsPage />
+              </Suspense>
+            }
+          />
+
+          {/* Vocabularies */}
+          <Route
+            path="vocabularies"
+            element={
+              <Suspense fallback={<AppLoading />}>
+                <VocabulariesPage />
               </Suspense>
             }
           />

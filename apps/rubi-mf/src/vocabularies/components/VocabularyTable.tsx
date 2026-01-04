@@ -1,0 +1,131 @@
+import { Box, Typography, Avatar } from '@mui/material';
+import { BookOpen } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { memo, useMemo } from 'react';
+import '../i18n/translations';
+import { DataTable, createColumnHelper, createStatusChip } from '../../../../shared-lib/src/data-management/DataTable';
+import type { Vocabulary } from '../types/vocabulary.types';
+import { useVocabularyActionMenu } from '../hooks/useVocabularyActionMenu';
+import { STATUS_MAPS } from '../constants';
+
+function WordCell({ info }: Readonly<{ info: any }>) {
+  const vocabulary = info.row.original as Vocabulary;
+  return (
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+      <Avatar src={vocabulary.wordImageOriginalUrl || ''} alt={vocabulary.word} sx={{ width: 40, height: 40 }} variant="rounded">
+        {!vocabulary.wordImageOriginalUrl && <BookOpen size={20} />}
+      </Avatar>
+      <Box>
+        <Typography variant="body2" sx={{ fontWeight: 600 }}>
+          {info.getValue()}
+        </Typography>
+        {vocabulary.definition && (
+          <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+            {vocabulary.definition.substring(0, 60)}...
+          </Typography>
+        )}
+      </Box>
+    </Box>
+  );
+}
+
+const columnHelper = createColumnHelper<Vocabulary>();
+
+const VocabularyTable = memo(
+  ({
+    vocabularies,
+    pagination,
+    onPageChange,
+    onPageSizeChange,
+    onVocabularyAction,
+  }: any) => {
+    const { t } = useTranslation();
+
+    const actionMenuItems = useVocabularyActionMenu({
+      onView: (vocabulary: Vocabulary) => onVocabularyAction(vocabulary, 'view'),
+      onEdit: (vocabulary: Vocabulary) => onVocabularyAction(vocabulary, 'edit'),
+      onDelete: (vocabulary: Vocabulary) => onVocabularyAction(vocabulary, 'delete'),
+    });
+
+    const columns = useMemo(
+      () => [
+        columnHelper.accessor('word', {
+          header: t('vocabularies.columns.word'),
+          cell: (info) => <WordCell info={info} />,
+          size: 280,
+        }),
+        columnHelper.accessor('definition', {
+          header: t('vocabularies.columns.definition'),
+          cell: (info) => {
+            const def = info.getValue();
+            return <Typography variant="body2">{def ? def.substring(0, 50) + (def.length > 50 ? '...' : '') : '-'}</Typography>;
+          },
+        }),
+        columnHelper.accessor('tags', {
+          header: t('vocabularies.columns.tags'),
+          cell: (info) => <Typography variant="body2">{info.getValue() || '-'}</Typography>,
+        }),
+        columnHelper.accessor('lang', {
+          header: t('vocabularies.columns.lang'),
+          cell: (info) => <Typography variant="body2">{info.getValue() || '-'}</Typography>,
+        }),
+        columnHelper.accessor('displayOrder', {
+          header: t('vocabularies.columns.displayOrder'),
+          cell: (info) => <Typography variant="body2">{info.getValue()}</Typography>,
+        }),
+        columnHelper.accessor('isActive', {
+          header: t('vocabularies.columns.isActive'),
+          cell: (info) => {
+            const isActive = info.getValue();
+            return (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                {createStatusChip(isActive?.toString?.() ?? String(!!isActive), STATUS_MAPS.active)}
+              </Box>
+            );
+          },
+        }),
+        columnHelper.accessor('updatedAt', {
+          header: t('vocabularies.columns.updatedAt'),
+          cell: (info) => {
+            const value = info.getValue();
+            if (!value) return <Typography variant="body2">-</Typography>;
+            let dateStr = '-';
+            if (typeof value === 'string') {
+              const match = value.match(/\d{4}-\d{2}-\d{2}/);
+              dateStr = match ? match[0] : value;
+            } else if (value && typeof value === 'object' && 'toISOString' in value) {
+              dateStr = (value as Date).toISOString().split('T')[0];
+            }
+            return <Typography variant="body2">{dateStr}</Typography>;
+          },
+        }),
+      ],
+      [t],
+    );
+
+    if (!vocabularies?.length) {
+      return (
+        <Box sx={{ p: 3, textAlign: 'center' }}>
+          <Typography variant="body1" color="text.secondary">
+            {t('vocabularies.noVocabulariesFound')}
+          </Typography>
+        </Box>
+      );
+    }
+
+    return (
+      <DataTable
+        columns={columns}
+        data={vocabularies}
+        actionMenu={actionMenuItems}
+        pagination={pagination}
+        onPageChange={onPageChange}
+        onPageSizeChange={onPageSizeChange}
+      />
+    );
+  },
+);
+
+VocabularyTable.displayName = 'VocabularyTable';
+
+export default VocabularyTable;

@@ -39,6 +39,7 @@ const shellResources = {
         content: 'CMS',
         media: 'Media',
         system: 'System',
+        rubi: 'Rubi',
       },
       settings: {
         title: 'System Settings',
@@ -96,6 +97,9 @@ const shellResources = {
       videos: {
         title: 'Videos',
       },
+      vocabularies: {
+        title: 'Vocabulary',
+      },
       common: {
         goBack: 'Go Back',
         goHome: 'Go Home',
@@ -149,6 +153,7 @@ const shellResources = {
         content: '内容管理',
         media: '媒体库',
         system: '系统设置',
+        rubi: '洋子',
       },
       settings: {
         title: '系统设置',
@@ -205,6 +210,9 @@ const shellResources = {
       },
       videos: {
         title: '视频管理',
+      },
+      vocabularies: {
+        title: '词汇管理',
       },
       common: {
         goBack: '返回',
