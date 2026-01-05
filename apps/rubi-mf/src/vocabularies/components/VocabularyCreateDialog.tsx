@@ -22,6 +22,7 @@ import {
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { Plus, Upload } from 'lucide-react';
+import { TiptapTextEditor } from '../../../../shared-lib/src/ui-components';
 import type { VocabularyFormData } from '../types/vocabulary.types';
 import { getEmptyVocabularyFormData } from '../utils/getEmptyVocabularyFormData';
 import { LANGUAGE_OPTIONS, VOCABULARY_TAG_SETTING_KEY, VOCABULARY_PART_OF_SPEECH_SETTING_KEY } from '../constants';
@@ -152,6 +153,16 @@ const VocabularyCreateDialog = ({ open, onClose, onConfirm }: VocabularyCreateDi
           </FormControl>
 
           <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.dictionaryUrl')}</FormLabel>
+            <TextField
+              value={formData.dictionaryUrl}
+              onChange={(e) => handleChange('dictionaryUrl', e.target.value)}
+              placeholder="https://dictionary.example.com/word"
+              fullWidth
+            />
+          </FormControl>
+
+          <FormControl fullWidth>
             <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.phonetic')}</FormLabel>
             <TextField
               value={formData.phonetic}
@@ -187,14 +198,22 @@ const VocabularyCreateDialog = ({ open, onClose, onConfirm }: VocabularyCreateDi
           </FormControl>
 
           <FormControl fullWidth>
-            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.definition')}</FormLabel>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.synonyms')}</FormLabel>
             <TextField
-              value={formData.definition}
-              onChange={(e) => handleChange('definition', e.target.value)}
-              multiline
-              rows={3}
-              placeholder={t('vocabularies.form.definition')}
+              value={formData.synonyms}
+              onChange={(e) => handleChange('synonyms', e.target.value)}
+              placeholder={t('vocabularies.form.synonyms')}
               fullWidth
+            />
+          </FormControl>
+
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.definition')}</FormLabel>
+            <TiptapTextEditor
+              value={formData.definition}
+              onChange={(value) => handleChange('definition', value)}
+              placeholder={t('vocabularies.form.definition')}
+              initialRows={3}
             />
           </FormControl>
 
@@ -210,13 +229,11 @@ const VocabularyCreateDialog = ({ open, onClose, onConfirm }: VocabularyCreateDi
 
           <FormControl fullWidth>
             <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.example')}</FormLabel>
-            <TextField
+            <TiptapTextEditor
               value={formData.example}
-              onChange={(e) => handleChange('example', e.target.value)}
-              multiline
-              rows={2}
+              onChange={(value) => handleChange('example', value)}
               placeholder={t('vocabularies.form.example')}
-              fullWidth
+              initialRows={2}
             />
           </FormControl>
 
@@ -241,31 +258,11 @@ const VocabularyCreateDialog = ({ open, onClose, onConfirm }: VocabularyCreateDi
           </FormControl>
 
           <FormControl fullWidth>
-            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.dictionaryUrl')}</FormLabel>
-            <TextField
-              value={formData.dictionaryUrl}
-              onChange={(e) => handleChange('dictionaryUrl', e.target.value)}
-              placeholder="https://dictionary.example.com/word"
-              fullWidth
-            />
-          </FormControl>
-
-          <FormControl fullWidth>
             <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.pluralForm')}</FormLabel>
             <TextField
               value={formData.pluralForm}
               onChange={(e) => handleChange('pluralForm', e.target.value)}
               placeholder={t('vocabularies.form.pluralForm')}
-              fullWidth
-            />
-          </FormControl>
-
-          <FormControl fullWidth>
-            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.synonyms')}</FormLabel>
-            <TextField
-              value={formData.synonyms}
-              onChange={(e) => handleChange('synonyms', e.target.value)}
-              placeholder={t('vocabularies.form.synonyms')}
               fullWidth
             />
           </FormControl>

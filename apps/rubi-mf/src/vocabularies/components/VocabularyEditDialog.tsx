@@ -22,6 +22,7 @@ import {
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { Edit, Upload } from 'lucide-react';
+import { TiptapTextEditor } from '../../../../shared-lib/src/ui-components';
 import type { Vocabulary, VocabularyFormData } from '../types/vocabulary.types';
 import { getEmptyVocabularyFormData } from '../utils/getEmptyVocabularyFormData';
 import { LANGUAGE_OPTIONS, VOCABULARY_TAG_SETTING_KEY, VOCABULARY_PART_OF_SPEECH_SETTING_KEY } from '../constants';
@@ -222,13 +223,11 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
 
           <FormControl fullWidth>
             <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.definition')}</FormLabel>
-            <TextField
+            <TiptapTextEditor
               value={formData.definition}
-              onChange={(e) => handleChange('definition', e.target.value)}
-              multiline
-              rows={3}
+              onChange={(value) => handleChange('definition', value)}
               placeholder={t('vocabularies.form.definition')}
-              fullWidth
+              initialRows={3}
             />
           </FormControl>
 
@@ -254,13 +253,11 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
 
           <FormControl fullWidth>
             <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.example')}</FormLabel>
-            <TextField
+            <TiptapTextEditor
               value={formData.example}
-              onChange={(e) => handleChange('example', e.target.value)}
-              multiline
-              rows={2}
+              onChange={(value) => handleChange('example', value)}
               placeholder={t('vocabularies.form.example')}
-              fullWidth
+              initialRows={2}
             />
           </FormControl>
 
