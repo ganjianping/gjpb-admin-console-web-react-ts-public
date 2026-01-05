@@ -72,7 +72,7 @@ const VocabularyViewDialog = ({ open, vocabulary, onClose, onEdit }: VocabularyV
               </Typography>
               {vocabulary.definition && (
                 <Typography variant="body1" sx={{ color: 'text.secondary', mb: 0.5, textAlign: 'center' }}>
-                  {vocabulary.definition}
+                  <div dangerouslySetInnerHTML={{ __html: vocabulary.definition }} />
                 </Typography>
               )}
               {vocabulary.wordImageOriginalUrl && (
@@ -146,7 +146,13 @@ const VocabularyViewDialog = ({ open, vocabulary, onClose, onEdit }: VocabularyV
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>
                     {t('vocabularies.form.example')}
                   </Typography>
-                  <Typography variant="body2">{vocabulary.example || '-'}</Typography>
+                  <Typography variant="body2">
+                    {vocabulary.example ? (
+                      <div dangerouslySetInnerHTML={{ __html: vocabulary.example }} />
+                    ) : (
+                      '-'
+                    )}
+                  </Typography>
                 </Box>
                 <Box>
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>
