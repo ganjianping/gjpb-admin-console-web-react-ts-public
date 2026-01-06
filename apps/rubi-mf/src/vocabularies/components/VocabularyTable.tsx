@@ -1,5 +1,5 @@
 import { Box, Typography, Avatar } from '@mui/material';
-import { BookOpen } from 'lucide-react';
+import { Volume2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { memo, useMemo } from 'react';
 import '../i18n/translations';
@@ -12,9 +12,9 @@ function WordCell({ info }: Readonly<{ info: any }>) {
   const vocabulary = info.row.original as Vocabulary;
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-      <Avatar src={vocabulary.wordImageOriginalUrl || ''} alt={vocabulary.word} sx={{ width: 40, height: 40 }} variant="rounded">
-        {!vocabulary.wordImageOriginalUrl && <BookOpen size={20} />}
-      </Avatar>
+      {vocabulary.wordImageOriginalUrl && (
+        <Avatar src={vocabulary.wordImageOriginalUrl} alt={vocabulary.word} sx={{ width: 40, height: 40 }} variant="rounded" />
+      )}
       <Box>
         <Typography variant="body2" sx={{ fontWeight: 600 }}>
           {info.getValue()}
@@ -52,8 +52,52 @@ const VocabularyTable = memo(
         columnHelper.accessor('phonetic', {
           header: t('vocabularies.columns.phonetic'),
           cell: (info) => {
-            const def = info.getValue();
-            return <Typography variant="body2">{def ? def.substring(0, 50) + (def.length > 50 ? '...' : '') : '-'}</Typography>;
+            const vocabulary = info.row.original as Vocabulary;
+            const phonetic = info.getValue();
+            const displayText = phonetic ? phonetic.substring(0, 50) + (phonetic.length > 50 ? '...' : '') : '-';
+            
+            const handlePlayAudio = () => {
+              if (vocabulary.phoneticAudioOriginalUrl) {
+                console.log('Playing audio:', vocabulary.phoneticAudioOriginalUrl);
+                const audio = new Audio(vocabulary.phoneticAudioOriginalUrl);
+                audio.play()
+                  .then(() => console.log('Audio started playing'))
+                  .catch(err => {
+                    console.error('Failed to play audio:', err);
+                    console.error('Audio URL:', vocabulary.phoneticAudioOriginalUrl);
+                  });
+              } else {
+                console.log('No audio URL available');
+              }
+            };
+
+            return (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    cursor: vocabulary.phoneticAudioOriginalUrl ? 'pointer' : 'default',
+                    '&:hover': vocabulary.phoneticAudioOriginalUrl ? { textDecoration: 'underline' } : {}
+                  }}
+                  onClick={vocabulary.phoneticAudioOriginalUrl ? handlePlayAudio : undefined}
+                >
+                  {displayText}
+                </Typography>
+                {vocabulary.phoneticAudioOriginalUrl && (
+                  <Box
+                    sx={{ 
+                      cursor: 'pointer',
+                      '&:hover': { opacity: 0.7 },
+                      display: 'flex',
+                      alignItems: 'center'
+                    }}
+                    onClick={handlePlayAudio}
+                  >
+                    <Volume2 size={14} />
+                  </Box>
+                )}
+              </Box>
+            );
           },
         }),
         columnHelper.accessor('tags', {

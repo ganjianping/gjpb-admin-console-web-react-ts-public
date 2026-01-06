@@ -108,6 +108,7 @@ const VocabulariesPage: React.FC = () => {
       dialog.setDialogOpen(false);
     } catch (err) {
       console.error('Failed to create vocabulary', err);
+      throw err; // Re-throw the error so the dialog can handle it
     } finally {
       dialog.setLoading(false);
     }
@@ -142,6 +143,7 @@ const VocabulariesPage: React.FC = () => {
       dialog.setDialogOpen(false);
     } catch (err) {
       console.error('Failed to update vocabulary', err);
+      throw err; // Re-throw the error so the dialog can handle it
     } finally {
       dialog.setLoading(false);
     }

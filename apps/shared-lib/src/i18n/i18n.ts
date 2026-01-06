@@ -85,6 +85,7 @@ const enResources = {
     // Messages
     error: "An error occurred",
     retry: "Retry",
+    required: "This field is required",
   },
   errors: {
     notFound: "Page not found",
@@ -198,6 +199,7 @@ const zhResources = {
     // Messages
     error: "发生错误",
     retry: "重试",
+    required: "此字段为必填项",
   },
   errors: {
     notFound: "页面不存在",

@@ -19,9 +19,10 @@ import {
   RadioGroup,
   Radio,
   Alert,
+  IconButton,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { Edit, Upload } from 'lucide-react';
+import { Edit, Upload, Link } from 'lucide-react';
 import { TiptapTextEditor } from '../../../../shared-lib/src/ui-components';
 import type { Vocabulary, VocabularyFormData } from '../types/vocabulary.types';
 import { getEmptyVocabularyFormData } from '../utils/getEmptyVocabularyFormData';
@@ -40,6 +41,7 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
   const [formData, setFormData] = useState<VocabularyFormData>(getEmptyVocabularyFormData());
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [apiErrorMessage, setApiErrorMessage] = useState('');
 
   const availableTags = useMemo(() => {
     try {
@@ -90,7 +92,7 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
         definition: vocabulary.definition || '',
         example: vocabulary.example || '',
         tags: vocabulary.tags || '',
-        lang: vocabulary.lang || 'EN',
+        lang: vocabulary.lang || (i18n.language.toUpperCase().startsWith('ZH') ? 'ZH' : 'EN'),
         displayOrder: vocabulary.displayOrder ?? 0,
         isActive: vocabulary.isActive ?? true,
         wordImageFile: null,
@@ -98,18 +100,44 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
         dictionaryUrl: vocabulary.dictionaryUrl || '',
       });
       setErrors({});
+      setApiErrorMessage('');
     }
-  }, [open, vocabulary]);
+  }, [open, vocabulary, i18n.language]);
 
   const handleChange = (field: keyof VocabularyFormData, value: any) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    if (errors[field]) {
-      setErrors((prev) => {
-        const newErrors = { ...prev };
-        delete newErrors[field];
-        return newErrors;
-      });
-    }
+    setFormData((prev) => {
+      const oldValue = prev[field];
+      const hasChanged = oldValue !== value;
+      if (hasChanged && errors[field]) {
+        setErrors((prevErrors) => {
+          const newErrors = { ...prevErrors };
+          delete newErrors[field];
+          return newErrors;
+        });
+      }
+      const newFormData = { ...prev, [field]: value };
+      
+      // Auto-update dictionary URL when word changes
+      if (field === 'word' && hasChanged && value.trim()) {
+        const currentLang = newFormData.lang || 'EN';
+        if (currentLang === 'ZH') {
+          newFormData.dictionaryUrl = `https://zd.hwxnet.com/search.do?keyword=${value.trim()}`;
+        } else {
+          newFormData.dictionaryUrl = `https://dictionary.cambridge.org/dictionary/english/${value.trim()}`;
+        }
+      }
+      
+      // Auto-update dictionary URL when language changes and word exists
+      if (field === 'lang' && hasChanged && newFormData.word.trim()) {
+        if (value === 'ZH') {
+          newFormData.dictionaryUrl = `https://zd.hwxnet.com/search.do?keyword=${newFormData.word.trim()}`;
+        } else {
+          newFormData.dictionaryUrl = `https://dictionary.cambridge.org/dictionary/english/${newFormData.word.trim()}`;
+        }
+      }
+      
+      return newFormData;
+    });
   };
 
   const handleTagsChange = (e: any) => {
@@ -137,9 +165,20 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
   const handleSubmit = async () => {
     if (!validateForm()) return;
     setLoading(true);
+    setApiErrorMessage('');
     try {
       await onConfirm(formData);
       onClose();
+    } catch (error: any) {
+      if (error.response && error.response.data && error.response.data.status) {
+        const { message, errors: apiErrors } = error.response.data.status;
+        setApiErrorMessage(message || 'An error occurred');
+        if (apiErrors) {
+          setErrors(apiErrors);
+        }
+      } else {
+        setApiErrorMessage('An unexpected error occurred.');
+      }
     } finally {
       setLoading(false);
     }
@@ -163,6 +202,11 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
         </Typography>
       </DialogTitle>
       <DialogContent sx={{ pt: 3 }}>
+        {apiErrorMessage && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {apiErrorMessage}
+          </Alert>
+        )}
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <FormControl fullWidth error={!!errors.word}>
             <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.word')}</FormLabel>
@@ -177,7 +221,23 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
           </FormControl>
 
           <FormControl fullWidth>
-            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.dictionaryUrl')}</FormLabel>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <FormLabel sx={{ flex: 1 }}>
+                {t('vocabularies.form.dictionaryUrl')}
+              </FormLabel>
+              <IconButton
+                size="small"
+                onClick={() => {
+                  if (formData.dictionaryUrl) {
+                    window.open(formData.dictionaryUrl, '_blank');
+                  }
+                }}
+                disabled={!formData.dictionaryUrl}
+                sx={{ ml: 1 }}
+              >
+                <Link size={16} />
+              </IconButton>
+            </Box>
             <TextField
               value={formData.dictionaryUrl}
               onChange={(e) => handleChange('dictionaryUrl', e.target.value)}
@@ -221,7 +281,7 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
             </Select>
           </FormControl>
 
-          <FormControl fullWidth>
+          <FormControl fullWidth error={!!errors.definition}>
             <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.definition')}</FormLabel>
             <TiptapTextEditor
               value={formData.definition}
@@ -229,6 +289,11 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
               placeholder={t('vocabularies.form.definition')}
               initialRows={3}
             />
+            {errors.definition && (
+              <Typography variant="caption" color="error" sx={{ mt: 1, display: 'block' }}>
+                {errors.definition}
+              </Typography>
+            )}
           </FormControl>
 
           <FormControl fullWidth>
@@ -251,7 +316,7 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
             />
           </FormControl>
 
-          <FormControl fullWidth>
+          <FormControl fullWidth error={!!errors.example}>
             <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.example')}</FormLabel>
             <TiptapTextEditor
               value={formData.example}
@@ -259,6 +324,11 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
               placeholder={t('vocabularies.form.example')}
               initialRows={2}
             />
+            {errors.example && (
+              <Typography variant="caption" color="error" sx={{ mt: 1, display: 'block' }}>
+                {errors.example}
+              </Typography>
+            )}
           </FormControl>
 
           <FormControl fullWidth>
