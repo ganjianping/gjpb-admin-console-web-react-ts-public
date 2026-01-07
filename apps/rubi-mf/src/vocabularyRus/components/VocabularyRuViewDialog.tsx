@@ -14,18 +14,18 @@ import { useTranslation } from 'react-i18next';
 import { format, parseISO } from 'date-fns';
 import { Eye, Tag, CheckCircle2, XCircle, Calendar, User, Copy, Check } from 'lucide-react';
 import { useState as useStateHook } from 'react';
-import type { Vocabulary } from '../types/vocabulary.types';
+import type { VocabularyRu } from '../types/vocabularyRu.types';
 import '../i18n/translations';
 import { LANGUAGE_OPTIONS } from '../constants';
 
-interface VocabularyViewDialogProps {
+interface VocabularyRuViewDialogProps {
   open: boolean;
-  vocabulary: Vocabulary;
+  vocabularyRu: VocabularyRu;
   onClose: () => void;
-  onEdit?: (vocabulary: Vocabulary) => void;
+  onEdit?: (vocabularyRu: VocabularyRu) => void;
 }
 
-const VocabularyViewDialog = ({ open, vocabulary, onClose, onEdit }: VocabularyViewDialogProps) => {
+const VocabularyRuViewDialog = ({ open, vocabularyRu, onClose, onEdit }: VocabularyRuViewDialogProps) => {
   const { t } = useTranslation();
   const [copiedField, setCopiedField] = useStateHook<string | null>(null);
 
@@ -60,7 +60,7 @@ const VocabularyViewDialog = ({ open, vocabulary, onClose, onEdit }: VocabularyV
       <DialogTitle sx={{ pb: 2, display: 'flex', alignItems: 'center', gap: 1.5, borderBottom: '1px solid', borderColor: 'divider' }}>
         <Eye size={20} />
         <Typography variant="h6" component="span">
-          {t('vocabularies.view')}
+          {t('vocabularyRus.view')}
         </Typography>
       </DialogTitle>
       <DialogContent sx={{ pt: 3, mt: 2 }}>
@@ -68,25 +68,25 @@ const VocabularyViewDialog = ({ open, vocabulary, onClose, onEdit }: VocabularyV
           <Card elevation={0} sx={{ background: (theme) => theme.palette.mode === 'dark' ? 'linear-gradient(135deg, #1e293b 0%, #334155 100%)' : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)', border: '1px solid', borderColor: 'divider', alignItems: 'center', justifyContent: 'center' }}>
             <CardContent sx={{ p: 3, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
               <Typography variant="h5" sx={{ fontWeight: 700, mb: 0.5 }}>
-                {vocabulary.word}
+                {vocabularyRu.word}
               </Typography>
-              {vocabulary.definition && (
+              {vocabularyRu.definition && (
                 <Typography variant="body1" sx={{ color: 'text.secondary', mb: 0.5, textAlign: 'center' }}>
-                  <div dangerouslySetInnerHTML={{ __html: vocabulary.definition }} />
+                  <div dangerouslySetInnerHTML={{ __html: vocabularyRu.definition }} />
                 </Typography>
               )}
-              {vocabulary.wordImageOriginalUrl && (
+              {vocabularyRu.wordImageOriginalUrl && (
                 <Box sx={{ flex: '0 0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <img
-                    id="vocabulary-word-image"
-                    src={vocabulary.wordImageOriginalUrl}
-                    alt={vocabulary.word}
+                    id="vocabularyRu-word-image"
+                    src={vocabularyRu.wordImageOriginalUrl}
+                    alt={vocabularyRu.word}
                     style={{ width: '100%', maxWidth: 300, maxHeight: 300, borderRadius: 8, objectFit: 'cover', boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}
                   />
                 </Box>
               )}
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75, justifyContent: 'center' }}>
-                {vocabulary.tags?.split(',').filter(Boolean).map((tag) => (
+                {vocabularyRu.tags?.split(',').filter(Boolean).map((tag) => (
                   <Chip key={tag.trim()} icon={<Tag size={14} />} label={tag.trim()} size="small" variant="outlined" sx={{ fontWeight: 500 }} />
                 ))}
               </Box>
@@ -96,43 +96,43 @@ const VocabularyViewDialog = ({ open, vocabulary, onClose, onEdit }: VocabularyV
           <Card elevation={0} sx={{ border: '1px solid', borderColor: 'divider' }}>
             <CardContent sx={{ p: 3 }}>
               <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: 'text.secondary' }}>
-                {t('vocabularies.viewDialog.details')}
+                {t('vocabularyRus.viewDialog.details')}
               </Typography>
               <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2.5 }}>
                 <Box>
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>
-                    {t('vocabularies.form.word')}
+                    {t('vocabularyRus.form.word')}
                   </Typography>
                   <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                    {vocabulary.word}
+                    {vocabularyRu.word}
                   </Typography>
                 </Box>
                 <Box>
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>
                     Language
                   </Typography>
-                  <Chip label={languageLabel(vocabulary.lang)} size="small" sx={{ fontWeight: 600 }} />
+                  <Chip label={languageLabel(vocabularyRu.lang)} size="small" sx={{ fontWeight: 600 }} />
                 </Box>
                 <Box>
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>
-                    {t('vocabularies.form.phonetic')}
+                    {t('vocabularyRus.form.phonetic')}
                   </Typography>
-                  <Typography variant="body2">{vocabulary.phonetic || '-'}</Typography>
+                  <Typography variant="body2">{vocabularyRu.phonetic || '-'}</Typography>
                 </Box>
                 <Box>
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>
                     Phonetic Audio
                   </Typography>
-                  {vocabulary.phoneticAudioOriginalUrl ? (
+                  {vocabularyRu.phoneticAudioOriginalUrl ? (
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                       <audio controls style={{ height: '32px' }}>
-                        <source src={vocabulary.phoneticAudioOriginalUrl} type="audio/mpeg" />
-                        <source src={vocabulary.phoneticAudioOriginalUrl} type="audio/wav" />
+                        <source src={vocabularyRu.phoneticAudioOriginalUrl} type="audio/mpeg" />
+                        <source src={vocabularyRu.phoneticAudioOriginalUrl} type="audio/wav" />
                         Your browser does not support the audio element.
                       </audio>
                       <Button
                         size="small"
-                        onClick={() => handleCopy(vocabulary.phoneticAudioOriginalUrl!, 'phoneticAudio')}
+                        onClick={() => handleCopy(vocabularyRu.phoneticAudioOriginalUrl!, 'phoneticAudio')}
                         sx={{ minWidth: 'auto', px: 1 }}
                       >
                         {copiedField === 'phoneticAudio' ? <Check size={14} /> : <Copy size={14} />}
@@ -144,11 +144,11 @@ const VocabularyViewDialog = ({ open, vocabulary, onClose, onEdit }: VocabularyV
                 </Box>
                 <Box sx={{ gridColumn: '1 / -1' }}>
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>
-                    {t('vocabularies.form.example')}
+                    {t('vocabularyRus.form.example')}
                   </Typography>
                   <Typography variant="body2">
-                    {vocabulary.example ? (
-                      <div dangerouslySetInnerHTML={{ __html: vocabulary.example }} />
+                    {vocabularyRu.example ? (
+                      <div dangerouslySetInnerHTML={{ __html: vocabularyRu.example }} />
                     ) : (
                       '-'
                     )}
@@ -156,28 +156,28 @@ const VocabularyViewDialog = ({ open, vocabulary, onClose, onEdit }: VocabularyV
                 </Box>
                 <Box>
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>
-                    {t('vocabularies.form.simplePastTense')}
+                    {t('vocabularyRus.form.simplePastTense')}
                   </Typography>
-                  <Typography variant="body2">{vocabulary.simplePastTense || '-'}</Typography>
+                  <Typography variant="body2">{vocabularyRu.simplePastTense || '-'}</Typography>
                 </Box>
                 <Box>
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>
-                    {t('vocabularies.form.pastPerfectTense')}
+                    {t('vocabularyRus.form.pastPerfectTense')}
                   </Typography>
-                  <Typography variant="body2">{vocabulary.pastPerfectTense || '-'}</Typography>
+                  <Typography variant="body2">{vocabularyRu.pastPerfectTense || '-'}</Typography>
                 </Box>
                 <Box sx={{ gridColumn: '1 / -1' }}>
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>
-                    {t('vocabularies.form.dictionaryUrl')}
+                    {t('vocabularyRus.form.dictionaryUrl')}
                   </Typography>
-                  {vocabulary.dictionaryUrl ? (
+                  {vocabularyRu.dictionaryUrl ? (
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                       <Typography variant="body2" sx={{ wordBreak: 'break-all' }}>
-                        {vocabulary.dictionaryUrl}
+                        {vocabularyRu.dictionaryUrl}
                       </Typography>
                       <Button
                         size="small"
-                        onClick={() => handleCopy(vocabulary.dictionaryUrl!, 'dictionaryUrl')}
+                        onClick={() => handleCopy(vocabularyRu.dictionaryUrl!, 'dictionaryUrl')}
                         sx={{ minWidth: 'auto', px: 1 }}
                       >
                         {copiedField === 'dictionaryUrl' ? <Check size={14} /> : <Copy size={14} />}
@@ -189,27 +189,27 @@ const VocabularyViewDialog = ({ open, vocabulary, onClose, onEdit }: VocabularyV
                 </Box>
                 <Box>
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>
-                    {t('vocabularies.form.pluralForm')}
+                    {t('vocabularyRus.form.pluralForm')}
                   </Typography>
-                  <Typography variant="body2">{vocabulary.pluralForm || '-'}</Typography>
+                  <Typography variant="body2">{vocabularyRu.pluralForm || '-'}</Typography>
                 </Box>
                 <Box sx={{ gridColumn: '1 / -1' }}>
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>
-                    {t('vocabularies.form.synonyms')}
+                    {t('vocabularyRus.form.synonyms')}
                   </Typography>
-                  <Typography variant="body2">{vocabulary.synonyms || '-'}</Typography>
+                  <Typography variant="body2">{vocabularyRu.synonyms || '-'}</Typography>
                 </Box>
                 <Box>
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>
                     Display Order
                   </Typography>
-                  <Typography variant="body2">{vocabulary.displayOrder ?? '-'}</Typography>
+                  <Typography variant="body2">{vocabularyRu.displayOrder ?? '-'}</Typography>
                 </Box>
                 <Box>
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>
                     Active
                   </Typography>
-                  <Chip icon={vocabulary.isActive ? <CheckCircle2 size={16} /> : <XCircle size={16} />} label={vocabulary.isActive ? t('vocabularies.status.active') : t('vocabularies.status.inactive')} color={vocabulary.isActive ? 'success' : 'default'} sx={{ fontWeight: 600 }} />
+                  <Chip icon={vocabularyRu.isActive ? <CheckCircle2 size={16} /> : <XCircle size={16} />} label={vocabularyRu.isActive ? t('vocabularyRus.status.active') : t('vocabularyRus.status.inactive')} color={vocabularyRu.isActive ? 'success' : 'default'} sx={{ fontWeight: 600 }} />
                 </Box>
               </Box>
             </CardContent>
@@ -218,50 +218,50 @@ const VocabularyViewDialog = ({ open, vocabulary, onClose, onEdit }: VocabularyV
           <Card elevation={0} sx={{ border: '1px solid', borderColor: 'divider' }}>
             <CardContent sx={{ p: 3 }}>
               <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: 'text.secondary' }}>
-                {t('vocabularies.viewDialog.metadata')}
+                {t('vocabularyRus.viewDialog.metadata')}
               </Typography>
               <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2.5 }}>
                 <Box>
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>
-                    {t('vocabularies.form.createdAt')}
+                    {t('vocabularyRus.form.createdAt')}
                   </Typography>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                     <Calendar size={16} />
                     <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                      {vocabulary.createdAt ? format(parseISO(vocabulary.createdAt), 'MMM dd, yyyy HH:mm') : '-'}
+                      {vocabularyRu.createdAt ? format(parseISO(vocabularyRu.createdAt), 'MMM dd, yyyy HH:mm') : '-'}
                     </Typography>
                   </Box>
                 </Box>
                 <Box>
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>
-                    {t('vocabularies.form.updatedAt')}
+                    {t('vocabularyRus.form.updatedAt')}
                   </Typography>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                     <Calendar size={16} />
                     <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                      {vocabulary.updatedAt ? format(parseISO(vocabulary.updatedAt), 'MMM dd, yyyy HH:mm') : '-'}
+                      {vocabularyRu.updatedAt ? format(parseISO(vocabularyRu.updatedAt), 'MMM dd, yyyy HH:mm') : '-'}
                     </Typography>
                   </Box>
                 </Box>
                 <Box sx={{ gridColumn: '1 / -1' }}>
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>
-                    {t('vocabularies.form.createdBy')}
+                    {t('vocabularyRus.form.createdBy')}
                   </Typography>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                     <User size={16} />
                     <Typography variant="body2" sx={{ fontFamily: 'monospace', fontSize: '0.875rem', wordBreak: 'break-all' }}>
-                      {vocabulary.createdBy || '-'}
+                      {vocabularyRu.createdBy || '-'}
                     </Typography>
                   </Box>
                 </Box>
                 <Box sx={{ gridColumn: '1 / -1' }}>
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>
-                    {t('vocabularies.form.updatedBy')}
+                    {t('vocabularyRus.form.updatedBy')}
                   </Typography>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                     <User size={16} />
                     <Typography variant="body2" sx={{ fontFamily: 'monospace', fontSize: '0.875rem', wordBreak: 'break-all' }}>
-                      {vocabulary.updatedBy || '-'}
+                      {vocabularyRu.updatedBy || '-'}
                     </Typography>
                   </Box>
                 </Box>
@@ -272,7 +272,7 @@ const VocabularyViewDialog = ({ open, vocabulary, onClose, onEdit }: VocabularyV
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 3, pt: 2, gap: 1 }}>
         {onEdit && (
-          <Button onClick={() => onEdit(vocabulary)} variant="contained" color="primary" sx={{ borderRadius: 2, px: 3, textTransform: 'none', fontWeight: 600 }}>
+          <Button onClick={() => onEdit(vocabularyRu)} variant="contained" color="primary" sx={{ borderRadius: 2, px: 3, textTransform: 'none', fontWeight: 600 }}>
             {t('common.edit')}
           </Button>
         )}
@@ -284,4 +284,4 @@ const VocabularyViewDialog = ({ open, vocabulary, onClose, onEdit }: VocabularyV
   );
 };
 
-export default VocabularyViewDialog;
+export default VocabularyRuViewDialog;

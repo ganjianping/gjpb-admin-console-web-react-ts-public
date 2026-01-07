@@ -77,9 +77,9 @@ const QuestionsPage = lazy(() =>
     default: module.default,
   })),
 );
-const VocabulariesPage = lazy(() =>
+const VocabularyRusPage = lazy(() =>
   import("../../../../rubi-mf/src/public-api").then((module) => ({
-    default: module.VocabulariesPage,
+    default: module.VocabularyRusPage,
   })),
 );
 
@@ -388,7 +388,7 @@ const AppRoutes = () => {
             path="vocabularies"
             element={
               <Suspense fallback={<AppLoading />}>
-                <VocabulariesPage />
+                <VocabularyRusPage />
               </Suspense>
             }
           />

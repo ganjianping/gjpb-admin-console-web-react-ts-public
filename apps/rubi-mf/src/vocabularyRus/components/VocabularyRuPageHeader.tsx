@@ -3,14 +3,14 @@ import '../i18n/translations';
 import { Box, Button, Typography, useTheme } from '@mui/material';
 import { Plus, Search, ChevronDown, ChevronUp } from 'lucide-react';
 
-interface VocabularyPageHeaderProps {
-  onCreateVocabulary: () => void;
+interface VocabularyRuPageHeaderProps {
+  onCreateVocabularyRu: () => void;
   searchPanelOpen: boolean;
   onToggleSearchPanel: () => void;
 }
 
-const VocabularyPageHeader: React.FC<VocabularyPageHeaderProps> = ({
-  onCreateVocabulary,
+const VocabularyRuPageHeader: React.FC<VocabularyRuPageHeaderProps> = ({
+  onCreateVocabularyRu,
   searchPanelOpen,
   onToggleSearchPanel,
 }) => {
@@ -42,10 +42,10 @@ const VocabularyPageHeader: React.FC<VocabularyPageHeaderProps> = ({
               WebkitTextFillColor: theme.palette.mode === 'dark' ? 'transparent' : 'inherit',
             }}
           >
-            {t('vocabularies.pageTitle')}
+            {t('vocabularyRus.pageTitle')}
           </Typography>
           <Typography variant='body2' color='text.secondary'>
-            {t('vocabularies.subtitle')}
+            {t('vocabularyRus.subtitle')}
           </Typography>
         </Box>
 
@@ -86,7 +86,7 @@ const VocabularyPageHeader: React.FC<VocabularyPageHeaderProps> = ({
           <Button
             variant='contained'
             startIcon={<Plus size={16} />}
-            onClick={onCreateVocabulary}
+            onClick={onCreateVocabularyRu}
             sx={{
               borderRadius: 2,
               px: 2.5,
@@ -105,7 +105,7 @@ const VocabularyPageHeader: React.FC<VocabularyPageHeaderProps> = ({
               },
             }}
           >
-            {t('vocabularies.create')}
+            {t('vocabularyRus.create')}
           </Button>
         </Box>
       </Box>
@@ -113,4 +113,4 @@ const VocabularyPageHeader: React.FC<VocabularyPageHeaderProps> = ({
   );
 };
 
-export default VocabularyPageHeader;
+export default VocabularyRuPageHeader;

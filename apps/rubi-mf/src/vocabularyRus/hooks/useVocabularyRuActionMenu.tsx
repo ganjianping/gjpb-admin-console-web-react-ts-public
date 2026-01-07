@@ -2,38 +2,38 @@ import { useMemo } from 'react';
 import { Eye, Edit, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import '../i18n/translations';
-import type { Vocabulary } from '../types/vocabulary.types';
+import type { VocabularyRu } from '../types/vocabularyRu.types';
 
-interface UseVocabularyActionMenuParams {
-  onView: (vocabulary: Vocabulary) => void;
-  onEdit: (vocabulary: Vocabulary) => void;
-  onDelete: (vocabulary: Vocabulary) => void;
+interface UseVocabularyRuActionMenuParams {
+  onView: (vocabularyRu: VocabularyRu) => void;
+  onEdit: (vocabularyRu: VocabularyRu) => void;
+  onDelete: (vocabularyRu: VocabularyRu) => void;
 }
 
-export const useVocabularyActionMenu = ({
+export const useVocabularyRuActionMenu = ({
   onView,
   onEdit,
   onDelete,
-}: UseVocabularyActionMenuParams) => {
+}: UseVocabularyRuActionMenuParams) => {
   const { t } = useTranslation();
 
   return useMemo(
     () =>
       ([
         {
-          label: t('vocabularies.actions.view'),
+          label: t('vocabularyRus.actions.view'),
           icon: <Eye size={16} />,
           action: onView,
           color: 'info' as const,
         },
         {
-          label: t('vocabularies.actions.edit'),
+          label: t('vocabularyRus.actions.edit'),
           icon: <Edit size={16} />,
           action: onEdit,
           color: 'primary' as const,
         },
         {
-          label: t('vocabularies.actions.delete'),
+          label: t('vocabularyRus.actions.delete'),
           icon: <Trash2 size={16} />,
           action: onDelete,
           color: 'error' as const,
@@ -43,4 +43,4 @@ export const useVocabularyActionMenu = ({
   );
 };
 
-export default useVocabularyActionMenu;
+export default useVocabularyRuActionMenu;

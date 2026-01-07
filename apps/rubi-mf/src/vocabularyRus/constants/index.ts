@@ -23,11 +23,11 @@ export const PART_OF_SPEECH_OPTIONS = [
   { value: 'interjection', label: 'Interjection' },
 ];
 
-export const VOCABULARY_TAG_SETTING_KEY = 'vocabulary_tags';
+export const VOCABULARY_TAG_SETTING_KEY = 'vocabularyRu_tags';
 export const VOCABULARY_PART_OF_SPEECH_SETTING_KEY = 'part_of_speech';
 export const VOCABULARY_LANG_SETTING_KEY = 'lang';
-export const VOCABULARY_WORD_IMAGE_BASE_URL_KEY = 'vocabulary_word_image_base_url';
-export const VOCABULARY_PHONETIC_AUDIO_BASE_URL_KEY = 'vocabulary_phonetic_audio_base_url';
+export const VOCABULARY_WORD_IMAGE_BASE_URL_KEY = 'vocabularyRu_word_image_base_url';
+export const VOCABULARY_PHONETIC_AUDIO_BASE_URL_KEY = 'vocabularyRu_phonetic_audio_base_url';
 
 export const VOCABULARY_CONSTANTS = {
   DEFAULT_PAGE_SIZE: 20,

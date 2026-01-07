@@ -1,18 +1,18 @@
 import i18n from '../../../../shared-lib/src/i18n/i18n';
 
 const enTranslations = {
-  vocabularies: {
+  vocabularyRus: {
     title: 'Vocabulary',
-    subtitle: 'Manage vocabulary words and their definitions',
-    description: 'Maintain the vocabulary library with word images and audio',
+    subtitle: 'Manage Vocabulary words and their definitions',
+    description: 'Maintain the Vocabulary library with word images and audio',
     pageTitle: 'Vocabulary Management',
     create: 'Create Vocabulary',
     edit: 'Edit Vocabulary',
     delete: 'Delete Vocabulary',
     view: 'View Vocabulary',
-    search: 'Search Vocabularies',
+    search: 'Search Vocabularys',
     clearFilters: 'Clear Filters',
-    noVocabulariesFound: 'No vocabularies found',
+    noVocabularysFound: 'No Vocabularys found',
     columns: {
       word: 'Word',
       phonetic: 'Phonetic',
@@ -75,7 +75,7 @@ const enTranslations = {
       createdSuccessfully: 'Vocabulary created successfully',
       updatedSuccessfully: 'Vocabulary updated successfully',
       deletedSuccessfully: 'Vocabulary deleted successfully',
-      deleteConfirmation: 'Are you sure you want to delete this vocabulary?',
+      deleteConfirmation: 'Are you sure you want to delete this Vocabulary?',
       phoneticAudioCopied: 'Phonetic audio URL copied to clipboard!',
       wordImageCopied: 'Word image URL copied to clipboard!',
     },
@@ -92,7 +92,7 @@ const enTranslations = {
 };
 
 const zhTranslations = {
-  vocabularies: {
+  Vocabularys: {
     title: '词汇',
     subtitle: '管理词汇单词及其定义',
     description: '维护词汇库，包括单词图像和音频',
@@ -103,7 +103,7 @@ const zhTranslations = {
     view: '查看词汇',
     search: '搜索词汇',
     clearFilters: '清除筛选',
-    noVocabulariesFound: '未找到词汇',
+    noVocabularysFound: '未找到词汇',
     columns: {
       word: '单词',
       phonetic: '音标',

@@ -1,7 +1,7 @@
 import { Skeleton, Box } from '@mui/material';
 import { memo } from 'react';
 
-const VocabularyTableSkeleton = memo(() => {
+const VocabularyRuTableSkeleton = memo(() => {
   return (
     <Box sx={{ p: 2 }}>
       {Array.from({ length: 5 }).map((_, i) => (
@@ -20,6 +20,6 @@ const VocabularyTableSkeleton = memo(() => {
   );
 });
 
-VocabularyTableSkeleton.displayName = 'VocabularyTableSkeleton';
+VocabularyRuTableSkeleton.displayName = 'VocabularyRuTableSkeleton';
 
-export default VocabularyTableSkeleton;
+export default VocabularyRuTableSkeleton;

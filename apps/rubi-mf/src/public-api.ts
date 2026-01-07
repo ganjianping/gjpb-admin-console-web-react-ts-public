@@ -1,3 +1,3 @@
-export { default as VocabulariesPage } from './vocabularies/pages/VocabulariesPage';
-export * from './vocabularies/types/vocabulary.types';
-export { vocabularyService } from './vocabularies/services/vocabularyService';
+export { default as VocabularyRusPage } from './vocabularyRus/pages/VocabularyRusPage';
+export * from './vocabularyRus/types/vocabularyRu.types';
+export { vocabularyRuService } from './vocabularyRus/services/vocabularyRuService';

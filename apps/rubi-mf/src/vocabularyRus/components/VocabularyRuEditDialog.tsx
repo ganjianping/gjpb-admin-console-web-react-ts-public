@@ -24,21 +24,21 @@ import {
 import { useTranslation } from 'react-i18next';
 import { Edit, Upload, Link } from 'lucide-react';
 import { TiptapTextEditor } from '../../../../shared-lib/src/ui-components';
-import type { Vocabulary, VocabularyFormData } from '../types/vocabulary.types';
-import { getEmptyVocabularyFormData } from '../utils/getEmptyVocabularyFormData';
+import type { VocabularyRu, VocabularyRuFormData } from '../types/vocabularyRu.types';
+import { getEmptyVocabularyRuFormData } from '../utils/getEmptyVocabularyRuFormData';
 import { LANGUAGE_OPTIONS, VOCABULARY_TAG_SETTING_KEY, VOCABULARY_PART_OF_SPEECH_SETTING_KEY } from '../constants';
 import '../i18n/translations';
 
-interface VocabularyEditDialogProps {
+interface VocabularyRuEditDialogProps {
   open: boolean;
-  vocabulary: Vocabulary | null;
+  vocabularyRu: VocabularyRu | null;
   onClose: () => void;
-  onConfirm: (data: VocabularyFormData) => Promise<void>;
+  onConfirm: (data: VocabularyRuFormData) => Promise<void>;
 }
 
-const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: VocabularyEditDialogProps) => {
+const VocabularyRuEditDialog = ({ open, vocabularyRu, onClose, onConfirm }: VocabularyRuEditDialogProps) => {
   const { t, i18n } = useTranslation();
-  const [formData, setFormData] = useState<VocabularyFormData>(getEmptyVocabularyFormData());
+  const [formData, setFormData] = useState<VocabularyRuFormData>(getEmptyVocabularyRuFormData());
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [apiErrorMessage, setApiErrorMessage] = useState('');
@@ -53,7 +53,7 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
       if (!tagSetting) return [] as string[];
       return tagSetting.value.split(',').map((v) => v.trim()).filter(Boolean);
     } catch (err) {
-      console.error('[VocabularyEditDialog] Error loading tags:', err);
+      console.error('[VocabularyRuEditDialog] Error loading tags:', err);
       return [] as string[];
     }
   }, [i18n.language]);
@@ -68,43 +68,43 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
       if (!posSetting) return [] as string[];
       return posSetting.value.split(',').map((v) => v.trim()).filter(Boolean);
     } catch (err) {
-      console.error('[VocabularyEditDialog] Error loading part of speech options:', err);
+      console.error('[VocabularyRuEditDialog] Error loading part of speech options:', err);
       return [] as string[];
     }
   }, [i18n.language]);
 
   useEffect(() => {
-    if (open && vocabulary) {
+    if (open && vocabularyRu) {
       setFormData({
-        word: vocabulary.word || '',
-        wordImageFilename: vocabulary.wordImageFilename || '',
-        wordImageOriginalUrl: vocabulary.wordImageOriginalUrl || '',
-        wordImageUploadMethod: vocabulary.wordImageOriginalUrl ? 'url' : 'file',
-        simplePastTense: vocabulary.simplePastTense || '',
-        pastPerfectTense: vocabulary.pastPerfectTense || '',
-        translation: vocabulary.translation || '',
-        synonyms: vocabulary.synonyms || '',
-        pluralForm: vocabulary.pluralForm || '',
-        phonetic: vocabulary.phonetic || '',
-        phoneticAudioFilename: vocabulary.phoneticAudioFilename || '',
-        phoneticAudioOriginalUrl: vocabulary.phoneticAudioOriginalUrl || '',
-        partOfSpeech: vocabulary.partOfSpeech || '',
-        definition: vocabulary.definition || '',
-        example: vocabulary.example || '',
-        tags: vocabulary.tags || '',
-        lang: vocabulary.lang || (i18n.language.toUpperCase().startsWith('ZH') ? 'ZH' : 'EN'),
-        displayOrder: vocabulary.displayOrder ?? 0,
-        isActive: vocabulary.isActive ?? true,
+        word: vocabularyRu.word || '',
+        wordImageFilename: vocabularyRu.wordImageFilename || '',
+        wordImageOriginalUrl: vocabularyRu.wordImageOriginalUrl || '',
+        wordImageUploadMethod: vocabularyRu.wordImageOriginalUrl ? 'url' : 'file',
+        simplePastTense: vocabularyRu.simplePastTense || '',
+        pastPerfectTense: vocabularyRu.pastPerfectTense || '',
+        translation: vocabularyRu.translation || '',
+        synonyms: vocabularyRu.synonyms || '',
+        pluralForm: vocabularyRu.pluralForm || '',
+        phonetic: vocabularyRu.phonetic || '',
+        phoneticAudioFilename: vocabularyRu.phoneticAudioFilename || '',
+        phoneticAudioOriginalUrl: vocabularyRu.phoneticAudioOriginalUrl || '',
+        partOfSpeech: vocabularyRu.partOfSpeech || '',
+        definition: vocabularyRu.definition || '',
+        example: vocabularyRu.example || '',
+        tags: vocabularyRu.tags || '',
+        lang: vocabularyRu.lang || (i18n.language.toUpperCase().startsWith('ZH') ? 'ZH' : 'EN'),
+        displayOrder: vocabularyRu.displayOrder ?? 0,
+        isActive: vocabularyRu.isActive ?? true,
         wordImageFile: null,
         phoneticAudioFile: null,
-        dictionaryUrl: vocabulary.dictionaryUrl || '',
+        dictionaryUrl: vocabularyRu.dictionaryUrl || '',
       });
       setErrors({});
       setApiErrorMessage('');
     }
-  }, [open, vocabulary, i18n.language]);
+  }, [open, vocabularyRu, i18n.language]);
 
-  const handleChange = (field: keyof VocabularyFormData, value: any) => {
+  const handleChange = (field: keyof VocabularyRuFormData, value: any) => {
     setFormData((prev) => {
       const oldValue = prev[field];
       const hasChanged = oldValue !== value;
@@ -198,7 +198,7 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
       <DialogTitle sx={{ pb: 2, display: 'flex', alignItems: 'center', gap: 1.5, borderBottom: '1px solid', borderColor: 'divider' }}>
         <Edit size={20} />
         <Typography variant="h6" component="span">
-          {t('vocabularies.edit')}
+          {t('vocabularyRus.edit')}
         </Typography>
       </DialogTitle>
       <DialogContent sx={{ pt: 3 }}>
@@ -209,11 +209,11 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
         )}
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <FormControl fullWidth error={!!errors.word}>
-            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.word')}</FormLabel>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.word')}</FormLabel>
             <TextField
               value={formData.word}
               onChange={(e) => handleChange('word', e.target.value)}
-              placeholder={t('vocabularies.form.word')}
+              placeholder={t('vocabularyRus.form.word')}
               error={!!errors.word}
               helperText={errors.word}
               fullWidth
@@ -223,7 +223,7 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
           <FormControl fullWidth>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
               <FormLabel sx={{ flex: 1 }}>
-                {t('vocabularies.form.dictionaryUrl')}
+                {t('vocabularyRus.form.dictionaryUrl')}
               </FormLabel>
               <IconButton
                 size="small"
@@ -247,17 +247,17 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
           </FormControl>
 
           <FormControl fullWidth>
-            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.phonetic')}</FormLabel>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.phonetic')}</FormLabel>
             <TextField
               value={formData.phonetic}
               onChange={(e) => handleChange('phonetic', e.target.value)}
-              placeholder={t('vocabularies.form.phonetic')}
+              placeholder={t('vocabularyRus.form.phonetic')}
               fullWidth
             />
           </FormControl>
 
           <FormControl fullWidth>
-            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.partOfSpeech')}</FormLabel>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.partOfSpeech')}</FormLabel>
             <Select
               multiple
               value={formData.partOfSpeech ? formData.partOfSpeech.split(',').filter(Boolean) : []}
@@ -282,11 +282,11 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
           </FormControl>
 
           <FormControl fullWidth error={!!errors.definition}>
-            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.definition')}</FormLabel>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.definition')}</FormLabel>
             <TiptapTextEditor
               value={formData.definition}
               onChange={(value) => handleChange('definition', value)}
-              placeholder={t('vocabularies.form.definition')}
+              placeholder={t('vocabularyRus.form.definition')}
               initialRows={3}
             />
             {errors.definition && (
@@ -297,31 +297,31 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
           </FormControl>
 
           <FormControl fullWidth>
-            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.synonyms')}</FormLabel>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.synonyms')}</FormLabel>
             <TextField
               value={formData.synonyms}
               onChange={(e) => handleChange('synonyms', e.target.value)}
-              placeholder={t('vocabularies.form.synonyms')}
+              placeholder={t('vocabularyRus.form.synonyms')}
               fullWidth
             />
           </FormControl>
 
           <FormControl fullWidth>
-            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.translation')}</FormLabel>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.translation')}</FormLabel>
             <TextField
               value={formData.translation}
               onChange={(e) => handleChange('translation', e.target.value)}
-              placeholder={t('vocabularies.form.translation')}
+              placeholder={t('vocabularyRus.form.translation')}
               fullWidth
             />
           </FormControl>
 
           <FormControl fullWidth error={!!errors.example}>
-            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.example')}</FormLabel>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.example')}</FormLabel>
             <TiptapTextEditor
               value={formData.example}
               onChange={(value) => handleChange('example', value)}
-              placeholder={t('vocabularies.form.example')}
+              placeholder={t('vocabularyRus.form.example')}
               initialRows={2}
             />
             {errors.example && (
@@ -332,37 +332,37 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
           </FormControl>
 
           <FormControl fullWidth>
-            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.simplePastTense')}</FormLabel>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.simplePastTense')}</FormLabel>
             <TextField
               value={formData.simplePastTense}
               onChange={(e) => handleChange('simplePastTense', e.target.value)}
-              placeholder={t('vocabularies.form.simplePastTense')}
+              placeholder={t('vocabularyRus.form.simplePastTense')}
               fullWidth
             />
           </FormControl>
 
           <FormControl fullWidth>
-            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.pastPerfectTense')}</FormLabel>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.pastPerfectTense')}</FormLabel>
             <TextField
               value={formData.pastPerfectTense}
               onChange={(e) => handleChange('pastPerfectTense', e.target.value)}
-              placeholder={t('vocabularies.form.pastPerfectTense')}
+              placeholder={t('vocabularyRus.form.pastPerfectTense')}
               fullWidth
             />
           </FormControl>
 
           <FormControl fullWidth>
-            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.pluralForm')}</FormLabel>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.pluralForm')}</FormLabel>
             <TextField
               value={formData.pluralForm}
               onChange={(e) => handleChange('pluralForm', e.target.value)}
-              placeholder={t('vocabularies.form.pluralForm')}
+              placeholder={t('vocabularyRus.form.pluralForm')}
               fullWidth
             />
           </FormControl>
 
           <FormControl fullWidth>
-            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.tags')}</FormLabel>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.tags')}</FormLabel>
             <Select
               multiple
               value={formData.tags ? formData.tags.split(',').filter(Boolean) : []}
@@ -387,21 +387,21 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
           </FormControl>
 
           <FormControl component="fieldset">
-            <FormLabel component="legend">{t('vocabularies.form.wordImageUploadMethod')}</FormLabel>
+            <FormLabel component="legend">{t('vocabularyRus.form.wordImageUploadMethod')}</FormLabel>
             <RadioGroup
               row
               value={formData.wordImageUploadMethod || 'url'}
               onChange={(e) => handleChange('wordImageUploadMethod', e.target.value as 'url' | 'file')}
             >
-              <FormControlLabel value="url" control={<Radio />} label={t('vocabularies.form.byUrl')} />
-              <FormControlLabel value="file" control={<Radio />} label={t('vocabularies.form.uploadFile')} />
+              <FormControlLabel value="url" control={<Radio />} label={t('vocabularyRus.form.byUrl')} />
+              <FormControlLabel value="file" control={<Radio />} label={t('vocabularyRus.form.uploadFile')} />
             </RadioGroup>
           </FormControl>
 
           {formData.wordImageUploadMethod === 'file' && (
             <Box>
               <Button variant="outlined" component="label" startIcon={<Upload size={20} />} fullWidth sx={{ mb: 1 }}>
-                {formData.wordImageFile ? formData.wordImageFile.name : t('vocabularies.form.chooseWordImageFile')}
+                {formData.wordImageFile ? formData.wordImageFile.name : t('vocabularyRus.form.chooseWordImageFile')}
                 <input
                   type="file"
                   hidden
@@ -416,7 +416,7 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
               </Button>
               {formData.wordImageFile && (
                 <Alert severity="info" sx={{ mt: 1 }}>
-                  {t('vocabularies.form.selectedFile')}: {formData.wordImageFile.name} ({(formData.wordImageFile.size / 1024).toFixed(2)} KB)
+                  {t('vocabularyRus.form.selectedFile')}: {formData.wordImageFile.name} ({(formData.wordImageFile.size / 1024).toFixed(2)} KB)
                 </Alert>
               )}
             </Box>
@@ -424,7 +424,7 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
 
           {formData.wordImageUploadMethod === 'url' && (
             <TextField
-              label={t('vocabularies.form.wordImageOriginalUrl')}
+              label={t('vocabularyRus.form.wordImageOriginalUrl')}
               value={formData.wordImageOriginalUrl}
               onChange={(e) => handleChange('wordImageOriginalUrl', e.target.value)}
               fullWidth
@@ -433,7 +433,7 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
           )}
 
           <TextField
-            label={t('vocabularies.form.wordImageFilename')}
+            label={t('vocabularyRus.form.wordImageFilename')}
             value={formData.wordImageFilename}
             onChange={(e) => handleChange('wordImageFilename', e.target.value)}
             fullWidth
@@ -441,21 +441,21 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
           />
 
           <FormControl component="fieldset">
-            <FormLabel component="legend">{t('vocabularies.form.phoneticAudioUploadMethod')}</FormLabel>
+            <FormLabel component="legend">{t('vocabularyRus.form.phoneticAudioUploadMethod')}</FormLabel>
             <RadioGroup
               row
               value={formData.phoneticAudioUploadMethod || 'url'}
               onChange={(e) => handleChange('phoneticAudioUploadMethod', e.target.value as 'url' | 'file')}
             >
-              <FormControlLabel value="url" control={<Radio />} label={t('vocabularies.form.byUrl')} />
-              <FormControlLabel value="file" control={<Radio />} label={t('vocabularies.form.uploadFile')} />
+              <FormControlLabel value="url" control={<Radio />} label={t('vocabularyRus.form.byUrl')} />
+              <FormControlLabel value="file" control={<Radio />} label={t('vocabularyRus.form.uploadFile')} />
             </RadioGroup>
           </FormControl>
 
           {formData.phoneticAudioUploadMethod === 'file' && (
             <Box>
               <Button variant="outlined" component="label" startIcon={<Upload size={20} />} fullWidth sx={{ mb: 1 }}>
-                {formData.phoneticAudioFile ? formData.phoneticAudioFile.name : t('vocabularies.form.choosePhoneticAudioFile')}
+                {formData.phoneticAudioFile ? formData.phoneticAudioFile.name : t('vocabularyRus.form.choosePhoneticAudioFile')}
                 <input
                   type="file"
                   hidden
@@ -470,7 +470,7 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
               </Button>
               {formData.phoneticAudioFile && (
                 <Alert severity="info" sx={{ mt: 1 }}>
-                  {t('vocabularies.form.selectedFile')}: {formData.phoneticAudioFile.name} ({(formData.phoneticAudioFile.size / 1024).toFixed(2)} KB)
+                  {t('vocabularyRus.form.selectedFile')}: {formData.phoneticAudioFile.name} ({(formData.phoneticAudioFile.size / 1024).toFixed(2)} KB)
                 </Alert>
               )}
             </Box>
@@ -478,7 +478,7 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
 
           {formData.phoneticAudioUploadMethod === 'url' && (
             <TextField
-              label={t('vocabularies.form.phoneticAudioOriginalUrl')}
+              label={t('vocabularyRus.form.phoneticAudioOriginalUrl')}
               value={formData.phoneticAudioOriginalUrl}
               onChange={(e) => handleChange('phoneticAudioOriginalUrl', e.target.value)}
               fullWidth
@@ -487,7 +487,7 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
           )}
 
           <TextField
-            label={t('vocabularies.form.phoneticAudioFilename')}
+            label={t('vocabularyRus.form.phoneticAudioFilename')}
             value={formData.phoneticAudioFilename}
             onChange={(e) => handleChange('phoneticAudioFilename', e.target.value)}
             fullWidth
@@ -495,7 +495,7 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
           />
 
           <FormControl fullWidth error={!!errors.lang}>
-            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.lang')}</FormLabel>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.lang')}</FormLabel>
             <Select value={formData.lang} onChange={(e) => handleChange('lang', e.target.value)}>
               {LANGUAGE_OPTIONS.map((opt) => (
                 <MenuItem key={opt.value} value={opt.value}>
@@ -506,7 +506,7 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
           </FormControl>
 
           <FormControl fullWidth>
-            <FormLabel sx={{ mb: 1 }}>{t('vocabularies.form.displayOrder')}</FormLabel>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.displayOrder')}</FormLabel>
             <TextField
               type="number"
               value={formData.displayOrder}
@@ -517,7 +517,7 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
 
           <FormControlLabel
             control={<Checkbox checked={formData.isActive} onChange={(e) => handleChange('isActive', e.target.checked)} />}
-            label={t('vocabularies.form.isActive')}
+            label={t('vocabularyRus.form.isActive')}
           />
         </Box>
       </DialogContent>
@@ -533,4 +533,4 @@ const VocabularyEditDialog = ({ open, vocabulary, onClose, onConfirm }: Vocabula
   );
 };
 
-export default VocabularyEditDialog;
+export default VocabularyRuEditDialog;

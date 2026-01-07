@@ -1,11 +1,11 @@
 import { apiClient } from '../../../../shared-lib/src/api/api-client';
 import type { ApiResponse } from '../../../../shared-lib/src/api/api.types';
 import type {
-  Vocabulary,
-  VocabularyPaginatedResponse,
-} from '../types/vocabulary.types';
+  VocabularyRu,
+  VocabularyRuPaginatedResponse,
+} from '../types/vocabularyRu.types';
 
-export interface VocabularyQueryParams {
+export interface VocabularyRuQueryParams {
   page?: number;
   size?: number;
   sort?: string;
@@ -16,7 +16,7 @@ export interface VocabularyQueryParams {
   isActive?: boolean;
 }
 
-export interface CreateVocabularyRequest {
+export interface CreateVocabularyRuRequest {
   word: string;
   wordImageFilename?: string;
   wordImageOriginalUrl?: string;
@@ -38,12 +38,12 @@ export interface CreateVocabularyRequest {
   dictionaryUrl?: string;
 }
 
-export interface CreateVocabularyByUploadRequest extends CreateVocabularyRequest {
+export interface CreateVocabularyRuByUploadRequest extends CreateVocabularyRuRequest {
   wordImageFile?: File;
   phoneticAudioFile?: File;
 }
 
-export interface UpdateVocabularyRequest {
+export interface UpdateVocabularyRuRequest {
   word?: string;
   wordImageFilename?: string;
   wordImageOriginalUrl?: string;
@@ -65,19 +65,19 @@ export interface UpdateVocabularyRequest {
   dictionaryUrl?: string;
 }
 
-class VocabularyService {
-  private readonly getUrl = '/v1/vocabularies';
-  private readonly crudUrl = '/v1/vocabularies';
+class VocabularyRuService {
+  private readonly getUrl = '/v1/ru/vocabularies';
+  private readonly crudUrl = '/v1/ru/vocabularies';
 
-  async getVocabularies(params?: VocabularyQueryParams): Promise<ApiResponse<VocabularyPaginatedResponse>> {
+  async getVocabularyRus(params?: VocabularyRuQueryParams): Promise<ApiResponse<VocabularyRuPaginatedResponse>> {
     return apiClient.get(this.getUrl, { params });
   }
 
-  async createVocabulary(data: CreateVocabularyRequest): Promise<ApiResponse<Vocabulary>> {
+  async createVocabularyRu(data: CreateVocabularyRuRequest): Promise<ApiResponse<VocabularyRu>> {
     return apiClient.post(this.crudUrl, data);
   }
 
-  async createVocabularyByUpload(data: CreateVocabularyByUploadRequest): Promise<ApiResponse<Vocabulary>> {
+  async createVocabularyRuByUpload(data: CreateVocabularyRuByUploadRequest): Promise<ApiResponse<VocabularyRu>> {
     const formData = new FormData();
     formData.append('word', data.word);
     formData.append('lang', data.lang);
@@ -143,14 +143,14 @@ class VocabularyService {
     return apiClient.post(`${this.crudUrl}`, formData);
   }
 
-  async updateVocabulary(id: string, data: UpdateVocabularyRequest): Promise<ApiResponse<Vocabulary>> {
+  async updateVocabularyRu(id: string, data: UpdateVocabularyRuRequest): Promise<ApiResponse<VocabularyRu>> {
     return apiClient.put(`${this.crudUrl}/${id}`, data);
   }
 
-  async updateVocabularyWithFiles(
+  async updateVocabularyRuWithFiles(
     id: string,
-    data: UpdateVocabularyRequest & { wordImageFile?: File | null; phoneticAudioFile?: File | null },
-  ): Promise<ApiResponse<Vocabulary>> {
+    data: UpdateVocabularyRuRequest & { wordImageFile?: File | null; phoneticAudioFile?: File | null },
+  ): Promise<ApiResponse<VocabularyRu>> {
     const formData = new FormData();
     
     if (data.wordImageFile) {
@@ -220,9 +220,9 @@ class VocabularyService {
     return apiClient.put(`${this.crudUrl}/${id}`, formData);
   }
 
-  async deleteVocabulary(id: string): Promise<ApiResponse<void>> {
+  async deleteVocabularyRu(id: string): Promise<ApiResponse<void>> {
     return apiClient.delete(`${this.crudUrl}/${id}`);
   }
 }
 
-export const vocabularyService = new VocabularyService();
+export const vocabularyRuService = new VocabularyRuService();

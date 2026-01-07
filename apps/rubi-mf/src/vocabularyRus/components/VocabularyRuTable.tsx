@@ -4,16 +4,16 @@ import { useTranslation } from 'react-i18next';
 import { memo, useMemo } from 'react';
 import '../i18n/translations';
 import { DataTable, createColumnHelper, createStatusChip } from '../../../../shared-lib/src/data-management/DataTable';
-import type { Vocabulary } from '../types/vocabulary.types';
-import { useVocabularyActionMenu } from '../hooks/useVocabularyActionMenu';
+import type { VocabularyRu } from '../types/vocabularyRu.types';
+import { useVocabularyRuActionMenu } from '../hooks/useVocabularyRuActionMenu';
 import { STATUS_MAPS } from '../constants';
 
 function WordCell({ info }: Readonly<{ info: any }>) {
-  const vocabulary = info.row.original as Vocabulary;
+  const vocabularyRu = info.row.original as VocabularyRu;
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-      {vocabulary.wordImageOriginalUrl && (
-        <Avatar src={vocabulary.wordImageOriginalUrl} alt={vocabulary.word} sx={{ width: 40, height: 40 }} variant="rounded" />
+      {vocabularyRu.wordImageOriginalUrl && (
+        <Avatar src={vocabularyRu.wordImageOriginalUrl} alt={vocabularyRu.word} sx={{ width: 40, height: 40 }} variant="rounded" />
       )}
       <Box>
         <Typography variant="body2" sx={{ fontWeight: 600 }}>
@@ -24,47 +24,47 @@ function WordCell({ info }: Readonly<{ info: any }>) {
   );
 }
 
-const columnHelper = createColumnHelper<Vocabulary>();
+const columnHelper = createColumnHelper<VocabularyRu>();
 
-const VocabularyTable = memo(
+const VocabularyRuTable = memo(
   ({
-    vocabularies,
+    vocabularyRus,
     pagination,
     onPageChange,
     onPageSizeChange,
-    onVocabularyAction,
+    onVocabularyRuAction,
   }: any) => {
     const { t } = useTranslation();
 
-    const actionMenuItems = useVocabularyActionMenu({
-      onView: (vocabulary: Vocabulary) => onVocabularyAction(vocabulary, 'view'),
-      onEdit: (vocabulary: Vocabulary) => onVocabularyAction(vocabulary, 'edit'),
-      onDelete: (vocabulary: Vocabulary) => onVocabularyAction(vocabulary, 'delete'),
+    const actionMenuItems = useVocabularyRuActionMenu({
+      onView: (vocabularyRu: VocabularyRu) => onVocabularyRuAction(vocabularyRu, 'view'),
+      onEdit: (vocabularyRu: VocabularyRu) => onVocabularyRuAction(vocabularyRu, 'edit'),
+      onDelete: (vocabularyRu: VocabularyRu) => onVocabularyRuAction(vocabularyRu, 'delete'),
     });
 
     const columns = useMemo(
       () => [
         columnHelper.accessor('word', {
-          header: t('vocabularies.columns.word'),
+          header: t('vocabularyRus.columns.word'),
           cell: (info) => <WordCell info={info} />,
           size: 280,
         }),
         columnHelper.accessor('phonetic', {
-          header: t('vocabularies.columns.phonetic'),
+          header: t('vocabularyRus.columns.phonetic'),
           cell: (info) => {
-            const vocabulary = info.row.original as Vocabulary;
+            const vocabularyRu = info.row.original as VocabularyRu;
             const phonetic = info.getValue();
             const displayText = phonetic ? phonetic.substring(0, 50) + (phonetic.length > 50 ? '...' : '') : '-';
             
             const handlePlayAudio = () => {
-              if (vocabulary.phoneticAudioOriginalUrl) {
-                console.log('Playing audio:', vocabulary.phoneticAudioOriginalUrl);
-                const audio = new Audio(vocabulary.phoneticAudioOriginalUrl);
+              if (vocabularyRu.phoneticAudioOriginalUrl) {
+                console.log('Playing audio:', vocabularyRu.phoneticAudioOriginalUrl);
+                const audio = new Audio(vocabularyRu.phoneticAudioOriginalUrl);
                 audio.play()
                   .then(() => console.log('Audio started playing'))
                   .catch(err => {
                     console.error('Failed to play audio:', err);
-                    console.error('Audio URL:', vocabulary.phoneticAudioOriginalUrl);
+                    console.error('Audio URL:', vocabularyRu.phoneticAudioOriginalUrl);
                   });
               } else {
                 console.log('No audio URL available');
@@ -76,14 +76,14 @@ const VocabularyTable = memo(
                 <Typography 
                   variant="body2" 
                   sx={{ 
-                    cursor: vocabulary.phoneticAudioOriginalUrl ? 'pointer' : 'default',
-                    '&:hover': vocabulary.phoneticAudioOriginalUrl ? { textDecoration: 'underline' } : {}
+                    cursor: vocabularyRu.phoneticAudioOriginalUrl ? 'pointer' : 'default',
+                    '&:hover': vocabularyRu.phoneticAudioOriginalUrl ? { textDecoration: 'underline' } : {}
                   }}
-                  onClick={vocabulary.phoneticAudioOriginalUrl ? handlePlayAudio : undefined}
+                  onClick={vocabularyRu.phoneticAudioOriginalUrl ? handlePlayAudio : undefined}
                 >
                   {displayText}
                 </Typography>
-                {vocabulary.phoneticAudioOriginalUrl && (
+                {vocabularyRu.phoneticAudioOriginalUrl && (
                   <Box
                     sx={{ 
                       cursor: 'pointer',
@@ -101,19 +101,19 @@ const VocabularyTable = memo(
           },
         }),
         columnHelper.accessor('tags', {
-          header: t('vocabularies.columns.tags'),
+          header: t('vocabularyRus.columns.tags'),
           cell: (info) => <Typography variant="body2">{info.getValue() || '-'}</Typography>,
         }),
         columnHelper.accessor('lang', {
-          header: t('vocabularies.columns.lang'),
+          header: t('vocabularyRus.columns.lang'),
           cell: (info) => <Typography variant="body2">{info.getValue() || '-'}</Typography>,
         }),
         columnHelper.accessor('displayOrder', {
-          header: t('vocabularies.columns.displayOrder'),
+          header: t('vocabularyRus.columns.displayOrder'),
           cell: (info) => <Typography variant="body2">{info.getValue()}</Typography>,
         }),
         columnHelper.accessor('isActive', {
-          header: t('vocabularies.columns.isActive'),
+          header: t('vocabularyRus.columns.isActive'),
           cell: (info) => {
             const isActive = info.getValue();
             return (
@@ -124,7 +124,7 @@ const VocabularyTable = memo(
           },
         }),
         columnHelper.accessor('updatedAt', {
-          header: t('vocabularies.columns.updatedAt'),
+          header: t('vocabularyRus.columns.updatedAt'),
           cell: (info) => {
             const value = info.getValue();
             if (!value) return <Typography variant="body2">-</Typography>;
@@ -142,11 +142,11 @@ const VocabularyTable = memo(
       [t],
     );
 
-    if (!vocabularies?.length) {
+    if (!vocabularyRus?.length) {
       return (
         <Box sx={{ p: 3, textAlign: 'center' }}>
           <Typography variant="body1" color="text.secondary">
-            {t('vocabularies.noVocabulariesFound')}
+            {t('vocabularyRus.noVocabularyRusFound')}
           </Typography>
         </Box>
       );
@@ -155,10 +155,10 @@ const VocabularyTable = memo(
     return (
       <DataTable
         columns={columns}
-        data={vocabularies}
+        data={vocabularyRus}
         actionMenuItems={actionMenuItems}
         showSearch={false}
-        onRowDoubleClick={(vocabulary: Vocabulary) => onVocabularyAction(vocabulary, 'view')}
+        onRowDoubleClick={(vocabularyRu: VocabularyRu) => onVocabularyRuAction(vocabularyRu, 'view')}
         manualPagination={!!pagination}
         pageCount={pagination?.totalPages || 0}
         currentPage={pagination?.page || 0}
@@ -171,6 +171,6 @@ const VocabularyTable = memo(
   },
 );
 
-VocabularyTable.displayName = 'VocabularyTable';
+VocabularyRuTable.displayName = 'VocabularyRuTable';
 
-export default VocabularyTable;
+export default VocabularyRuTable;

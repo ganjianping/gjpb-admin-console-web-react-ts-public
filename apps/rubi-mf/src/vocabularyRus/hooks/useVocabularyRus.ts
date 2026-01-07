@@ -1,27 +1,27 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { vocabularyService } from '../services/vocabularyService';
-import type { VocabularyQueryParams } from '../services/vocabularyService';
-import type { Vocabulary } from '../types/vocabulary.types';
+import { vocabularyRuService } from '../services/vocabularyRuService';
+import type { VocabularyRuQueryParams } from '../services/vocabularyRuService';
+import type { VocabularyRu } from '../types/vocabularyRu.types';
 import type { PaginatedResponse } from '../../../../shared-lib/src/api/api.types';
 import { VOCABULARY_CONSTANTS } from '../constants';
 
-export const useVocabularies = () => {
-  const [allVocabularies, setAllVocabularies] = useState<Vocabulary[]>([]);
-  const [filteredVocabularies, setFilteredVocabularies] = useState<Vocabulary[]>([]);
-  const [pagination, setPagination] = useState<PaginatedResponse<Vocabulary> | null>(null);
+export const useVocabularyRus = () => {
+  const [allVocabularyRus, setAllVocabularyRus] = useState<VocabularyRu[]>([]);
+  const [filteredVocabularyRus, setFilteredVocabularyRus] = useState<VocabularyRu[]>([]);
+  const [pagination, setPagination] = useState<PaginatedResponse<VocabularyRu> | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState<number>(VOCABULARY_CONSTANTS.DEFAULT_PAGE_SIZE);
   const hasInitiallyLoaded = useRef(false);
 
-  const loadVocabularies = useCallback(async (params?: VocabularyQueryParams, page?: number, size?: number) => {
+  const loadVocabularyRus = useCallback(async (params?: VocabularyRuQueryParams, page?: number, size?: number) => {
     const actualPage = page ?? currentPage;
     const actualSize = size ?? pageSize;
 
     setLoading(true);
     try {
-      const queryParams: VocabularyQueryParams = {
+      const queryParams: VocabularyRuQueryParams = {
         page: actualPage,
         size: actualSize,
         sort: VOCABULARY_CONSTANTS.SORT_FIELD,
@@ -29,24 +29,24 @@ export const useVocabularies = () => {
         ...params,
       };
 
-      const res = await vocabularyService.getVocabularies(queryParams);
+      const res = await vocabularyRuService.getVocabularyRus(queryParams);
       if (res?.data) {
         // Handle both array (old) and paginated (new) response structures
         const responseData = res.data as any;
-        let vocabularies: Vocabulary[] = [];
+        let vocabularyRus: VocabularyRu[] = [];
         
         if (Array.isArray(responseData)) {
-          vocabularies = responseData;
+          vocabularyRus = responseData;
         } else if (responseData && 'content' in responseData) {
-          vocabularies = responseData.content;
+          vocabularyRus = responseData.content;
           setPagination(responseData);
         }
         
-        setAllVocabularies(vocabularies || []);
-        setFilteredVocabularies(vocabularies || []);
+        setAllVocabularyRus(vocabularyRus || []);
+        setFilteredVocabularyRus(vocabularyRus || []);
       }
     } catch (err: any) {
-      setError(err?.message || 'Failed to load vocabularies');
+      setError(err?.message || 'Failed to load vocabularyRus');
     } finally {
       setLoading(false);
     }
@@ -55,9 +55,9 @@ export const useVocabularies = () => {
   useEffect(() => {
     if (!hasInitiallyLoaded.current) {
       hasInitiallyLoaded.current = true;
-      loadVocabularies();
+      loadVocabularyRus();
     }
-  }, [loadVocabularies]);
+  }, [loadVocabularyRus]);
 
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
@@ -69,18 +69,18 @@ export const useVocabularies = () => {
   }, []);
 
   return { 
-    allVocabularies, 
-    filteredVocabularies, 
-    setFilteredVocabularies, 
+    allVocabularyRus, 
+    filteredVocabularyRus, 
+    setFilteredVocabularyRus, 
     pagination,
     loading, 
     error, 
     currentPage,
     pageSize,
-    loadVocabularies,
+    loadVocabularyRus,
     handlePageChange,
     handlePageSizeChange
   };
 };
 
-export default useVocabularies;
+export default useVocabularyRus;

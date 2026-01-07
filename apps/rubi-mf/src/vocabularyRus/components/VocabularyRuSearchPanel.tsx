@@ -16,18 +16,18 @@ import {
   Chip,
 } from '@mui/material';
 import { Search } from 'lucide-react';
-import type { VocabularySearchFormData } from '../types/vocabulary.types';
+import type { VocabularyRuSearchFormData } from '../types/vocabularyRu.types';
 import { VOCABULARY_TAG_SETTING_KEY, LANGUAGE_OPTIONS, VOCABULARY_LANG_SETTING_KEY } from '../constants';
 
-interface VocabularySearchPanelProps {
-  searchFormData: VocabularySearchFormData;
+interface VocabularyRuSearchPanelProps {
+  searchFormData: VocabularyRuSearchFormData;
   loading?: boolean;
-  onFormChange: (field: keyof VocabularySearchFormData, value: any) => void;
+  onFormChange: (field: keyof VocabularyRuSearchFormData, value: any) => void;
   onSearch: () => void;
   onClear: () => void;
 }
 
-const VocabularySearchPanel: React.FC<VocabularySearchPanelProps> = ({
+const VocabularyRuSearchPanel: React.FC<VocabularyRuSearchPanelProps> = ({
   searchFormData,
   loading,
   onFormChange,
@@ -47,7 +47,7 @@ const VocabularySearchPanel: React.FC<VocabularySearchPanelProps> = ({
       if (!tagSetting) return [] as string[];
       return tagSetting.value.split(',').map((v) => v.trim()).filter(Boolean);
     } catch (err) {
-      console.error('[VocabularySearchPanel] Error loading tags:', err);
+      console.error('[VocabularyRuSearchPanel] Error loading tags:', err);
       return [] as string[];
     }
   }, [i18n.language]);
@@ -69,7 +69,7 @@ const VocabularySearchPanel: React.FC<VocabularySearchPanelProps> = ({
         return { value: code, label: fallback ? fallback.label : code };
       });
     } catch (err) {
-      console.error('[VocabularySearchPanel] Error loading lang options:', err);
+      console.error('[VocabularyRuSearchPanel] Error loading lang options:', err);
       return LANGUAGE_OPTIONS;
     }
   }, [i18n.language]);
@@ -119,14 +119,14 @@ const VocabularySearchPanel: React.FC<VocabularySearchPanelProps> = ({
       <CardContent sx={{ position: 'relative', zIndex: 2, p: 3 }}>
         <Typography variant='h6' sx={{ mb: 2, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 1 }}>
           <Search size={18} />
-          {t('vocabularies.search')}
+          {t('vocabularyRus.search')}
         </Typography>
 
         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: '1fr 1fr 1fr 1fr' }, gap: 2, mb: 2.5 }}>
           <FormControl variant='outlined' size='small' fullWidth>
-            <FormLabel sx={{ mb: 1, fontSize: '0.875rem', fontWeight: 500 }}>{t('vocabularies.form.word')}</FormLabel>
+            <FormLabel sx={{ mb: 1, fontSize: '0.875rem', fontWeight: 500 }}>{t('vocabularyRus.form.word')}</FormLabel>
             <TextField
-              placeholder={t('vocabularies.filters.searchByWord')}
+              placeholder={t('vocabularyRus.filters.searchByWord')}
               value={searchFormData.word || ''}
               onChange={(e) => onFormChange('word', e.target.value)}
               variant='outlined'
@@ -140,7 +140,7 @@ const VocabularySearchPanel: React.FC<VocabularySearchPanelProps> = ({
           </FormControl>
 
           <FormControl variant='outlined' size='small' fullWidth>
-            <FormLabel sx={{ mb: 1, fontSize: '0.875rem', fontWeight: 500 }}>{t('vocabularies.form.lang')}</FormLabel>
+            <FormLabel sx={{ mb: 1, fontSize: '0.875rem', fontWeight: 500 }}>{t('vocabularyRus.form.lang')}</FormLabel>
             <Select
               value={searchFormData.lang || ''}
               onChange={(e) => onFormChange('lang', e.target.value)}
@@ -149,7 +149,7 @@ const VocabularySearchPanel: React.FC<VocabularySearchPanelProps> = ({
                 borderRadius: 1.5,
               }}
             >
-              <MenuItem value=''>{t('vocabularies.filters.all')}</MenuItem>
+              <MenuItem value=''>{t('vocabularyRus.filters.all')}</MenuItem>
               {availableLangOptions.map((opt) => (
                 <MenuItem key={opt.value} value={opt.value}>
                   {opt.label}
@@ -159,7 +159,7 @@ const VocabularySearchPanel: React.FC<VocabularySearchPanelProps> = ({
           </FormControl>
 
           <FormControl variant='outlined' size='small' fullWidth>
-            <FormLabel sx={{ mb: 1, fontSize: '0.875rem', fontWeight: 500 }}>{t('vocabularies.form.tags')}</FormLabel>
+            <FormLabel sx={{ mb: 1, fontSize: '0.875rem', fontWeight: 500 }}>{t('vocabularyRus.form.tags')}</FormLabel>
             <Select
               value={searchFormData.tags || ''}
               onChange={(e) => onFormChange('tags', e.target.value)}
@@ -168,7 +168,7 @@ const VocabularySearchPanel: React.FC<VocabularySearchPanelProps> = ({
                 borderRadius: 1.5,
               }}
             >
-              <MenuItem value=''>{t('vocabularies.filters.all')}</MenuItem>
+              <MenuItem value=''>{t('vocabularyRus.filters.all')}</MenuItem>
               {availableTags.map((tag) => (
                 <MenuItem key={tag} value={tag}>
                   <Chip label={tag} size='small' variant='outlined' />
@@ -178,7 +178,7 @@ const VocabularySearchPanel: React.FC<VocabularySearchPanelProps> = ({
           </FormControl>
 
           <FormControl variant='outlined' size='small' fullWidth>
-            <FormLabel sx={{ mb: 1, fontSize: '0.875rem', fontWeight: 500 }}>{t('vocabularies.form.isActive')}</FormLabel>
+            <FormLabel sx={{ mb: 1, fontSize: '0.875rem', fontWeight: 500 }}>{t('vocabularyRus.form.isActive')}</FormLabel>
             <Select
               value={searchFormData.isActive ?? ''}
               onChange={(e) => onFormChange('isActive', e.target.value || null)}
@@ -187,9 +187,9 @@ const VocabularySearchPanel: React.FC<VocabularySearchPanelProps> = ({
                 borderRadius: 1.5,
               }}
             >
-              <MenuItem value=''>{t('vocabularies.filters.all')}</MenuItem>
-              <MenuItem value='true'>{t('vocabularies.status.active')}</MenuItem>
-              <MenuItem value='false'>{t('vocabularies.status.inactive')}</MenuItem>
+              <MenuItem value=''>{t('vocabularyRus.filters.all')}</MenuItem>
+              <MenuItem value='true'>{t('vocabularyRus.status.active')}</MenuItem>
+              <MenuItem value='false'>{t('vocabularyRus.status.inactive')}</MenuItem>
             </Select>
           </FormControl>
         </Box>
@@ -206,7 +206,7 @@ const VocabularySearchPanel: React.FC<VocabularySearchPanelProps> = ({
               fontWeight: 600,
             }}
           >
-            {t('vocabularies.clearFilters')}
+            {t('vocabularyRus.clearFilters')}
           </Button>
           <Button
             variant='contained'
@@ -228,4 +228,4 @@ const VocabularySearchPanel: React.FC<VocabularySearchPanelProps> = ({
   );
 };
 
-export default VocabularySearchPanel;
+export default VocabularyRuSearchPanel;

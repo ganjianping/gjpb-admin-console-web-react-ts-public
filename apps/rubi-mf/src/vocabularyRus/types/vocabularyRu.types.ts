@@ -1,4 +1,4 @@
-export interface Vocabulary {
+export interface VocabularyRu {
   id: string;
   word: string;
   wordImageFilename?: string | null;
@@ -25,17 +25,17 @@ export interface Vocabulary {
   updatedAt?: string | null;
 }
 
-export interface VocabularyPaginatedResponse {
-  content: Vocabulary[];
+export interface VocabularyRuPaginatedResponse {
+  content: VocabularyRu[];
   page: number;
   size: number;
   totalElements: number;
   totalPages: number;
 }
 
-export type VocabularyActionType = 'create' | 'edit' | 'view';
+export type VocabularyRuActionType = 'create' | 'edit' | 'view';
 
-export interface VocabularyFormData {
+export interface VocabularyRuFormData {
   word: string;
   wordImageFilename: string;
   wordImageOriginalUrl: string;
@@ -61,7 +61,7 @@ export interface VocabularyFormData {
   phoneticAudioFile: File | null;
 }
 
-export interface VocabularySearchFormData {
+export interface VocabularyRuSearchFormData {
   word?: string;
   lang?: string;
   tags?: string;

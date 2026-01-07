@@ -1,6 +1,6 @@
-import type { VocabularyFormData } from '../types/vocabulary.types';
+import type { VocabularyRuFormData } from '../types/vocabularyRu.types';
 
-export const getEmptyVocabularyFormData = (): VocabularyFormData => ({
+export const getEmptyVocabularyRuFormData = (): VocabularyRuFormData => ({
   word: '',
   wordImageFilename: '',
   wordImageOriginalUrl: '',

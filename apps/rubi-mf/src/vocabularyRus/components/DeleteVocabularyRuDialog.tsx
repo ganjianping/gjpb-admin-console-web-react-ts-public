@@ -11,24 +11,24 @@ import {
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { AlertTriangle } from 'lucide-react';
-import type { Vocabulary } from '../types/vocabulary.types';
+import type { VocabularyRu } from '../types/vocabularyRu.types';
 
-interface DeleteVocabularyDialogProps {
+interface DeleteVocabularyRuDialogProps {
   open: boolean;
-  vocabulary: Vocabulary | null;
+  vocabularyRu: VocabularyRu | null;
   onClose: () => void;
-  onConfirm: (vocabulary: Vocabulary) => Promise<void>;
+  onConfirm: (vocabularyRu: VocabularyRu) => Promise<void>;
 }
 
-const DeleteVocabularyDialog = ({ open, vocabulary, onClose, onConfirm }: DeleteVocabularyDialogProps) => {
+const DeleteVocabularyRuDialog = ({ open, vocabularyRu, onClose, onConfirm }: DeleteVocabularyRuDialogProps) => {
   const { t } = useTranslation();
   const [deleting, setDeleting] = useState(false);
 
   const handleConfirm = async () => {
-    if (!vocabulary) return;
+    if (!vocabularyRu) return;
     setDeleting(true);
     try {
-      await onConfirm(vocabulary);
+      await onConfirm(vocabularyRu);
       onClose();
     } finally {
       setDeleting(false);
@@ -40,19 +40,19 @@ const DeleteVocabularyDialog = ({ open, vocabulary, onClose, onConfirm }: Delete
       <DialogTitle sx={{ pb: 1, display: 'flex', alignItems: 'center', gap: 1.5, borderBottom: '1px solid', borderColor: 'divider' }}>
         <AlertTriangle size={20} color="error" />
         <Typography variant="h6" component="span">
-          {t('vocabularies.delete')}
+          {t('vocabularyRus.delete')}
         </Typography>
       </DialogTitle>
       <DialogContent sx={{ pt: 3 }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <Alert severity="warning">{t('vocabularies.messages.deleteConfirmation')}</Alert>
-          {vocabulary && (
+          <Alert severity="warning">{t('vocabularyRus.messages.deleteConfirmation')}</Alert>
+          {vocabularyRu && (
             <Box sx={{ p: 2, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 1.5 }}>
               <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.5 }}>
-                {vocabulary.word}
+                {vocabularyRu.word}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                {vocabulary.definition || '-'}
+                {vocabularyRu.definition || '-'}
               </Typography>
             </Box>
           )}
@@ -70,4 +70,4 @@ const DeleteVocabularyDialog = ({ open, vocabulary, onClose, onConfirm }: Delete
   );
 };
 
-export default DeleteVocabularyDialog;
+export default DeleteVocabularyRuDialog;
