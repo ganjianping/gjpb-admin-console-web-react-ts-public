@@ -100,6 +100,9 @@ const shellResources = {
       vocabularies: {
         title: 'Vocabulary',
       },
+      mcqRus: {
+        title: 'MCQs',
+      },
       common: {
         goBack: 'Go Back',
         goHome: 'Go Home',
@@ -213,6 +216,9 @@ const shellResources = {
       },
       vocabularies: {
         title: '词汇管理',
+      },
+      mcqRus: {
+        title: '选择题',
       },
       common: {
         goBack: '返回',

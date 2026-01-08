@@ -82,6 +82,11 @@ const VocabularyRusPage = lazy(() =>
     default: module.VocabularyRusPage,
   })),
 );
+const McqRusPage = lazy(() =>
+  import("../../../../rubi-mf/src/public-api").then((module) => ({
+    default: module.McqRusPage,
+  })),
+);
 
 // Import dashboard (this also loads dashboard translations)
 import "../../dashboard";
@@ -389,6 +394,16 @@ const AppRoutes = () => {
             element={
               <Suspense fallback={<AppLoading />}>
                 <VocabularyRusPage />
+              </Suspense>
+            }
+          />
+
+          {/* MCQ Rus */}
+          <Route
+            path="mcqRus"
+            element={
+              <Suspense fallback={<AppLoading />}>
+                <McqRusPage />
               </Suspense>
             }
           />

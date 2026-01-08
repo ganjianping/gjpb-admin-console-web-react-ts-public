@@ -2,10 +2,17 @@ import i18n from '../../../../shared-lib/src/i18n/i18n';
 
 const enTranslations = {
   mcqRus: {
-    title: 'MCQ Rus',
+    title: 'MCQ',
     subtitle: 'Manage multiple choice questions and answers',
     description: 'Maintain the MCQ library with questions and options',
     pageTitle: 'MCQ Management',
+    createNew: 'Create New MCQ',
+    searchFilters: 'Search Filters',
+    question: 'Question',
+    language: 'Language',
+    tags: 'Tags',
+    statusLabel: 'Status',
+    searchByQuestion: 'Search by question text...',
     create: 'Create MCQ',
     edit: 'Edit MCQ',
     delete: 'Delete MCQ',
@@ -49,7 +56,6 @@ const enTranslations = {
       updatedAt: 'Updated At',
       createdBy: 'Created By',
       updatedBy: 'Updated By',
-      status: 'Status',
     },
     filters: {
       searchByQuestion: 'Search by question',
@@ -86,6 +92,8 @@ const enTranslations = {
       active: 'Active',
       inactive: 'Inactive',
     },
+    multipleChoice: 'Multiple Choice',
+    singleChoice: 'Single Choice',
     viewDialog: {
       details: 'Details',
       id: 'ID',
@@ -112,6 +120,13 @@ const zhTranslations = {
     subtitle: '管理多项选择题和答案',
     description: '维护MCQ题库和选项',
     pageTitle: 'MCQ管理',
+    createNew: '新建MCQ',
+    searchFilters: '搜索筛选',
+    question: '问题',
+    language: '语言',
+    tags: '标签',
+    statusLabel: '状态',
+    searchByQuestion: '按问题文本搜索...',
     create: '创建MCQ',
     edit: '编辑MCQ',
     delete: '删除MCQ',
@@ -155,7 +170,6 @@ const zhTranslations = {
       updatedAt: '更新时间',
       createdBy: '创建者',
       updatedBy: '更新者',
-      status: '状态',
     },
     filters: {
       searchByQuestion: '按问题搜索',
@@ -192,6 +206,8 @@ const zhTranslations = {
       active: '激活',
       inactive: '未激活',
     },
+    multipleChoice: '多选题',
+    singleChoice: '单选题',
     viewDialog: {
       details: '详情',
       id: 'ID',

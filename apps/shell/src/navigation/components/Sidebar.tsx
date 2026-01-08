@@ -177,6 +177,12 @@ const Sidebar = ({ drawerWidth, collapsedWidth, open, onClose, variant }: Sideba
           path: '/vocabularies',
           icon: BookOpen,
         },
+        {
+          key: 'mcqRus',
+          title: t('mcqRus.title'),
+          path: '/mcqRus',
+          icon: HelpCircle,
+        },
       ]
     },
     {

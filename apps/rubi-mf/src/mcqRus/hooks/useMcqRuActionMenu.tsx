@@ -39,7 +39,7 @@ export const useMcqRuActionMenu = ({
           color: 'error' as const,
           divider: true,
         },
-      ] as const,
+      ],
     [t, onView, onEdit, onDelete],
   );
 };
