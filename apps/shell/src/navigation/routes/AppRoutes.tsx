@@ -87,6 +87,11 @@ const MultipleChoiceQuestionRusPage = lazy(() =>
     default: module.MultipleChoiceQuestionRusPage,
   })),
 );
+const FreeTextQuestionRusPage = lazy(() =>
+  import("../../../../rubi-mf/src/public-api").then((module) => ({
+    default: module.FreeTextQuestionRusPage,
+  })),
+);
 
 // Import dashboard (this also loads dashboard translations)
 import "../../dashboard";
@@ -404,6 +409,16 @@ const AppRoutes = () => {
             element={
               <Suspense fallback={<AppLoading />}>
                 <MultipleChoiceQuestionRusPage />
+              </Suspense>
+            }
+          />
+
+          {/* Free Text Question Rus */}
+          <Route
+            path="freeTextQuestionRus"
+            element={
+              <Suspense fallback={<AppLoading />}>
+                <FreeTextQuestionRusPage />
               </Suspense>
             }
           />

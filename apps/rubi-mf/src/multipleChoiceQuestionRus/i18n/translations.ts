@@ -2,7 +2,7 @@ import i18n from '../../../../shared-lib/src/i18n/i18n';
 
 const enTranslations = {
   multipleChoiceQuestionRus: {
-    title: 'MCQs',
+    title: 'MCQ',
     subtitle: 'Manage multiple choice questions and answers',
     description: 'Maintain the multiple choice questions library',
     pageTitle: 'Multiple Choice Questions',

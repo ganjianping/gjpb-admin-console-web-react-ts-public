@@ -183,6 +183,12 @@ const Sidebar = ({ drawerWidth, collapsedWidth, open, onClose, variant }: Sideba
           path: '/multipleChoiceQuestionRus',
           icon: HelpCircle,
         },
+        {
+          key: 'freeTextQuestionRus',
+          title: t('freeTextQuestionRus.title'),
+          path: '/freeTextQuestionRus',
+          icon: HelpCircle,
+        },
       ]
     },
     {

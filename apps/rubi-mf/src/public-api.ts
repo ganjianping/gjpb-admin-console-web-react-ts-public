@@ -5,3 +5,7 @@ export { vocabularyRuService } from './vocabularyRus/services/vocabularyRuServic
 export { default as MultipleChoiceQuestionRusPage } from './multipleChoiceQuestionRus/pages/MultipleChoiceQuestionRusPage';
 export * from './multipleChoiceQuestionRus/types/multipleChoiceQuestionRu.types';
 export { multipleChoiceQuestionRuService } from './multipleChoiceQuestionRus/services/multipleChoiceQuestionRuService';
+
+export { default as FreeTextQuestionRusPage } from './freeTextQuestionRus/pages/FreeTextQuestionRusPage';
+export * from './freeTextQuestionRus/types/freeTextQuestionRu.types';
+export { freeTextQuestionRuService } from './freeTextQuestionRus/services/freeTextQuestionRuService';

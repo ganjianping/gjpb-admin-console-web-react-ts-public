@@ -101,7 +101,10 @@ const shellResources = {
         title: 'Vocabulary',
       },
       multipleChoiceQuestionRus: {
-        title: 'MCQs',
+        title: 'MCQ',
+      },
+      freeTextQuestionRus: {
+        title: 'FTQ',
       },
       common: {
         goBack: 'Go Back',
@@ -219,6 +222,9 @@ const shellResources = {
       },
       multipleChoiceQuestionRus: {
         title: '选择题',
+      },
+      freeTextQuestionRus: {
+        title: '填空题',
       },
       common: {
         goBack: '返回',
