@@ -20,6 +20,7 @@ export const getEmptyVocabularyRuFormData = (): VocabularyRuFormData => ({
   example: '',
   tags: '',
   lang: 'EN',
+  difficultyLevel: 'easy',
   displayOrder: 999,
   isActive: true,
   wordImageFile: null,

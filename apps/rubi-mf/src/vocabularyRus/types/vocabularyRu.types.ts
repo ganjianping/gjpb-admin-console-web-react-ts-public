@@ -19,6 +19,7 @@ export interface VocabularyRu {
   example?: string | null;
   tags?: string | null;
   lang?: string | null;
+  difficultyLevel?: string | null;
   displayOrder?: number | null;
   isActive?: boolean | null;
   createdBy?: string | null;
@@ -57,6 +58,7 @@ export interface VocabularyRuFormData {
   example: string;
   tags: string;
   lang: string;
+  difficultyLevel: string;
   displayOrder: number;
   isActive: boolean;
   wordImageFile: File | null;
@@ -66,6 +68,7 @@ export interface VocabularyRuFormData {
 export interface VocabularyRuSearchFormData {
   word?: string;
   lang?: string;
+  difficultyLevel?: string;
   tags?: string;
   isActive?: string | null;
 }

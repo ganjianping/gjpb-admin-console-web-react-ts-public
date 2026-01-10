@@ -29,6 +29,7 @@ import type { VocabularyRuFormData } from "../types/vocabularyRu.types";
 import { getEmptyVocabularyRuFormData } from "../utils/getEmptyVocabularyRuFormData";
 import {
   LANGUAGE_OPTIONS,
+  DIFFICULTY_LEVEL_OPTIONS,
   VOCABULARY_TAG_SETTING_KEY,
   VOCABULARY_PART_OF_SPEECH_SETTING_KEY,
 } from "../constants";
@@ -609,6 +610,22 @@ const VocabularyRuCreateDialog = ({
               onChange={(e) => handleChange("lang", e.target.value)}
             >
               {LANGUAGE_OPTIONS.map((opt) => (
+                <MenuItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>
+              {t("vocabularyRus.form.difficultyLevel")}
+            </FormLabel>
+            <Select
+              value={formData.difficultyLevel}
+              onChange={(e) => handleChange("difficultyLevel", e.target.value)}
+            >
+              {DIFFICULTY_LEVEL_OPTIONS.map((opt) => (
                 <MenuItem key={opt.value} value={opt.value}>
                   {opt.label}
                 </MenuItem>

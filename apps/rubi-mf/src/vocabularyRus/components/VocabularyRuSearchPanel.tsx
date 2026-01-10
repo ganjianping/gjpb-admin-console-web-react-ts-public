@@ -17,7 +17,7 @@ import {
 } from '@mui/material';
 import { Search } from 'lucide-react';
 import type { VocabularyRuSearchFormData } from '../types/vocabularyRu.types';
-import { VOCABULARY_TAG_SETTING_KEY, LANGUAGE_OPTIONS, VOCABULARY_LANG_SETTING_KEY } from '../constants';
+import { VOCABULARY_TAG_SETTING_KEY, LANGUAGE_OPTIONS, VOCABULARY_LANG_SETTING_KEY, DIFFICULTY_LEVEL_OPTIONS } from '../constants';
 
 interface VocabularyRuSearchPanelProps {
   searchFormData: VocabularyRuSearchFormData;
@@ -122,7 +122,7 @@ const VocabularyRuSearchPanel: React.FC<VocabularyRuSearchPanelProps> = ({
           {t('vocabularyRus.search')}
         </Typography>
 
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: '1fr 1fr 1fr 1fr' }, gap: 2, mb: 2.5 }}>
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: '1fr 1fr 1fr 1fr 1fr' }, gap: 2, mb: 2.5 }}>
           <FormControl variant='outlined' size='small' fullWidth>
             <FormLabel sx={{ mb: 1, fontSize: '0.875rem', fontWeight: 500 }}>{t('vocabularyRus.form.word')}</FormLabel>
             <TextField
@@ -151,6 +151,25 @@ const VocabularyRuSearchPanel: React.FC<VocabularyRuSearchPanelProps> = ({
             >
               <MenuItem value=''>{t('vocabularyRus.filters.all')}</MenuItem>
               {availableLangOptions.map((opt) => (
+                <MenuItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl variant='outlined' size='small' fullWidth>
+            <FormLabel sx={{ mb: 1, fontSize: '0.875rem', fontWeight: 500 }}>{t('vocabularyRus.form.difficultyLevel')}</FormLabel>
+            <Select
+              value={searchFormData.difficultyLevel || ''}
+              onChange={(e) => onFormChange('difficultyLevel', e.target.value)}
+              displayEmpty
+              sx={{
+                borderRadius: 1.5,
+              }}
+            >
+              <MenuItem value=''>{t('vocabularyRus.filters.all')}</MenuItem>
+              {DIFFICULTY_LEVEL_OPTIONS.map((opt) => (
                 <MenuItem key={opt.value} value={opt.value}>
                   {opt.label}
                 </MenuItem>

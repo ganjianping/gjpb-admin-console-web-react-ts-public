@@ -16,7 +16,7 @@ import { Eye, Tag, CheckCircle2, XCircle, Calendar, User, Copy, Check } from 'lu
 import { useState as useStateHook } from 'react';
 import type { VocabularyRu } from '../types/vocabularyRu.types';
 import '../i18n/translations';
-import { LANGUAGE_OPTIONS } from '../constants';
+import { LANGUAGE_OPTIONS, DIFFICULTY_LEVEL_OPTIONS } from '../constants';
 
 interface VocabularyRuViewDialogProps {
   open: boolean;
@@ -43,6 +43,12 @@ const VocabularyRuViewDialog = ({ open, vocabularyRu, onClose, onEdit }: Vocabul
     if (!code) return '-';
     const found = LANGUAGE_OPTIONS.find((o) => o.value === code.toUpperCase());
     return found ? `${found.label} (${code})` : code;
+  };
+
+  const difficultyLevelLabel = (level?: string | null) => {
+    if (!level) return '-';
+    const found = DIFFICULTY_LEVEL_OPTIONS.find((o) => o.value === level.toLowerCase());
+    return found ? found.label : level;
   };
 
   return (
@@ -112,6 +118,12 @@ const VocabularyRuViewDialog = ({ open, vocabularyRu, onClose, onEdit }: Vocabul
                     Language
                   </Typography>
                   <Chip label={languageLabel(vocabularyRu.lang)} size="small" sx={{ fontWeight: 600 }} />
+                </Box>
+                <Box>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>
+                    {t('vocabularyRus.form.difficultyLevel')}
+                  </Typography>
+                  <Chip label={difficultyLevelLabel(vocabularyRu.difficultyLevel)} size="small" sx={{ fontWeight: 600 }} />
                 </Box>
                 <Box>
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>

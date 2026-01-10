@@ -6,6 +6,7 @@ export const useVocabularyRuSearch = (allVocabularyRus: VocabularyRu[]) => {
   const [searchFormData, setSearchFormData] = useState<VocabularyRuSearchFormData>({
     word: '',
     lang: '',
+    difficultyLevel: '',
     tags: '',
     isActive: null,
   });
@@ -17,15 +18,17 @@ export const useVocabularyRuSearch = (allVocabularyRus: VocabularyRu[]) => {
     setSearchFormData({
       word: '',
       lang: '',
+      difficultyLevel: '',
       tags: '',
       isActive: null,
     });
 
   const applyClientSideFiltersWithData = (formData: VocabularyRuSearchFormData) => {
-    const { word, lang, tags, isActive } = formData;
+    const { word, lang, difficultyLevel, tags, isActive } = formData;
     return allVocabularyRus.filter((vocabularyRu) => {
       if (word && !vocabularyRu.word?.toLowerCase().includes(word.toLowerCase())) return false;
       if (lang && vocabularyRu.lang !== lang) return false;
+      if (difficultyLevel && vocabularyRu.difficultyLevel !== difficultyLevel) return false;
       if (tags && !vocabularyRu.tags?.toLowerCase().includes(tags.toLowerCase())) return false;
       if (isActive === 'true' && !vocabularyRu.isActive) return false;
       if (isActive === 'false' && vocabularyRu.isActive) return false;

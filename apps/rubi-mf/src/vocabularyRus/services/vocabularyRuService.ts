@@ -12,6 +12,7 @@ export interface VocabularyRuQueryParams {
   direction?: 'asc' | 'desc';
   word?: string;
   lang?: string;
+  difficultyLevel?: string;
   tags?: string;
   isActive?: boolean;
 }
@@ -33,6 +34,7 @@ export interface CreateVocabularyRuRequest {
   example?: string;
   tags?: string;
   lang: string;
+  difficultyLevel?: string;
   displayOrder?: number;
   isActive?: boolean;
   dictionaryUrl?: string;
@@ -60,6 +62,7 @@ export interface UpdateVocabularyRuRequest {
   example?: string;
   tags?: string;
   lang?: string;
+  difficultyLevel?: string;
   displayOrder?: number;
   isActive?: boolean;
   dictionaryUrl?: string;

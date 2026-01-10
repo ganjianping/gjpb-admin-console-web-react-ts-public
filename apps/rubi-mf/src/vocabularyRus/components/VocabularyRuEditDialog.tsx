@@ -27,7 +27,7 @@ import { Edit, Upload, Link } from 'lucide-react';
 import { TiptapTextEditor } from '../../../../shared-lib/src/ui-components';
 import type { VocabularyRu, VocabularyRuFormData } from '../types/vocabularyRu.types';
 import { getEmptyVocabularyRuFormData } from '../utils/getEmptyVocabularyRuFormData';
-import { LANGUAGE_OPTIONS, VOCABULARY_TAG_SETTING_KEY, VOCABULARY_PART_OF_SPEECH_SETTING_KEY } from '../constants';
+import { LANGUAGE_OPTIONS, DIFFICULTY_LEVEL_OPTIONS, VOCABULARY_TAG_SETTING_KEY, VOCABULARY_PART_OF_SPEECH_SETTING_KEY } from '../constants';
 import '../i18n/translations';
 
 interface VocabularyRuEditDialogProps {
@@ -94,6 +94,7 @@ const VocabularyRuEditDialog = ({ open, vocabularyRu, onClose, onConfirm }: Voca
         example: vocabularyRu.example || '',
         tags: vocabularyRu.tags || '',
         lang: vocabularyRu.lang || (i18n.language.toUpperCase().startsWith('ZH') ? 'ZH' : 'EN'),
+        difficultyLevel: vocabularyRu.difficultyLevel || 'easy',
         displayOrder: vocabularyRu.displayOrder ?? 0,
         isActive: vocabularyRu.isActive ?? true,
         wordImageFile: null,
@@ -497,6 +498,17 @@ const VocabularyRuEditDialog = ({ open, vocabularyRu, onClose, onConfirm }: Voca
             <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.lang')}</FormLabel>
             <Select value={formData.lang} onChange={(e) => handleChange('lang', e.target.value)}>
               {LANGUAGE_OPTIONS.map((opt) => (
+                <MenuItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.difficultyLevel')}</FormLabel>
+            <Select value={formData.difficultyLevel} onChange={(e) => handleChange('difficultyLevel', e.target.value)}>
+              {DIFFICULTY_LEVEL_OPTIONS.map((opt) => (
                 <MenuItem key={opt.value} value={opt.value}>
                   {opt.label}
                 </MenuItem>
