@@ -7,5 +7,15 @@ export * from './multipleChoiceQuestionRus/types/multipleChoiceQuestionRu.types'
 export { multipleChoiceQuestionRuService } from './multipleChoiceQuestionRus/services/multipleChoiceQuestionRuService';
 
 export { default as FreeTextQuestionRusPage } from './freeTextQuestionRus/pages/FreeTextQuestionRusPage';
-export * from './freeTextQuestionRus/types/freeTextQuestionRu.types';
+// Explicitly export types with prefixes to avoid ambiguity
+export type {
+  FreeTextQuestionRu,
+  FreeTextQuestionRuPaginatedResponse,
+  FreeTextQuestionRuActionType,
+  FreeTextQuestionRuFormData,
+  FreeTextQuestionRuSearchFormData,
+  QuestionImageRu as FreeTextQuestionImageRu,
+  UploadQuestionImageRuByUrlRequest as FreeTextUploadQuestionImageRuByUrlRequest,
+  UploadQuestionImageRuByFileRequest as FreeTextUploadQuestionImageRuByFileRequest,
+} from './freeTextQuestionRus/types/freeTextQuestionRu.types';
 export { freeTextQuestionRuService } from './freeTextQuestionRus/services/freeTextQuestionRuService';

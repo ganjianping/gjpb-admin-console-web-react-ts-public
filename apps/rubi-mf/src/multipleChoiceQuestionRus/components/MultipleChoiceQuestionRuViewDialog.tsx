@@ -13,7 +13,7 @@ import {
   Card,
   CardContent,
 } from "@mui/material";
-import { Edit as EditIcon } from "@mui/icons-material";
+import { Edit as EditIcon, CheckCircle as CheckCircleIcon } from "@mui/icons-material";
 import type { MultipleChoiceQuestionRu } from "../types/multipleChoiceQuestionRu.types";
 import { DIFFICULTY_LEVELS, LANGUAGES } from "../constants";
 
@@ -45,6 +45,61 @@ const MultipleChoiceQuestionRuViewDialog: React.FC<
     return lang ? lang.label : value;
   };
 
+  const renderCorrectAnswers = () => {
+    const options = [
+      { key: "A", value: multipleChoiceQuestionRu.optionA },
+      { key: "B", value: multipleChoiceQuestionRu.optionB },
+      { key: "C", value: multipleChoiceQuestionRu.optionC },
+      { key: "D", value: multipleChoiceQuestionRu.optionD },
+    ];
+
+    const correctAnswers =
+      multipleChoiceQuestionRu.correctAnswers
+        ?.split(",")
+        .map((a: string) => a.trim().toUpperCase()) || [];
+
+    const correctOptions = options.filter((option) =>
+      correctAnswers.includes(option.key),
+    );
+
+    if (correctOptions.length === 0) return null;
+
+    const cleanHtml = (html: string) => {
+      let cleaned = html;
+      if (cleaned.startsWith('<p>')) {
+        cleaned = cleaned.substring(3);
+      }
+      if (cleaned.endsWith('</p>')) {
+        cleaned = cleaned.substring(0, cleaned.length - 4);
+      }
+      return cleaned;
+    };
+
+    return (
+      <Box sx={{ mt: 2 }}>
+        <Typography variant="h6" gutterBottom>
+          {t("multipleChoiceQuestionRus.viewDialog.correctAnswers")}
+        </Typography>
+        {correctOptions.map((option, index) => (
+          <Typography
+            key={option.key}
+            variant="body1"
+            sx={{
+              fontWeight: "bold",
+              color: "success.main",
+              display: "inline",
+            }}
+            dangerouslySetInnerHTML={{
+              __html: `${option.key}. ${cleanHtml(option.value)}${
+                index < correctOptions.length - 1 ? "; " : ""
+              }`,
+            }}
+          />
+        ))}
+      </Box>
+    );
+  };
+
   const renderOptions = () => {
     const options = [
       { key: "A", value: multipleChoiceQuestionRu.optionA },
@@ -58,8 +113,19 @@ const MultipleChoiceQuestionRuViewDialog: React.FC<
         ?.split(",")
         .map((a: string) => a.trim().toUpperCase()) || [];
 
+    const cleanHtml = (html: string) => {
+      let cleaned = html;
+      if (cleaned.startsWith('<p>')) {
+        cleaned = cleaned.substring(3);
+      }
+      if (cleaned.endsWith('</p>')) {
+        cleaned = cleaned.substring(0, cleaned.length - 4);
+      }
+      return cleaned;
+    };
+
     return options.map((option) => (
-      <Box key={option.key} sx={{ mb: 1 }}>
+      <Box key={option.key} sx={{ mb: 1, display: "flex", alignItems: "center" }}>
         <Typography
           variant="body1"
           sx={{
@@ -68,14 +134,15 @@ const MultipleChoiceQuestionRuViewDialog: React.FC<
               ? "success.main"
               : "text.primary",
           }}
-          dangerouslySetInnerHTML={{ __html: `${option.key}. ${option.value}` }}
+          dangerouslySetInnerHTML={{ __html: `${option.key}. ${cleanHtml(option.value)}` }}
         />
         {correctAnswers.includes(option.key) && (
-          <Chip
-            label={t("multipleChoiceQuestionRus.viewDialog.correct")}
-            size="small"
-            color="success"
-            sx={{ ml: 1, fontSize: "0.75rem" }}
+          <CheckCircleIcon
+            sx={{
+              ml: 1,
+              color: "success.main",
+              fontSize: "1.2rem"
+            }}
           />
         )}
       </Box>
@@ -93,9 +160,6 @@ const MultipleChoiceQuestionRuViewDialog: React.FC<
         <Box sx={{ pt: 2 }}>
           <Card sx={{ mb: 2 }}>
             <CardContent>
-              <Typography variant="h6" gutterBottom>
-                {t("multipleChoiceQuestionRus.form.question")}
-              </Typography>
               <Typography
                 variant="body1"
                 sx={{ mb: 2 }}
@@ -106,9 +170,6 @@ const MultipleChoiceQuestionRuViewDialog: React.FC<
 
               <Divider sx={{ my: 2 }} />
 
-              <Typography variant="h6" gutterBottom>
-                {t("multipleChoiceQuestionRus.form.options")}
-              </Typography>
               {renderOptions()}
 
               {multipleChoiceQuestionRu.explanation && (
