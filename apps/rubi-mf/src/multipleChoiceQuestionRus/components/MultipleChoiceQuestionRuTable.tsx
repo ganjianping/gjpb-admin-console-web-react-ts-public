@@ -83,6 +83,14 @@ const MultipleChoiceQuestionRuTable = memo(
           header: t('multipleChoiceQuestionRus.columns.displayOrder'),
           cell: (info) => <Typography variant="body2">{info.getValue()}</Typography>,
         }),
+        columnHelper.accessor('successCount', {
+          header: t('multipleChoiceQuestionRus.columns.successCount'),
+          cell: (info) => <Typography variant="body2">{info.getValue() || 0}</Typography>,
+        }),
+        columnHelper.accessor('failCount', {
+          header: t('multipleChoiceQuestionRus.columns.failCount'),
+          cell: (info) => <Typography variant="body2">{info.getValue() || 0}</Typography>,
+        }),
         columnHelper.accessor('isActive', {
           header: t('multipleChoiceQuestionRus.columns.isActive'),
           cell: (info) => {
