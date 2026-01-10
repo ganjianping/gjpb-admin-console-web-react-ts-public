@@ -72,17 +72,22 @@ const VocabularyRuTable = memo(
 
             const handlePlayAudio = () => {
               if (vocabularyRu.phoneticAudioUrl) {
-                console.log("Playing audio:", vocabularyRu.phoneticAudioUrl);
-                const audio = new Audio(vocabularyRu.phoneticAudioUrl);
-                audio
-                  .play()
-                  .then(() => console.log("Audio started playing"))
-                  .catch((err) => {
-                    console.error("Failed to play audio:", err);
-                    console.error("Audio URL:", vocabularyRu.phoneticAudioUrl);
-                  });
+                console.log("Playing audio for word:", vocabularyRu.word, "URL:", vocabularyRu.phoneticAudioUrl);
+                try {
+                  const audio = new Audio(vocabularyRu.phoneticAudioUrl);
+                  audio.volume = 0.5; // Set volume to 50%
+                  audio
+                    .play()
+                    .then(() => console.log("Audio started playing for:", vocabularyRu.word))
+                    .catch((err) => {
+                      console.error("Failed to play audio for:", vocabularyRu.word, err);
+                      console.error("Audio URL:", vocabularyRu.phoneticAudioUrl);
+                    });
+                } catch (error) {
+                  console.error("Error creating audio element for:", vocabularyRu.word, error);
+                }
               } else {
-                console.log("No audio URL available");
+                console.log("No audio URL available for word:", vocabularyRu.word);
               }
             };
 

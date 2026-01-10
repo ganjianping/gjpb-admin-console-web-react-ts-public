@@ -20,6 +20,7 @@ import {
   Radio,
   Alert,
   IconButton,
+  CircularProgress,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { Edit, Upload, Link } from 'lucide-react';
@@ -523,8 +524,13 @@ const VocabularyRuEditDialog = ({ open, vocabularyRu, onClose, onConfirm }: Voca
         <Button onClick={onClose} variant="outlined" disabled={loading}>
           {t('common.cancel')}
         </Button>
-        <Button onClick={handleSubmit} variant="contained" disabled={loading}>
-          {t('common.save')}
+        <Button 
+          onClick={handleSubmit} 
+          variant="contained" 
+          disabled={loading}
+          startIcon={loading ? <CircularProgress size={16} color="inherit" /> : null}
+        >
+          {loading ? t('common.saving', 'Saving...') : t('common.save')}
         </Button>
       </DialogActions>
     </Dialog>
