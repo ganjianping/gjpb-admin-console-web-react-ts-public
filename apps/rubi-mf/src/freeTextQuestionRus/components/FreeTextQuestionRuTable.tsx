@@ -13,6 +13,19 @@ import { STATUS_MAPS } from "../constants";
 
 const columnHelper = createColumnHelper<FreeTextQuestionRu>();
 
+// Utility function to strip HTML tags and truncate text
+const stripHtmlAndTruncate = (html: string, maxLength: number = 60): string => {
+  if (!html) return '-';
+  
+  // Strip HTML tags
+  const stripped = html.replace(/<[^>]*>/g, '');
+  
+  // Truncate to maxLength characters
+  if (stripped.length <= maxLength) return stripped;
+  
+  return stripped.substring(0, maxLength) + '...';
+};
+
 const FreeTextQuestionRuTable = memo(
   ({
     freeTextQuestionRus,
@@ -38,9 +51,7 @@ const FreeTextQuestionRuTable = memo(
           header: t("freeTextQuestionRus.columns.question"),
           cell: (info) => {
             const question = info.getValue();
-            const displayText = question
-              ? question.substring(0, 100) + (question.length > 100 ? "..." : "")
-              : "-";
+            const displayText = stripHtmlAndTruncate(question);
             return (
               <Typography variant="body2" sx={{ fontWeight: 500 }}>
                 {displayText}

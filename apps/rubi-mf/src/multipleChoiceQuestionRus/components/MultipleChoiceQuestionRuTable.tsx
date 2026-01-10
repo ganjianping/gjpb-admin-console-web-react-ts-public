@@ -9,6 +9,19 @@ import { STATUS_MAPS, DIFFICULTY_LEVELS, LANGUAGES } from '../constants';
 
 const columnHelper = createColumnHelper<MultipleChoiceQuestionRu>();
 
+// Utility function to strip HTML tags and truncate text
+const stripHtmlAndTruncate = (html: string, maxLength: number = 60): string => {
+  if (!html) return '-';
+  
+  // Strip HTML tags
+  const stripped = html.replace(/<[^>]*>/g, '');
+  
+  // Truncate to maxLength characters
+  if (stripped.length <= maxLength) return stripped;
+  
+  return stripped.substring(0, maxLength) + '...';
+};
+
 interface MultipleChoiceQuestionRuTableProps {
   multipleChoiceQuestionRus: MultipleChoiceQuestionRu[];
   pagination?: any;
@@ -49,12 +62,7 @@ const MultipleChoiceQuestionRuTable = memo(
           header: t('multipleChoiceQuestionRus.columns.question'),
           cell: (info) => {
             const question = info.getValue();
-            if (!question) return <Typography variant="body2">-</Typography>;
-
-            const displayText = question.length > 70
-              ? question.substring(0, 70) + '...'
-              : question;
-
+            const displayText = stripHtmlAndTruncate(question);
             return <Typography variant="body2">{displayText}</Typography>;
           },
           size: 300,
