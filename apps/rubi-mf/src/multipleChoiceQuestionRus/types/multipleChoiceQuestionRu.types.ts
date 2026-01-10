@@ -72,16 +72,14 @@ export interface QuestionImageRu {
 }
 
 export interface UploadQuestionImageRuByUrlRequest {
-  questionId: string;
-  questionTitle: string;
+  multipleChoiceQuestionId: string;
   originalUrl: string;
   filename: string;
   lang: string;
 }
 
 export interface UploadQuestionImageRuByFileRequest {
-  questionId: string;
-  questionTitle: string;
+  multipleChoiceQuestionId: string;
   file: File;
   filename: string;
 }

@@ -145,8 +145,7 @@ const MultipleChoiceQuestionRuEditDialog: React.FC<
     try {
       setLocalSaving(true);
       await multipleChoiceQuestionRuService.uploadQuestionImageByUrl({
-        questionId: multipleChoiceQuestionRu.id,
-        questionTitle: formData.question,
+        multipleChoiceQuestionId: multipleChoiceQuestionRu.id,
         originalUrl: uploadUrl,
         filename: uploadFilename,
         lang: formData.lang,
@@ -166,8 +165,7 @@ const MultipleChoiceQuestionRuEditDialog: React.FC<
     try {
       setLocalSaving(true);
       await multipleChoiceQuestionRuService.uploadQuestionImageByFile({
-        questionId: multipleChoiceQuestionRu.id,
-        questionTitle: formData.question,
+        multipleChoiceQuestionId: multipleChoiceQuestionRu.id,
         file: uploadFile,
         filename: uploadFileFilename,
       });

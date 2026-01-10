@@ -69,8 +69,8 @@ class MultipleChoiceQuestionRuService {
     return apiClient.delete(`${this.crudUrl}/${id}`);
   }
 
-  async getQuestionImages(questionId: string): Promise<ApiResponse<QuestionImageRu[]>> {
-    return apiClient.get('/v1/question-image-rus', { params: { questionId } });
+  async getQuestionImages(multipleChoiceQuestionId: string): Promise<ApiResponse<QuestionImageRu[]>> {
+    return apiClient.get('/v1/question-image-rus', { params: { multipleChoiceQuestionId } });
   }
 
   async uploadQuestionImageByUrl(data: UploadQuestionImageRuByUrlRequest): Promise<ApiResponse<QuestionImageRu>> {
@@ -79,8 +79,7 @@ class MultipleChoiceQuestionRuService {
 
   async uploadQuestionImageByFile(data: UploadQuestionImageRuByFileRequest): Promise<ApiResponse<QuestionImageRu>> {
     const formData = new FormData();
-    formData.append('questionId', data.questionId);
-    formData.append('questionTitle', data.questionTitle);
+    formData.append('multipleChoiceQuestionId', data.multipleChoiceQuestionId);
     formData.append('filename', data.filename);
     formData.append('file', data.file);
     return apiClient.post('/v1/question-image-rus', formData);
