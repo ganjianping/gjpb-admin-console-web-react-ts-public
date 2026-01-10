@@ -92,10 +92,10 @@ const DeleteMultipleChoiceQuestionRuDialog: React.FC<DeleteMultipleChoiceQuestio
             </Typography>
 
             <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-              {t('multipleChoiceQuestionRus.form.correctAnswers')}
+              {t('multipleChoiceQuestionRus.form.answer')}
             </Typography>
             <Typography variant="body2">
-              {multipleChoiceQuestionRu.correctAnswers}
+              {multipleChoiceQuestionRu.answer}
             </Typography>
           </Box>
         </Box>

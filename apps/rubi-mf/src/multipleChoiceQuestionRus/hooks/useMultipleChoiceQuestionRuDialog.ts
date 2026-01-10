@@ -38,8 +38,8 @@ export const useMultipleChoiceQuestionRuDialog = () => {
       errors.optionD = t('validation.optionDRequired');
     }
 
-    if (!formData.correctAnswers?.trim()) {
-      errors.correctAnswers = t('validation.correctAnswersRequired');
+    if (!formData.answer?.trim()) {
+      errors.answer = t('validation.answerRequired');
     }
 
     if (!formData.difficultyLevel) {

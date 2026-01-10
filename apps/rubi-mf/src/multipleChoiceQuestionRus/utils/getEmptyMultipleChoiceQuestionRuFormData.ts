@@ -6,7 +6,7 @@ export const getEmptyMultipleChoiceQuestionRuFormData = (): MultipleChoiceQuesti
   optionB: '',
   optionC: '',
   optionD: '',
-  correctAnswers: '',
+  answer: '',
   explanation: '',
   difficultyLevel: '',
   tags: '',

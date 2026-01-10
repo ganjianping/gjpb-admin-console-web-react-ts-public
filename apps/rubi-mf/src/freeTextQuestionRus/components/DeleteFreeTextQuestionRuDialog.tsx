@@ -52,7 +52,7 @@ const DeleteFreeTextQuestionRuDialog = ({ open, freeTextQuestionRu, onClose, onC
                 {freeTextQuestionRu.question}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                {freeTextQuestionRu.correctAnswer || '-'}
+                {freeTextQuestionRu.answer || '-'}
               </Typography>
             </Box>
           )}

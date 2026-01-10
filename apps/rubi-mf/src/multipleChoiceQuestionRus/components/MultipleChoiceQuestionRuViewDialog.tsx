@@ -60,8 +60,8 @@ const MultipleChoiceQuestionRuViewDialog: React.FC<
       { key: "D", value: multipleChoiceQuestionRu.optionD },
     ];
 
-    const correctAnswers =
-      multipleChoiceQuestionRu.correctAnswers
+    const answer =
+      multipleChoiceQuestionRu.answer
         ?.split(",")
         .map((a: string) => a.trim().toUpperCase()) || [];
 
@@ -84,8 +84,8 @@ const MultipleChoiceQuestionRuViewDialog: React.FC<
           mb: 2,
           borderRadius: 2,
           border: '2px solid',
-          borderColor: correctAnswers.includes(option.key) ? 'primary.main' : 'grey.300',
-          backgroundColor: correctAnswers.includes(option.key) ? 'primary.50' : 'background.paper',
+          borderColor: answer.includes(option.key) ? 'primary.main' : 'grey.300',
+          backgroundColor: answer.includes(option.key) ? 'primary.50' : 'background.paper',
           display: "flex",
           alignItems: "center",
           gap: 2,
@@ -100,7 +100,7 @@ const MultipleChoiceQuestionRuViewDialog: React.FC<
             width: 40,
             height: 40,
             borderRadius: '50%',
-            backgroundColor: correctAnswers.includes(option.key) ? 'primary.main' : 'grey.400',
+            backgroundColor: answer.includes(option.key) ? 'primary.main' : 'grey.400',
             color: 'white',
             display: 'flex',
             alignItems: 'center',
@@ -119,7 +119,7 @@ const MultipleChoiceQuestionRuViewDialog: React.FC<
             dangerouslySetInnerHTML={{ __html: cleanHtml(option.value) }}
           />
         </Box>
-        {correctAnswers.includes(option.key) && (
+        {answer.includes(option.key) && (
           <CheckCircleIcon sx={{ color: "primary.main", fontSize: "1.75rem", flexShrink: 0 }} />
         )}
       </Box>
@@ -301,9 +301,9 @@ const MultipleChoiceQuestionRuViewDialog: React.FC<
                       </Typography>
                     </Box>
                     <Box>
-                      <Typography variant="caption" sx={{ color: 'text.secondary' }}>Correct Answers</Typography>
+                      <Typography variant="caption" sx={{ color: 'text.secondary' }}>Correct Answer</Typography>
                       <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                        {multipleChoiceQuestionRu.correctAnswers || '-'}
+                        {multipleChoiceQuestionRu.answer || '-'}
                       </Typography>
                     </Box>
                     {multipleChoiceQuestionRu.tags && multipleChoiceQuestionRu.tags.split(',').length > 4 && (

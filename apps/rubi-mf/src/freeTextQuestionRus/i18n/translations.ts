@@ -3,7 +3,7 @@ import i18n from '../../../../shared-lib/src/i18n/i18n';
 const enTranslations = {
   freeTextQuestionRus: {
     title: 'FTQ',
-    subtitle: 'Manage free text questions and answers',
+    subtitle: 'Manage free text questions and answer',
     description: 'Maintain the free text question library',
     pageTitle: 'Free Text Question',
     create: 'Create Free Text Question',
@@ -15,7 +15,7 @@ const enTranslations = {
     noFreeTextQuestionsFound: 'No Free Text Questions found',
     columns: {
       question: 'Question',
-      correctAnswer: 'Correct Answer',
+      answer: 'Correct Answer',
       difficultyLevel: 'Difficulty',
       lang: 'Language',
       tags: 'Tags',
@@ -25,7 +25,7 @@ const enTranslations = {
     },
     form: {
       question: 'Question',
-      correctAnswer: 'Correct Answer',
+      answer: 'Correct Answer',
       explanation: 'Explanation',
       difficultyLevel: 'Difficulty Level',
       tags: 'Tags',
@@ -85,7 +85,7 @@ const zhTranslations = {
     noFreeTextQuestionsFound: '未找到自由文本问题',
     columns: {
       question: '问题',
-      correctAnswer: '正确答案',
+      answer: '正确答案',
       difficultyLevel: '难度',
       lang: '语言',
       tags: '标签',
@@ -95,7 +95,7 @@ const zhTranslations = {
     },
     form: {
       question: '问题',
-      correctAnswer: '正确答案',
+      answer: '正确答案',
       explanation: '解释',
       difficultyLevel: '难度级别',
       tags: '标签',

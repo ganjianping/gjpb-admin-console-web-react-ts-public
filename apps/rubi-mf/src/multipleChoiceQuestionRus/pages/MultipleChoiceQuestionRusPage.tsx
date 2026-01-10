@@ -38,7 +38,7 @@ const MultipleChoiceQuestionRusPage: React.FC = () => {
     optionB: multipleChoiceQuestionRu.optionB || '',
     optionC: multipleChoiceQuestionRu.optionC || '',
     optionD: multipleChoiceQuestionRu.optionD || '',
-    correctAnswers: multipleChoiceQuestionRu.correctAnswers || '',
+    answer: multipleChoiceQuestionRu.answer || '',
     explanation: multipleChoiceQuestionRu.explanation || '',
     difficultyLevel: multipleChoiceQuestionRu.difficultyLevel || '',
     tags: multipleChoiceQuestionRu.tags || '',
@@ -77,7 +77,7 @@ const MultipleChoiceQuestionRusPage: React.FC = () => {
       optionB: formData.optionB,
       optionC: formData.optionC,
       optionD: formData.optionD,
-      correctAnswers: formData.correctAnswers,
+      answer: formData.answer,
       explanation: formData.explanation,
       difficultyLevel: formData.difficultyLevel,
       tags: formData.tags,
@@ -97,7 +97,7 @@ const MultipleChoiceQuestionRusPage: React.FC = () => {
       optionB: formData.optionB,
       optionC: formData.optionC,
       optionD: formData.optionD,
-      correctAnswers: formData.correctAnswers,
+      answer: formData.answer,
       explanation: formData.explanation,
       difficultyLevel: formData.difficultyLevel,
       tags: formData.tags,
@@ -164,7 +164,7 @@ const MultipleChoiceQuestionRusPage: React.FC = () => {
 
       <MultipleChoiceQuestionRuViewDialog
         open={dialog.dialogOpen && dialog.actionType === 'view'}
-        multipleChoiceQuestionRu={dialog.selectedMultipleChoiceQuestionRu || { id: '', question: '', optionA: '', optionB: '', optionC: '', optionD: '', correctAnswers: '', explanation: '', difficultyLevel: '', failCount: 0, successCount: 0, tags: '', lang: 'EN', displayOrder: 999, isActive: true, createdAt: '', updatedAt: '' }}
+        multipleChoiceQuestionRu={dialog.selectedMultipleChoiceQuestionRu || { id: '', question: '', optionA: '', optionB: '', optionC: '', optionD: '', answer: '', explanation: '', difficultyLevel: '', failCount: 0, successCount: 0, tags: '', lang: 'EN', displayOrder: 999, isActive: true, createdAt: '', updatedAt: '' }}
         onClose={() => dialog.setDialogOpen(false)}
         onEdit={(multipleChoiceQuestionRu) => {
           dialog.setSelectedMultipleChoiceQuestionRu(multipleChoiceQuestionRu);

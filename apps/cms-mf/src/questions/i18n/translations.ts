@@ -3,7 +3,7 @@ import i18n from '../../../../shared-lib/src/i18n/i18n';
 const enTranslations = {
   questions: {
     title: 'Questions',
-    subtitle: 'Manage questions and answers',
+    subtitle: 'Manage questions and answer',
     pageTitle: 'Question Management',
     create: 'Create Question',
     edit: 'Edit Question',

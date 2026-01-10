@@ -2,7 +2,7 @@ import type { FreeTextQuestionRuFormData } from '../types/freeTextQuestionRu.typ
 
 export const getEmptyFreeTextQuestionRuFormData = (): FreeTextQuestionRuFormData => ({
   question: '',
-  correctAnswer: '',
+  answer: '',
   explanation: '',
   difficultyLevel: '',
   tags: '',

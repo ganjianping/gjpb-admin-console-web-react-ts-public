@@ -22,7 +22,7 @@ export interface FreeTextQuestionRuQueryParams {
 
 export interface CreateFreeTextQuestionRuRequest {
   question: string;
-  correctAnswer: string;
+  answer: string;
   explanation?: string;
   difficultyLevel?: string;
   tags?: string;
@@ -33,7 +33,7 @@ export interface CreateFreeTextQuestionRuRequest {
 
 export interface UpdateFreeTextQuestionRuRequest {
   question?: string;
-  correctAnswer?: string;
+  answer?: string;
   explanation?: string;
   difficultyLevel?: string;
   tags?: string;

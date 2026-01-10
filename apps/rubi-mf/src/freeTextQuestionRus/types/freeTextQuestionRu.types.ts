@@ -1,7 +1,7 @@
 export interface FreeTextQuestionRu {
   id: string;
   question: string;
-  correctAnswer: string | null;
+  answer: string | null;
   explanation?: string | null;
   difficultyLevel?: string | null;
   tags?: string | null;
@@ -26,7 +26,7 @@ export type FreeTextQuestionRuActionType = "create" | "edit" | "view";
 
 export interface FreeTextQuestionRuFormData {
   question: string;
-  correctAnswer: string;
+  answer: string;
   explanation: string;
   difficultyLevel: string;
   tags: string;

@@ -5,7 +5,7 @@ export interface MultipleChoiceQuestionRu {
   optionB: string;
   optionC: string;
   optionD: string;
-  correctAnswers: string;
+  answer: string;
   explanation?: string | null;
   difficultyLevel?: string | null;
   failCount: number;
@@ -36,7 +36,7 @@ export interface MultipleChoiceQuestionRuFormData {
   optionB: string;
   optionC: string;
   optionD: string;
-  correctAnswers: string;
+  answer: string;
   explanation: string;
   difficultyLevel: string;
   tags: string;

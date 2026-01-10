@@ -79,8 +79,8 @@ const FreeTextQuestionRuViewDialog = ({
                   <Box sx={{ mt: 3 }}>
                     <Box sx={{ p: 3, backgroundColor: 'rgba(255,255,255,0.9)', borderRadius: 2, border: '2px solid', borderColor: 'primary.main' }}>
                       <Typography variant="body1" sx={{ fontWeight: 500, fontSize: '1rem', lineHeight: 1.8 }}>
-                        {freeTextQuestionRu.correctAnswer ? (
-                          <div dangerouslySetInnerHTML={{ __html: freeTextQuestionRu.correctAnswer }} />
+                        {freeTextQuestionRu.answer ? (
+                          <div dangerouslySetInnerHTML={{ __html: freeTextQuestionRu.answer }} />
                         ) : (
                           <em>No correct answer provided</em>
                         )}

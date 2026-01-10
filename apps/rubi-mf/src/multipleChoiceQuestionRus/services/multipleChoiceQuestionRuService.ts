@@ -25,7 +25,7 @@ export interface CreateMultipleChoiceQuestionRuRequest {
   optionB: string;
   optionC: string;
   optionD: string;
-  correctAnswers: string;
+  answer: string;
   explanation?: string;
   difficultyLevel?: string;
   tags?: string;
@@ -40,7 +40,7 @@ export interface UpdateMultipleChoiceQuestionRuRequest {
   optionB?: string;
   optionC?: string;
   optionD?: string;
-  correctAnswers?: string;
+  answer?: string;
   explanation?: string;
   difficultyLevel?: string;
   tags?: string;

@@ -209,9 +209,9 @@ const MultipleChoiceQuestionRuCreateDialog: React.FC<
   };
 
   const validateForm = (): boolean => {
-    // Only Question and Correct Answers are mandatory
+    // Only Question and Correct Answer are mandatory
     if (!formData.question?.trim()) return false;
-    if (!formData.correctAnswers?.trim()) return false;
+    if (!formData.answer?.trim()) return false;
     return true;
   };
 
@@ -324,19 +324,19 @@ const MultipleChoiceQuestionRuCreateDialog: React.FC<
             />
           </FormControl>
 
-          <FormControl fullWidth error={!formData.correctAnswers?.trim()}>
-            <FormLabel sx={{ mb: 1 }}>{t("multipleChoiceQuestionRus.form.correctAnswers")} *</FormLabel>
+          <FormControl fullWidth error={!formData.answer?.trim()}>
+            <FormLabel sx={{ mb: 1 }}>{t("multipleChoiceQuestionRus.form.answer")} *</FormLabel>
             <TextField
               fullWidth
-              value={formData.correctAnswers}
-              onChange={(e) => handleFormChange("correctAnswers", e.target.value)}
-              placeholder={t("multipleChoiceQuestionRus.form.correctAnswersPlaceholder")}
-              error={!formData.correctAnswers?.trim()}
+              value={formData.answer}
+              onChange={(e) => handleFormChange("answer", e.target.value)}
+              placeholder={t("multipleChoiceQuestionRus.form.answerPlaceholder")}
+              error={!formData.answer?.trim()}
             />
-            <Typography variant="caption" color={formData.correctAnswers?.trim() ? "text.secondary" : "error"} sx={{ mt: 0.5 }}>
-              {formData.correctAnswers?.trim()
-                ? t("multipleChoiceQuestionRus.form.correctAnswersHelp")
-                : t("multipleChoiceQuestionRus.validation.correctAnswersRequired")}
+            <Typography variant="caption" color={formData.answer?.trim() ? "text.secondary" : "error"} sx={{ mt: 0.5 }}>
+              {formData.answer?.trim()
+                ? t("multipleChoiceQuestionRus.form.answerHelp")
+                : t("multipleChoiceQuestionRus.validation.answerRequired")}
             </Typography>
           </FormControl>
 

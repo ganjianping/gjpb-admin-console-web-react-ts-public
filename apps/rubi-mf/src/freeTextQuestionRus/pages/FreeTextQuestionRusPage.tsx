@@ -42,7 +42,7 @@ const FreeTextQuestionRusPage: React.FC = () => {
 
   const freeTextQuestionRuToFormData = (freeTextQuestionRu: FreeTextQuestionRu) => ({
     question: freeTextQuestionRu.question || "",
-    correctAnswer: freeTextQuestionRu.correctAnswer || "",
+    answer: freeTextQuestionRu.answer || "",
     explanation: freeTextQuestionRu.explanation || "",
     difficultyLevel: freeTextQuestionRu.difficultyLevel || "",
     tags: freeTextQuestionRu.tags || "",
@@ -84,7 +84,7 @@ const FreeTextQuestionRusPage: React.FC = () => {
     try {
       await freeTextQuestionRuService.createFreeTextQuestionRu({
         question: formData.question,
-        correctAnswer: formData.correctAnswer,
+        answer: formData.answer,
         explanation: formData.explanation,
         difficultyLevel: formData.difficultyLevel,
         tags: formData.tags,
@@ -110,7 +110,7 @@ const FreeTextQuestionRusPage: React.FC = () => {
         dialog.selectedFreeTextQuestionRu.id,
         {
           question: formData.question,
-          correctAnswer: formData.correctAnswer,
+          answer: formData.answer,
           explanation: formData.explanation,
           difficultyLevel: formData.difficultyLevel,
           tags: formData.tags,

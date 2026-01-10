@@ -126,7 +126,7 @@ const FreeTextQuestionRuEditDialog = ({
     if (open && freeTextQuestionRu) {
       setFormData({
         question: freeTextQuestionRu.question || "",
-        correctAnswer: freeTextQuestionRu.correctAnswer || "",
+        answer: freeTextQuestionRu.answer || "",
         explanation: freeTextQuestionRu.explanation || "",
         difficultyLevel: freeTextQuestionRu.difficultyLevel || "",
         tags: freeTextQuestionRu.tags || "",
@@ -165,8 +165,8 @@ const FreeTextQuestionRuEditDialog = ({
     if (!formData.question.trim()) {
       newErrors.question = t("common.required");
     }
-    if (!formData.correctAnswer.trim()) {
-      newErrors.correctAnswer = t("common.required");
+    if (!formData.answer.trim()) {
+      newErrors.answer = t("common.required");
     }
     if (!formData.lang) {
       newErrors.lang = t("common.required");
@@ -328,16 +328,16 @@ const FreeTextQuestionRuEditDialog = ({
             )}
           </FormControl>
 
-          <FormControl fullWidth error={!!errors.correctAnswer} required>
-            <FormLabel sx={{ mb: 1 }}>{t("freeTextQuestionRus.form.correctAnswer")}</FormLabel>
+          <FormControl fullWidth error={!!errors.answer} required>
+            <FormLabel sx={{ mb: 1 }}>{t("freeTextQuestionRus.form.answer")}</FormLabel>
             <TiptapTextEditor
-              value={formData.correctAnswer}
-              onChange={(value) => handleChange("correctAnswer", value)}
-              placeholder={t("freeTextQuestionRus.form.correctAnswer")}
+              value={formData.answer}
+              onChange={(value) => handleChange("answer", value)}
+              placeholder={t("freeTextQuestionRus.form.answer")}
             />
-            {errors.correctAnswer && (
+            {errors.answer && (
               <Typography variant="caption" color="error" sx={{ mt: 0.5 }}>
-                {errors.correctAnswer}
+                {errors.answer}
               </Typography>
             )}
           </FormControl>
