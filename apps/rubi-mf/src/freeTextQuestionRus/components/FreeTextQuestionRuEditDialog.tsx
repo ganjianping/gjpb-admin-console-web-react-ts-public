@@ -18,11 +18,20 @@ import {
   Chip,
   Alert,
   CircularProgress,
+  LinearProgress,
+  Grid,
+  Card,
+  CardMedia,
+  CardContent,
+  Divider,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { Edit } from "lucide-react";
 import { TiptapTextEditor } from "../../../../shared-lib/src/ui-components";
-import type { FreeTextQuestionRu, FreeTextQuestionRuFormData } from "../types/freeTextQuestionRu.types";
+import { ContentCopy as ContentCopyIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import type { FreeTextQuestionRu, FreeTextQuestionRuFormData, QuestionImageRu } from "../types/freeTextQuestionRu.types";
 import { getEmptyFreeTextQuestionRuFormData } from "../utils/getEmptyFreeTextQuestionRuFormData";
 import {
   LANGUAGE_OPTIONS,
@@ -51,6 +60,14 @@ const FreeTextQuestionRuEditDialog = ({
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [apiErrorMessage, setApiErrorMessage] = useState("");
+  const [localSaving, setLocalSaving] = useState(false);
+  const [images, setImages] = useState<QuestionImageRu[]>([]);
+  const [uploadUrl, setUploadUrl] = useState('');
+  const [uploadFilename, setUploadFilename] = useState('');
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
+  const [uploadFileFilename, setUploadFileFilename] = useState('');
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [imageToDelete, setImageToDelete] = useState<string | null>(null);
 
   const availableTags = useMemo(() => {
     try {
@@ -118,6 +135,9 @@ const FreeTextQuestionRuEditDialog = ({
       });
       setErrors({});
       setApiErrorMessage("");
+      loadImages();
+    } else {
+      setImages([]);
     }
   }, [open, freeTextQuestionRu, i18n.language]);
 
@@ -176,6 +196,85 @@ const FreeTextQuestionRuEditDialog = ({
     }
   };
 
+  const loadImages = async () => {
+    if (!freeTextQuestionRu?.id) return;
+    try {
+      const res = await freeTextQuestionRuService.getQuestionImages(freeTextQuestionRu.id);
+      if (res.data) {
+        setImages(res.data);
+      }
+    } catch (err) {
+      console.error('Failed to load images', err);
+    }
+  };
+
+  const handleUploadByUrl = async () => {
+    if (!freeTextQuestionRu?.id || !uploadUrl || !uploadFilename) return;
+    try {
+      setLocalSaving(true);
+      await freeTextQuestionRuService.uploadQuestionImageByUrl({
+        freeTextQuestionId: freeTextQuestionRu.id,
+        originalUrl: uploadUrl,
+        filename: uploadFilename,
+        lang: formData.lang,
+      });
+      setUploadUrl('');
+      setUploadFilename('');
+      await loadImages();
+    } catch (err) {
+      console.error('Failed to upload image by url', err);
+    } finally {
+      setLocalSaving(false);
+    }
+  };
+
+  const handleUploadByFile = async () => {
+    if (!freeTextQuestionRu?.id || !uploadFile || !uploadFileFilename) return;
+    try {
+      setLocalSaving(true);
+      await freeTextQuestionRuService.uploadQuestionImageByFile({
+        freeTextQuestionId: freeTextQuestionRu.id,
+        file: uploadFile,
+        filename: uploadFileFilename,
+      });
+      setUploadFile(null);
+      setUploadFileFilename('');
+      await loadImages();
+    } catch (err) {
+      console.error('Failed to upload image by file', err);
+    } finally {
+      setLocalSaving(false);
+    }
+  };
+
+  const handleDeleteImageClick = (imageId: string) => {
+    setImageToDelete(imageId);
+    setDeleteConfirmOpen(true);
+  };
+
+  const handleConfirmDeleteImage = async () => {
+    if (!imageToDelete) return;
+    try {
+      setLocalSaving(true);
+      await freeTextQuestionRuService.deleteQuestionImage(imageToDelete);
+      await loadImages();
+    } catch (err) {
+      console.error('Failed to delete image', err);
+    } finally {
+      setLocalSaving(false);
+      setDeleteConfirmOpen(false);
+      setImageToDelete(null);
+    }
+  };
+
+  const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    setUploadFile(file);
+    if (file) {
+      setUploadFileFilename(file.name);
+    }
+  };
+
   return (
     <Dialog
       open={open}
@@ -187,6 +286,11 @@ const FreeTextQuestionRuEditDialog = ({
       fullWidth
       disableEscapeKeyDown
     >
+      {(loading || localSaving) && (
+        <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 1200 }}>
+          <LinearProgress />
+        </Box>
+      )}
       <DialogTitle
         sx={{
           pb: 2,
@@ -245,6 +349,107 @@ const FreeTextQuestionRuEditDialog = ({
               placeholder={t("freeTextQuestionRus.form.explanation")}
             />
           </FormControl>
+
+          {freeTextQuestionRu?.id && (
+            <Box sx={{ border: '1px solid #ddd', p: 2, borderRadius: 1 }}>
+              <Typography variant="subtitle1" gutterBottom>
+                Question Images
+              </Typography>
+
+              <Grid container spacing={2} sx={{ mb: 2 }}>
+                {images.map((img) => (
+                  <Grid size={{ xs: 4, sm: 3, md: 2 }} key={img.id}>
+                    <Card sx={{ position: 'relative' }}>
+                      <CardMedia
+                        component="img"
+                        height="100"
+                        image={img.fileUrl || img.originalUrl || ''}
+                        alt={img.filename}
+                      />
+                      <CardContent sx={{ p: 1, '&:last-child': { pb: 1 } }}>
+                        <Typography variant="caption" noWrap display="block">
+                          {img.filename}
+                        </Typography>
+                      </CardContent>
+                      <Box sx={{ position: 'absolute', top: 0, right: 0, bgcolor: 'rgba(255,255,255,0.7)', display: 'flex' }}>
+                        {img.fileUrl && (
+                          <Tooltip title="Copy URL">
+                            <IconButton
+                              size="small"
+                              onClick={() => {
+                                navigator.clipboard.writeText(img.fileUrl!);
+                              }}
+                            >
+                              <ContentCopyIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                        )}
+                        <Tooltip title="Delete Image">
+                          <IconButton
+                            size="small"
+                            onClick={() => handleDeleteImageClick(img.id)}
+                            color="error"
+                          >
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                      </Box>
+                    </Card>
+                  </Grid>
+                ))}
+              </Grid>
+
+              <Divider sx={{ my: 2 }} />
+
+              <Typography variant="subtitle2" gutterBottom>
+                Upload by URL
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
+                <TextField
+                  label="Original URL"
+                  value={uploadUrl}
+                  onChange={(e) => setUploadUrl(e.target.value)}
+                  size="small"
+                  fullWidth
+                />
+                <TextField
+                  label="Filename"
+                  value={uploadFilename}
+                  onChange={(e) => setUploadFilename(e.target.value)}
+                  size="small"
+                  sx={{ width: 200 }}
+                />
+                <Button
+                  variant="outlined"
+                  onClick={handleUploadByUrl}
+                  disabled={!uploadUrl || !uploadFilename || localSaving}
+                >
+                  Upload
+                </Button>
+              </Box>
+
+              <Typography variant="subtitle2" gutterBottom>
+                Upload by File
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                <input type="file" accept="image/*" onChange={handleImageFileChange} />
+                <TextField
+                  label="Filename"
+                  value={uploadFileFilename}
+                  onChange={(e) => setUploadFileFilename(e.target.value)}
+                  size="small"
+                  sx={{ width: 200 }}
+                />
+                <Button
+                  variant="outlined"
+                  onClick={handleUploadByFile}
+                  disabled={!uploadFile || !uploadFileFilename || localSaving}
+                >
+                  Upload
+                </Button>
+              </Box>
+            </Box>
+          )}
 
           <FormControl fullWidth>
             <FormLabel sx={{ mb: 1 }}>{t("freeTextQuestionRus.form.difficultyLevel")}</FormLabel>
@@ -340,6 +545,22 @@ const FreeTextQuestionRuEditDialog = ({
           {loading ? t("common.saving") : t("common.save")}
         </Button>
       </DialogActions>
+
+      <Dialog
+        open={deleteConfirmOpen}
+        onClose={() => setDeleteConfirmOpen(false)}
+      >
+        <DialogTitle>{t("freeTextQuestionRus.common.delete")}</DialogTitle>
+        <DialogContent>
+          <Typography>Are you sure you want to delete this image?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteConfirmOpen(false)}>{t("freeTextQuestionRus.common.cancel")}</Button>
+          <Button onClick={handleConfirmDeleteImage} color="error" variant="contained">
+            {t("freeTextQuestionRus.common.delete")}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Dialog>
   );
 };

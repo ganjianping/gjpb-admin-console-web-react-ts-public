@@ -3,6 +3,9 @@ import type { ApiResponse } from '../../../../shared-lib/src/api/api.types';
 import type {
   FreeTextQuestionRu,
   FreeTextQuestionRuPaginatedResponse,
+  QuestionImageRu,
+  UploadQuestionImageRuByUrlRequest,
+  UploadQuestionImageRuByFileRequest,
 } from '../types/freeTextQuestionRu.types';
 
 export interface FreeTextQuestionRuQueryParams {
@@ -57,6 +60,26 @@ class FreeTextQuestionRuService {
 
   async deleteFreeTextQuestionRu(id: string): Promise<ApiResponse<void>> {
     return apiClient.delete(`${this.crudUrl}/${id}`);
+  }
+
+  async getQuestionImages(freeTextQuestionId: string): Promise<ApiResponse<QuestionImageRu[]>> {
+    return apiClient.get('/v1/question-image-rus', { params: { freeTextQuestionId } });
+  }
+
+  async uploadQuestionImageByUrl(data: UploadQuestionImageRuByUrlRequest): Promise<ApiResponse<QuestionImageRu>> {
+    return apiClient.post('/v1/question-image-rus', data);
+  }
+
+  async uploadQuestionImageByFile(data: UploadQuestionImageRuByFileRequest): Promise<ApiResponse<QuestionImageRu>> {
+    const formData = new FormData();
+    formData.append('freeTextQuestionId', data.freeTextQuestionId);
+    formData.append('filename', data.filename);
+    formData.append('file', data.file);
+    return apiClient.post('/v1/question-image-rus', formData);
+  }
+
+  async deleteQuestionImage(id: string): Promise<ApiResponse<void>> {
+    return apiClient.delete(`/v1/question-image-rus/${id}/permanent`);
   }
 }
 

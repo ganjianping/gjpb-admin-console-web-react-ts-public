@@ -5,7 +5,7 @@ const enTranslations = {
     title: 'FTQ',
     subtitle: 'Manage free text questions and answers',
     description: 'Maintain the free text question library',
-    pageTitle: 'Free Text Question Management',
+    pageTitle: 'Free Text Question',
     create: 'Create Free Text Question',
     edit: 'Edit Free Text Question',
     delete: 'Delete Free Text Question',

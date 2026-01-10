@@ -42,3 +42,35 @@ export interface FreeTextQuestionRuSearchFormData {
   difficultyLevel?: string;
   isActive?: string | null;
 }
+
+export interface QuestionImageRu {
+  id: string;
+  questionId: string;
+  questionTitle?: string;
+  filename: string;
+  fileUrl?: string;
+  originalUrl?: string | null;
+  url?: string;
+  width?: number;
+  height?: number;
+  lang?: string;
+  displayOrder?: number;
+  createdBy?: string;
+  updatedBy?: string;
+  isActive?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface UploadQuestionImageRuByUrlRequest {
+  freeTextQuestionId: string;
+  originalUrl: string;
+  filename: string;
+  lang: string;
+}
+
+export interface UploadQuestionImageRuByFileRequest {
+  freeTextQuestionId: string;
+  file: File;
+  filename: string;
+}
