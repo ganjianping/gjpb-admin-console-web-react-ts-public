@@ -3,6 +3,7 @@ export interface VocabularyRu {
   word: string;
   wordImageFilename?: string | null;
   wordImageOriginalUrl?: string | null;
+  wordImageUrl?: string | null;
   simplePastTense?: string | null;
   pastPerfectTense?: string | null;
   translation?: string | null;
@@ -11,6 +12,7 @@ export interface VocabularyRu {
   phonetic?: string | null;
   phoneticAudioFilename?: string | null;
   phoneticAudioOriginalUrl?: string | null;
+  phoneticAudioUrl?: string | null;
   dictionaryUrl?: string | null;
   partOfSpeech?: string | null;
   definition?: string | null;
@@ -33,13 +35,13 @@ export interface VocabularyRuPaginatedResponse {
   totalPages: number;
 }
 
-export type VocabularyRuActionType = 'create' | 'edit' | 'view';
+export type VocabularyRuActionType = "create" | "edit" | "view";
 
 export interface VocabularyRuFormData {
   word: string;
   wordImageFilename: string;
   wordImageOriginalUrl: string;
-  wordImageUploadMethod?: 'url' | 'file';
+  wordImageUploadMethod?: "url" | "file";
   simplePastTense: string;
   pastPerfectTense: string;
   translation: string;
@@ -48,7 +50,7 @@ export interface VocabularyRuFormData {
   phonetic: string;
   phoneticAudioFilename: string;
   phoneticAudioOriginalUrl: string;
-  phoneticAudioUploadMethod?: 'url' | 'file';
+  phoneticAudioUploadMethod?: "url" | "file";
   dictionaryUrl: string;
   partOfSpeech: string;
   definition: string;
