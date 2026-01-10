@@ -171,7 +171,7 @@ const VocabularyRuSearchPanel: React.FC<VocabularyRuSearchPanelProps> = ({
               <MenuItem value=''>{t('vocabularyRus.filters.all')}</MenuItem>
               {DIFFICULTY_LEVEL_OPTIONS.map((opt) => (
                 <MenuItem key={opt.value} value={opt.value}>
-                  {opt.label}
+                  {t(`vocabularyRus.difficultyLevels.${opt.value}`)}
                 </MenuItem>
               ))}
             </Select>

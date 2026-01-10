@@ -32,6 +32,7 @@ import {
   DIFFICULTY_LEVEL_OPTIONS,
   VOCABULARY_TAG_SETTING_KEY,
   VOCABULARY_PART_OF_SPEECH_SETTING_KEY,
+  VOCABULARY_DIFFICULTY_LEVEL_SETTING_KEY,
 } from "../constants";
 import "../i18n/translations";
 
@@ -76,6 +77,32 @@ const VocabularyRuCreateDialog = ({
         .filter(Boolean);
     } catch (err) {
       console.error("[VocabularyRuCreateDialog] Error loading tags:", err);
+      return [] as string[];
+    }
+  }, [i18n.language]);
+
+  const availableDifficultyLevels = useMemo(() => {
+    try {
+      const settings = localStorage.getItem("gjpb_app_settings");
+      if (!settings) return [] as string[];
+      const appSettings = JSON.parse(settings) as Array<{
+        name: string;
+        value: string;
+        lang: string;
+      }>;
+      const currentLang = i18n.language.toUpperCase().startsWith("ZH")
+        ? "ZH"
+        : "EN";
+      const difficultyLevelSetting = appSettings.find(
+        (s) => s.name === VOCABULARY_DIFFICULTY_LEVEL_SETTING_KEY && s.lang === currentLang,
+      );
+      if (!difficultyLevelSetting) return [] as string[];
+      return difficultyLevelSetting.value
+        .split(",")
+        .map((v) => v.trim())
+        .filter(Boolean);
+    } catch (err) {
+      console.error("[VocabularyRuCreateDialog] Error loading difficulty levels:", err);
       return [] as string[];
     }
   }, [i18n.language]);
@@ -410,6 +437,22 @@ const VocabularyRuCreateDialog = ({
           </FormControl>
 
           <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>
+              {t("vocabularyRus.form.difficultyLevel")}
+            </FormLabel>
+            <Select
+              value={formData.difficultyLevel}
+              onChange={(e) => handleChange("difficultyLevel", e.target.value)}
+            >
+              {(availableDifficultyLevels.length > 0 ? availableDifficultyLevels : DIFFICULTY_LEVEL_OPTIONS.map(opt => opt.value)).map((level) => (
+                <MenuItem key={level} value={level}>
+                  {availableDifficultyLevels.length > 0 ? level : t(`vocabularyRus.difficultyLevels.${level}`)}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl fullWidth>
             <FormLabel sx={{ mb: 1 }}>{t("vocabularyRus.form.tags")}</FormLabel>
             <Select
               multiple
@@ -610,22 +653,6 @@ const VocabularyRuCreateDialog = ({
               onChange={(e) => handleChange("lang", e.target.value)}
             >
               {LANGUAGE_OPTIONS.map((opt) => (
-                <MenuItem key={opt.value} value={opt.value}>
-                  {opt.label}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-          <FormControl fullWidth>
-            <FormLabel sx={{ mb: 1 }}>
-              {t("vocabularyRus.form.difficultyLevel")}
-            </FormLabel>
-            <Select
-              value={formData.difficultyLevel}
-              onChange={(e) => handleChange("difficultyLevel", e.target.value)}
-            >
-              {DIFFICULTY_LEVEL_OPTIONS.map((opt) => (
                 <MenuItem key={opt.value} value={opt.value}>
                   {opt.label}
                 </MenuItem>

@@ -45,61 +45,6 @@ const MultipleChoiceQuestionRuViewDialog: React.FC<
     return lang ? lang.label : value;
   };
 
-  const renderCorrectAnswers = () => {
-    const options = [
-      { key: "A", value: multipleChoiceQuestionRu.optionA },
-      { key: "B", value: multipleChoiceQuestionRu.optionB },
-      { key: "C", value: multipleChoiceQuestionRu.optionC },
-      { key: "D", value: multipleChoiceQuestionRu.optionD },
-    ];
-
-    const correctAnswers =
-      multipleChoiceQuestionRu.correctAnswers
-        ?.split(",")
-        .map((a: string) => a.trim().toUpperCase()) || [];
-
-    const correctOptions = options.filter((option) =>
-      correctAnswers.includes(option.key),
-    );
-
-    if (correctOptions.length === 0) return null;
-
-    const cleanHtml = (html: string) => {
-      let cleaned = html;
-      if (cleaned.startsWith('<p>')) {
-        cleaned = cleaned.substring(3);
-      }
-      if (cleaned.endsWith('</p>')) {
-        cleaned = cleaned.substring(0, cleaned.length - 4);
-      }
-      return cleaned;
-    };
-
-    return (
-      <Box sx={{ mt: 2 }}>
-        <Typography variant="h6" gutterBottom>
-          {t("multipleChoiceQuestionRus.viewDialog.correctAnswers")}
-        </Typography>
-        {correctOptions.map((option, index) => (
-          <Typography
-            key={option.key}
-            variant="body1"
-            sx={{
-              fontWeight: "bold",
-              color: "success.main",
-              display: "inline",
-            }}
-            dangerouslySetInnerHTML={{
-              __html: `${option.key}. ${cleanHtml(option.value)}${
-                index < correctOptions.length - 1 ? "; " : ""
-              }`,
-            }}
-          />
-        ))}
-      </Box>
-    );
-  };
-
   const renderOptions = () => {
     const options = [
       { key: "A", value: multipleChoiceQuestionRu.optionA },

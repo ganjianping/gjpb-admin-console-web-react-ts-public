@@ -60,6 +60,7 @@ const VocabularyRusPage: React.FC = () => {
     lang:
       vocabularyRu.lang ||
       (dialog.getCurrentLanguage ? dialog.getCurrentLanguage() : "EN"),
+    difficultyLevel: vocabularyRu.difficultyLevel || "easy",
     displayOrder: vocabularyRu.displayOrder ?? 0,
     isActive: Boolean(vocabularyRu.isActive),
     wordImageFile: null,

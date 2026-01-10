@@ -49,6 +49,7 @@ const enTranslations = {
       pluralForm: 'Plural Form',
       tags: 'Tags',
       lang: 'Language',
+      difficultyLevel: 'Difficulty Level',
       displayOrder: 'Display Order',
       isActive: 'Active Status',
       createdAt: 'Created At',
@@ -82,6 +83,11 @@ const enTranslations = {
     status: {
       active: 'Active',
       inactive: 'Inactive',
+    },
+    difficultyLevels: {
+      easy: 'Easy',
+      medium: 'Medium',
+      hard: 'Hard',
     },
     viewDialog: {
       details: 'Details',
@@ -140,6 +146,7 @@ const zhTranslations = {
       pluralForm: '复数形式',
       tags: '标签',
       lang: '语言',
+      difficultyLevel: '难度等级',
       displayOrder: '显示顺序',
       isActive: '激活状态',
       createdAt: '创建于',
@@ -173,6 +180,11 @@ const zhTranslations = {
     status: {
       active: '激活',
       inactive: '停用',
+    },
+    difficultyLevels: {
+      easy: '简单',
+      medium: '中等',
+      hard: '困难',
     },
     viewDialog: {
       details: '详情',

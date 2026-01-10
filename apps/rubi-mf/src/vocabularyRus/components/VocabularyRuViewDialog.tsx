@@ -16,7 +16,7 @@ import { Eye, Tag, CheckCircle2, XCircle, Calendar, User, Copy, Check } from 'lu
 import { useState as useStateHook } from 'react';
 import type { VocabularyRu } from '../types/vocabularyRu.types';
 import '../i18n/translations';
-import { LANGUAGE_OPTIONS, DIFFICULTY_LEVEL_OPTIONS } from '../constants';
+import { LANGUAGE_OPTIONS } from '../constants';
 
 interface VocabularyRuViewDialogProps {
   open: boolean;
@@ -47,8 +47,7 @@ const VocabularyRuViewDialog = ({ open, vocabularyRu, onClose, onEdit }: Vocabul
 
   const difficultyLevelLabel = (level?: string | null) => {
     if (!level) return '-';
-    const found = DIFFICULTY_LEVEL_OPTIONS.find((o) => o.value === level.toLowerCase());
-    return found ? found.label : level;
+    return t(`vocabularyRus.difficultyLevels.${level.toLowerCase()}`, level);
   };
 
   return (
