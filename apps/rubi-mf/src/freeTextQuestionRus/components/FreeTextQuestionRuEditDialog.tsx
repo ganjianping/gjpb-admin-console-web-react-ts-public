@@ -38,6 +38,7 @@ import {
   FREE_TEXT_QUESTION_TAG_SETTING_KEY,
   FREE_TEXT_QUESTION_DIFFICULTY_LEVEL_SETTING_KEY,
 } from "../constants";
+import { freeTextQuestionRuService } from "../services/freeTextQuestionRuService";
 import "../i18n/translations";
 
 interface FreeTextQuestionRuEditDialogProps {
