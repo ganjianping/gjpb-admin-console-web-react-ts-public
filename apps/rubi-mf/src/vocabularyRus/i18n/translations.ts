@@ -93,6 +93,10 @@ const enTranslations = {
       details: 'Details',
       id: 'ID',
       metadata: 'Metadata',
+      basicInfo: 'Basic Information',
+      grammar: 'Grammar',
+      exampleAndMedia: 'Example & Media',
+      links: 'Links & References',
     },
   },
 };
@@ -190,6 +194,10 @@ const zhTranslations = {
       details: '详情',
       id: 'ID',
       metadata: '元数据',
+      basicInfo: '基本信息',
+      grammar: '语法',
+      exampleAndMedia: '例句与媒体',
+      links: '链接与参考',
     },
   },
 };
