@@ -17,7 +17,7 @@ import {
 } from '@mui/material';
 import { Search } from 'lucide-react';
 import type { VocabularyRuSearchFormData } from '../types/vocabularyRu.types';
-import { VOCABULARY_TAG_SETTING_KEY, LANGUAGE_OPTIONS, VOCABULARY_LANG_SETTING_KEY, DIFFICULTY_LEVEL_OPTIONS } from '../constants';
+import { VOCABULARY_RU_TAG_SETTING_KEY, LANGUAGE_OPTIONS, VOCABULARY_LANG_SETTING_KEY, DIFFICULTY_LEVEL_OPTIONS } from '../constants';
 
 interface VocabularyRuSearchPanelProps {
   searchFormData: VocabularyRuSearchFormData;
@@ -43,7 +43,7 @@ const VocabularyRuSearchPanel: React.FC<VocabularyRuSearchPanelProps> = ({
       if (!settings) return [] as string[];
       const appSettings = JSON.parse(settings) as Array<{ name: string; value: string; lang: string }>;
       const currentLang = i18n.language.toUpperCase().startsWith('ZH') ? 'ZH' : 'EN';
-      const tagSetting = appSettings.find((s) => s.name === VOCABULARY_TAG_SETTING_KEY && s.lang === currentLang);
+      const tagSetting = appSettings.find((s) => s.name === VOCABULARY_RU_TAG_SETTING_KEY && s.lang === currentLang);
       if (!tagSetting) return [] as string[];
       return tagSetting.value.split(',').map((v) => v.trim()).filter(Boolean);
     } catch (err) {

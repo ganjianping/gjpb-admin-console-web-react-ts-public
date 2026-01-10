@@ -30,8 +30,8 @@ import { getEmptyVocabularyRuFormData } from "../utils/getEmptyVocabularyRuFormD
 import {
   LANGUAGE_OPTIONS,
   DIFFICULTY_LEVEL_OPTIONS,
-  VOCABULARY_TAG_SETTING_KEY,
-  VOCABULARY_PART_OF_SPEECH_SETTING_KEY,
+  VOCABULARY_RU_TAG_SETTING_KEY,
+  VOCABULARY_RU_PART_OF_SPEECH_SETTING_KEY,
   VOCABULARY_DIFFICULTY_LEVEL_SETTING_KEY,
 } from "../constants";
 import "../i18n/translations";
@@ -68,7 +68,7 @@ const VocabularyRuCreateDialog = ({
         ? "ZH"
         : "EN";
       const tagSetting = appSettings.find(
-        (s) => s.name === VOCABULARY_TAG_SETTING_KEY && s.lang === currentLang,
+        (s) => s.name === VOCABULARY_RU_TAG_SETTING_KEY && s.lang === currentLang,
       );
       if (!tagSetting) return [] as string[];
       return tagSetting.value
@@ -121,7 +121,7 @@ const VocabularyRuCreateDialog = ({
         : "EN";
       const posSetting = appSettings.find(
         (s) =>
-          s.name === VOCABULARY_PART_OF_SPEECH_SETTING_KEY &&
+          s.name === VOCABULARY_RU_PART_OF_SPEECH_SETTING_KEY &&
           s.lang === currentLang,
       );
       if (!posSetting) return [] as string[];
@@ -298,63 +298,134 @@ const VocabularyRuCreateDialog = ({
             />
           </FormControl>
 
-          <FormControl fullWidth>
-            <FormLabel sx={{ mb: 1 }}>
-              {t("vocabularyRus.form.phonetic")}
-            </FormLabel>
-            <TextField
-              value={formData.phonetic}
-              onChange={(e) => handleChange("phonetic", e.target.value)}
-              placeholder={t("vocabularyRus.form.phonetic")}
-              fullWidth
-            />
-          </FormControl>
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <FormControl fullWidth>
+              <FormLabel sx={{ mb: 1 }}>
+                {t("vocabularyRus.form.phonetic")}
+              </FormLabel>
+              <TextField
+                value={formData.phonetic}
+                onChange={(e) => handleChange("phonetic", e.target.value)}
+                placeholder={t("vocabularyRus.form.phonetic")}
+                fullWidth
+              />
+            </FormControl>
 
-          <FormControl fullWidth>
-            <FormLabel sx={{ mb: 1 }}>
-              {t("vocabularyRus.form.partOfSpeech")}
-            </FormLabel>
-            <Select
-              multiple
-              value={
-                formData.partOfSpeech
-                  ? formData.partOfSpeech.split(",").filter(Boolean)
-                  : []
-              }
-              onChange={handlePartOfSpeechChange}
-              input={<OutlinedInput />}
-              renderValue={(selected) => (
-                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                  {Array.isArray(selected) &&
-                    selected.map((v) => (
-                      <Chip key={v} label={v} size="small" />
-                    ))}
-                </Box>
-              )}
-            >
-              {availablePartOfSpeech.length > 0 ? (
-                availablePartOfSpeech.map((pos) => (
-                  <MenuItem key={pos} value={pos}>
-                    {pos}
+            <FormControl fullWidth>
+              <FormLabel sx={{ mb: 1 }}>
+                {t("vocabularyRus.form.partOfSpeech")}
+              </FormLabel>
+              <Select
+                multiple
+                value={
+                  formData.partOfSpeech
+                    ? formData.partOfSpeech.split(",").filter(Boolean)
+                    : []
+                }
+                onChange={handlePartOfSpeechChange}
+                input={<OutlinedInput />}
+                renderValue={(selected) => (
+                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                    {Array.isArray(selected) &&
+                      selected.map((v) => (
+                        <Chip key={v} label={v} size="small" />
+                      ))}
+                  </Box>
+                )}
+              >
+                {availablePartOfSpeech.length > 0 ? (
+                  availablePartOfSpeech.map((pos) => (
+                    <MenuItem key={pos} value={pos}>
+                      {pos}
+                    </MenuItem>
+                  ))
+                ) : (
+                  <MenuItem disabled>No part of speech options</MenuItem>
+                )}
+              </Select>
+            </FormControl>
+          </Box>
+
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <FormControl fullWidth>
+              <FormLabel sx={{ mb: 1 }}>
+                {t("vocabularyRus.form.synonyms")}
+              </FormLabel>
+              <TextField
+                value={formData.synonyms}
+                onChange={(e) => handleChange("synonyms", e.target.value)}
+                placeholder={t("vocabularyRus.form.synonyms")}
+                fullWidth
+              />
+            </FormControl>
+
+            <FormControl fullWidth>
+              <FormLabel sx={{ mb: 1 }}>
+                {t("vocabularyRus.form.translation")}
+              </FormLabel>
+              <TextField
+                value={formData.translation}
+                onChange={(e) => handleChange("translation", e.target.value)}
+                placeholder={t("vocabularyRus.form.translation")}
+                fullWidth
+              />
+            </FormControl>
+          </Box>  
+
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <FormControl fullWidth>
+              <FormLabel sx={{ mb: 1 }}>
+                {t("vocabularyRus.form.simplePastTense")}
+              </FormLabel>
+              <TextField
+                value={formData.simplePastTense}
+                onChange={(e) => handleChange("simplePastTense", e.target.value)}
+                placeholder={t("vocabularyRus.form.simplePastTense")}
+                fullWidth
+              />
+            </FormControl>
+
+            <FormControl fullWidth>
+              <FormLabel sx={{ mb: 1 }}>
+                {t("vocabularyRus.form.pastPerfectTense")}
+              </FormLabel>
+              <TextField
+                value={formData.pastPerfectTense}
+                onChange={(e) => handleChange("pastPerfectTense", e.target.value)}
+                placeholder={t("vocabularyRus.form.pastPerfectTense")}
+                fullWidth
+              />
+            </FormControl>
+          </Box>
+
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <FormControl fullWidth>
+              <FormLabel sx={{ mb: 1 }}>
+                {t("vocabularyRus.form.difficultyLevel")}
+              </FormLabel>
+              <Select
+                value={formData.difficultyLevel}
+                onChange={(e) => handleChange("difficultyLevel", e.target.value)}
+              >
+                {(availableDifficultyLevels.length > 0 ? availableDifficultyLevels : DIFFICULTY_LEVEL_OPTIONS.map(opt => opt.value)).map((level) => (
+                  <MenuItem key={level} value={level}>
+                    {availableDifficultyLevels.length > 0 ? level : t(`vocabularyRus.difficultyLevels.${level}`)}
                   </MenuItem>
-                ))
-              ) : (
-                <MenuItem disabled>No part of speech options</MenuItem>
-              )}
-            </Select>
-          </FormControl>
-
-          <FormControl fullWidth>
-            <FormLabel sx={{ mb: 1 }}>
-              {t("vocabularyRus.form.synonyms")}
-            </FormLabel>
-            <TextField
-              value={formData.synonyms}
-              onChange={(e) => handleChange("synonyms", e.target.value)}
-              placeholder={t("vocabularyRus.form.synonyms")}
-              fullWidth
-            />
-          </FormControl>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl fullWidth>
+              <FormLabel sx={{ mb: 1 }}>
+                {t("vocabularyRus.form.pluralForm")}
+              </FormLabel>
+              <TextField
+                value={formData.pluralForm}
+                onChange={(e) => handleChange("pluralForm", e.target.value)}
+                placeholder={t("vocabularyRus.form.pluralForm")}
+                fullWidth
+              />
+            </FormControl>
+          </Box>
 
           <FormControl fullWidth error={!!errors.definition}>
             <FormLabel sx={{ mb: 1 }}>
@@ -372,18 +443,6 @@ const VocabularyRuCreateDialog = ({
             )}
           </FormControl>
 
-          <FormControl fullWidth>
-            <FormLabel sx={{ mb: 1 }}>
-              {t("vocabularyRus.form.translation")}
-            </FormLabel>
-            <TextField
-              value={formData.translation}
-              onChange={(e) => handleChange("translation", e.target.value)}
-              placeholder={t("vocabularyRus.form.translation")}
-              fullWidth
-            />
-          </FormControl>
-
           <FormControl fullWidth error={!!errors.example}>
             <FormLabel sx={{ mb: 1 }}>
               {t("vocabularyRus.form.example")}
@@ -398,58 +457,6 @@ const VocabularyRuCreateDialog = ({
                 {errors.example}
               </Typography>
             )}
-          </FormControl>
-
-          <FormControl fullWidth>
-            <FormLabel sx={{ mb: 1 }}>
-              {t("vocabularyRus.form.simplePastTense")}
-            </FormLabel>
-            <TextField
-              value={formData.simplePastTense}
-              onChange={(e) => handleChange("simplePastTense", e.target.value)}
-              placeholder={t("vocabularyRus.form.simplePastTense")}
-              fullWidth
-            />
-          </FormControl>
-
-          <FormControl fullWidth>
-            <FormLabel sx={{ mb: 1 }}>
-              {t("vocabularyRus.form.pastPerfectTense")}
-            </FormLabel>
-            <TextField
-              value={formData.pastPerfectTense}
-              onChange={(e) => handleChange("pastPerfectTense", e.target.value)}
-              placeholder={t("vocabularyRus.form.pastPerfectTense")}
-              fullWidth
-            />
-          </FormControl>
-
-          <FormControl fullWidth>
-            <FormLabel sx={{ mb: 1 }}>
-              {t("vocabularyRus.form.pluralForm")}
-            </FormLabel>
-            <TextField
-              value={formData.pluralForm}
-              onChange={(e) => handleChange("pluralForm", e.target.value)}
-              placeholder={t("vocabularyRus.form.pluralForm")}
-              fullWidth
-            />
-          </FormControl>
-
-          <FormControl fullWidth>
-            <FormLabel sx={{ mb: 1 }}>
-              {t("vocabularyRus.form.difficultyLevel")}
-            </FormLabel>
-            <Select
-              value={formData.difficultyLevel}
-              onChange={(e) => handleChange("difficultyLevel", e.target.value)}
-            >
-              {(availableDifficultyLevels.length > 0 ? availableDifficultyLevels : DIFFICULTY_LEVEL_OPTIONS.map(opt => opt.value)).map((level) => (
-                <MenuItem key={level} value={level}>
-                  {availableDifficultyLevels.length > 0 ? level : t(`vocabularyRus.difficultyLevels.${level}`)}
-                </MenuItem>
-              ))}
-            </Select>
           </FormControl>
 
           <FormControl fullWidth>
@@ -481,6 +488,8 @@ const VocabularyRuCreateDialog = ({
               )}
             </Select>
           </FormControl>
+
+          
 
           <FormControl component="fieldset">
             <FormLabel component="legend">

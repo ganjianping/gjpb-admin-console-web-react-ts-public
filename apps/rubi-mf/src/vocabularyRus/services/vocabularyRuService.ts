@@ -142,6 +142,9 @@ class VocabularyRuService {
     if (data.dictionaryUrl) {
       formData.append('dictionaryUrl', data.dictionaryUrl);
     }
+    if (data.difficultyLevel) {
+      formData.append('difficultyLevel', data.difficultyLevel);
+    }
 
     return apiClient.post(`${this.crudUrl}`, formData);
   }
@@ -218,6 +221,9 @@ class VocabularyRuService {
     }
     if (data.dictionaryUrl !== undefined) {
       formData.append('dictionaryUrl', data.dictionaryUrl);
+    }
+    if (data.difficultyLevel !== undefined) {
+      formData.append('difficultyLevel', data.difficultyLevel);
     }
 
     return apiClient.put(`${this.crudUrl}/${id}`, formData);
