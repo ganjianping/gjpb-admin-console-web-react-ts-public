@@ -335,7 +335,6 @@ const VocabularyRuCreateDialog = ({
               value={formData.definition}
               onChange={(value) => handleChange("definition", value)}
               placeholder={t("vocabularyRus.form.definition")}
-              initialRows={3}
             />
             {errors.definition && (
               <Typography variant="caption" color="error" sx={{ mt: 1, display: 'block' }}>
@@ -364,7 +363,6 @@ const VocabularyRuCreateDialog = ({
               value={formData.example}
               onChange={(value) => handleChange("example", value)}
               placeholder={t("vocabularyRus.form.example")}
-              initialRows={2}
             />
             {errors.example && (
               <Typography variant="caption" color="error" sx={{ mt: 1, display: 'block' }}>

@@ -1,1 +1,0 @@
-export { default as McqRusPage } from './pages/McqRusPage';

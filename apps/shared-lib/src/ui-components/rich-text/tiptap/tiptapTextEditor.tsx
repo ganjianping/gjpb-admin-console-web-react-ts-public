@@ -37,6 +37,12 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
   const { value = '', onChange, placeholder = 'Enter rich text...', lineHeight = 1.8, initialRows = 0 } = props;
   const editor = useTiptapEditor({ value, onChange, placeholder, initialRows });
 
+  // Calculate dynamic minHeight based on initialRows and lineHeight
+  const lineHeightNum = typeof lineHeight === 'number' ? lineHeight : Number.parseFloat(String(lineHeight)) || 1.8;
+  const fontSize = 16; // Base font size in px
+  const singleLineHeight = fontSize * lineHeightNum;
+  const calculatedMinHeight = Math.max(singleLineHeight * initialRows, singleLineHeight);
+
   const editorContainerRef = useRef<HTMLDivElement | null>(null);
   // Fullscreen-like (in-page full-window) state: use a fixed-position overlay that stays in the same browser window/screen
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -254,7 +260,7 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
           border: isFullscreen ? 'none' : '1px solid rgba(0,0,0,0.12)',
           borderRadius: isFullscreen ? 0 : 6,
           padding: isFullscreen ? 16 : 8,
-          minHeight: isFullscreen ? '100vh' : 140,
+          minHeight: isFullscreen ? '100vh' : calculatedMinHeight + 16,
           position: isFullscreen ? 'fixed' : 'relative',
           top: isFullscreen ? 0 : undefined,
           left: isFullscreen ? 0 : undefined,
@@ -295,7 +301,7 @@ export default function TiptapTextEditor(props: Readonly<TiptapTextEditorProps>)
           className="gjp-tiptap-editor"
           style={{
             lineHeight: lineHeight,
-            minHeight: isFullscreen ? 'calc(100vh - 96px)' : 60,
+            minHeight: isFullscreen ? 'calc(100vh - 96px)' : calculatedMinHeight,
           }}
           onKeyDown={(e: any) => {
             // let the slash hook handle navigation/selection when open

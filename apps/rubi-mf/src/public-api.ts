@@ -2,6 +2,6 @@ export { default as VocabularyRusPage } from './vocabularyRus/pages/VocabularyRu
 export * from './vocabularyRus/types/vocabularyRu.types';
 export { vocabularyRuService } from './vocabularyRus/services/vocabularyRuService';
 
-export { default as McqRusPage } from './mcqRus/pages/McqRusPage';
-export * from './mcqRus/types/mcqRu.types';
-export { mcqRuService } from './mcqRus/services/mcqRuService';
+export { default as MultipleChoiceQuestionRusPage } from './multipleChoiceQuestionRus/pages/MultipleChoiceQuestionRusPage';
+export * from './multipleChoiceQuestionRus/types/multipleChoiceQuestionRu.types';
+export { multipleChoiceQuestionRuService } from './multipleChoiceQuestionRus/services/multipleChoiceQuestionRuService';

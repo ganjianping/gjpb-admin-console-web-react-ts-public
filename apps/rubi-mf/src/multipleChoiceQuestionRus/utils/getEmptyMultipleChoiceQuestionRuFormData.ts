@@ -1,13 +1,12 @@
-import type { McqRuFormData } from '../types/mcqRu.types';
+import type { MultipleChoiceQuestionRuFormData } from '../types/multipleChoiceQuestionRu.types';
 
-export const getEmptyMcqRuFormData = (): McqRuFormData => ({
+export const getEmptyMultipleChoiceQuestionRuFormData = (): MultipleChoiceQuestionRuFormData => ({
   question: '',
   optionA: '',
   optionB: '',
   optionC: '',
   optionD: '',
   correctAnswers: '',
-  isMultipleCorrect: false,
   explanation: '',
   difficultyLevel: '',
   tags: '',

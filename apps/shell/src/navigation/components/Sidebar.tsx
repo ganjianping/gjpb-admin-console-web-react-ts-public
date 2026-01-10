@@ -178,9 +178,9 @@ const Sidebar = ({ drawerWidth, collapsedWidth, open, onClose, variant }: Sideba
           icon: BookOpen,
         },
         {
-          key: 'mcqRus',
-          title: t('mcqRus.title'),
-          path: '/mcqRus',
+          key: 'multipleChoiceQuestionRus',
+          title: t('multipleChoiceQuestionRus.title'),
+          path: '/multipleChoiceQuestionRus',
           icon: HelpCircle,
         },
       ]

@@ -82,9 +82,9 @@ const VocabularyRusPage = lazy(() =>
     default: module.VocabularyRusPage,
   })),
 );
-const McqRusPage = lazy(() =>
+const MultipleChoiceQuestionRusPage = lazy(() =>
   import("../../../../rubi-mf/src/public-api").then((module) => ({
-    default: module.McqRusPage,
+    default: module.MultipleChoiceQuestionRusPage,
   })),
 );
 
@@ -400,10 +400,10 @@ const AppRoutes = () => {
 
           {/* MCQ Rus */}
           <Route
-            path="mcqRus"
+            path="multipleChoiceQuestionRus"
             element={
               <Suspense fallback={<AppLoading />}>
-                <McqRusPage />
+                <MultipleChoiceQuestionRusPage />
               </Suspense>
             }
           />

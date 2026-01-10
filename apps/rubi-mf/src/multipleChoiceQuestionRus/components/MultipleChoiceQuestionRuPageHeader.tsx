@@ -3,14 +3,14 @@ import '../i18n/translations';
 import { Box, Button, Typography, useTheme } from '@mui/material';
 import { Plus, Search, ChevronDown, ChevronUp } from 'lucide-react';
 
-interface McqRuPageHeaderProps {
-  onCreateMcqRu: () => void;
+interface MultipleChoiceQuestionRuPageHeaderProps {
+  onCreateMultipleChoiceQuestionRu: () => void;
   searchPanelOpen: boolean;
   onToggleSearchPanel: () => void;
 }
 
-const McqRuPageHeader: React.FC<McqRuPageHeaderProps> = ({
-  onCreateMcqRu,
+const MultipleChoiceQuestionRuPageHeader: React.FC<MultipleChoiceQuestionRuPageHeaderProps> = ({
+  onCreateMultipleChoiceQuestionRu,
   searchPanelOpen,
   onToggleSearchPanel,
 }) => {
@@ -42,10 +42,10 @@ const McqRuPageHeader: React.FC<McqRuPageHeaderProps> = ({
               WebkitTextFillColor: theme.palette.mode === 'dark' ? 'transparent' : 'inherit',
             }}
           >
-            {t('mcqRus.pageTitle')}
+            {t('multipleChoiceQuestionRus.pageTitle')}
           </Typography>
           <Typography variant='body2' color='text.secondary'>
-            {t('mcqRus.subtitle')}
+            {t('multipleChoiceQuestionRus.subtitle')}
           </Typography>
         </Box>
 
@@ -80,13 +80,13 @@ const McqRuPageHeader: React.FC<McqRuPageHeaderProps> = ({
               },
             }}
           >
-            {searchPanelOpen ? t('common.hideSearch') : t('common.showSearch')}
+            {searchPanelOpen ? t('multipleChoiceQuestionRus.common.hideSearch') : t('multipleChoiceQuestionRus.common.showSearch')}
           </Button>
 
           <Button
             variant='contained'
             startIcon={<Plus size={16} />}
-            onClick={onCreateMcqRu}
+            onClick={onCreateMultipleChoiceQuestionRu}
             sx={{
               borderRadius: 2,
               px: 2.5,
@@ -105,7 +105,7 @@ const McqRuPageHeader: React.FC<McqRuPageHeaderProps> = ({
               },
             }}
           >
-            {t('mcqRus.createNew')}
+            {t('multipleChoiceQuestionRus.create')}
           </Button>
         </Box>
       </Box>
@@ -113,4 +113,4 @@ const McqRuPageHeader: React.FC<McqRuPageHeaderProps> = ({
   );
 };
 
-export default McqRuPageHeader;
+export default MultipleChoiceQuestionRuPageHeader;

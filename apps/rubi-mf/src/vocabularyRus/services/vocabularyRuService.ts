@@ -66,8 +66,8 @@ export interface UpdateVocabularyRuRequest {
 }
 
 class VocabularyRuService {
-  private readonly getUrl = '/v1/ru/vocabularies';
-  private readonly crudUrl = '/v1/ru/vocabularies';
+  private readonly getUrl = '/v1/vocabulary-rus';
+  private readonly crudUrl = '/v1/vocabulary-rus';
 
   async getVocabularyRus(params?: VocabularyRuQueryParams): Promise<ApiResponse<VocabularyRuPaginatedResponse>> {
     return apiClient.get(this.getUrl, { params });

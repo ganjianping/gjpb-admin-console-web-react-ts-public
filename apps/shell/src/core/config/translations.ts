@@ -100,7 +100,7 @@ const shellResources = {
       vocabularies: {
         title: 'Vocabulary',
       },
-      mcqRus: {
+      multipleChoiceQuestionRus: {
         title: 'MCQs',
       },
       common: {
@@ -217,7 +217,7 @@ const shellResources = {
       vocabularies: {
         title: '词汇管理',
       },
-      mcqRus: {
+      multipleChoiceQuestionRus: {
         title: '选择题',
       },
       common: {

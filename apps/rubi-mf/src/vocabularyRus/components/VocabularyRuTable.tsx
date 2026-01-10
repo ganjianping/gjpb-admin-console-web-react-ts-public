@@ -146,7 +146,7 @@ const VocabularyRuTable = memo(
       return (
         <Box sx={{ p: 3, textAlign: 'center' }}>
           <Typography variant="body1" color="text.secondary">
-            {t('vocabularyRus.noVocabularyRusFound')}
+            {t('vocabularyRus.noVocabularysFound')}
           </Typography>
         </Box>
       );
