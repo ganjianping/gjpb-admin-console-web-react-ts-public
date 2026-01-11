@@ -288,8 +288,24 @@ const ArticleRuViewDialog = ({ open, articleRu, onClose, onEdit }: ArticleRuView
                   <Typography variant="body2" sx={{ fontWeight: 600 }}>{articleRu.sourceName || '-'}</Typography>
                 </Box>
                 <Box>
-                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>{t('articleRus.form.coverImageFilename')}</Typography>
-                  <Typography variant="body2" sx={{ fontFamily: 'monospace', fontSize: '0.875rem', wordBreak: 'break-all' }}>{articleRu.coverImageFilename || '-'}</Typography>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>{t('articleRus.form.coverImageFile')}</Typography>
+                  {articleRu.coverImageFileUrl ? (
+                    <Box sx={{ mt: 1 }}>
+                      <img 
+                        src={articleRu.coverImageFileUrl} 
+                        alt="Cover" 
+                        style={{ 
+                          maxWidth: '100%', 
+                          maxHeight: 120, 
+                          borderRadius: 8, 
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                          objectFit: 'cover'
+                        }} 
+                      />
+                    </Box>
+                  ) : (
+                    <Typography variant="body2" sx={{ fontStyle: 'italic', color: 'text.secondary' }}>No cover image</Typography>
+                  )}
                 </Box>
                 <Box>
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Language</Typography>

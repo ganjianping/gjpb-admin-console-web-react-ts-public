@@ -52,8 +52,8 @@ export interface UpdateArticleRequest {
 }
 
 class ArticleRuService {
-  private readonly getUrl = '/v1/articleRus';
-  private readonly crudUrl = '/v1/articleRus';
+  private readonly getUrl = '/v1/article-rus';
+  private readonly crudUrl = '/v1/article-rus';
 
   async getArticleRus(params?: ArticleRuQueryParams): Promise<ApiResponse<ArticleRuPaginatedResponse>> {
     return apiClient.get(this.getUrl, { params });
@@ -147,11 +147,11 @@ class ArticleRuService {
   }
 
   async getArticleRuImages(articleRuId: string): Promise<ApiResponse<ArticleRuImage[]>> {
-    return apiClient.get('/v1/articleRu-images', { params: { articleRuId } });
+    return apiClient.get('/v1/article-image-rus', { params: { articleRuId } });
   }
 
   async uploadArticleRuImageByUrl(data: UploadArticleRuImageByUrlRequest): Promise<ApiResponse<ArticleRuImage>> {
-    return apiClient.post('/v1/articleRu-images', data);
+    return apiClient.post('/v1/article-image-rus', data);
   }
 
   async uploadArticleRuImageByFile(data: UploadArticleRuImageByFileRequest): Promise<ApiResponse<ArticleRuImage>> {
@@ -160,11 +160,11 @@ class ArticleRuService {
     formData.append('articleRuTitle', data.articleRuTitle);
     formData.append('filename', data.filename);
     formData.append('file', data.file);
-    return apiClient.post('/v1/articleRu-images', formData);
+    return apiClient.post('/v1/article-image-rus', formData);
   }
 
   async deleteArticleRuImage(id: string): Promise<ApiResponse<void>> {
-    return apiClient.delete(`/v1/articleRu-images/${id}/permanent`);
+    return apiClient.delete(`/v1/article-image-rus/${id}/permanent`);
   }
 }
 
