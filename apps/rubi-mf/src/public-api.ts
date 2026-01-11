@@ -19,3 +19,29 @@ export type {
   UploadQuestionImageRuByFileRequest as FreeTextUploadQuestionImageRuByFileRequest,
 } from './freeTextQuestionRus/types/freeTextQuestionRu.types';
 export { freeTextQuestionRuService } from './freeTextQuestionRus/services/freeTextQuestionRuService';
+
+export { default as FillBlankQuestionRusPage } from './fillBlankQuestionRus/pages/FillBlankQuestionRusPage';
+export type {
+  FillBlankQuestionRu,
+  FillBlankQuestionRuPaginatedResponse,
+  FillBlankQuestionRuActionType,
+  FillBlankQuestionRuFormData,
+  FillBlankQuestionRuSearchFormData,
+  QuestionImageRu as FillBlankQuestionImageRu,
+  UploadQuestionImageRuByUrlRequest as FillBlankUploadQuestionImageRuByUrlRequest,
+  UploadQuestionImageRuByFileRequest as FillBlankUploadQuestionImageRuByFileRequest,
+} from './fillBlankQuestionRus/types/fillBlankQuestionRu.types';
+export { fillBlankQuestionRuService } from './fillBlankQuestionRus/services/fillBlankQuestionRuService';
+
+export { default as TrueFalseQuestionRusPage } from './trueFalseQuestionRus/pages/TrueFalseQuestionRusPage';
+export type {
+  TrueFalseQuestionRu,
+  TrueFalseQuestionRuPaginatedResponse,
+  TrueFalseQuestionRuActionType,
+  TrueFalseQuestionRuFormData,
+  TrueFalseQuestionRuSearchFormData,
+  QuestionImageRu as TrueFalseQuestionImageRu,
+  UploadQuestionImageRuByUrlRequest as TrueFalseUploadQuestionImageRuByUrlRequest,
+  UploadQuestionImageRuByFileRequest as TrueFalseUploadQuestionImageRuByFileRequest,
+} from './trueFalseQuestionRus/types/trueFalseQuestionRu.types';
+export { trueFalseQuestionRuService } from './trueFalseQuestionRus/services/trueFalseQuestionRuService';

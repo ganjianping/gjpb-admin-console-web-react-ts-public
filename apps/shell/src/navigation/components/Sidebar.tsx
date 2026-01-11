@@ -36,6 +36,8 @@ import {
   Lock,
   HelpCircle,
   BookOpen,
+  Edit,
+  CheckSquare,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -188,6 +190,18 @@ const Sidebar = ({ drawerWidth, collapsedWidth, open, onClose, variant }: Sideba
           title: t('freeTextQuestionRus.title'),
           path: '/freeTextQuestionRus',
           icon: HelpCircle,
+        },
+        {
+          key: 'fillBlankQuestionRus',
+          title: t('fillBlankQuestionRus.title'),
+          path: '/fillBlankQuestionRus',
+          icon: Edit,
+        },
+        {
+          key: 'trueFalseQuestionRus',
+          title: t('trueFalseQuestionRus.title'),
+          path: '/trueFalseQuestionRus',
+          icon: CheckSquare,
         },
       ]
     },

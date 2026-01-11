@@ -106,6 +106,12 @@ const shellResources = {
       freeTextQuestionRus: {
         title: 'FTQ',
       },
+      fillBlankQuestionRus: {
+        title: 'FBQ',
+      },
+      trueFalseQuestionRus: {
+        title: 'T/FQ',
+      },
       common: {
         goBack: 'Go Back',
         goHome: 'Go Home',
@@ -225,6 +231,12 @@ const shellResources = {
       },
       freeTextQuestionRus: {
         title: '填空题',
+      },
+      fillBlankQuestionRus: {
+        title: '填空题',
+      },
+      trueFalseQuestionRus: {
+        title: '判断题',
       },
       common: {
         goBack: '返回',

@@ -1,0 +1,158 @@
+import i18n from '../../../../shared-lib/src/i18n/i18n';
+
+const enTranslations = {
+  trueFalseQuestionRus: {
+    title: 'T/F',
+    subtitle: 'Manage true/false questions and answer',
+    description: 'Maintain the true/false question library',
+    pageTitle: 'True/False Question',
+    create: 'Create True False Question',
+    edit: 'Edit True False Question',
+    delete: 'Delete True False Question',
+    view: 'View True False Question',
+    search: 'Search True False Questions',
+    clearFilters: 'Clear Filters',
+    noFreeTextQuestionsFound: 'No True False Questions found',
+    columns: {
+      question: 'Question',
+      answer: 'Correct Answer',
+      difficultyLevel: 'Difficulty',
+      lang: 'Language',
+      tags: 'Tags',
+      displayOrder: 'Order',
+      isActive: 'Status',
+      updatedAt: 'Updated At',
+    },
+    form: {
+      question: 'Question',
+      answer: 'Correct Answer',
+      explanation: 'Explanation',
+      difficultyLevel: 'Difficulty Level',
+      tags: 'Tags',
+      lang: 'Language',
+      displayOrder: 'Display Order',
+      isActive: 'Active Status',
+      createdAt: 'Created At',
+      updatedAt: 'Updated At',
+      createdBy: 'Created By',
+      updatedBy: 'Updated By',
+      status: 'Status',
+    },
+    filters: {
+      searchByQuestion: 'Search by question',
+      all: 'All',
+    },
+    actions: {
+      view: 'View',
+      edit: 'Edit',
+      delete: 'Delete',
+      more: 'More...',
+      less: 'Less',
+      copy: 'Copy',
+    },
+    messages: {
+      questionCopied: 'Question copied to clipboard!',
+      answerCopied: 'Answer copied to clipboard!',
+      createdSuccessfully: 'True False Question created successfully',
+      updatedSuccessfully: 'True False Question updated successfully',
+      deletedSuccessfully: 'True False Question deleted successfully',
+      deleteConfirmation: 'Are you sure you want to delete this True False Question?',
+    },
+    status: {
+      active: 'Active',
+      inactive: 'Inactive',
+    },
+    viewDialog: {
+      details: 'Details',
+      id: 'ID',
+      metadata: 'Metadata',
+    },
+    common: {
+      close: 'Close',
+      cancel: 'Cancel',
+      delete: 'Delete',
+      edit: 'Edit',
+    },
+  },
+};
+
+const zhTranslations = {
+  trueFalseQuestionRus: {
+    title: '判断题',
+    subtitle: '管理判断题和答案',
+    description: '维护判断题库',
+    pageTitle: '判断题管理',
+    create: '创建判断题',
+    edit: '编辑判断题',
+    delete: '删除判断题',
+    view: '查看判断题',
+    search: '搜索判断题',
+    clearFilters: '清除筛选',
+    noFreeTextQuestionsFound: '未找到判断题',
+    columns: {
+      question: '问题',
+      answer: '正确答案',
+      difficultyLevel: '难度',
+      lang: '语言',
+      tags: '标签',
+      displayOrder: '排序',
+      isActive: '状态',
+      updatedAt: '更新时间',
+    },
+    form: {
+      question: '问题',
+      answer: '正确答案',
+      explanation: '解释',
+      difficultyLevel: '难度级别',
+      tags: '标签',
+      lang: '语言',
+      displayOrder: '显示顺序',
+      isActive: '激活状态',
+      createdAt: '创建时间',
+      updatedAt: '更新时间',
+      createdBy: '创建者',
+      updatedBy: '更新者',
+      status: '状态',
+    },
+    filters: {
+      searchByQuestion: '按问题搜索',
+      all: '全部',
+    },
+    actions: {
+      view: '查看',
+      edit: '编辑',
+      delete: '删除',
+      more: '更多...',
+      less: '收起',
+      copy: '复制',
+    },
+    messages: {
+      questionCopied: '问题已复制到剪贴板！',
+      answerCopied: '答案已复制到剪贴板！',
+      createdSuccessfully: '判断题创建成功',
+      updatedSuccessfully: '判断题更新成功',
+      deletedSuccessfully: '判断题删除成功',
+      deleteConfirmation: '确定要删除此判断题吗？',
+    },
+    status: {
+      active: '激活',
+      inactive: '未激活',
+    },
+    viewDialog: {
+      details: '详情',
+      id: 'ID',
+      metadata: '元数据',
+    },
+    common: {
+      close: '关闭',
+      cancel: '取消',
+      delete: '删除',
+      edit: '编辑',
+    },
+  },
+};
+
+i18n.addResourceBundle('en', 'translation', enTranslations, true, true);
+i18n.addResourceBundle('zh', 'translation', zhTranslations, true, true);
+
+export default { en: enTranslations, zh: zhTranslations };
