@@ -18,7 +18,7 @@ export const DIFFICULTY_LEVEL_OPTIONS = [
   { value: 'hard', label: 'Hard' },
 ];
 
-export const TRUE_FALSE_QUESTION_TAG_SETTING_KEY = 'true_false_question_tags';
+export const TRUE_FALSE_QUESTION_TAG_SETTING_KEY = 'question_ru_tags';
 export const TRUE_FALSE_QUESTION_DIFFICULTY_LEVEL_SETTING_KEY = 'difficulty_level';
 export const TRUE_FALSE_QUESTION_LANG_SETTING_KEY = 'lang';
 
