@@ -118,6 +118,9 @@ const shellResources = {
       videoRus: {
         title: 'Videos',
       },
+      audioRus: {
+        title: 'Audios',
+      },
       common: {
         goBack: 'Go Back',
         goHome: 'Go Home',
@@ -249,6 +252,9 @@ const shellResources = {
       },
       videoRus: {
         title: '视频管理',
+      },
+      audioRus: {
+        title: '音频管理',
       },
       common: {
         goBack: '返回',

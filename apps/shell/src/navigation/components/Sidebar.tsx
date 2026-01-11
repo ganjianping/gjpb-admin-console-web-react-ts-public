@@ -215,6 +215,12 @@ const Sidebar = ({ drawerWidth, collapsedWidth, open, onClose, variant }: Sideba
           path: '/video-rus',
           icon: Film,
         },
+        {
+          key: 'audioRus',
+          title: t('audioRus.title'),
+          path: '/audio-rus',
+          icon: Music,
+        },
       ],
     },
     {

@@ -1,0 +1,18 @@
+export const getEmptyAudioRuFormData = (lang = 'EN') => ({
+  name: '',
+  subtitle: '',
+  filename: '',
+  coverImageFilename: '',
+  sourceName: '',
+  originalUrl: '',
+  artist: '',
+  coverImageFile: null,
+  description: '',
+  sizeBytes: 0,
+  tags: '',
+  lang,
+  displayOrder: 999,
+  isActive: true,
+  uploadMethod: 'file' as const,
+  file: null,
+});

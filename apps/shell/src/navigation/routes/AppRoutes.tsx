@@ -112,6 +112,11 @@ const VideoRusPage = lazy(() =>
     default: module.VideoRusPage,
   })),
 );
+const AudioRusPage = lazy(() =>
+  import("../../../../rubi-mf/src/public-api").then((module) => ({
+    default: module.AudioRusPage,
+  })),
+);
 import "../../dashboard";
 import DashboardPage from "../../dashboard/pages/DashboardPage";
 
@@ -477,6 +482,16 @@ const AppRoutes = () => {
             element={
               <Suspense fallback={<AppLoading />}>
                 <VideoRusPage />
+              </Suspense>
+            }
+          />
+
+          {/* AudioRus */}
+          <Route
+            path="audio-rus"
+            element={
+              <Suspense fallback={<AppLoading />}>
+                <AudioRusPage />
               </Suspense>
             }
           />
