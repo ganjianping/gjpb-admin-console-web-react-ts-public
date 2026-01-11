@@ -112,6 +112,9 @@ const shellResources = {
       trueFalseQuestionRus: {
         title: 'T/FQ',
       },
+      imageRus: {
+        title: 'Images',
+      },
       common: {
         goBack: 'Go Back',
         goHome: 'Go Home',
@@ -237,6 +240,9 @@ const shellResources = {
       },
       trueFalseQuestionRus: {
         title: '判断题',
+      },
+      imageRus: {
+        title: '图片管理',
       },
       common: {
         goBack: '返回',

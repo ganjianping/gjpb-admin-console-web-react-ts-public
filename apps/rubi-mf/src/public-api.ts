@@ -45,3 +45,7 @@ export type {
   UploadQuestionImageRuByFileRequest as TrueFalseUploadQuestionImageRuByFileRequest,
 } from './trueFalseQuestionRus/types/trueFalseQuestionRu.types';
 export { trueFalseQuestionRuService } from './trueFalseQuestionRus/services/trueFalseQuestionRuService';
+
+export { default as ImageRusPage } from './imageRus/pages/ImageRusPage';
+export * from './imageRus/types/imageRu.types';
+export { imageRuService } from './imageRus/services/imageRuService';

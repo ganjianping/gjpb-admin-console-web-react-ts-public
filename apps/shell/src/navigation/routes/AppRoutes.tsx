@@ -102,8 +102,11 @@ const TrueFalseQuestionRusPage = lazy(() =>
     default: module.TrueFalseQuestionRusPage,
   })),
 );
-
-// Import dashboard (this also loads dashboard translations)
+const ImageRusPage = lazy(() =>
+  import("../../../../rubi-mf/src/public-api").then((module) => ({
+    default: module.ImageRusPage,
+  })),
+);
 import "../../dashboard";
 import DashboardPage from "../../dashboard/pages/DashboardPage";
 
@@ -415,7 +418,7 @@ const AppRoutes = () => {
 
           {/* MCQ Rus */}
           <Route
-            path="multipleChoiceQuestionRus"
+            path="multiple-choice-question-rus"
             element={
               <Suspense fallback={<AppLoading />}>
                 <MultipleChoiceQuestionRusPage />
@@ -425,7 +428,7 @@ const AppRoutes = () => {
 
           {/* Free Text Question Rus */}
           <Route
-            path="freeTextQuestionRus"
+            path="free-text-question-rus"
             element={
               <Suspense fallback={<AppLoading />}>
                 <FreeTextQuestionRusPage />
@@ -435,7 +438,7 @@ const AppRoutes = () => {
 
           {/* Fill Blank Question Rus */}
           <Route
-            path="fillBlankQuestionRus"
+            path="fill-blank-question-rus"
             element={
               <Suspense fallback={<AppLoading />}>
                 <FillBlankQuestionRusPage />
@@ -445,10 +448,20 @@ const AppRoutes = () => {
 
           {/* True False Question Rus */}
           <Route
-            path="trueFalseQuestionRus"
+            path="true-false-question-rus"
             element={
               <Suspense fallback={<AppLoading />}>
                 <TrueFalseQuestionRusPage />
+              </Suspense>
+            }
+          />
+
+          {/* ImageRus */}
+          <Route
+            path="image-rus"
+            element={
+              <Suspense fallback={<AppLoading />}>
+                <ImageRusPage />
               </Suspense>
             }
           />

@@ -182,28 +182,34 @@ const Sidebar = ({ drawerWidth, collapsedWidth, open, onClose, variant }: Sideba
         {
           key: 'multipleChoiceQuestionRus',
           title: t('multipleChoiceQuestionRus.title'),
-          path: '/multipleChoiceQuestionRus',
+          path: '/multiple-choice-question-rus',
           icon: HelpCircle,
         },
         {
           key: 'freeTextQuestionRus',
           title: t('freeTextQuestionRus.title'),
-          path: '/freeTextQuestionRus',
+          path: '/free-text-question-rus',
           icon: HelpCircle,
         },
         {
           key: 'fillBlankQuestionRus',
           title: t('fillBlankQuestionRus.title'),
-          path: '/fillBlankQuestionRus',
+          path: '/fill-blank-question-rus',
           icon: Edit,
         },
         {
           key: 'trueFalseQuestionRus',
           title: t('trueFalseQuestionRus.title'),
-          path: '/trueFalseQuestionRus',
+          path: '/true-false-question-rus',
           icon: CheckSquare,
         },
-      ]
+        {
+          key: 'imageRus',
+          title: t('imageRus.title'),
+          path: '/image-rus',
+          icon: Image,
+        },
+      ],
     },
     {
       key: 'system',
