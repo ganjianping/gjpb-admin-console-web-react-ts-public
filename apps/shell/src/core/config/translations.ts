@@ -121,6 +121,9 @@ const shellResources = {
       audioRus: {
         title: 'Audios',
       },
+      articleRus: {
+        title: 'Articles',
+      },
       common: {
         goBack: 'Go Back',
         goHome: 'Go Home',
@@ -255,6 +258,9 @@ const shellResources = {
       },
       audioRus: {
         title: '音频管理',
+      },
+      articleRus: {
+        title: '文章管理',
       },
       common: {
         goBack: '返回',

@@ -57,3 +57,7 @@ export { videoRuService } from './videoRus/services/videoRuService';
 export { default as AudioRusPage } from './audioRus/pages/AudioRusPage';
 export * from './audioRus/types/audioRu.types';
 export { audioRuService } from './audioRus/services/audioRuService';
+
+export { default as ArticleRusPage } from './articleRus/pages/ArticleRusPage';
+export * from './articleRus/types/articleRu.types';
+export { articleRuService } from './articleRus/services/articleRuService';
