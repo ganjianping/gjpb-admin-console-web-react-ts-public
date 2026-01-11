@@ -49,3 +49,7 @@ export { trueFalseQuestionRuService } from './trueFalseQuestionRus/services/true
 export { default as ImageRusPage } from './imageRus/pages/ImageRusPage';
 export * from './imageRus/types/imageRu.types';
 export { imageRuService } from './imageRus/services/imageRuService';
+
+export { default as VideoRusPage } from './videoRus/pages/VideoRusPage';
+export * from './videoRus/types/videoRu.types';
+export { videoRuService } from './videoRus/services/videoRuService';
