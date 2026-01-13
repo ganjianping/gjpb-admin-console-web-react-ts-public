@@ -20,7 +20,7 @@ export const DIFFICULTY_LEVEL_OPTIONS = [
 
 export const EXPRESSION_RU_TAG_SETTING_KEY = 'expression_ru_tags';
 export const EXPRESSION_LANG_SETTING_KEY = 'lang';
-export const EXPRESSION_DIFFICULTY_LEVEL_SETTING_KEY = 'difficulty_level';
+export const EXPRESSION_RU_DIFFICULTY_LEVEL_SETTING_KEY = 'difficulty_level';
 
 export const EXPRESSION_CONSTANTS = {
   DEFAULT_PAGE_SIZE: 20,

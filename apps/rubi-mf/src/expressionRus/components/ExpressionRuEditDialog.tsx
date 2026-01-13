@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   Dialog,
   DialogActions,
@@ -13,10 +13,12 @@ import {
   MenuItem,
   Checkbox,
   FormControlLabel,
+  OutlinedInput,
+  Chip,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import type { ExpressionRuFormData } from '../types/expressionRu.types';
-import { LANGUAGE_OPTIONS, DIFFICULTY_LEVEL_OPTIONS } from '../constants';
+import { LANGUAGE_OPTIONS, DIFFICULTY_LEVEL_OPTIONS, EXPRESSION_RU_TAG_SETTING_KEY, EXPRESSION_RU_DIFFICULTY_LEVEL_SETTING_KEY } from '../constants';
 
 interface ExpressionRuEditDialogProps {
   open: boolean;
@@ -35,7 +37,42 @@ const ExpressionRuEditDialog: React.FC<ExpressionRuEditDialogProps> = ({
   onSubmit,
   onClose,
 }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  const availableTags = useMemo(() => {
+    try {
+      const settings = localStorage.getItem('gjpb_app_settings');
+      if (!settings) return [] as string[];
+      const appSettings = JSON.parse(settings) as Array<{ name: string; value: string; lang: string }>;
+      const currentLang = i18n.language.toUpperCase().startsWith('ZH') ? 'ZH' : 'EN';
+      const tagSetting = appSettings.find((s) => s.name === EXPRESSION_RU_TAG_SETTING_KEY && s.lang === currentLang);
+      if (!tagSetting) return [] as string[];
+      return tagSetting.value.split(',').map((v) => v.trim()).filter(Boolean);
+    } catch (err) {
+      console.error('[ExpressionRuEditDialog] Error loading tags:', err);
+      return [] as string[];
+    }
+  }, [i18n.language]);
+
+  const availableDifficultyLevels = useMemo(() => {
+    try {
+      const settings = localStorage.getItem('gjpb_app_settings');
+      if (!settings) return [] as string[];
+      const appSettings = JSON.parse(settings) as Array<{ name: string; value: string; lang: string }>;
+      const currentLang = i18n.language.toUpperCase().startsWith('ZH') ? 'ZH' : 'EN';
+      const difficultyLevelSetting = appSettings.find((s) => s.name === EXPRESSION_RU_DIFFICULTY_LEVEL_SETTING_KEY && s.lang === currentLang);
+      if (!difficultyLevelSetting) return [] as string[];
+      return difficultyLevelSetting.value.split(',').map((v) => v.trim()).filter(Boolean);
+    } catch (err) {
+      console.error('[ExpressionRuEditDialog] Error loading difficulty levels:', err);
+      return [] as string[];
+    }
+  }, [i18n.language]);
+
+  const handleTagsChange = (e: any) => {
+    const value = e.target.value as string[];
+    onFormChange('tags', value.join(','));
+  };
 
   const handleSubmit = async () => {
     try {
@@ -112,30 +149,49 @@ const ExpressionRuEditDialog: React.FC<ExpressionRuEditDialogProps> = ({
                 value={formData.difficultyLevel}
                 onChange={(e) => onFormChange('difficultyLevel', e.target.value)}
               >
-                {DIFFICULTY_LEVEL_OPTIONS.map((opt) => (
-                  <MenuItem key={opt.value} value={opt.value}>
-                    {opt.label}
+                {(availableDifficultyLevels.length > 0 ? availableDifficultyLevels : DIFFICULTY_LEVEL_OPTIONS.map(opt => opt.value)).map((level) => (
+                  <MenuItem key={level} value={level}>
+                    {availableDifficultyLevels.length > 0 ? level : t(`expressionRus.difficultyLevels.${level}`)}
                   </MenuItem>
                 ))}
               </Select>
             </FormControl>
           </Box>
 
-          <Box sx={{ display: 'flex', gap: 2 }}>
-            <TextField
-              label={t('expressionRus.form.tags')}
-              value={formData.tags}
-              onChange={(e) => onFormChange('tags', e.target.value)}
-              fullWidth
-            />
-            <TextField
-              label={t('expressionRus.form.displayOrder')}
-              value={formData.displayOrder}
-              onChange={(e) => onFormChange('displayOrder', Number(e.target.value))}
-              type="number"
-              fullWidth
-            />
-          </Box>
+          <FormControl fullWidth>
+            <FormLabel>{t('expressionRus.form.tags')}</FormLabel>
+            <Select
+              multiple
+              value={formData.tags ? formData.tags.split(',').filter(Boolean) : []}
+              onChange={handleTagsChange}
+              input={<OutlinedInput />}
+              renderValue={(selected) => (
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                  {Array.isArray(selected) && selected.map((v) => (
+                    <Chip key={v} label={v} size="small" />
+                  ))}
+                </Box>
+              )}
+            >
+              {availableTags.length > 0 ? (
+                availableTags.map((tag) => (
+                  <MenuItem key={tag} value={tag}>
+                    {tag}
+                  </MenuItem>
+                ))
+              ) : (
+                <MenuItem disabled>No tags</MenuItem>
+              )}
+            </Select>
+          </FormControl>
+
+          <TextField
+            label={t('expressionRus.form.displayOrder')}
+            value={formData.displayOrder}
+            onChange={(e) => onFormChange('displayOrder', Number(e.target.value))}
+            type="number"
+            fullWidth
+          />
 
           <FormControlLabel
             control={

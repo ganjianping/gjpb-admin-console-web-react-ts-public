@@ -20,7 +20,7 @@ export const DIFFICULTY_LEVEL_OPTIONS = [
 
 export const SENTENCE_RU_TAG_SETTING_KEY = 'sentence_ru_tags';
 export const SENTENCE_LANG_SETTING_KEY = 'lang';
-export const SENTENCE_DIFFICULTY_LEVEL_SETTING_KEY = 'difficulty_level';
+export const SENTENCE_RU_DIFFICULTY_LEVEL_SETTING_KEY = 'difficulty_level';
 
 export const SENTENCE_CONSTANTS = {
   DEFAULT_PAGE_SIZE: 20,

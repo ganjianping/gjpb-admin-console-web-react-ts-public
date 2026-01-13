@@ -105,7 +105,7 @@ const SentenceRuPageHeader: React.FC<SentenceRuPageHeaderProps> = ({
               },
             }}
           >
-            {t('sentenceRus.createButton')}
+            {t('sentenceRus.create')}
           </Button>
         </Box>
       </Box>
