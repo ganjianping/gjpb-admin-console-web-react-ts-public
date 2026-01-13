@@ -33,7 +33,7 @@ import { ContentCopy as ContentCopyIcon, Delete as DeleteIcon } from '@mui/icons
 import { useTranslation } from 'react-i18next';
 import TiptapTextEditor from '../../../../shared-lib/src/ui-components/rich-text/tiptap/tiptapTextEditor';
 import '../i18n/translations';
-import type { ArticleRuFormData, ArticleRuImage } from '../types/articleRu.types';
+import type { ArticleRu, ArticleRuFormData, ArticleRuImage } from '../types/articleRu.types';
 import { ARTICLE_TAG_SETTING_KEY, LANGUAGE_OPTIONS, ARTICLE_LANG_SETTING_KEY } from '../constants';
 import { articleRuService } from '../services/articleRuService';
 import { getFullArticleRuCoverImageUrl } from '../utils/getFullArticleRuCoverImageUrl';
@@ -41,6 +41,7 @@ import { getFullArticleRuCoverImageUrl } from '../utils/getFullArticleRuCoverIma
 interface ArticleRuEditDialogProps {
   open: boolean;
   articleRuId?: string;
+  selectedArticleRu?: ArticleRu | null;
   formData: ArticleRuFormData;
   onFormChange: (field: keyof ArticleRuFormData, value: any) => void;
   onSubmit: (useFormData?: boolean) => Promise<void>;
@@ -52,6 +53,7 @@ interface ArticleRuEditDialogProps {
 const ArticleRuEditDialog: React.FC<ArticleRuEditDialogProps> = ({
   open,
   articleRuId,
+  selectedArticleRu,
   formData,
   onFormChange,
   onSubmit,
@@ -83,6 +85,9 @@ const ArticleRuEditDialog: React.FC<ArticleRuEditDialogProps> = ({
     if (formData.coverImageFile) {
       return URL.createObjectURL(formData.coverImageFile);
     }
+    if (selectedArticleRu?.coverImageFileUrl) {
+      return selectedArticleRu.coverImageFileUrl;
+    }
     if (formData.coverImageFilename) {
       return getFullArticleRuCoverImageUrl(`/${formData.coverImageFilename}`);
     }
@@ -90,7 +95,7 @@ const ArticleRuEditDialog: React.FC<ArticleRuEditDialogProps> = ({
       return formData.coverImageOriginalUrl;
     }
     return '';
-  }, [formData.coverImageFile, formData.coverImageOriginalUrl, formData.coverImageFilename]);
+  }, [formData.coverImageFile, formData.coverImageOriginalUrl, formData.coverImageFilename, selectedArticleRu?.coverImageFileUrl]);
 
   useEffect(() => {
     return () => {
@@ -372,8 +377,8 @@ const ArticleRuEditDialog: React.FC<ArticleRuEditDialogProps> = ({
             </Box>
 
             <TextField
-              label={t('articleRus.form.coverImageFilename')}
-              value={formData.coverImageFilename || ''}
+              label={t('articleRus.form.coverImageFile')}
+              value={selectedArticleRu?.coverImageFileUrl || formData.coverImageFilename || ''}
               onChange={(e) => onFormChange('coverImageFilename', e.target.value)}
               fullWidth
               sx={{ mb: 2 }}

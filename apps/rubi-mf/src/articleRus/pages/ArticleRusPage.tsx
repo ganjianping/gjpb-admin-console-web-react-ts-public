@@ -216,6 +216,7 @@ const ArticleRusPage: React.FC = () => {
         <ArticleRuEditDialog
           open={dialog.dialogOpen}
           articleRuId={dialog.selectedArticleRu.id}
+          selectedArticleRu={dialog.selectedArticleRu}
           formData={dialog.formData}
           onFormChange={(field, value) => dialog.setFormData((prev) => ({ ...prev, [field]: value }))}
           onClose={() => dialog.setDialogOpen(false)}
