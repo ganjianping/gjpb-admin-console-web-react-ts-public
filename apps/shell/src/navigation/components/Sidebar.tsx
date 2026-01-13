@@ -179,6 +179,19 @@ const Sidebar = ({ drawerWidth, collapsedWidth, open, onClose, variant }: Sideba
           path: '/vocabularies',
           icon: BookOpen,
         },
+
+        {
+          key: 'expressionRus',
+          title: t('expressionRus.title'),
+          path: '/expression-rus',
+          icon: BookOpen,
+        },
+        {
+          key: 'sentenceRus',
+          title: t('sentenceRus.title'),
+          path: '/sentence-rus',
+          icon: FileText,
+        },
         {
           key: 'multipleChoiceQuestionRus',
           title: t('multipleChoiceQuestionRus.title'),

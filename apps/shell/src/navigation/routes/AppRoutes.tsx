@@ -122,6 +122,16 @@ const ArticleRusPage = lazy(() =>
     default: module.ArticleRusPage,
   })),
 );
+const ExpressionRusPage = lazy(() =>
+  import("../../../../rubi-mf/src/public-api").then((module) => ({
+    default: module.ExpressionRusPage,
+  })),
+);
+const SentenceRusPage = lazy(() =>
+  import("../../../../rubi-mf/src/public-api").then((module) => ({
+    default: module.SentenceRusPage,
+  })),
+);
 import "../../dashboard";
 import DashboardPage from "../../dashboard/pages/DashboardPage";
 
@@ -507,6 +517,26 @@ const AppRoutes = () => {
             element={
               <Suspense fallback={<AppLoading />}>
                 <ArticleRusPage />
+              </Suspense>
+            }
+          />
+
+          {/* ExpressionRus */}
+          <Route
+            path="expression-rus"
+            element={
+              <Suspense fallback={<AppLoading />}>
+                <ExpressionRusPage />
+              </Suspense>
+            }
+          />
+
+          {/* SentenceRus */}
+          <Route
+            path="sentence-rus"
+            element={
+              <Suspense fallback={<AppLoading />}>
+                <SentenceRusPage />
               </Suspense>
             }
           />

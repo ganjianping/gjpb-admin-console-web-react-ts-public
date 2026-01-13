@@ -61,3 +61,11 @@ export { audioRuService } from './audioRus/services/audioRuService';
 export { default as ArticleRusPage } from './articleRus/pages/ArticleRusPage';
 export * from './articleRus/types/articleRu.types';
 export { articleRuService } from './articleRus/services/articleRuService';
+
+export { default as ExpressionRusPage } from './expressionRus/pages/ExpressionRusPage';
+export * from './expressionRus/types/expressionRu.types';
+export { expressionRuService } from './expressionRus/services/expressionRuService';
+
+export { default as SentenceRusPage } from './sentenceRus/pages/SentenceRusPage';
+export * from './sentenceRus/types/sentenceRu.types';
+export { sentenceRuService } from './sentenceRus/services/sentenceRuService';

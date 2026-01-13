@@ -124,6 +124,12 @@ const shellResources = {
       articleRus: {
         title: 'Articles',
       },
+      expressionRus: {
+        title: 'Expressions',
+      },
+      sentenceRus: {
+        title: 'Sentences',
+      },
       common: {
         goBack: 'Go Back',
         goHome: 'Go Home',
@@ -261,6 +267,12 @@ const shellResources = {
       },
       articleRus: {
         title: '文章管理',
+      },
+      expressionRus: {
+        title: '表达方式管理',
+      },
+      sentenceRus: {
+        title: '句子管理',
       },
       common: {
         goBack: '返回',
