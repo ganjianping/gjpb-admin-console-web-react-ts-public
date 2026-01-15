@@ -1,139 +1,146 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import '../i18n/translations';
+import { Box, Typography } from "@mui/material";
+import { useTranslation } from "react-i18next";
+import { memo, useMemo } from "react";
+import "../i18n/translations";
 import {
-  Box,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Chip,
-  IconButton,
-  Tooltip,
-  Typography,
-} from '@mui/material';
-import { Eye, Edit2, Trash2 } from 'lucide-react';
-import type { ExpressionRu } from '../types/expressionRu.types';
-import { STATUS_MAPS } from '../constants';
-import { format, parseISO } from 'date-fns';
+  DataTable,
+  createColumnHelper,
+  createStatusChip,
+} from "../../../../shared-lib/src/data-management/DataTable";
+import type { ExpressionRu } from "../types/expressionRu.types";
+import { useExpressionRuActionMenu } from "../hooks/useExpressionRuActionMenu";
+import { STATUS_MAPS } from "../constants";
 
-interface ExpressionRuTableProps {
-  expressions: ExpressionRu[];
-  loading?: boolean;
-  onAction: (expression: ExpressionRu, action: 'view' | 'edit' | 'delete') => void;
-}
+const columnHelper = createColumnHelper<ExpressionRu>();
 
-const ExpressionRuTable: React.FC<ExpressionRuTableProps> = ({
-  expressions,
-  loading,
-  onAction,
-}) => {
-  const { t } = useTranslation();
+const ExpressionRuTable = memo(
+  ({
+    expressionRus,
+    pagination,
+    onPageChange,
+    onPageSizeChange,
+    onExpressionRuAction,
+  }: any) => {
+    const { t } = useTranslation();
 
-  if (expressions.length === 0 && !loading) {
-    return (
-      <Box sx={{ textAlign: 'center', py: 8 }}>
-        <Typography variant="h6" color="text.secondary">
-          {t('expressionRus.noExpressionsFound')}
-        </Typography>
-      </Box>
-    );
-  }
+    const actionMenuItems = useExpressionRuActionMenu({
+      onView: (expressionRu: ExpressionRu) =>
+        onExpressionRuAction(expressionRu, "view"),
+      onEdit: (expressionRu: ExpressionRu) =>
+        onExpressionRuAction(expressionRu, "edit"),
+      onDelete: (expressionRu: ExpressionRu) =>
+        onExpressionRuAction(expressionRu, "delete"),
+    });
 
-  return (
-    <TableContainer component={Paper} sx={{ borderRadius: 2 }}>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>{t('expressionRus.columns.name')}</TableCell>
-            <TableCell>{t('expressionRus.columns.phonetic')}</TableCell>
-            <TableCell>{t('expressionRus.columns.translation')}</TableCell>
-            <TableCell>{t('expressionRus.columns.lang')}</TableCell>
-            <TableCell>{t('expressionRus.columns.tags')}</TableCell>
-            <TableCell>{t('expressionRus.columns.displayOrder')}</TableCell>
-            <TableCell>{t('expressionRus.columns.isActive')}</TableCell>
-            <TableCell>{t('expressionRus.columns.updatedAt')}</TableCell>
-            <TableCell align="right">{t('common.actions')}</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {expressions.map((expression) => {
-            const activeStatus = expression.isActive ? 'true' : 'false';
-            const statusConfig = STATUS_MAPS.active[activeStatus];
-            
+    const columns = useMemo(
+      () => [
+        columnHelper.accessor("name", {
+          header: t("expressionRus.columns.name"),
+          cell: (info) => (
+            <Typography variant="body2" sx={{ fontWeight: 600 }}>
+              {info.getValue()}
+            </Typography>
+          ),
+          size: 200,
+        }),
+        columnHelper.accessor("phonetic", {
+          header: t("expressionRus.columns.phonetic"),
+          cell: (info) => (
+            <Typography variant="body2">{info.getValue() || "-"}</Typography>
+          ),
+        }),
+        columnHelper.accessor("translation", {
+          header: t("expressionRus.columns.translation"),
+          cell: (info) => (
+            <Typography variant="body2">{info.getValue() || "-"}</Typography>
+          ),
+        }),
+        columnHelper.accessor("lang", {
+          header: t("expressionRus.columns.lang"),
+          cell: (info) => (
+            <Typography variant="body2">{info.getValue() || "-"}</Typography>
+          ),
+        }),
+        columnHelper.accessor("tags", {
+          header: t("expressionRus.columns.tags"),
+          cell: (info) => (
+            <Typography variant="body2">{info.getValue() || "-"}</Typography>
+          ),
+        }),
+        columnHelper.accessor("displayOrder", {
+          header: t("expressionRus.columns.displayOrder"),
+          cell: (info) => (
+            <Typography variant="body2">{info.getValue()}</Typography>
+          ),
+        }),
+        columnHelper.accessor("isActive", {
+          header: t("expressionRus.columns.isActive"),
+          cell: (info) => {
+            const isActive = info.getValue();
             return (
-              <TableRow key={expression.id} hover>
-                <TableCell>
-                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                    {expression.name}
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="body2" color="text.secondary">
-                    {expression.phonetic || '-'}
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="body2">
-                    {expression.translation || '-'}
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  <Chip label={expression.lang} size="small" variant="outlined" />
-                </TableCell>
-                <TableCell>
-                  <Typography variant="body2" color="text.secondary">
-                    {expression.tags || '-'}
-                  </Typography>
-                </TableCell>
-                <TableCell>{expression.displayOrder ?? '-'}</TableCell>
-                <TableCell>
-                  <Chip label={statusConfig.label} color={statusConfig.color} size="small" />
-                </TableCell>
-                <TableCell>
-                  <Typography variant="body2" color="text.secondary">
-                    {expression.updatedAt ? format(parseISO(expression.updatedAt), 'yyyy-MM-dd HH:mm') : '-'}
-                  </Typography>
-                </TableCell>
-                <TableCell align="right">
-                  <Box sx={{ display: 'flex', gap: 0.5, justifyContent: 'flex-end' }}>
-                    <Tooltip title={t('expressionRus.actions.view')}>
-                      <IconButton
-                        size="small"
-                        onClick={() => onAction(expression, 'view')}
-                      >
-                        <Eye size={16} />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title={t('expressionRus.actions.edit')}>
-                      <IconButton
-                        size="small"
-                        onClick={() => onAction(expression, 'edit')}
-                      >
-                        <Edit2 size={16} />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title={t('expressionRus.actions.delete')}>
-                      <IconButton
-                        size="small"
-                        color="error"
-                        onClick={() => onAction(expression, 'delete')}
-                      >
-                        <Trash2 size={16} />
-                      </IconButton>
-                    </Tooltip>
-                  </Box>
-                </TableCell>
-              </TableRow>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                {createStatusChip(
+                  isActive?.toString?.() ?? String(!!isActive),
+                  STATUS_MAPS.active,
+                )}
+              </Box>
             );
-          })}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  );
-};
+          },
+        }),
+        columnHelper.accessor("updatedAt", {
+          header: t("expressionRus.columns.updatedAt"),
+          cell: (info) => {
+            const value = info.getValue();
+            if (!value) return <Typography variant="body2">-</Typography>;
+            let dateStr = "-";
+            if (typeof value === "string") {
+              const match = value.match(/\d{4}-\d{2}-\d{2}/);
+              dateStr = match ? match[0] : value;
+            } else if (
+              value &&
+              typeof value === "object" &&
+              "toISOString" in value
+            ) {
+              dateStr = (value as Date).toISOString().split("T")[0];
+            }
+            return <Typography variant="body2">{dateStr}</Typography>;
+          },
+        }),
+      ],
+      [t],
+    );
+
+    if (!expressionRus?.length) {
+      return (
+        <Box sx={{ p: 3, textAlign: "center" }}>
+          <Typography variant="body1" color="text.secondary">
+            {t("expressionRus.noExpressionsFound")}
+          </Typography>
+        </Box>
+      );
+    }
+
+    return (
+      <DataTable
+        columns={columns}
+        data={expressionRus}
+        actionMenuItems={actionMenuItems}
+        showSearch={false}
+        onRowDoubleClick={(expressionRu: ExpressionRu) =>
+          onExpressionRuAction(expressionRu, "view")
+        }
+        manualPagination={!!pagination}
+        pageCount={pagination?.totalPages || 0}
+        currentPage={pagination?.page || 0}
+        pageSize={pagination?.size || 20}
+        totalRows={pagination?.totalElements || 0}
+        onPageChange={onPageChange}
+        onPageSizeChange={onPageSizeChange}
+      />
+    );
+  },
+);
+
+ExpressionRuTable.displayName = "ExpressionRuTable";
 
 export default ExpressionRuTable;

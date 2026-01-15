@@ -68,7 +68,7 @@ const VocabularyRuViewDialog = ({ open, vocabularyRu, onClose, onEdit }: Vocabul
                 <CardContent sx={{ p: 3 }}>
                   <Box sx={{ textAlign: 'center', mb: 2 }}>
                     <Typography variant="h3" sx={{ fontWeight: 700, mb: 1, color: 'primary.main' }}>
-                      {vocabularyRu.word}
+                      {vocabularyRu.name}
                     </Typography>
                     {vocabularyRu.translation && (
                       <Typography variant="h6" sx={{ color: 'text.secondary', mb: 2, fontStyle: 'italic' }}>
@@ -156,26 +156,38 @@ const VocabularyRuViewDialog = ({ open, vocabularyRu, onClose, onEdit }: Vocabul
               )}
 
               {/* Grammar Card - Compact */}
-              {(vocabularyRu.simplePastTense || vocabularyRu.pastPerfectTense) && (
+              {(vocabularyRu.verbSimplePastTense || vocabularyRu.verbPastPerfectTense || vocabularyRu.verbPresentParticiple || vocabularyRu.nounPluralForm) && (
                 <Card elevation={0} sx={{ border: '1px solid', borderColor: 'divider', mb: 2 }}>
                   <CardContent sx={{ p: 2 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                       <BookOpen size={16} color="#2e7d32" />
                       <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                        Grammar
+                        Grammar Forms
                       </Typography>
                     </Box>
                     <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-                      {vocabularyRu.simplePastTense && (
+                      {vocabularyRu.verbSimplePastTense && (
                         <Box>
                           <Typography variant="caption" sx={{ color: 'text.secondary' }}>Past</Typography>
-                          <Typography variant="body2" sx={{ fontFamily: 'monospace', fontWeight: 600 }}>{vocabularyRu.simplePastTense}</Typography>
+                          <Typography variant="body2" sx={{ fontFamily: 'monospace', fontWeight: 600 }}>{vocabularyRu.verbSimplePastTense}</Typography>
                         </Box>
                       )}
-                      {vocabularyRu.pastPerfectTense && (
+                      {vocabularyRu.verbPastPerfectTense && (
                         <Box>
                           <Typography variant="caption" sx={{ color: 'text.secondary' }}>Past Perfect</Typography>
-                          <Typography variant="body2" sx={{ fontFamily: 'monospace', fontWeight: 600 }}>{vocabularyRu.pastPerfectTense}</Typography>
+                          <Typography variant="body2" sx={{ fontFamily: 'monospace', fontWeight: 600 }}>{vocabularyRu.verbPastPerfectTense}</Typography>
+                        </Box>
+                      )}
+                      {vocabularyRu.verbPresentParticiple && (
+                        <Box>
+                          <Typography variant="caption" sx={{ color: 'text.secondary' }}>Present Participle</Typography>
+                          <Typography variant="body2" sx={{ fontFamily: 'monospace', fontWeight: 600 }}>{vocabularyRu.verbPresentParticiple}</Typography>
+                        </Box>
+                      )}
+                      {vocabularyRu.nounPluralForm && (
+                        <Box>
+                          <Typography variant="caption" sx={{ color: 'text.secondary' }}>Plural</Typography>
+                          <Typography variant="body2" sx={{ fontFamily: 'monospace', fontWeight: 600 }}>{vocabularyRu.nounPluralForm}</Typography>
                         </Box>
                       )}
                     </Box>
@@ -187,13 +199,13 @@ const VocabularyRuViewDialog = ({ open, vocabularyRu, onClose, onEdit }: Vocabul
             {/* Right Column - Media and Additional Info */}
             <Box sx={{ flex: '1 1 300px', minWidth: '280px' }}>
               {/* Image */}
-              {vocabularyRu.wordImageOriginalUrl && (
+              {vocabularyRu.imageOriginalUrl && (
                 <Card elevation={0} sx={{ border: '1px solid', borderColor: 'divider', mb: 2 }}>
                   <CardContent sx={{ p: 2, textAlign: 'center' }}>
-                    <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>Word Image</Typography>
+                    <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>Image</Typography>
                     <Avatar
-                      src={vocabularyRu.wordImageOriginalUrl}
-                      alt={vocabularyRu.word}
+                      src={vocabularyRu.imageOriginalUrl}
+                      alt={vocabularyRu.name}
                       sx={{ width: 120, height: 120, mx: 'auto', border: '2px solid', borderColor: 'divider' }}
                       variant="rounded"
                     />
@@ -231,13 +243,7 @@ const VocabularyRuViewDialog = ({ open, vocabularyRu, onClose, onEdit }: Vocabul
                         <Typography variant="body2" sx={{ fontWeight: 500 }}>{vocabularyRu.synonyms}</Typography>
                       </Box>
                     )}
-                    {vocabularyRu.pluralForm && (
-                      <Box>
-                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>Plural</Typography>
-                        <Typography variant="body2" sx={{ fontWeight: 500 }}>{vocabularyRu.pluralForm}</Typography>
-                      </Box>
-                    )}
-                    {vocabularyRu.displayOrder && (
+                    {vocabularyRu.displayOrder !== null && vocabularyRu.displayOrder !== undefined && (
                       <Box>
                         <Typography variant="caption" sx={{ color: 'text.secondary' }}>Display Order</Typography>
                         <Typography variant="body2" sx={{ fontWeight: 500 }}>{vocabularyRu.displayOrder}</Typography>

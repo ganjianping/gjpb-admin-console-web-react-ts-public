@@ -124,11 +124,11 @@ const VocabularyRuSearchPanel: React.FC<VocabularyRuSearchPanelProps> = ({
 
         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: '1fr 1fr 1fr 1fr 1fr' }, gap: 2, mb: 2.5 }}>
           <FormControl variant='outlined' size='small' fullWidth>
-            <FormLabel sx={{ mb: 1, fontSize: '0.875rem', fontWeight: 500 }}>{t('vocabularyRus.form.word')}</FormLabel>
+            <FormLabel sx={{ mb: 1, fontSize: '0.875rem', fontWeight: 500 }}>{t('vocabularyRus.form.name')}</FormLabel>
             <TextField
               placeholder={t('vocabularyRus.filters.searchByWord')}
-              value={searchFormData.word || ''}
-              onChange={(e) => onFormChange('word', e.target.value)}
+              value={searchFormData.name || ''}
+              onChange={(e) => onFormChange('name', e.target.value)}
               variant='outlined'
               size='small'
               sx={{

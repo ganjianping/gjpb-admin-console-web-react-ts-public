@@ -160,9 +160,11 @@ const SentenceRusPage: React.FC = () => {
         <SentenceRuTableSkeleton />
       ) : (
         <SentenceRuTable
-          sentences={filteredSentenceRus}
-          loading={loading}
-          onAction={handleSentenceRuAction}
+          sentenceRus={filteredSentenceRus}
+          pagination={null}
+          onPageChange={() => {}}
+          onPageSizeChange={() => {}}
+          onSentenceRuAction={handleSentenceRuAction}
         />
       )}
 

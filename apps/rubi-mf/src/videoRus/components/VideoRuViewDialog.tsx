@@ -170,7 +170,7 @@ const VideoRuViewDialog = ({ open, onClose, videoRu, onEdit }: VideoRuViewDialog
 					{/* Details grid for all metadata fields */}
 					<Card elevation={0} sx={{ border: '1px solid', borderColor: 'divider' }}>
 						<CardContent sx={{ p: 3 }}>
-							<Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: 'text.secondary' }}>VideoRu Details</Typography>
+							<Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: 'text.secondary' }}>Basic Information</Typography>
 							<Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2.5 }}>
 								<Box>
 									<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>ID</Typography>
@@ -180,33 +180,13 @@ const VideoRuViewDialog = ({ open, onClose, videoRu, onEdit }: VideoRuViewDialog
 									<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Name</Typography>
 									<Typography variant="body2" sx={{ fontWeight: 600 }}>{videoRu.name}</Typography>
 								</Box>
-								<Box sx={{ gridColumn: '1 / -1' }}>
-									<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Description</Typography>
-									<Typography variant="body2">{videoRu.description}</Typography>
-								</Box>
-                                <Box sx={{ gridColumn: '1 / -1' }}>
-									<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Tags</Typography>
-									<Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
-										{videoRu.tags?.split(',').map((tag: string) => (
-											<Chip key={tag.trim()} icon={<Tag size={14} />} label={tag.trim()} size="small" variant="outlined" sx={{ fontWeight: 500 }} />
-										))}
-									</Box>
-								</Box>
-                                <Box>
-									<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Source Name</Typography>
-									<Typography variant="body2" sx={{ fontWeight: 600 }}>{videoRu.sourceName || '-'}</Typography>
+								<Box>
+									<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Phonetic</Typography>
+									<Typography variant="body2">{videoRu.phonetic || '-'}</Typography>
 								</Box>
 								<Box>
-									<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Filename</Typography>
-									<Typography variant="body2" sx={{ fontFamily: 'monospace', fontSize: '0.875rem', wordBreak: 'break-all' }}>{videoRu.filename}</Typography>
-								</Box>
-								<Box>
-									<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Cover Image Filename</Typography>
-									<Typography variant="body2" sx={{ fontFamily: 'monospace', fontSize: '0.875rem', wordBreak: 'break-all' }}>{videoRu.coverImageFilename}</Typography>
-								</Box>
-								<Box>
-									<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Size (MB)</Typography>
-									<Typography variant="body2">{sizeInMB !== '-' ? `${sizeInMB} MB` : '-'}</Typography>
+									<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Translation</Typography>
+									<Typography variant="body2">{videoRu.translation || '-'}</Typography>
 								</Box>
 								<Box>
 									<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Language</Typography>
@@ -220,9 +200,331 @@ const VideoRuViewDialog = ({ open, onClose, videoRu, onEdit }: VideoRuViewDialog
 									<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Active</Typography>
 									<Chip icon={videoRu.isActive ? <CheckCircle2 size={16} /> : <XCircle size={16} />} label={videoRu.isActive ? 'Active' : 'Inactive'} color={videoRu.isActive ? 'success' : 'default'} sx={{ fontWeight: 600 }} />
 								</Box>
+								<Box>
+									<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Difficulty Level</Typography>
+									<Typography variant="body2">{videoRu.difficultyLevel || '-'}</Typography>
+								</Box>
 							</Box>
 						</CardContent>
 					</Card>
+
+					{/* Part of Speech Information */}
+					{videoRu.partOfSpeech && (
+						<Card elevation={0} sx={{ border: '1px solid', borderColor: 'divider' }}>
+							<CardContent sx={{ p: 3 }}>
+								<Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: 'text.secondary' }}>Part of Speech</Typography>
+								<Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2.5 }}>
+									<Box>
+										<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Part of Speech</Typography>
+										<Typography variant="body2">{videoRu.partOfSpeech}</Typography>
+									</Box>
+									{videoRu.partOfSpeech === 'noun' && videoRu.nounPluralForm && (
+										<Box>
+											<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Plural Form</Typography>
+											<Typography variant="body2">{videoRu.nounPluralForm}</Typography>
+										</Box>
+									)}
+									{videoRu.partOfSpeech === 'verb' && (
+										<>
+											{videoRu.verbSimplePastTense && (
+												<Box>
+													<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Simple Past</Typography>
+													<Typography variant="body2">{videoRu.verbSimplePastTense}</Typography>
+												</Box>
+											)}
+											{videoRu.verbPastPerfectTense && (
+												<Box>
+													<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Past Perfect</Typography>
+													<Typography variant="body2">{videoRu.verbPastPerfectTense}</Typography>
+												</Box>
+											)}
+											{videoRu.verbPresentParticiple && (
+												<Box>
+													<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Present Participle</Typography>
+													<Typography variant="body2">{videoRu.verbPresentParticiple}</Typography>
+												</Box>
+											)}
+										</>
+									)}
+									{videoRu.partOfSpeech === 'adjective' && (
+										<>
+											{videoRu.adjectiveComparativeForm && (
+												<Box>
+													<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Comparative</Typography>
+													<Typography variant="body2">{videoRu.adjectiveComparativeForm}</Typography>
+												</Box>
+											)}
+											{videoRu.adjectiveSuperlativeForm && (
+												<Box>
+													<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Superlative</Typography>
+													<Typography variant="body2">{videoRu.adjectiveSuperlativeForm}</Typography>
+												</Box>
+											)}
+										</>
+									)}
+								</Box>
+							</CardContent>
+						</Card>
+					)}
+
+					{/* Verb Information */}
+					{(videoRu.verbForm || videoRu.verbMeaning || videoRu.verbExample) && (
+						<Card elevation={0} sx={{ border: '1px solid', borderColor: 'divider' }}>
+							<CardContent sx={{ p: 3 }}>
+								<Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: 'text.secondary' }}>Verb Information</Typography>
+								<Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2.5 }}>
+									{videoRu.verbForm && (
+										<Box>
+											<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Verb Form</Typography>
+											<Typography variant="body2">{videoRu.verbForm}</Typography>
+										</Box>
+									)}
+									{videoRu.verbMeaning && (
+										<Box>
+											<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Verb Meaning</Typography>
+											<Typography variant="body2">{videoRu.verbMeaning}</Typography>
+										</Box>
+									)}
+									{videoRu.verbExample && (
+										<Box sx={{ gridColumn: '1 / -1' }}>
+											<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Verb Example</Typography>
+											<Typography variant="body2">{videoRu.verbExample}</Typography>
+										</Box>
+									)}
+								</Box>
+							</CardContent>
+						</Card>
+					)}
+
+					{/* Adjective Information */}
+					{(videoRu.adjectiveForm || videoRu.adjectiveMeaning || videoRu.adjectiveExample) && (
+						<Card elevation={0} sx={{ border: '1px solid', borderColor: 'divider' }}>
+							<CardContent sx={{ p: 3 }}>
+								<Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: 'text.secondary' }}>Adjective Information</Typography>
+								<Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2.5 }}>
+									{videoRu.adjectiveForm && (
+										<Box>
+											<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Adjective Form</Typography>
+											<Typography variant="body2">{videoRu.adjectiveForm}</Typography>
+										</Box>
+									)}
+									{videoRu.adjectiveMeaning && (
+										<Box>
+											<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Adjective Meaning</Typography>
+											<Typography variant="body2">{videoRu.adjectiveMeaning}</Typography>
+										</Box>
+									)}
+									{videoRu.adjectiveExample && (
+										<Box sx={{ gridColumn: '1 / -1' }}>
+											<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Adjective Example</Typography>
+											<Typography variant="body2">{videoRu.adjectiveExample}</Typography>
+										</Box>
+									)}
+								</Box>
+							</CardContent>
+						</Card>
+					)}
+
+					{/* Adverb Information */}
+					{(videoRu.adverbForm || videoRu.adverbMeaning || videoRu.adverbExample) && (
+						<Card elevation={0} sx={{ border: '1px solid', borderColor: 'divider' }}>
+							<CardContent sx={{ p: 3 }}>
+								<Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: 'text.secondary' }}>Adverb Information</Typography>
+								<Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2.5 }}>
+									{videoRu.adverbForm && (
+										<Box>
+											<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Adverb Form</Typography>
+											<Typography variant="body2">{videoRu.adverbForm}</Typography>
+										</Box>
+									)}
+									{videoRu.adverbMeaning && (
+										<Box>
+											<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Adverb Meaning</Typography>
+											<Typography variant="body2">{videoRu.adverbMeaning}</Typography>
+										</Box>
+									)}
+									{videoRu.adverbExample && (
+										<Box sx={{ gridColumn: '1 / -1' }}>
+											<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Adverb Example</Typography>
+											<Typography variant="body2">{videoRu.adverbExample}</Typography>
+										</Box>
+									)}
+								</Box>
+							</CardContent>
+						</Card>
+					)}
+
+					{/* Definition and Examples */}
+					{(videoRu.definition || videoRu.example || videoRu.synonyms) && (
+						<Card elevation={0} sx={{ border: '1px solid', borderColor: 'divider' }}>
+							<CardContent sx={{ p: 3 }}>
+								<Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: 'text.secondary' }}>Definition & Examples</Typography>
+								<Box sx={{ display: 'grid', gridTemplateColumns: '1fr', gap: 2.5 }}>
+									{videoRu.definition && (
+										<Box>
+											<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Definition</Typography>
+											<Typography variant="body2">{videoRu.definition}</Typography>
+										</Box>
+									)}
+									{videoRu.example && (
+										<Box>
+											<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Example</Typography>
+											<Typography variant="body2">{videoRu.example}</Typography>
+										</Box>
+									)}
+									{videoRu.synonyms && (
+										<Box>
+											<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Synonyms</Typography>
+											<Typography variant="body2">{videoRu.synonyms}</Typography>
+										</Box>
+									)}
+								</Box>
+							</CardContent>
+						</Card>
+					)}
+
+					{/* Media Information */}
+					{(videoRu.imageUrl || videoRu.phoneticAudioUrl || videoRu.dictionaryUrl) && (
+						<Card elevation={0} sx={{ border: '1px solid', borderColor: 'divider' }}>
+							<CardContent sx={{ p: 3 }}>
+								<Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: 'text.secondary' }}>Media & Resources</Typography>
+								<Box sx={{ display: 'grid', gridTemplateColumns: '1fr', gap: 2.5 }}>
+									{videoRu.imageUrl && (
+										<Box>
+											<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Image URL</Typography>
+											<Link href={videoRu.imageUrl} target="_blank" rel="noopener noreferrer" sx={{ display: 'flex', alignItems: 'center', gap: 0.5, textDecoration: 'none', color: 'primary.main', wordBreak: 'break-all', fontFamily: 'monospace', fontSize: '0.875rem', '&:hover': { textDecoration: 'underline' } }}>
+												<ExternalLink size={14} />
+												<Typography variant="body2" sx={{ fontFamily: 'inherit', fontSize: 'inherit' }}>{videoRu.imageUrl}</Typography>
+											</Link>
+											{videoRu.imageFilename && (
+												<Typography variant="caption" sx={{ color: 'text.secondary', mt: 0.5, display: 'block' }}>Filename: {videoRu.imageFilename}</Typography>
+											)}
+										</Box>
+									)}
+									{videoRu.phoneticAudioUrl && (
+										<Box>
+											<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Phonetic Audio URL</Typography>
+											<Link href={videoRu.phoneticAudioUrl} target="_blank" rel="noopener noreferrer" sx={{ display: 'flex', alignItems: 'center', gap: 0.5, textDecoration: 'none', color: 'primary.main', wordBreak: 'break-all', fontFamily: 'monospace', fontSize: '0.875rem', '&:hover': { textDecoration: 'underline' } }}>
+												<ExternalLink size={14} />
+												<Typography variant="body2" sx={{ fontFamily: 'inherit', fontSize: 'inherit' }}>{videoRu.phoneticAudioUrl}</Typography>
+											</Link>
+											{videoRu.phoneticAudioFilename && (
+												<Typography variant="caption" sx={{ color: 'text.secondary', mt: 0.5, display: 'block' }}>Filename: {videoRu.phoneticAudioFilename}</Typography>
+											)}
+										</Box>
+									)}
+									{videoRu.dictionaryUrl && (
+										<Box>
+											<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Dictionary URL</Typography>
+											<Link href={videoRu.dictionaryUrl} target="_blank" rel="noopener noreferrer" sx={{ display: 'flex', alignItems: 'center', gap: 0.5, textDecoration: 'none', color: 'primary.main', wordBreak: 'break-all', fontFamily: 'monospace', fontSize: '0.875rem', '&:hover': { textDecoration: 'underline' } }}>
+												<ExternalLink size={14} />
+												<Typography variant="body2" sx={{ fontFamily: 'inherit', fontSize: 'inherit' }}>{videoRu.dictionaryUrl}</Typography>
+											</Link>
+										</Box>
+									)}
+								</Box>
+							</CardContent>
+						</Card>
+					)}
+
+					{/* Tags */}
+					{videoRu.tags && (
+						<Card elevation={0} sx={{ border: '1px solid', borderColor: 'divider' }}>
+							<CardContent sx={{ p: 3 }}>
+								<Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: 'text.secondary' }}>Tags</Typography>
+								<Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
+									{videoRu.tags.split(',').map((tag: string) => (
+										<Chip key={tag.trim()} icon={<Tag size={14} />} label={tag.trim()} size="small" variant="outlined" sx={{ fontWeight: 500 }} />
+									))}
+								</Box>
+							</CardContent>
+						</Card>
+					)}
+
+					{/* Legacy VideoRu Information */}
+					{(videoRu.filename || videoRu.fileUrl || videoRu.coverImageFileUrl || videoRu.description || videoRu.sourceName || videoRu.originalUrl) && (
+						<Card elevation={0} sx={{ border: '1px solid', borderColor: 'divider' }}>
+							<CardContent sx={{ p: 3 }}>
+								<Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: 'text.secondary' }}>VideoRu Information</Typography>
+								<Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2.5 }}>
+									{videoRu.filename && (
+										<Box>
+											<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Filename</Typography>
+											<Typography variant="body2" sx={{ fontFamily: 'monospace', fontSize: '0.875rem', wordBreak: 'break-all' }}>{videoRu.filename}</Typography>
+										</Box>
+									)}
+									{videoRu.sizeBytes && (
+										<Box>
+											<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Size (MB)</Typography>
+											<Typography variant="body2">{sizeInMB !== '-' ? `${sizeInMB} MB` : '-'}</Typography>
+										</Box>
+									)}
+									{videoRu.sourceName && (
+										<Box>
+											<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Source Name</Typography>
+											<Typography variant="body2" sx={{ fontWeight: 600 }}>{videoRu.sourceName}</Typography>
+										</Box>
+									)}
+									{videoRu.coverImageFilename && (
+										<Box>
+											<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Cover Image Filename</Typography>
+											<Typography variant="body2" sx={{ fontFamily: 'monospace', fontSize: '0.875rem', wordBreak: 'break-all' }}>{videoRu.coverImageFilename}</Typography>
+										</Box>
+									)}
+									{videoRu.description && (
+										<Box sx={{ gridColumn: '1 / -1' }}>
+											<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Description</Typography>
+											<Typography variant="body2">{videoRu.description}</Typography>
+										</Box>
+									)}
+									{/* Clickable full URLs for videoRu and cover */}
+									{videoRu.fileUrl && (
+										<Box sx={{ gridColumn: '1 / -1' }}>
+											<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>VideoRu URL</Typography>
+											<Link href={videoRu.fileUrl} target="_blank" rel="noopener noreferrer" sx={{ display: 'flex', alignItems: 'center', gap: 0.5, textDecoration: 'none', color: 'primary.main', wordBreak: 'break-all', flex: 1, fontFamily: 'monospace', fontSize: '0.875rem', '&:hover': { textDecoration: 'underline' } }}>
+												<ExternalLink size={14} />
+												<Typography variant="body2" sx={{ fontFamily: 'inherit', fontSize: 'inherit' }}>{videoRu.fileUrl}</Typography>
+											</Link>
+											<Tooltip title={copiedField === 'fileUrl' ? t('videoRus.messages.filenameCopied') : 'Copy'}>
+												<IconButton size="small" onClick={() => handleCopy(videoRu.fileUrl!, 'fileUrl')} sx={{ ml: 0.5 }}>
+													{copiedField === 'fileUrl' ? <Check size={16} /> : <Copy size={16} />}
+												</IconButton>
+											</Tooltip>
+										</Box>
+									)}
+									{videoRu.coverImageFileUrl && (
+										<Box sx={{ gridColumn: '1 / -1' }}>
+											<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Cover URL</Typography>
+											<Link href={videoRu.coverImageFileUrl} target="_blank" rel="noopener noreferrer" sx={{ display: 'flex', alignItems: 'center', gap: 0.5, textDecoration: 'none', color: 'primary.main', wordBreak: 'break-all', flex: 1, fontFamily: 'monospace', fontSize: '0.875rem', '&:hover': { textDecoration: 'underline' } }}>
+												<ExternalLink size={14} />
+												<Typography variant="body2" sx={{ fontFamily: 'inherit', fontSize: 'inherit' }}>{videoRu.coverImageFileUrl}</Typography>
+											</Link>
+											<Tooltip title={copiedField === 'coverImageFileUrl' ? t('videoRus.messages.filenameCopied') : 'Copy'}>
+												<IconButton size="small" onClick={() => handleCopy(videoRu.coverImageFileUrl!, 'coverImageFileUrl')} sx={{ ml: 0.5 }}>
+													{copiedField === 'coverImageFileUrl' ? <Check size={16} /> : <Copy size={16} />}
+												</IconButton>
+											</Tooltip>
+										</Box>
+									)}
+									{/* Show original URL (external source) if provided */}
+									{videoRu.originalUrl && (
+										<Box sx={{ gridColumn: '1 / -1' }}>
+											<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Original URL</Typography>
+											<Link href={videoRu.originalUrl} target="_blank" rel="noopener noreferrer" sx={{ display: 'flex', alignItems: 'center', gap: 0.5, textDecoration: 'none', color: 'primary.main', wordBreak: 'break-all', flex: 1, fontFamily: 'monospace', fontSize: '0.875rem', '&:hover': { textDecoration: 'underline' } }}>
+												<ExternalLink size={14} />
+												<Typography variant="body2" sx={{ fontFamily: 'inherit', fontSize: 'inherit' }}>{videoRu.originalUrl}</Typography>
+											</Link>
+											<Tooltip title={copiedField === 'originalUrl' ? t('videoRus.messages.filenameCopied') : 'Copy'}>
+												<IconButton size="small" onClick={() => handleCopy(videoRu.originalUrl, 'originalUrl')} sx={{ ml: 0.5 }}>
+													{copiedField === 'originalUrl' ? <Check size={16} /> : <Copy size={16} />}
+												</IconButton>
+											</Tooltip>
+										</Box>
+									)}
+								</Box>
+							</CardContent>
+						</Card>
+					)}
 					<Card elevation={0} sx={{ border: '1px solid', borderColor: 'divider' }}>
 						<CardContent sx={{ p: 3 }}>
 							<Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: 'text.secondary' }}>Metadata</Typography>

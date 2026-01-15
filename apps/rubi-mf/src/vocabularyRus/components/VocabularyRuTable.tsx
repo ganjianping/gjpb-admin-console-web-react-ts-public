@@ -16,10 +16,10 @@ function WordCell({ info }: Readonly<{ info: any }>) {
   const vocabularyRu = info.row.original as VocabularyRu;
   return (
     <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-      {vocabularyRu.wordImageUrl && (
+      {vocabularyRu.imageUrl && (
         <Avatar
-          src={vocabularyRu.wordImageUrl}
-          alt={vocabularyRu.word}
+          src={vocabularyRu.imageUrl}
+          alt={vocabularyRu.name}
           sx={{ width: 40, height: 40 }}
           variant="rounded"
         />
@@ -56,8 +56,8 @@ const VocabularyRuTable = memo(
 
     const columns = useMemo(
       () => [
-        columnHelper.accessor("word", {
-          header: t("vocabularyRus.columns.word"),
+        columnHelper.accessor("name", {
+          header: t("vocabularyRus.columns.name"),
           cell: (info) => <WordCell info={info} />,
           size: 280,
         }),
@@ -72,22 +72,22 @@ const VocabularyRuTable = memo(
 
             const handlePlayAudio = () => {
               if (vocabularyRu.phoneticAudioUrl) {
-                console.log("Playing audio for word:", vocabularyRu.word, "URL:", vocabularyRu.phoneticAudioUrl);
+                console.log("Playing audio for word:", vocabularyRu.name, "URL:", vocabularyRu.phoneticAudioUrl);
                 try {
                   const audio = new Audio(vocabularyRu.phoneticAudioUrl);
                   audio.volume = 0.5; // Set volume to 50%
                   audio
                     .play()
-                    .then(() => console.log("Audio started playing for:", vocabularyRu.word))
+                    .then(() => console.log("Audio started playing for:", vocabularyRu.name))
                     .catch((err) => {
-                      console.error("Failed to play audio for:", vocabularyRu.word, err);
+                      console.error("Failed to play audio for:", vocabularyRu.name, err);
                       console.error("Audio URL:", vocabularyRu.phoneticAudioUrl);
                     });
                 } catch (error) {
-                  console.error("Error creating audio element for:", vocabularyRu.word, error);
+                  console.error("Error creating audio element for:", vocabularyRu.name, error);
                 }
               } else {
-                console.log("No audio URL available for word:", vocabularyRu.word);
+                console.log("No audio URL available for word:", vocabularyRu.name);
               }
             };
 

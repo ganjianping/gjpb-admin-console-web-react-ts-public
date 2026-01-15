@@ -160,8 +160,8 @@ const VocabularyRuCreateDialog = ({
       }
       const newFormData = { ...prev, [field]: value };
       
-      // Auto-update dictionary URL when word changes
-      if (field === 'word' && hasChanged && value.trim()) {
+      // Auto-update dictionary URL when name changes
+      if (field === 'name' && hasChanged && value.trim()) {
         const currentLang = newFormData.lang || 'EN';
         if (currentLang === 'ZH') {
           newFormData.dictionaryUrl = `https://zd.hwxnet.com/search.do?keyword=${value.trim()}`;
@@ -170,12 +170,12 @@ const VocabularyRuCreateDialog = ({
         }
       }
       
-      // Auto-update dictionary URL when language changes and word exists
-      if (field === 'lang' && hasChanged && newFormData.word.trim()) {
+      // Auto-update dictionary URL when language changes and name exists
+      if (field === 'lang' && hasChanged && newFormData.name.trim()) {
         if (value === 'ZH') {
-          newFormData.dictionaryUrl = `https://zd.hwxnet.com/search.do?keyword=${newFormData.word.trim()}`;
+          newFormData.dictionaryUrl = `https://zd.hwxnet.com/search.do?keyword=${newFormData.name.trim()}`;
         } else {
-          newFormData.dictionaryUrl = `https://dictionary.cambridge.org/dictionary/english/${newFormData.word.trim()}`;
+          newFormData.dictionaryUrl = `https://dictionary.cambridge.org/dictionary/english/${newFormData.name.trim()}`;
         }
       }
       
@@ -195,8 +195,8 @@ const VocabularyRuCreateDialog = ({
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    if (!formData.word.trim()) {
-      newErrors.word = t("common.required");
+    if (!formData.name.trim()) {
+      newErrors.name = t("common.required");
     }
     if (!formData.lang) {
       newErrors.lang = t("common.required");
@@ -260,14 +260,14 @@ const VocabularyRuCreateDialog = ({
           </Alert>
         )}
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          <FormControl fullWidth error={!!errors.word}>
-            <FormLabel sx={{ mb: 1 }}>{t("vocabularyRus.form.word")}</FormLabel>
+          <FormControl fullWidth error={!!errors.name}>
+            <FormLabel sx={{ mb: 1 }}>{t("vocabularyRus.form.name")}</FormLabel>
             <TextField
-              value={formData.word}
-              onChange={(e) => handleChange("word", e.target.value)}
-              placeholder={t("vocabularyRus.form.word")}
-              error={!!errors.word}
-              helperText={errors.word}
+              value={formData.name}
+              onChange={(e) => handleChange("name", e.target.value)}
+              placeholder={t("vocabularyRus.form.name")}
+              error={!!errors.name}
+              helperText={errors.name}
               fullWidth
             />
           </FormControl>
@@ -375,24 +375,24 @@ const VocabularyRuCreateDialog = ({
           <Box sx={{ display: 'flex', gap: 2 }}>
             <FormControl fullWidth>
               <FormLabel sx={{ mb: 1 }}>
-                {t("vocabularyRus.form.simplePastTense")}
+                {t("vocabularyRus.form.verbSimplePastTense")}
               </FormLabel>
               <TextField
-                value={formData.simplePastTense}
-                onChange={(e) => handleChange("simplePastTense", e.target.value)}
-                placeholder={t("vocabularyRus.form.simplePastTense")}
+                value={formData.verbSimplePastTense}
+                onChange={(e) => handleChange("verbSimplePastTense", e.target.value)}
+                placeholder={t("vocabularyRus.form.verbSimplePastTense")}
                 fullWidth
               />
             </FormControl>
 
             <FormControl fullWidth>
               <FormLabel sx={{ mb: 1 }}>
-                {t("vocabularyRus.form.pastPerfectTense")}
+                {t("vocabularyRus.form.verbPastPerfectTense")}
               </FormLabel>
               <TextField
-                value={formData.pastPerfectTense}
-                onChange={(e) => handleChange("pastPerfectTense", e.target.value)}
-                placeholder={t("vocabularyRus.form.pastPerfectTense")}
+                value={formData.verbPastPerfectTense}
+                onChange={(e) => handleChange("verbPastPerfectTense", e.target.value)}
+                placeholder={t("vocabularyRus.form.verbPastPerfectTense")}
                 fullWidth
               />
             </FormControl>
@@ -416,12 +416,12 @@ const VocabularyRuCreateDialog = ({
             </FormControl>
             <FormControl fullWidth>
               <FormLabel sx={{ mb: 1 }}>
-                {t("vocabularyRus.form.pluralForm")}
+                {t("vocabularyRus.form.nounPluralForm")}
               </FormLabel>
               <TextField
-                value={formData.pluralForm}
-                onChange={(e) => handleChange("pluralForm", e.target.value)}
-                placeholder={t("vocabularyRus.form.pluralForm")}
+                value={formData.nounPluralForm}
+                onChange={(e) => handleChange("nounPluralForm", e.target.value)}
+                placeholder={t("vocabularyRus.form.nounPluralForm")}
                 fullWidth
               />
             </FormControl>
@@ -493,14 +493,14 @@ const VocabularyRuCreateDialog = ({
 
           <FormControl component="fieldset">
             <FormLabel component="legend">
-              {t("vocabularyRus.form.wordImageUploadMethod")}
+              {t("vocabularyRus.form.imageUploadMethod")}
             </FormLabel>
             <RadioGroup
               row
-              value={formData.wordImageUploadMethod || "url"}
+              value={formData.imageUploadMethod || "url"}
               onChange={(e) =>
                 handleChange(
-                  "wordImageUploadMethod",
+                  "imageUploadMethod",
                   e.target.value as "url" | "file",
                 )
               }
@@ -518,7 +518,7 @@ const VocabularyRuCreateDialog = ({
             </RadioGroup>
           </FormControl>
 
-          {formData.wordImageUploadMethod === "file" && (
+          {formData.imageUploadMethod === "file" && (
             <Box>
               <Button
                 variant="outlined"
@@ -527,9 +527,9 @@ const VocabularyRuCreateDialog = ({
                 fullWidth
                 sx={{ mb: 1 }}
               >
-                {formData.wordImageFile
-                  ? formData.wordImageFile.name
-                  : t("vocabularyRus.form.chooseWordImageFile")}
+                {formData.imageFile
+                  ? formData.imageFile.name
+                  : t("vocabularyRus.form.chooseImageFile")}
                 <input
                   type="file"
                   hidden
@@ -537,39 +537,39 @@ const VocabularyRuCreateDialog = ({
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (file) {
-                      handleChange("wordImageFile", file);
+                      handleChange("imageFile", file);
                     }
                   }}
                 />
               </Button>
-              {formData.wordImageFile && (
+              {formData.imageFile && (
                 <Alert severity="info" sx={{ mt: 1 }}>
                   {t("vocabularyRus.form.selectedFile")}:{" "}
-                  {formData.wordImageFile.name} (
-                  {(formData.wordImageFile.size / 1024).toFixed(2)} KB)
+                  {formData.imageFile.name} (
+                  {(formData.imageFile.size / 1024).toFixed(2)} KB)
                 </Alert>
               )}
             </Box>
           )}
 
-          {formData.wordImageUploadMethod === "url" && (
+          {formData.imageUploadMethod === "url" && (
             <TextField
-              label={t("vocabularyRus.form.wordImageOriginalUrl")}
-              value={formData.wordImageOriginalUrl}
+              label={t("vocabularyRus.form.imageOriginalUrl")}
+              value={formData.imageOriginalUrl}
               onChange={(e) =>
-                handleChange("wordImageOriginalUrl", e.target.value)
+                handleChange("imageOriginalUrl", e.target.value)
               }
               fullWidth
-              placeholder="https://example.com/word-image.jpg"
+              placeholder="https://example.com/image.jpg"
             />
           )}
 
           <TextField
-            label={t("vocabularyRus.form.wordImageFilename")}
-            value={formData.wordImageFilename}
-            onChange={(e) => handleChange("wordImageFilename", e.target.value)}
+            label={t("vocabularyRus.form.imageFilename")}
+            value={formData.imageFilename}
+            onChange={(e) => handleChange("imageFilename", e.target.value)}
             fullWidth
-            placeholder="word-image.jpg"
+            placeholder="image.jpg"
           />
 
           <FormControl component="fieldset">

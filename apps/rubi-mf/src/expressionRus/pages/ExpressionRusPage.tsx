@@ -163,9 +163,11 @@ const ExpressionRusPage: React.FC = () => {
         <ExpressionRuTableSkeleton />
       ) : (
         <ExpressionRuTable
-          expressions={filteredExpressionRus}
-          loading={loading}
-          onAction={handleExpressionRuAction}
+          expressionRus={filteredExpressionRus}
+          pagination={null}
+          onPageChange={() => {}}
+          onPageSizeChange={() => {}}
+          onExpressionRuAction={handleExpressionRuAction}
         />
       )}
 

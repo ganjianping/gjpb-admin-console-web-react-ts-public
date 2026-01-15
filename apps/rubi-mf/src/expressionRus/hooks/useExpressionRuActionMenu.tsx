@@ -1,70 +1,44 @@
-import React from "react";
-import { Menu, MenuItem } from "@mui/material";
-import { Eye, Edit2, Trash2 } from "lucide-react";
-import type { ExpressionRu } from "../types/expressionRu.types";
+import { useMemo } from 'react';
+import { Eye, Edit, Trash2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import '../i18n/translations';
+import type { ExpressionRu } from '../types/expressionRu.types';
 
-export const useExpressionRuActionMenu = () => {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [selectedExpressionRu, setSelectedExpressionRu] = React.useState<ExpressionRu | null>(null);
+interface UseExpressionRuActionMenuParams {
+  onView: (expressionRu: ExpressionRu) => void;
+  onEdit: (expressionRu: ExpressionRu) => void;
+  onDelete: (expressionRu: ExpressionRu) => void;
+}
 
-  const handleOpenMenu = (event: React.MouseEvent<HTMLElement>, expressionRu: ExpressionRu) => {
-    setAnchorEl(event.currentTarget);
-    setSelectedExpressionRu(expressionRu);
-  };
+export const useExpressionRuActionMenu = ({
+  onView,
+  onEdit,
+  onDelete,
+}: UseExpressionRuActionMenuParams) => {
+  const { t } = useTranslation();
 
-  const handleCloseMenu = () => {
-    setAnchorEl(null);
-  };
-
-  const renderActionMenu = (onAction: (action: 'view' | 'edit' | 'delete') => void) => (
-    <Menu
-      anchorEl={anchorEl}
-      open={Boolean(anchorEl)}
-      onClose={handleCloseMenu}
-      anchorOrigin={{
-        vertical: 'bottom',
-        horizontal: 'right',
-      }}
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-    >
-      <MenuItem
-        onClick={() => {
-          if (selectedExpressionRu) onAction('view');
-          handleCloseMenu();
-        }}
-      >
-        <Eye size={16} style={{ marginRight: 8 }} />
-        View
-      </MenuItem>
-      <MenuItem
-        onClick={() => {
-          if (selectedExpressionRu) onAction('edit');
-          handleCloseMenu();
-        }}
-      >
-        <Edit2 size={16} style={{ marginRight: 8 }} />
-        Edit
-      </MenuItem>
-      <MenuItem
-        onClick={() => {
-          if (selectedExpressionRu) onAction('delete');
-          handleCloseMenu();
-        }}
-        sx={{ color: 'error.main' }}
-      >
-        <Trash2 size={16} style={{ marginRight: 8 }} />
-        Delete
-      </MenuItem>
-    </Menu>
+  return useMemo(
+    () =>
+      ([
+        {
+          label: t('expressionRus.actions.view'),
+          icon: <Eye size={16} />,
+          action: onView,
+          color: 'info' as const,
+        },
+        {
+          label: t('expressionRus.actions.edit'),
+          icon: <Edit size={16} />,
+          action: onEdit,
+          color: 'primary' as const,
+        },
+        {
+          label: t('expressionRus.actions.delete'),
+          icon: <Trash2 size={16} />,
+          action: onDelete,
+          color: 'error' as const,
+        },
+      ] as any[]).filter(Boolean) as any[],
+    [t, onView, onEdit, onDelete],
   );
-
-  return {
-    handleOpenMenu,
-    handleCloseMenu,
-    renderActionMenu,
-    selectedExpressionRu,
-  };
 };
