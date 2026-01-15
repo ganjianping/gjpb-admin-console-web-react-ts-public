@@ -334,39 +334,53 @@ const VocabularyRuEditDialog = ({ open, vocabularyRu, onClose, onConfirm }: Voca
             </FormControl>
           </Box>
 
-          <Box sx={{ display: "flex", gap: 2 }}>
-            <FormControl fullWidth>
-              <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.verbSimplePastTense')}</FormLabel>
-              <TextField
-                value={formData.verbSimplePastTense}
-                onChange={(e) => handleChange('verbSimplePastTense', e.target.value)}
-                placeholder={t('vocabularyRus.form.verbSimplePastTense')}
-                fullWidth
-              />
-            </FormControl>
-            <FormControl fullWidth>
-              <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.verbPastPerfectTense')}</FormLabel>
-              <TextField
-                value={formData.verbPastPerfectTense}
-                onChange={(e) => handleChange('verbPastPerfectTense', e.target.value)}
-                placeholder={t('vocabularyRus.form.verbPastPerfectTense')}
-                fullWidth
-              />
-            </FormControl>
-          </Box>
+          {formData.partOfSpeech?.toLowerCase().includes('verb') && (
+            <>
+              <Box sx={{ display: "flex", gap: 2 }}>
+                <FormControl fullWidth>
+                  <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.verbSimplePastTense')}</FormLabel>
+                  <TextField
+                    value={formData.verbSimplePastTense}
+                    onChange={(e) => handleChange('verbSimplePastTense', e.target.value)}
+                    placeholder={t('vocabularyRus.form.verbSimplePastTense')}
+                    fullWidth
+                  />
+                </FormControl>
+                <FormControl fullWidth>
+                  <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.verbPastPerfectTense')}</FormLabel>
+                  <TextField
+                    value={formData.verbPastPerfectTense}
+                    onChange={(e) => handleChange('verbPastPerfectTense', e.target.value)}
+                    placeholder={t('vocabularyRus.form.verbPastPerfectTense')}
+                    fullWidth
+                  />
+                </FormControl>
+              </Box>
 
-          <Box sx={{ display: "flex", gap: 2 }}>
-            <FormControl fullWidth>
-              <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.difficultyLevel')}</FormLabel>
-              <Select value={formData.difficultyLevel} onChange={(e) => handleChange('difficultyLevel', e.target.value)}>
-                {(availableDifficultyLevels.length > 0 ? availableDifficultyLevels : DIFFICULTY_LEVEL_OPTIONS.map(opt => opt.value)).map((level) => (
-                  <MenuItem key={level} value={level}>
-                    {availableDifficultyLevels.length > 0 ? level : t(`vocabularyRus.difficultyLevels.${level}`)}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+              <FormControl fullWidth>
+                <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.verbPresentParticiple')}</FormLabel>
+                <TextField
+                  value={formData.verbPresentParticiple}
+                  onChange={(e) => handleChange('verbPresentParticiple', e.target.value)}
+                  placeholder={t('vocabularyRus.form.verbPresentParticiple')}
+                  fullWidth
+                />
+              </FormControl>
+            </>
+          )}
 
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.difficultyLevel')}</FormLabel>
+            <Select value={formData.difficultyLevel} onChange={(e) => handleChange('difficultyLevel', e.target.value)}>
+              {(availableDifficultyLevels.length > 0 ? availableDifficultyLevels : DIFFICULTY_LEVEL_OPTIONS.map(opt => opt.value)).map((level) => (
+                <MenuItem key={level} value={level}>
+                  {availableDifficultyLevels.length > 0 ? level : t(`vocabularyRus.difficultyLevels.${level}`)}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          {formData.partOfSpeech?.toLowerCase().includes('noun') && (
             <FormControl fullWidth>
               <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.nounPluralForm')}</FormLabel>
               <TextField
@@ -376,7 +390,31 @@ const VocabularyRuEditDialog = ({ open, vocabularyRu, onClose, onConfirm }: Voca
                 fullWidth
               />
             </FormControl>
-          </Box>
+          )}
+
+          {formData.partOfSpeech?.toLowerCase().includes('adjective') && (
+            <Box sx={{ display: 'flex', gap: 2 }}>
+              <FormControl fullWidth>
+                <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.adjectiveComparativeForm')}</FormLabel>
+                <TextField
+                  value={formData.adjectiveComparativeForm}
+                  onChange={(e) => handleChange('adjectiveComparativeForm', e.target.value)}
+                  placeholder={t('vocabularyRus.form.adjectiveComparativeForm')}
+                  fullWidth
+                />
+              </FormControl>
+
+              <FormControl fullWidth>
+                <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.adjectiveSuperlativeForm')}</FormLabel>
+                <TextField
+                  value={formData.adjectiveSuperlativeForm}
+                  onChange={(e) => handleChange('adjectiveSuperlativeForm', e.target.value)}
+                  placeholder={t('vocabularyRus.form.adjectiveSuperlativeForm')}
+                  fullWidth
+                />
+              </FormControl>
+            </Box>
+          )}
 
           <FormControl fullWidth error={!!errors.definition}>
             <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.definition')}</FormLabel>
