@@ -24,6 +24,11 @@ const enTranslations = {
       isActive: 'Status',
       updatedAt: 'Updated At',
     },
+    tabs: {
+      verb: 'Verb',
+      adjective: 'Adjective',
+      adverb: 'Adverb',
+    },
     form: {
       name: 'Name',
       imageUploadMethod: 'Image Upload Method',
@@ -136,6 +141,11 @@ const zhTranslations = {
       displayOrder: '顺序',
       isActive: '状态',
       updatedAt: '更新于',
+    },
+    tabs: {
+      verb: '动词',
+      adjective: '形容词',
+      adverb: '副词',
     },
     form: {
       name: '名称',

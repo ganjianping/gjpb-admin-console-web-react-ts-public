@@ -515,7 +515,7 @@ const VideoRuViewDialog = ({ open, onClose, videoRu, onEdit }: VideoRuViewDialog
 												<Typography variant="body2" sx={{ fontFamily: 'inherit', fontSize: 'inherit' }}>{videoRu.originalUrl}</Typography>
 											</Link>
 											<Tooltip title={copiedField === 'originalUrl' ? t('videoRus.messages.filenameCopied') : 'Copy'}>
-												<IconButton size="small" onClick={() => handleCopy(videoRu.originalUrl, 'originalUrl')} sx={{ ml: 0.5 }}>
+												<IconButton size="small" onClick={() => handleCopy(videoRu.originalUrl || '', 'originalUrl')} sx={{ ml: 0.5 }}>
 													{copiedField === 'originalUrl' ? <Check size={16} /> : <Copy size={16} />}
 												</IconButton>
 											</Tooltip>

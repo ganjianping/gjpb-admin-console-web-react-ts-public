@@ -31,8 +31,8 @@ export interface CreateVideoRequest {
 export interface CreateVideoRuByUploadRequest {
   file: File;
   name: string;
-  filename: string;
-  coverImageFilename: string;
+  filename?: string;
+  coverImageFilename?: string;
   sourceName?: string;
   originalUrl?: string;
   description?: string;
@@ -75,8 +75,12 @@ class VideoRuService {
     const formData = new FormData();
     formData.append('file', data.file);
     formData.append('name', data.name);
-    formData.append('filename', data.filename);
-    formData.append('coverImageFilename', data.coverImageFilename);
+    if (data.filename) {
+      formData.append('filename', data.filename);
+    }
+    if (data.coverImageFilename) {
+      formData.append('coverImageFilename', data.coverImageFilename);
+    }
     // If a cover image file is provided, append it as 'coverImageFile'
     // Some backends expect both filename and file field.
     if ((data as any).coverImageFile) {
