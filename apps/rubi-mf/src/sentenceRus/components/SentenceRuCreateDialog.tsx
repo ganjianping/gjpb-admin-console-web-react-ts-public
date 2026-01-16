@@ -17,6 +17,7 @@ import {
   Chip,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import { TiptapTextEditor } from '../../../../shared-lib/src/ui-components';
 import type { SentenceRuFormData } from '../types/sentenceRu.types';
 import { LANGUAGE_OPTIONS, DIFFICULTY_LEVEL_OPTIONS, SENTENCE_RU_TAG_SETTING_KEY, SENTENCE_RU_DIFFICULTY_LEVEL_SETTING_KEY } from '../constants';
 
@@ -87,13 +88,14 @@ const SentenceRuCreateDialog: React.FC<SentenceRuCreateDialogProps> = ({
       <DialogTitle>{t('sentenceRus.create')}</DialogTitle>
       <DialogContent>
         <Box sx={{ pt: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <TextField
-            label={t('sentenceRus.form.name')}
-            value={formData.name}
-            onChange={(e) => onFormChange('name', e.target.value)}
-            fullWidth
-            required
-          />
+          <FormControl fullWidth>
+            <FormLabel required>{t('sentenceRus.form.name')}</FormLabel>
+            <TiptapTextEditor
+              value={formData.name}
+              onChange={(value) => onFormChange('name', value)}
+              placeholder={t('sentenceRus.form.name')}
+            />
+          </FormControl>
 
           <TextField
             label={t('sentenceRus.form.phonetic')}
@@ -109,14 +111,14 @@ const SentenceRuCreateDialog: React.FC<SentenceRuCreateDialogProps> = ({
             fullWidth
           />
           
-          <TextField
-            label={t('sentenceRus.form.explanation')}
-            value={formData.explanation}
-            onChange={(e) => onFormChange('explanation', e.target.value)}
-            fullWidth
-            multiline
-            rows={3}
-          />
+          <FormControl fullWidth>
+            <FormLabel>{t('sentenceRus.form.explanation')}</FormLabel>
+            <TiptapTextEditor
+              value={formData.explanation}
+              onChange={(value) => onFormChange('explanation', value)}
+              placeholder={t('sentenceRus.form.explanation')}
+            />
+          </FormControl>
 
           <Box sx={{ display: 'flex', gap: 2 }}>
             <FormControl fullWidth>

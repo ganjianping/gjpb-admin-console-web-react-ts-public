@@ -38,7 +38,7 @@ const SentenceRuViewDialog: React.FC<SentenceRuViewDialogProps> = ({
             <Typography variant="subtitle2" color="text.secondary">
               {t('sentenceRus.form.name')}
             </Typography>
-            <Typography variant="h6">{sentenceRu.name}</Typography>
+            <div dangerouslySetInnerHTML={{ __html: sentenceRu.name || '-' }} />
           </Box>
 
           <Box sx={{ display: 'flex', gap: 2 }}>
@@ -62,7 +62,7 @@ const SentenceRuViewDialog: React.FC<SentenceRuViewDialogProps> = ({
             <Typography variant="subtitle2" color="text.secondary">
               {t('sentenceRus.form.explanation')}
             </Typography>
-            <Typography>{sentenceRu.explanation || '-'}</Typography>
+            <div dangerouslySetInnerHTML={{ __html: sentenceRu.explanation || '-' }} />
           </Box>
 
           <Divider />
