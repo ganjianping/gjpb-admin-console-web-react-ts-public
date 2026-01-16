@@ -36,11 +36,17 @@ const SentenceRuTable = memo(
       () => [
         columnHelper.accessor("name", {
           header: t("sentenceRus.columns.name"),
-          cell: (info) => (
-            <Typography variant="body2" sx={{ fontWeight: 600 }}>
-              {info.getValue()}
-            </Typography>
-          ),
+          cell: (info) => {
+            const value = info.getValue();
+            // Remove HTML tags and limit to 100 characters
+            const cleanText = value?.replace(/<[^>]*>/g, '') || '';
+            const truncatedText = cleanText.length > 100 ? `${cleanText.substring(0, 100)}...` : cleanText;
+            return (
+              <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                {truncatedText}
+              </Typography>
+            );
+          },
           size: 300,
         }),
         columnHelper.accessor("lang", {
