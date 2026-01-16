@@ -49,12 +49,6 @@ const ExpressionRuTable = memo(
             <Typography variant="body2">{info.getValue() || "-"}</Typography>
           ),
         }),
-        columnHelper.accessor("translation", {
-          header: t("expressionRus.columns.translation"),
-          cell: (info) => (
-            <Typography variant="body2">{info.getValue() || "-"}</Typography>
-          ),
-        }),
         columnHelper.accessor("lang", {
           header: t("expressionRus.columns.lang"),
           cell: (info) => (
