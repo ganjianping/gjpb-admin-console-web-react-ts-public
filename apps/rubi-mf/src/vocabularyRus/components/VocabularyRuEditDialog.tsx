@@ -452,6 +452,7 @@ const VocabularyRuEditDialog = ({ open, vocabularyRu, onClose, onConfirm }: Voca
               <Tab label={t('vocabularyRus.tabs.verb', 'Verb')} />
               <Tab label={t('vocabularyRus.tabs.adjective', 'Adjective')} />
               <Tab label={t('vocabularyRus.tabs.adverb', 'Adverb')} />
+              <Tab label={t('vocabularyRus.tabs.noun', 'Noun')} />
             </Tabs>
 
             {activeTab === 0 && (
@@ -539,6 +540,36 @@ const VocabularyRuEditDialog = ({ open, vocabularyRu, onClose, onConfirm }: Voca
                     value={formData.adverbExample}
                     onChange={(value) => handleChange('adverbExample', value)}
                     placeholder={t('vocabularyRus.form.adverbExample')}
+                  />
+                </FormControl>
+              </Box>
+            )}
+
+            {activeTab === 3 && (
+              <Box sx={{ mt: 2 }}>
+                <FormControl fullWidth sx={{ mb: 2 }}>
+                  <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.nounForm')}</FormLabel>
+                  <TextField
+                    value={formData.nounForm}
+                    onChange={(e) => handleChange('nounForm', e.target.value)}
+                    placeholder={t('vocabularyRus.form.nounForm')}
+                    fullWidth
+                  />
+                </FormControl>
+                <FormControl fullWidth sx={{ mb: 2 }}>
+                  <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.nounMeaning')}</FormLabel>
+                  <TiptapTextEditor
+                    value={formData.nounMeaning}
+                    onChange={(value) => handleChange('nounMeaning', value)}
+                    placeholder={t('vocabularyRus.form.nounMeaning')}
+                  />
+                </FormControl>
+                <FormControl fullWidth>
+                  <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.nounExample')}</FormLabel>
+                  <TiptapTextEditor
+                    value={formData.nounExample}
+                    onChange={(value) => handleChange('nounExample', value)}
+                    placeholder={t('vocabularyRus.form.nounExample')}
                   />
                 </FormControl>
               </Box>

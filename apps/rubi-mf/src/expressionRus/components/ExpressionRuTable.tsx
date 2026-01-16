@@ -43,12 +43,6 @@ const ExpressionRuTable = memo(
           ),
           size: 200,
         }),
-        columnHelper.accessor("phonetic", {
-          header: t("expressionRus.columns.phonetic"),
-          cell: (info) => (
-            <Typography variant="body2">{info.getValue() || "-"}</Typography>
-          ),
-        }),
         columnHelper.accessor("lang", {
           header: t("expressionRus.columns.lang"),
           cell: (info) => (

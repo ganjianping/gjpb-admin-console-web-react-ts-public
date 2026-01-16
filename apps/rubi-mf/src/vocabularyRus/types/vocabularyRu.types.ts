@@ -4,6 +4,9 @@ export interface VocabularyRu {
   phonetic?: string | null;
   partOfSpeech?: string | null;
   nounPluralForm?: string | null;
+  nounForm?: string | null;
+  nounMeaning?: string | null;
+  nounExample?: string | null;
   verbSimplePastTense?: string | null;
   verbPastPerfectTense?: string | null;
   verbPresentParticiple?: string | null;
@@ -55,6 +58,9 @@ export interface VocabularyRuFormData {
   phonetic: string;
   partOfSpeech: string;
   nounPluralForm: string;
+  nounForm: string;
+  nounMeaning: string;
+  nounExample: string;
   verbSimplePastTense: string;
   verbPastPerfectTense: string;
   verbPresentParticiple: string;

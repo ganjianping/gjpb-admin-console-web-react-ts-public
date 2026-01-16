@@ -43,18 +43,6 @@ const SentenceRuTable = memo(
           ),
           size: 200,
         }),
-        columnHelper.accessor("phonetic", {
-          header: t("sentenceRus.columns.phonetic"),
-          cell: (info) => (
-            <Typography variant="body2">{info.getValue() || "-"}</Typography>
-          ),
-        }),
-        columnHelper.accessor("translation", {
-          header: t("sentenceRus.columns.translation"),
-          cell: (info) => (
-            <Typography variant="body2">{info.getValue() || "-"}</Typography>
-          ),
-        }),
         columnHelper.accessor("lang", {
           header: t("sentenceRus.columns.lang"),
           cell: (info) => (
