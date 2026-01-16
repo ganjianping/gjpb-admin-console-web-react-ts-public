@@ -62,14 +62,34 @@ const ExpressionRuViewDialog: React.FC<ExpressionRuViewDialogProps> = ({
             <Typography variant="subtitle2" color="text.secondary">
               {t('expressionRus.form.explanation')}
             </Typography>
-            <Typography>{expressionRu.explanation || '-'}</Typography>
+            <Box 
+              sx={{ 
+                mt: 1, 
+                p: 2, 
+                border: '1px solid', 
+                borderColor: 'divider', 
+                borderRadius: 1,
+                minHeight: '60px'
+              }}
+              dangerouslySetInnerHTML={{ __html: expressionRu.explanation || '-' }}
+            />
           </Box>
 
           <Box>
             <Typography variant="subtitle2" color="text.secondary">
               {t('expressionRus.form.example')}
             </Typography>
-            <Typography>{expressionRu.example || '-'}</Typography>
+            <Box 
+              sx={{ 
+                mt: 1, 
+                p: 2, 
+                border: '1px solid', 
+                borderColor: 'divider', 
+                borderRadius: 1,
+                minHeight: '60px'
+              }}
+              dangerouslySetInnerHTML={{ __html: expressionRu.example || '-' }}
+            />
           </Box>
 
           <Divider />

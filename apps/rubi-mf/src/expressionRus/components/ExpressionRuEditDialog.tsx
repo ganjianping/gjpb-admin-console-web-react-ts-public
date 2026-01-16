@@ -17,6 +17,7 @@ import {
   Chip,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import { TiptapTextEditor } from '../../../../shared-lib/src/ui-components';
 import type { ExpressionRuFormData } from '../types/expressionRu.types';
 import { LANGUAGE_OPTIONS, DIFFICULTY_LEVEL_OPTIONS, EXPRESSION_RU_TAG_SETTING_KEY, EXPRESSION_RU_DIFFICULTY_LEVEL_SETTING_KEY } from '../constants';
 
@@ -110,23 +111,23 @@ const ExpressionRuEditDialog: React.FC<ExpressionRuEditDialogProps> = ({
             />
           </Box>
 
-          <TextField
-            label={t('expressionRus.form.explanation')}
-            value={formData.explanation}
-            onChange={(e) => onFormChange('explanation', e.target.value)}
-            fullWidth
-            multiline
-            rows={3}
-          />
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t('expressionRus.form.explanation')}</FormLabel>
+            <TiptapTextEditor
+              value={formData.explanation}
+              onChange={(value) => onFormChange('explanation', value)}
+              placeholder={t('expressionRus.form.explanation')}
+            />
+          </FormControl>
 
-          <TextField
-            label={t('expressionRus.form.example')}
-            value={formData.example}
-            onChange={(e) => onFormChange('example', e.target.value)}
-            fullWidth
-            multiline
-            rows={2}
-          />
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t('expressionRus.form.example')}</FormLabel>
+            <TiptapTextEditor
+              value={formData.example}
+              onChange={(value) => onFormChange('example', value)}
+              placeholder={t('expressionRus.form.example')}
+            />
+          </FormControl>
 
           <Box sx={{ display: 'flex', gap: 2 }}>
             <FormControl fullWidth>
