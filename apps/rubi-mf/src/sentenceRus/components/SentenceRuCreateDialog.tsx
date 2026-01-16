@@ -95,21 +95,20 @@ const SentenceRuCreateDialog: React.FC<SentenceRuCreateDialogProps> = ({
             required
           />
 
-          <Box sx={{ display: 'flex', gap: 2 }}>
-            <TextField
-              label={t('sentenceRus.form.phonetic')}
-              value={formData.phonetic}
-              onChange={(e) => onFormChange('phonetic', e.target.value)}
-              fullWidth
-            />
-            <TextField
-              label={t('sentenceRus.form.translation')}
-              value={formData.translation}
-              onChange={(e) => onFormChange('translation', e.target.value)}
-              fullWidth
-            />
-          </Box>
+          <TextField
+            label={t('sentenceRus.form.phonetic')}
+            value={formData.phonetic}
+            onChange={(e) => onFormChange('phonetic', e.target.value)}
+            fullWidth
+          />
 
+          <TextField
+            label={t('sentenceRus.form.translation')}
+            value={formData.translation}
+            onChange={(e) => onFormChange('translation', e.target.value)}
+            fullWidth
+          />
+          
           <TextField
             label={t('sentenceRus.form.explanation')}
             value={formData.explanation}

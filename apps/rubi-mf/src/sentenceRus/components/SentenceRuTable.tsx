@@ -41,7 +41,7 @@ const SentenceRuTable = memo(
               {info.getValue()}
             </Typography>
           ),
-          size: 200,
+          size: 300,
         }),
         columnHelper.accessor("lang", {
           header: t("sentenceRus.columns.lang"),

@@ -47,18 +47,23 @@ const VocabularyRuViewDialog = ({ open, vocabularyRu, onClose, onEdit }: Vocabul
   // Calculate adverb tab index
   const getAdverbTabIndex = () => {
     let index = 0;
+    if (hasNounFields) index++;
     if (hasVerbFields) index++;
     if (hasAdjectiveFields) index++;
-    if (hasNounFields) index++;
-    return index - 1; // Subtract 1 because we want the index of adverb tab
+    return index; // Subtract 1 because we want the index of adverb tab
   };
 
   // Calculate noun tab index
-  const getNounTabIndex = () => {
+  const getAdjectiveTabIndex = () => {
     let index = 0;
+    if (hasNounFields) index++;
     if (hasVerbFields) index++;
-    if (hasAdjectiveFields) index++;
-    if (hasAdverbFields) index++;
+    return index;
+  };
+  
+  const getVerbTabIndex = () => {
+    let index = 0;
+    if (hasNounFields) index++;
     return index;
   };
 
@@ -215,14 +220,46 @@ const VocabularyRuViewDialog = ({ open, vocabularyRu, onClose, onEdit }: Vocabul
                 {(hasVerbFields || hasAdjectiveFields || hasAdverbFields) && (
                   <Box>
                     <Tabs value={activeTab} onChange={(_, newValue) => setActiveTab(newValue)} sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
+                      {hasNounFields && <Tab label="Noun" />}
                       {hasVerbFields && <Tab label="Verb" />}
                       {hasAdjectiveFields && <Tab label="Adjective" />}
                       {hasAdverbFields && <Tab label="Adverb" />}
-                      {hasNounFields && <Tab label="Noun" />}
                     </Tabs>
 
+                    {/* Noun Tab Content */}
+                    {hasNounFields && activeTab === 0 && (
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                        {vocabularyRu.nounForm && (
+                          <Box sx={{ p: 2, backgroundColor: 'rgba(76, 175, 80, 0.05)', borderRadius: 1.5, border: '1px solid', borderColor: 'rgba(76, 175, 80, 0.2)' }}>
+                            <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, display: 'block', mb: 0.5 }}>
+                              Noun Form
+                            </Typography>
+                            <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                              {vocabularyRu.nounForm}
+                            </Typography>
+                          </Box>
+                        )}
+                        {vocabularyRu.nounMeaning && (
+                          <Box sx={{ p: 2, backgroundColor: 'grey.50', borderRadius: 1.5, border: '1px solid', borderColor: 'grey.200' }}>
+                            <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, display: 'block', mb: 1 }}>
+                              Noun Meaning
+                            </Typography>
+                            <div dangerouslySetInnerHTML={{ __html: vocabularyRu.nounMeaning }} />
+                          </Box>
+                        )}
+                        {vocabularyRu.nounExample && (
+                          <Box sx={{ p: 2, backgroundColor: 'rgba(237, 108, 2, 0.05)', borderRadius: 1.5, border: '1px solid', borderColor: 'orange.200' }}>
+                            <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, display: 'block', mb: 1 }}>
+                              Noun Example
+                            </Typography>
+                            <div dangerouslySetInnerHTML={{ __html: vocabularyRu.nounExample }} />
+                          </Box>
+                        )}
+                      </Box>
+                    )}
+
                     {/* Verb Tab Content */}
-                    {hasVerbFields && activeTab === 0 && (
+                    {hasVerbFields && activeTab === getVerbTabIndex() && (
                       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                         {vocabularyRu.verbForm && (
                           <Box sx={{ p: 2, backgroundColor: 'rgba(46, 125, 50, 0.05)', borderRadius: 1.5, border: '1px solid', borderColor: 'rgba(46, 125, 50, 0.2)' }}>
@@ -274,7 +311,7 @@ const VocabularyRuViewDialog = ({ open, vocabularyRu, onClose, onEdit }: Vocabul
                     )}
 
                     {/* Adjective Tab Content */}
-                    {hasAdjectiveFields && activeTab === (hasVerbFields ? 1 : 0) && (
+                    {hasAdjectiveFields && activeTab === getAdjectiveTabIndex() && (
                       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                         {vocabularyRu.adjectiveForm && (
                           <Box sx={{ p: 2, backgroundColor: 'rgba(156, 39, 176, 0.05)', borderRadius: 1.5, border: '1px solid', borderColor: 'rgba(156, 39, 176, 0.2)' }}>
@@ -351,37 +388,6 @@ const VocabularyRuViewDialog = ({ open, vocabularyRu, onClose, onEdit }: Vocabul
                       </Box>
                     )}
 
-                    {/* Noun Tab Content */}
-                    {hasNounFields && activeTab === getNounTabIndex() && (
-                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                        {vocabularyRu.nounForm && (
-                          <Box sx={{ p: 2, backgroundColor: 'rgba(76, 175, 80, 0.05)', borderRadius: 1.5, border: '1px solid', borderColor: 'rgba(76, 175, 80, 0.2)' }}>
-                            <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, display: 'block', mb: 0.5 }}>
-                              Noun Form
-                            </Typography>
-                            <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                              {vocabularyRu.nounForm}
-                            </Typography>
-                          </Box>
-                        )}
-                        {vocabularyRu.nounMeaning && (
-                          <Box sx={{ p: 2, backgroundColor: 'grey.50', borderRadius: 1.5, border: '1px solid', borderColor: 'grey.200' }}>
-                            <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, display: 'block', mb: 1 }}>
-                              Noun Meaning
-                            </Typography>
-                            <div dangerouslySetInnerHTML={{ __html: vocabularyRu.nounMeaning }} />
-                          </Box>
-                        )}
-                        {vocabularyRu.nounExample && (
-                          <Box sx={{ p: 2, backgroundColor: 'rgba(237, 108, 2, 0.05)', borderRadius: 1.5, border: '1px solid', borderColor: 'orange.200' }}>
-                            <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, display: 'block', mb: 1 }}>
-                              Noun Example
-                            </Typography>
-                            <div dangerouslySetInnerHTML={{ __html: vocabularyRu.nounExample }} />
-                          </Box>
-                        )}
-                      </Box>
-                    )}
                   </Box>
                 )}
               </CardContent>

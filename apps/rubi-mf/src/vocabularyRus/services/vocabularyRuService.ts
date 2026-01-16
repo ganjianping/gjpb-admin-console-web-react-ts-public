@@ -22,6 +22,9 @@ export interface CreateVocabularyRuRequest {
   phonetic?: string;
   partOfSpeech?: string;
   nounPluralForm?: string;
+  nounForm?: string;
+  nounMeaning?: string;
+  nounExample?: string;
   verbSimplePastTense?: string;
   verbPastPerfectTense?: string;
   verbPresentParticiple?: string;
@@ -62,6 +65,9 @@ export interface UpdateVocabularyRuRequest {
   phonetic?: string;
   partOfSpeech?: string;
   nounPluralForm?: string;
+  nounForm?: string;
+  nounMeaning?: string;
+  nounExample?: string;
   verbSimplePastTense?: string;
   verbPastPerfectTense?: string;
   verbPresentParticiple?: string;

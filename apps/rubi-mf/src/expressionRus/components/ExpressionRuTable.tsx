@@ -41,7 +41,7 @@ const ExpressionRuTable = memo(
               {info.getValue()}
             </Typography>
           ),
-          size: 200,
+          size: 300,
         }),
         columnHelper.accessor("lang", {
           header: t("expressionRus.columns.lang"),

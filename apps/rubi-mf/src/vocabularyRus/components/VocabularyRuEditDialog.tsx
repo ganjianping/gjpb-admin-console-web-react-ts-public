@@ -99,6 +99,9 @@ const VocabularyRuEditDialog = ({ open, vocabularyRu, onClose, onConfirm }: Voca
         phonetic: vocabularyRu.phonetic || '',
         partOfSpeech: vocabularyRu.partOfSpeech || '',
         nounPluralForm: vocabularyRu.nounPluralForm || '',
+        nounForm: vocabularyRu.nounForm || '',
+        nounMeaning: vocabularyRu.nounMeaning || '',
+        nounExample: vocabularyRu.nounExample || '',
         verbSimplePastTense: vocabularyRu.verbSimplePastTense || '',
         verbPastPerfectTense: vocabularyRu.verbPastPerfectTense || '',
         verbPresentParticiple: vocabularyRu.verbPresentParticiple || '',
@@ -449,13 +452,43 @@ const VocabularyRuEditDialog = ({ open, vocabularyRu, onClose, onConfirm }: Voca
 
           <Box sx={{ mt: 2 }}>
             <Tabs value={activeTab} onChange={(_, newValue) => setActiveTab(newValue)} sx={{ borderBottom: 1, borderColor: 'divider' }}>
+              <Tab label={t('vocabularyRus.tabs.noun', 'Noun')} />
               <Tab label={t('vocabularyRus.tabs.verb', 'Verb')} />
               <Tab label={t('vocabularyRus.tabs.adjective', 'Adjective')} />
               <Tab label={t('vocabularyRus.tabs.adverb', 'Adverb')} />
-              <Tab label={t('vocabularyRus.tabs.noun', 'Noun')} />
             </Tabs>
 
             {activeTab === 0 && (
+              <Box sx={{ mt: 2 }}>
+                <FormControl fullWidth sx={{ mb: 2 }}>
+                  <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.nounForm')}</FormLabel>
+                  <TextField
+                    value={formData.nounForm}
+                    onChange={(e) => handleChange('nounForm', e.target.value)}
+                    placeholder={t('vocabularyRus.form.nounForm')}
+                    fullWidth
+                  />
+                </FormControl>
+                <FormControl fullWidth sx={{ mb: 2 }}>
+                  <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.nounMeaning')}</FormLabel>
+                  <TiptapTextEditor
+                    value={formData.nounMeaning}
+                    onChange={(value) => handleChange('nounMeaning', value)}
+                    placeholder={t('vocabularyRus.form.nounMeaning')}
+                  />
+                </FormControl>
+                <FormControl fullWidth>
+                  <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.nounExample')}</FormLabel>
+                  <TiptapTextEditor
+                    value={formData.nounExample}
+                    onChange={(value) => handleChange('nounExample', value)}
+                    placeholder={t('vocabularyRus.form.nounExample')}
+                  />
+                </FormControl>
+              </Box>
+            )}
+
+            {activeTab === 1 && (
                 <Box sx={{ mt: 2 }}>
                   <FormControl fullWidth sx={{ mb: 2 }}>
                     <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.verbForm')}</FormLabel>
@@ -485,7 +518,7 @@ const VocabularyRuEditDialog = ({ open, vocabularyRu, onClose, onConfirm }: Voca
                 </Box>
             )}
 
-            {activeTab === 1 && (
+            {activeTab === 2 && (
                 <Box sx={{ mt: 2 }}>
                   <FormControl fullWidth sx={{ mb: 2 }}>
                     <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.adjectiveForm')}</FormLabel>
@@ -515,7 +548,7 @@ const VocabularyRuEditDialog = ({ open, vocabularyRu, onClose, onConfirm }: Voca
                 </Box>
             )}
 
-            {activeTab === 2 && (
+            {activeTab === 3 && (
               <Box sx={{ mt: 2 }}>
                 <FormControl fullWidth sx={{ mb: 2 }}>
                   <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.adverbForm')}</FormLabel>
@@ -540,36 +573,6 @@ const VocabularyRuEditDialog = ({ open, vocabularyRu, onClose, onConfirm }: Voca
                     value={formData.adverbExample}
                     onChange={(value) => handleChange('adverbExample', value)}
                     placeholder={t('vocabularyRus.form.adverbExample')}
-                  />
-                </FormControl>
-              </Box>
-            )}
-
-            {activeTab === 3 && (
-              <Box sx={{ mt: 2 }}>
-                <FormControl fullWidth sx={{ mb: 2 }}>
-                  <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.nounForm')}</FormLabel>
-                  <TextField
-                    value={formData.nounForm}
-                    onChange={(e) => handleChange('nounForm', e.target.value)}
-                    placeholder={t('vocabularyRus.form.nounForm')}
-                    fullWidth
-                  />
-                </FormControl>
-                <FormControl fullWidth sx={{ mb: 2 }}>
-                  <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.nounMeaning')}</FormLabel>
-                  <TiptapTextEditor
-                    value={formData.nounMeaning}
-                    onChange={(value) => handleChange('nounMeaning', value)}
-                    placeholder={t('vocabularyRus.form.nounMeaning')}
-                  />
-                </FormControl>
-                <FormControl fullWidth>
-                  <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.nounExample')}</FormLabel>
-                  <TiptapTextEditor
-                    value={formData.nounExample}
-                    onChange={(value) => handleChange('nounExample', value)}
-                    placeholder={t('vocabularyRus.form.nounExample')}
                   />
                 </FormControl>
               </Box>
