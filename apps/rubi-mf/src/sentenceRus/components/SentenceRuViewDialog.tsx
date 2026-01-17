@@ -40,20 +40,19 @@ const SentenceRuViewDialog: React.FC<SentenceRuViewDialogProps> = ({
             </Typography>
             <div dangerouslySetInnerHTML={{ __html: sentenceRu.name || '-' }} />
           </Box>
-
-          <Box sx={{ display: 'flex', gap: 2 }}>
-            <Box sx={{ flex: 1 }}>
-              <Typography variant="subtitle2" color="text.secondary">
-                {t('sentenceRus.form.phonetic')}
-              </Typography>
-              <Typography>{sentenceRu.phonetic || '-'}</Typography>
-            </Box>
-            <Box sx={{ flex: 1 }}>
-              <Typography variant="subtitle2" color="text.secondary">
-                {t('sentenceRus.form.translation')}
-              </Typography>
-              <Typography>{sentenceRu.translation || '-'}</Typography>
-            </Box>
+          
+          <Box sx={{ flex: 1 }}>
+            <Typography variant="subtitle2" color="text.secondary">
+              {t('sentenceRus.form.phonetic')}
+            </Typography>
+            <div dangerouslySetInnerHTML={{ __html: sentenceRu.phonetic || '-' }} />
+          </Box>
+          
+          <Box sx={{ flex: 1 }}>
+            <Typography variant="subtitle2" color="text.secondary">
+              {t('sentenceRus.form.translation')}
+            </Typography>
+            <div dangerouslySetInnerHTML={{ __html: sentenceRu.translation || '-' }} />
           </Box>
 
           <Divider />
