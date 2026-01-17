@@ -5,7 +5,7 @@ const enTranslations = {
     title: 'Images',
     subtitle: 'Manage images and related information',
     description: 'Maintain the image library and metadata',
-    pageTitle: 'Images Management',
+    pageTitle: 'Images',
     create: 'Create Image',
     edit: 'Edit Image',
     delete: 'Delete Image',

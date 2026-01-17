@@ -5,7 +5,7 @@ const enTranslations = {
     title: 'Audios',
     subtitle: 'Manage audios and related information',
     description: 'Maintain the audio library and metadata',
-    pageTitle: 'Audios Management',
+    pageTitle: 'Audios',
     create: 'Create Audio',
     edit: 'Edit Audio',
     delete: 'Delete Audio',

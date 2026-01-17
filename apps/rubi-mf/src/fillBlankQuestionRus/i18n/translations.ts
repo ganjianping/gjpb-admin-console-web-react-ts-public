@@ -12,7 +12,7 @@ const enTranslations = {
     view: 'View Question',
     search: 'Search Questions',
     clearFilters: 'Clear Filters',
-    noFreeTextQuestionsFound: 'No Fill Blank Questions found',
+    noQuestionsFound: 'No Fill Blank Questions found',
     columns: {
       question: 'Question',
       answer: 'Correct Answer',
@@ -90,7 +90,7 @@ const zhTranslations = {
     view: '查看填空题',
     search: '搜索填空题',
     clearFilters: '清除筛选',
-    noFreeTextQuestionsFound: '未找到填空题',
+    noQuestionsFound: '未找到填空题',
     columns: {
       question: '问题',
       answer: '正确答案',

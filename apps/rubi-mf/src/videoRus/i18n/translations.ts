@@ -5,7 +5,7 @@ const enTranslations = {
     title: 'Videos',
     subtitle: 'Manage videos and related information',
     description: 'Maintain the video library and metadata',
-    pageTitle: 'Videos Management',
+    pageTitle: 'Videos',
     create: 'Create Video',
     edit: 'Edit Video',
     delete: 'Delete Video',

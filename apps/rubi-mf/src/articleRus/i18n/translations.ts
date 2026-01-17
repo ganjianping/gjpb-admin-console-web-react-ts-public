@@ -5,7 +5,7 @@ const enTranslations = {
     title: 'Articles',
     subtitle: 'Manage articles, cover images, and metadata',
     description: 'Maintain the article library and rich content',
-    pageTitle: 'Articles Management',
+    pageTitle: 'Articles',
     create: 'Create Article',
     edit: 'Edit Article',
     delete: 'Delete Article',

@@ -353,7 +353,7 @@ const TrueFalseQuestionRuCreateDialog = ({
           disabled={loading}
           startIcon={loading ? <CircularProgress size={16} /> : null}
         >
-          {loading ? t("common.saving") : t("common.create")}
+          {loading ? t("common.saving") : t("common.save")}
         </Button>
       </DialogActions>
     </Dialog>

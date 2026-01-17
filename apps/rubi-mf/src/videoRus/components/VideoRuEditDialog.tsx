@@ -76,7 +76,7 @@ const VideoRuEditDialog: React.FC<VideoRuEditDialogProps> = ({ open, formData, o
 				onClose();
 			}}
 			disableEscapeKeyDown
-			maxWidth="sm"
+			maxWidth="md"
 			fullWidth
 		>
 			{(loading || localSaving) && (

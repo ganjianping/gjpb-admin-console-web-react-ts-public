@@ -118,7 +118,7 @@ const FillBlankQuestionRuTable = memo(
       return (
         <Box sx={{ p: 3, textAlign: "center" }}>
           <Typography variant="body1" color="text.secondary">
-            {t("fillBlankQuestionRus.noFreeTextQuestionsFound")}
+            {t("fillBlankQuestionRus.noQuestionsFound")}
           </Typography>
         </Box>
       );
