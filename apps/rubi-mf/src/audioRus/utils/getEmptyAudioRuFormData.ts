@@ -12,6 +12,8 @@ export const getEmptyAudioRuFormData = (lang = 'EN') => ({
   tags: '',
   lang,
   displayOrder: 999,
+  term: undefined,
+  week: undefined,
   isActive: true,
   uploadMethod: 'file' as const,
   file: null,

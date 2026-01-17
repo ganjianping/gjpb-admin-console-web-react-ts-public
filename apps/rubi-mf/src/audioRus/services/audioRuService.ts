@@ -26,6 +26,8 @@ export interface CreateAudioRequest {
   tags: string;
   lang: string;
   displayOrder?: number;
+  term?: number;
+  week?: number;
   isActive?: boolean;
 }
 
@@ -43,6 +45,8 @@ export interface CreateAudioRuByUploadRequest {
   tags: string;
   lang: string;
   displayOrder?: number;
+  term?: number;
+  week?: number;
   isActive?: boolean;
   coverImageFile?: File;
 }
@@ -61,6 +65,8 @@ export interface UpdateAudioRequest {
   tags?: string;
   lang?: string;
   displayOrder?: number;
+  term?: number;
+  week?: number;
   isActive?: boolean;
 }
 
@@ -110,6 +116,12 @@ class AudioRuService {
     formData.append('lang', data.lang);
     if (data.displayOrder !== undefined) {
       formData.append('displayOrder', String(data.displayOrder));
+    }
+    if (data.term !== undefined) {
+      formData.append('term', String(data.term));
+    }
+    if (data.week !== undefined) {
+      formData.append('week', String(data.week));
     }
     if (data.isActive !== undefined) {
       formData.append('isActive', String(data.isActive));
@@ -164,6 +176,12 @@ class AudioRuService {
     }
     if (data.displayOrder !== undefined) {
       formData.append('displayOrder', String(data.displayOrder));
+    }
+    if (data.term !== undefined) {
+      formData.append('term', String(data.term));
+    }
+    if (data.week !== undefined) {
+      formData.append('week', String(data.week));
     }
     if (data.isActive !== undefined) {
       formData.append('isActive', String(data.isActive));

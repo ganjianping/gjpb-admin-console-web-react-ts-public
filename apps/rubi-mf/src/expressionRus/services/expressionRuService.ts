@@ -26,6 +26,8 @@ export interface CreateExpressionRuRequest {
   tags?: string;
   lang: string;
   difficultyLevel?: string;
+  term?: number;
+  week?: number;
   displayOrder?: number;
   isActive?: boolean;
 }
@@ -39,6 +41,8 @@ export interface UpdateExpressionRuRequest {
   tags?: string;
   lang?: string;
   difficultyLevel?: string;
+  term?: number;
+  week?: number;
   displayOrder?: number;
   isActive?: boolean;
 }

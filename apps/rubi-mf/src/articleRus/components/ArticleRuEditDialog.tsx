@@ -34,7 +34,7 @@ import { useTranslation } from 'react-i18next';
 import TiptapTextEditor from '../../../../shared-lib/src/ui-components/rich-text/tiptap/tiptapTextEditor';
 import '../i18n/translations';
 import type { ArticleRu, ArticleRuFormData, ArticleRuImage } from '../types/articleRu.types';
-import { ARTICLE_TAG_SETTING_KEY, LANGUAGE_OPTIONS, ARTICLE_LANG_SETTING_KEY } from '../constants';
+import { ARTICLE_TAG_SETTING_KEY, LANGUAGE_OPTIONS, ARTICLE_LANG_SETTING_KEY, TERM_OPTIONS, WEEK_OPTIONS } from '../constants';
 import { articleRuService } from '../services/articleRuService';
 import { getFullArticleRuCoverImageUrl } from '../utils/getFullArticleRuCoverImageUrl';
 
@@ -533,6 +533,35 @@ const ArticleRuEditDialog: React.FC<ArticleRuEditDialogProps> = ({
             onChange={(e) => onFormChange('displayOrder', Number(e.target.value) || 0)}
             fullWidth
           />
+
+          <FormControl fullWidth>
+            <Select
+              value={formData.term}
+              onChange={(e) => onFormChange('term', e.target.value)}
+              displayEmpty
+            >
+              {TERM_OPTIONS.map((opt) => (
+                <MenuItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl fullWidth>
+            <Select
+              value={formData.week}
+              onChange={(e) => onFormChange('week', e.target.value)}
+              displayEmpty
+            >
+              {WEEK_OPTIONS.map((opt) => (
+                <MenuItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
           <FormControlLabel
             control={<Checkbox checked={formData.isActive} onChange={(e) => onFormChange('isActive', e.target.checked)} />}
             label={t('articleRus.form.isActive')}

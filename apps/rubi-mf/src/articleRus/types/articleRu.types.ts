@@ -9,6 +9,8 @@ export interface ArticleRu {
   coverImageFileUrl?: string | null;
   coverImageOriginalUrl?: string | null;
   tags?: string | null;
+  term?: number | null;
+  week?: number | null;
   lang?: string | null;
   displayOrder?: number | null;
   isActive?: boolean | null;
@@ -38,6 +40,8 @@ export interface ArticleRuFormData {
   coverImageOriginalUrl: string;
   tags: string;
   lang: string;
+  term?: number;
+  week?: number;
   displayOrder: number;
   isActive: boolean;
   coverImageFile: File | null;

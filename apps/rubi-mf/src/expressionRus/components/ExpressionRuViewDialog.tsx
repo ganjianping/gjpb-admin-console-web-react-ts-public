@@ -112,6 +112,21 @@ const ExpressionRuViewDialog: React.FC<ExpressionRuViewDialogProps> = ({
           <Box sx={{ display: 'flex', gap: 2 }}>
             <Box sx={{ flex: 1 }}>
               <Typography variant="subtitle2" color="text.secondary">
+                {t('expressionRus.form.term')}
+              </Typography>
+              <Chip label={expressionRu.term ? `Term ${expressionRu.term}` : '-'} size="small" color="secondary" />
+            </Box>
+            <Box sx={{ flex: 1 }}>
+              <Typography variant="subtitle2" color="text.secondary">
+                {t('expressionRus.form.week')}
+              </Typography>
+              <Chip label={expressionRu.week ? `Week ${expressionRu.week}` : '-'} size="small" color="info" />
+            </Box>
+          </Box>
+
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <Box sx={{ flex: 1 }}>
+              <Typography variant="subtitle2" color="text.secondary">
                 {t('expressionRus.form.tags')}
               </Typography>
               <Typography>{expressionRu.tags || '-'}</Typography>

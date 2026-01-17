@@ -46,6 +46,8 @@ const ArticleRusPage: React.FC = () => {
     coverImageOriginalUrl: articleRu.coverImageOriginalUrl || '',
     tags: articleRu.tags || '',
     lang: articleRu.lang || (dialog.getCurrentLanguage ? dialog.getCurrentLanguage() : 'EN'),
+    term: articleRu.term ?? undefined,
+    week: articleRu.week ?? undefined,
     displayOrder: articleRu.displayOrder ?? 0,
     isActive: Boolean(articleRu.isActive),
     coverImageFile: null,

@@ -90,8 +90,8 @@ export interface VocabularyRuFormData {
   phoneticAudioUploadMethod?: "url" | "file";
   tags: string;
   difficultyLevel: string;
-  term: number;
-  week: number;
+  term?: number;
+  week?: number;
   lang: string;
   displayOrder: number;
   isActive: boolean;

@@ -7,6 +7,8 @@ export interface ExpressionRu {
   example?: string | null;
   tags?: string | null;
   difficultyLevel?: string | null;
+  term?: number | null;
+  week?: number | null;
   lang?: string | null;
   displayOrder?: number | null;
   isActive?: boolean | null;
@@ -35,6 +37,8 @@ export interface ExpressionRuFormData {
   tags: string;
   lang: string;
   difficultyLevel: string;
+  term?: number;
+  week?: number;
   displayOrder: number;
   isActive: boolean;
 }

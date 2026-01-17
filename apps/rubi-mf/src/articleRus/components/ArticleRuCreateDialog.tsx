@@ -25,7 +25,7 @@ import { useTranslation } from 'react-i18next';
 import TiptapTextEditor from '../../../../shared-lib/src/ui-components/rich-text/tiptap/tiptapTextEditor';
 import '../i18n/translations';
 import type { ArticleRuFormData } from '../types/articleRu.types';
-import { ARTICLE_TAG_SETTING_KEY, LANGUAGE_OPTIONS, ARTICLE_LANG_SETTING_KEY } from '../constants';
+import { ARTICLE_TAG_SETTING_KEY, LANGUAGE_OPTIONS, ARTICLE_LANG_SETTING_KEY, TERM_OPTIONS, WEEK_OPTIONS } from '../constants';
 import { articleRuService } from '../services/articleRuService';
 
 interface ArticleRuCreateDialogProps {
@@ -128,6 +128,8 @@ const ArticleRuCreateDialog = ({
           coverImageOriginalUrl: formData.coverImageOriginalUrl,
           originalUrl: formData.originalUrl,
           sourceName: formData.sourceName,
+          term: formData.term,
+          week: formData.week,
         });
       } else {
         await articleRuService.createArticleRu({
@@ -142,6 +144,8 @@ const ArticleRuCreateDialog = ({
           coverImageOriginalUrl: formData.coverImageOriginalUrl,
           originalUrl: formData.originalUrl,
           sourceName: formData.sourceName,
+          term: formData.term,
+          week: formData.week,
         });
       }
 
@@ -297,6 +301,35 @@ const ArticleRuCreateDialog = ({
             onChange={(e) => onFormChange('displayOrder', Number(e.target.value) || 0)}
             fullWidth
           />
+
+          <FormControl fullWidth>
+            <Select
+              value={formData.term}
+              onChange={(e) => onFormChange('term', e.target.value)}
+              displayEmpty
+            >
+              {TERM_OPTIONS.map((opt) => (
+                <MenuItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl fullWidth>
+            <Select
+              value={formData.week}
+              onChange={(e) => onFormChange('week', e.target.value)}
+              displayEmpty
+            >
+              {WEEK_OPTIONS.map((opt) => (
+                <MenuItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
           <FormControlLabel
             control={<Switch checked={formData.isActive} onChange={(e) => onFormChange('isActive', e.target.checked)} />}
             label={t('articleRus.form.isActive')}

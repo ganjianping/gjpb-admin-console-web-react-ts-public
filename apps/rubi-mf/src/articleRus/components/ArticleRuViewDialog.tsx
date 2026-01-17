@@ -316,6 +316,14 @@ const ArticleRuViewDialog = ({ open, articleRu, onClose, onEdit }: ArticleRuView
                   <Typography variant="body2">{articleRu.displayOrder ?? '-'}</Typography>
                 </Box>
                 <Box>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>{t('articleRus.form.term')}</Typography>
+                  <Chip label={articleRu.term ? `Term ${articleRu.term}` : '-'} size="small" sx={{ fontWeight: 600 }} />
+                </Box>
+                <Box>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>{t('articleRus.form.week')}</Typography>
+                  <Chip label={articleRu.week ? `Week ${articleRu.week}` : '-'} size="small" sx={{ fontWeight: 600 }} />
+                </Box>
+                <Box>
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Active</Typography>
                   <Chip icon={articleRu.isActive ? <CheckCircle2 size={16} /> : <XCircle size={16} />} label={articleRu.isActive ? t('articleRus.status.active') : t('articleRus.status.inactive')} color={articleRu.isActive ? 'success' : 'default'} sx={{ fontWeight: 600 }} />
                 </Box>

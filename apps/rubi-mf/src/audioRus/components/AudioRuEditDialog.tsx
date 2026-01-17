@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Box, FormControlLabel, Checkbox, FormControl, Select, MenuItem, OutlinedInput, Chip, Typography, TextareaAutosize, LinearProgress, Backdrop, CircularProgress } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import type { AudioRuFormData } from '../types/audioRu.types';
-import { LANGUAGE_OPTIONS } from '../constants';
+import { LANGUAGE_OPTIONS, TERM_OPTIONS, WEEK_OPTIONS } from '../constants';
 import TiptapTextEditor from '../../../../shared-lib/src/ui-components/rich-text/tiptap/tiptapTextEditor';
 
 interface AudioRuEditDialogProps {
@@ -117,7 +117,35 @@ const AudioRuEditDialog: React.FC<AudioRuEditDialogProps> = ({ open, formData, o
           </FormControl>
 
           <TextField label={t('audioRus.form.displayOrder') || 'Display Order'} type="number" value={String(formData.displayOrder)} onChange={e => onFormChange('displayOrder', Number(e.target.value) || 0)} fullWidth />
-            
+
+          <FormControl fullWidth>
+            <Select
+              value={formData.term}
+              onChange={(e) => onFormChange('term', e.target.value)}
+              displayEmpty
+            >
+              {TERM_OPTIONS.map((opt) => (
+                <MenuItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl fullWidth>
+            <Select
+              value={formData.week}
+              onChange={(e) => onFormChange('week', e.target.value)}
+              displayEmpty
+            >
+              {WEEK_OPTIONS.map((opt) => (
+                <MenuItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
           <Box>
             <Typography variant="subtitle2">{t('audioRus.form.subtitle') || 'Subtitle'}</Typography>
             <TiptapTextEditor value={(formData as any).subtitle || ''} onChange={(html: string) => onFormChange('subtitle' as any, html)} placeholder={t('audioRus.form.subtitle') || 'Subtitle'} />

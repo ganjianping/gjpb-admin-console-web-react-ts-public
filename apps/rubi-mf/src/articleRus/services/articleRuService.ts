@@ -29,6 +29,8 @@ export interface CreateArticleRequest {
   coverImageOriginalUrl?: string;
   tags: string;
   lang: string;
+  term?: number;
+  week?: number;
   displayOrder?: number;
   isActive?: boolean;
 }
@@ -47,6 +49,8 @@ export interface UpdateArticleRequest {
   coverImageOriginalUrl?: string;
   tags?: string;
   lang?: string;
+  term?: number;
+  week?: number;
   displayOrder?: number;
   isActive?: boolean;
 }

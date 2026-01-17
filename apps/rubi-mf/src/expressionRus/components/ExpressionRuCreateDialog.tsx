@@ -157,6 +157,34 @@ const ExpressionRuCreateDialog: React.FC<ExpressionRuCreateDialogProps> = ({
                 ))}
               </Select>
             </FormControl>
+
+            <FormControl fullWidth>
+              <FormLabel>{t('expressionRus.form.term')}</FormLabel>
+              <Select
+                value={formData.term}
+                onChange={(e) => onFormChange('term', Number(e.target.value))}
+              >
+                {[1, 2, 3, 4].map((term) => (
+                  <MenuItem key={term} value={term}>
+                    {term}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <FormControl fullWidth>
+              <FormLabel>{t('expressionRus.form.week')}</FormLabel>
+              <Select
+                value={formData.week}
+                onChange={(e) => onFormChange('week', Number(e.target.value))}
+              >
+                {Array.from({ length: 14 }, (_, i) => i + 1).map((week) => (
+                  <MenuItem key={week} value={week}>
+                    {week}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Box>
 
           <FormControl fullWidth>

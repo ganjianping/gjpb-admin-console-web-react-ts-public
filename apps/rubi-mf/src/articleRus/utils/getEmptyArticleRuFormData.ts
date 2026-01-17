@@ -10,6 +10,8 @@ export const getEmptyArticleRuFormData = (lang = 'EN'): ArticleRuFormData => ({
   coverImageOriginalUrl: '',
   tags: '',
   lang,
+  term: undefined,
+  week: undefined,
   displayOrder: 999,
   isActive: true,
   coverImageFile: null,

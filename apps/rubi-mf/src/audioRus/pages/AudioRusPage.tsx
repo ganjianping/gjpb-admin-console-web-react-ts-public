@@ -58,6 +58,8 @@ const AudioRusPage: React.FC = () => {
     tags: audioRu.tags || '',
     lang: audioRu.lang || (dialog.getCurrentLanguage ? dialog.getCurrentLanguage() : 'EN'),
     displayOrder: audioRu.displayOrder || 0,
+    term: audioRu.term ?? undefined,
+    week: audioRu.week ?? undefined,
     isActive: !!audioRu.isActive,
     uploadMethod: 'file' as const,
     file: null,

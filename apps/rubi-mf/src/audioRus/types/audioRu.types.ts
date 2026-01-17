@@ -15,6 +15,8 @@ export interface AudioRu {
   tags?: string;
   lang?: string;
   displayOrder?: number;
+  term?: number;
+  week?: number;
   isActive?: boolean;
   createdBy?: string;
   updatedBy?: string;
@@ -45,6 +47,8 @@ export interface AudioRuFormData {
   tags: string;
   lang: string;
   displayOrder: number;
+  term?: number;
+  week?: number;
   isActive: boolean;
   uploadMethod: 'file';
   file: File | null;

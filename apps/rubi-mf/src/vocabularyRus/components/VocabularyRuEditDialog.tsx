@@ -129,6 +129,8 @@ const VocabularyRuEditDialog = ({ open, vocabularyRu, onClose, onConfirm }: Voca
         phoneticAudioUploadMethod: vocabularyRu.phoneticAudioOriginalUrl ? 'url' : 'file',
         tags: vocabularyRu.tags || '',
         difficultyLevel: vocabularyRu.difficultyLevel || 'easy',
+        term: vocabularyRu.term ?? undefined,
+        week: vocabularyRu.week ?? undefined,
         lang: vocabularyRu.lang || (i18n.language.toUpperCase().startsWith('ZH') ? 'ZH' : 'EN'),
         displayOrder: vocabularyRu.displayOrder ?? 0,
         isActive: vocabularyRu.isActive ?? true,
@@ -386,40 +388,6 @@ const VocabularyRuEditDialog = ({ open, vocabularyRu, onClose, onConfirm }: Voca
             </Select>
           </FormControl>
 
-          <Box sx={{ display: 'flex', gap: 2 }}>
-            <FormControl fullWidth>
-              <FormLabel sx={{ mb: 1 }}>
-                {t("vocabularyRus.form.term")}
-              </FormLabel>
-              <Select
-                value={formData.term}
-                onChange={(e) => handleChange("term", Number(e.target.value))}
-              >
-                {[1, 2, 3, 4].map((term) => (
-                  <MenuItem key={term} value={term}>
-                    {term}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-
-            <FormControl fullWidth>
-              <FormLabel sx={{ mb: 1 }}>
-                {t("vocabularyRus.form.week")}
-              </FormLabel>
-              <Select
-                value={formData.week}
-                onChange={(e) => handleChange("week", Number(e.target.value))}
-              >
-                {Array.from({ length: 14 }, (_, i) => i + 1).map((week) => (
-                  <MenuItem key={week} value={week}>
-                    {week}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Box>
-
           {formData.partOfSpeech?.toLowerCase().includes('noun') && (
             <FormControl fullWidth>
               <FormLabel sx={{ mb: 1 }}>{t('vocabularyRus.form.nounPluralForm')}</FormLabel>
@@ -637,6 +605,40 @@ const VocabularyRuEditDialog = ({ open, vocabularyRu, onClose, onConfirm }: Voca
               )}
             </Select>
           </FormControl>
+
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <FormControl fullWidth>
+              <FormLabel sx={{ mb: 1 }}>
+                {t("vocabularyRus.form.term")}
+              </FormLabel>
+              <Select
+                value={formData.term}
+                onChange={(e) => handleChange("term", Number(e.target.value))}
+              >
+                {[1, 2, 3, 4].map((term) => (
+                  <MenuItem key={term} value={term}>
+                    {term}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <FormControl fullWidth>
+              <FormLabel sx={{ mb: 1 }}>
+                {t("vocabularyRus.form.week")}
+              </FormLabel>
+              <Select
+                value={formData.week}
+                onChange={(e) => handleChange("week", Number(e.target.value))}
+              >
+                {Array.from({ length: 14 }, (_, i) => i + 1).map((week) => (
+                  <MenuItem key={week} value={week}>
+                    {week}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
 
           <FormControl component="fieldset">
             <FormLabel component="legend">{t('vocabularyRus.form.imageUploadMethod')}</FormLabel>

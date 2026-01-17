@@ -24,7 +24,7 @@ import {
 import TiptapTextEditor from '../../../../shared-lib/src/ui-components/rich-text/tiptap/tiptapTextEditor';
 import { useTranslation } from 'react-i18next';
 import type { AudioRuFormData } from '../types/audioRu.types';
-import { LANGUAGE_OPTIONS } from '../constants';
+import { LANGUAGE_OPTIONS, TERM_OPTIONS, WEEK_OPTIONS } from '../constants';
 import { audioRuService } from '../services/audioRuService';
 
 interface AudioRuCreateDialogProps {
@@ -139,7 +139,8 @@ const AudioRuCreateDialog = ({
           tags: formData.tags,
           lang: formData.lang,
           displayOrder: formData.displayOrder,
-          isActive: formData.isActive,
+          term: formData.term,
+          week: formData.week,
         } as any ),
       } as any);
 
@@ -153,7 +154,7 @@ const AudioRuCreateDialog = ({
       }
       onClose();
     } catch (err: any) {
-      setErrorMsg(err?.message || 'Failed to upload audioRu');
+      setErrorMsg(err?.message || 'Failed to create audioRu');
     } finally {
       setLocalSaving(false);
     }
@@ -209,7 +210,35 @@ const AudioRuCreateDialog = ({
             </Select>
           </FormControl>
           <TextField label={t('audioRus.form.displayOrder') || 'Display Order'} type="number" value={String(formData.displayOrder)} onChange={(e) => onFormChange('displayOrder', Number(e.target.value) || 0)} fullWidth />
-          
+
+          <FormControl fullWidth>
+            <Select
+              value={formData.term}
+              onChange={(e) => onFormChange('term', e.target.value)}
+              displayEmpty
+            >
+              {TERM_OPTIONS.map((opt) => (
+                <MenuItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl fullWidth>
+            <Select
+              value={formData.week}
+              onChange={(e) => onFormChange('week', e.target.value)}
+              displayEmpty
+            >
+              {WEEK_OPTIONS.map((opt) => (
+                <MenuItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
           <Box>
             <Typography variant="subtitle2">{t('audioRus.form.subtitle') || 'Subtitle'}</Typography>
             <TiptapTextEditor value={(formData as any).subtitle || ''} onChange={(html: string) => onFormChange('subtitle' as any, html)} placeholder={t('audioRus.form.subtitle') || 'Subtitle'} />

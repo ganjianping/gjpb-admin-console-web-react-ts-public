@@ -377,6 +377,14 @@ const AudioRuViewDialog = ({ open, onClose, audioRu, onEdit }: AudioRuViewDialog
                   <Typography variant="body2">{audioRu.displayOrder}</Typography>
                 </Box>
                 <Box>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>{t('audioRus.form.term')}</Typography>
+                  <Chip label={audioRu.term ? `Term ${audioRu.term}` : '-'} size="small" sx={{ fontWeight: 600 }} />
+                </Box>
+                <Box>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>{t('audioRus.form.week')}</Typography>
+                  <Chip label={audioRu.week ? `Week ${audioRu.week}` : '-'} size="small" sx={{ fontWeight: 600 }} />
+                </Box>
+                <Box>
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Active</Typography>
                   <Chip icon={audioRu.isActive ? <CheckCircle2 size={16} /> : <XCircle size={16} />} label={audioRu.isActive ? 'Active' : 'Inactive'} color={audioRu.isActive ? 'success' : 'default'} sx={{ fontWeight: 600 }} />
                 </Box>

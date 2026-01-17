@@ -433,40 +433,6 @@ const VocabularyRuCreateDialog = ({
             </Select>
           </FormControl>
 
-          <Box sx={{ display: 'flex', gap: 2 }}>
-            <FormControl fullWidth>
-              <FormLabel sx={{ mb: 1 }}>
-                {t("vocabularyRus.form.term")}
-              </FormLabel>
-              <Select
-                value={formData.term}
-                onChange={(e) => handleChange("term", Number(e.target.value))}
-              >
-                {[1, 2, 3, 4].map((term) => (
-                  <MenuItem key={term} value={term}>
-                    {term}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-
-            <FormControl fullWidth>
-              <FormLabel sx={{ mb: 1 }}>
-                {t("vocabularyRus.form.week")}
-              </FormLabel>
-              <Select
-                value={formData.week}
-                onChange={(e) => handleChange("week", Number(e.target.value))}
-              >
-                {Array.from({ length: 14 }, (_, i) => i + 1).map((week) => (
-                  <MenuItem key={week} value={week}>
-                    {week}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Box>
-
           {formData.partOfSpeech?.toLowerCase().includes('noun') && (
             <FormControl fullWidth>
               <FormLabel sx={{ mb: 1 }}>
@@ -670,6 +636,40 @@ const VocabularyRuCreateDialog = ({
             )}
           </Box>
 
+           <Box sx={{ display: 'flex', gap: 2 }}>
+            <FormControl fullWidth>
+              <FormLabel sx={{ mb: 1 }}>
+                {t("vocabularyRus.form.term")}
+              </FormLabel>
+              <Select
+                value={formData.term}
+                onChange={(e) => handleChange("term", Number(e.target.value))}
+              >
+                {[1, 2, 3, 4].map((term) => (
+                  <MenuItem key={term} value={term}>
+                    {term}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <FormControl fullWidth>
+              <FormLabel sx={{ mb: 1 }}>
+                {t("vocabularyRus.form.week")}
+              </FormLabel>
+              <Select
+                value={formData.week}
+                onChange={(e) => handleChange("week", Number(e.target.value))}
+              >
+                {Array.from({ length: 14 }, (_, i) => i + 1).map((week) => (
+                  <MenuItem key={week} value={week}>
+                    {week}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
+
           <FormControl fullWidth>
             <FormLabel sx={{ mb: 1 }}>{t("vocabularyRus.form.tags")}</FormLabel>
             <Select
@@ -699,8 +699,6 @@ const VocabularyRuCreateDialog = ({
               )}
             </Select>
           </FormControl>
-
-          
 
           <FormControl component="fieldset">
             <FormLabel component="legend">
