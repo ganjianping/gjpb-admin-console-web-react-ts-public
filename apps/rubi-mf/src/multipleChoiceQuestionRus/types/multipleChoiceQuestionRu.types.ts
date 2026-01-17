@@ -12,6 +12,8 @@ export interface MultipleChoiceQuestionRu {
   successCount: number;
   tags: string;
   lang: string;
+  term?: number;
+  week?: number;
   displayOrder: number;
   isActive: boolean;
   createdBy?: string | null;
@@ -41,6 +43,8 @@ export interface MultipleChoiceQuestionRuFormData {
   difficultyLevel: string;
   tags: string;
   lang: string;
+  term?: number;
+  week?: number;
   displayOrder: number;
   isActive: boolean;
 }

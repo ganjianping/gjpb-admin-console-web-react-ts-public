@@ -192,6 +192,18 @@ const VideoRuViewDialog = ({ open, onClose, videoRu, onEdit }: VideoRuViewDialog
 									<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Language</Typography>
 									<Chip label={t(`videoRus.languages.${videoRu.lang}`)} size="small" sx={{ fontWeight: 600 }} />
 								</Box>
+								{videoRu.term && (
+									<Box>
+										<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>{t("videoRus.form.term")}</Typography>
+										<Typography variant="body2">{videoRu.term}</Typography>
+									</Box>
+								)}
+								{videoRu.week && (
+									<Box>
+										<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>{t("videoRus.form.week")}</Typography>
+										<Typography variant="body2">{videoRu.week}</Typography>
+									</Box>
+								)}
 								<Box>
 									<Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Display Order</Typography>
 									<Typography variant="body2">{videoRu.displayOrder}</Typography>

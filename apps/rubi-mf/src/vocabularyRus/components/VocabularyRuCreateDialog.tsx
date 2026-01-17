@@ -642,11 +642,12 @@ const VocabularyRuCreateDialog = ({
                 {t("vocabularyRus.form.term")}
               </FormLabel>
               <Select
-                value={formData.term}
-                onChange={(e) => handleChange("term", Number(e.target.value))}
+                value={formData.term?.toString() || ''}
+                onChange={(e) => handleChange("term", e.target.value ? parseInt(e.target.value) : undefined)}
               >
+                <MenuItem value=""><em>None</em></MenuItem>
                 {[1, 2, 3, 4].map((term) => (
-                  <MenuItem key={term} value={term}>
+                  <MenuItem key={term} value={term.toString()}>
                     {term}
                   </MenuItem>
                 ))}
@@ -658,11 +659,12 @@ const VocabularyRuCreateDialog = ({
                 {t("vocabularyRus.form.week")}
               </FormLabel>
               <Select
-                value={formData.week}
-                onChange={(e) => handleChange("week", Number(e.target.value))}
+                value={formData.week?.toString() || ''}
+                onChange={(e) => handleChange("week", e.target.value ? parseInt(e.target.value) : undefined)}
               >
+                <MenuItem value=""><em>None</em></MenuItem>
                 {Array.from({ length: 14 }, (_, i) => i + 1).map((week) => (
-                  <MenuItem key={week} value={week}>
+                  <MenuItem key={week} value={week.toString()}>
                     {week}
                   </MenuItem>
                 ))}
@@ -913,7 +915,7 @@ const VocabularyRuCreateDialog = ({
           disabled={loading}
           startIcon={loading ? <CircularProgress size={16} color="inherit" /> : null}
         >
-          {loading ? t("common.creating", "Creating...") : t("common.create")}
+          {loading ? t("common.save", "Saving...") : t("common.save")}
         </Button>
       </DialogActions>
     </Dialog>

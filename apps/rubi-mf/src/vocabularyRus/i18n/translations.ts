@@ -5,7 +5,7 @@ const enTranslations = {
     title: 'Vocabulary',
     subtitle: 'Manage Vocabulary words and their definitions',
     description: 'Maintain the Vocabulary library with word images and audio',
-    pageTitle: 'Vocabulary Management',
+    pageTitle: 'Vocabularies',
     create: 'Create Vocabulary',
     edit: 'Edit Vocabulary',
     delete: 'Delete Vocabulary',

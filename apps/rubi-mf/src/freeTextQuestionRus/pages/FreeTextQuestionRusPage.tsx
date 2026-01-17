@@ -49,6 +49,8 @@ const FreeTextQuestionRusPage: React.FC = () => {
     lang:
       freeTextQuestionRu.lang ||
       (dialog.getCurrentLanguage ? dialog.getCurrentLanguage() : "EN"),
+    term: freeTextQuestionRu.term ?? undefined,
+    week: freeTextQuestionRu.week ?? undefined,
     displayOrder: freeTextQuestionRu.displayOrder ?? 999,
     isActive: Boolean(freeTextQuestionRu.isActive),
   });
@@ -89,6 +91,8 @@ const FreeTextQuestionRusPage: React.FC = () => {
         difficultyLevel: formData.difficultyLevel,
         tags: formData.tags,
         lang: formData.lang,
+        term: formData.term,
+        week: formData.week,
         displayOrder: formData.displayOrder,
         isActive: formData.isActive,
       });
@@ -115,6 +119,8 @@ const FreeTextQuestionRusPage: React.FC = () => {
           difficultyLevel: formData.difficultyLevel,
           tags: formData.tags,
           lang: formData.lang,
+          term: formData.term,
+          week: formData.week,
           displayOrder: formData.displayOrder,
           isActive: formData.isActive,
         },

@@ -11,6 +11,7 @@ import {
   FormLabel,
   Select,
   MenuItem,
+  CircularProgress,
   Checkbox,
   FormControlLabel,
   OutlinedInput,
@@ -237,8 +238,13 @@ const ExpressionRuCreateDialog: React.FC<ExpressionRuCreateDialogProps> = ({
         <Button onClick={onClose} disabled={loading}>
           {t('common.cancel')}
         </Button>
-        <Button onClick={handleSubmit} variant="contained" disabled={loading}>
-          {t('common.create')}
+        <Button 
+          onClick={handleSubmit} 
+          variant="contained" 
+          disabled={loading}
+          startIcon={loading ? <CircularProgress size={16} color="inherit" /> : null}
+        >
+          {loading ? t("common.save", "Saving...") : t("common.save")}
         </Button>
       </DialogActions>
     </Dialog>

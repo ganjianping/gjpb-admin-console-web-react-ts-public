@@ -8,6 +8,8 @@ export interface SentenceRu {
   difficultyLevel?: string | null;
   lang?: string | null;
   displayOrder?: number | null;
+  term?: number | null;
+  week?: number | null;
   isActive?: boolean | null;
   createdBy?: string | null;
   updatedBy?: string | null;
@@ -33,6 +35,8 @@ export interface SentenceRuFormData {
   tags: string;
   lang: string;
   difficultyLevel: string;
+  term?: number;
+  week?: number;
   displayOrder: number;
   isActive: boolean;
 }

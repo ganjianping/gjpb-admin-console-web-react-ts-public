@@ -18,6 +18,8 @@ export const getEmptyImageRuFormData = (lang = 'EN'): ImageRuFormData => ({
   altText: '',
   tags: '',
   lang,
+  term: undefined,
+  week: undefined,
   displayOrder: 999,
   isActive: true,
   uploadMethod: 'url',

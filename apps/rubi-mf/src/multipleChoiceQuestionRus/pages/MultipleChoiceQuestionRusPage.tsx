@@ -43,6 +43,8 @@ const MultipleChoiceQuestionRusPage: React.FC = () => {
     difficultyLevel: multipleChoiceQuestionRu.difficultyLevel || '',
     tags: multipleChoiceQuestionRu.tags || '',
     lang: multipleChoiceQuestionRu.lang || (dialog.getCurrentLanguage ? dialog.getCurrentLanguage() : 'EN'),
+    term: multipleChoiceQuestionRu.term || undefined,
+    week: multipleChoiceQuestionRu.week || undefined,
     displayOrder: multipleChoiceQuestionRu.displayOrder ?? 999,
     isActive: Boolean(multipleChoiceQuestionRu.isActive),
   });
@@ -82,6 +84,8 @@ const MultipleChoiceQuestionRusPage: React.FC = () => {
       difficultyLevel: formData.difficultyLevel,
       tags: formData.tags,
       lang: formData.lang,
+      term: formData.term,
+      week: formData.week,
       displayOrder: formData.displayOrder,
       isActive: formData.isActive,
     });
@@ -102,6 +106,8 @@ const MultipleChoiceQuestionRusPage: React.FC = () => {
       difficultyLevel: formData.difficultyLevel,
       tags: formData.tags,
       lang: formData.lang,
+      term: formData.term,
+      week: formData.week,
       displayOrder: formData.displayOrder,
       isActive: formData.isActive,
     });

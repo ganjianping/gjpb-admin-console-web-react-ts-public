@@ -19,6 +19,7 @@ import {
   OutlinedInput,
   Chip,
   LinearProgress,
+  CircularProgress,
   Grid,
   Card,
   CardMedia,
@@ -118,6 +119,8 @@ const MultipleChoiceQuestionRuEditDialog: React.FC<
         difficultyLevel: multipleChoiceQuestionRu.difficultyLevel || '',
         tags: multipleChoiceQuestionRu.tags || '',
         lang: multipleChoiceQuestionRu.lang || 'EN',
+        term: multipleChoiceQuestionRu.term ?? undefined,
+        week: multipleChoiceQuestionRu.week ?? undefined,
         displayOrder: multipleChoiceQuestionRu.displayOrder ?? 999,
         isActive: Boolean(multipleChoiceQuestionRu.isActive),
       });
@@ -523,6 +526,32 @@ const MultipleChoiceQuestionRuEditDialog: React.FC<
             </FormControl>
 
             <FormControl fullWidth>
+              <FormLabel sx={{ mb: 1 }}>{t("multipleChoiceQuestionRus.form.term")}</FormLabel>
+              <Select
+                value={formData.term?.toString() || ''}
+                onChange={(e) => handleFormChange('term', e.target.value ? parseInt(e.target.value) : undefined)}
+              >
+                <MenuItem value=""><em>None</em></MenuItem>
+                {[1, 2, 3, 4].map((term) => (
+                  <MenuItem key={term} value={term.toString()}>{term}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <FormControl fullWidth>
+              <FormLabel sx={{ mb: 1 }}>{t("multipleChoiceQuestionRus.form.week")}</FormLabel>
+              <Select
+                value={formData.week?.toString() || ''}
+                onChange={(e) => handleFormChange('week', e.target.value ? parseInt(e.target.value) : undefined)}
+              >
+                <MenuItem value=""><em>None</em></MenuItem>
+                {Array.from({ length: 14 }, (_, i) => i + 1).map((week) => (
+                  <MenuItem key={week} value={week.toString()}>{week}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <FormControl fullWidth>
               <FormLabel sx={{ mb: 1 }}>{t("multipleChoiceQuestionRus.form.displayOrder")}</FormLabel>
               <TextField
                 fullWidth
@@ -555,8 +584,9 @@ const MultipleChoiceQuestionRuEditDialog: React.FC<
           onClick={handleSubmit}
           variant="contained"
           disabled={loading || !validateForm()}
+          startIcon={loading ? <CircularProgress size={16} color="inherit" /> : null}
         >
-          {loading ? t("multipleChoiceQuestionRus.common.pleaseWait") : t("multipleChoiceQuestionRus.editDialog.save")}
+          {loading ? t("common.save", "Saving...") : t("common.save")}
         </Button>
       </DialogActions>
 

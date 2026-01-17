@@ -5,7 +5,7 @@ import '../i18n/translations';
 import { DataTable, createColumnHelper, createStatusChip } from '../../../../shared-lib/src/data-management/DataTable';
 import type { MultipleChoiceQuestionRu } from '../types/multipleChoiceQuestionRu.types';
 import { useMultipleChoiceQuestionRuActionMenu } from '../hooks/useMultipleChoiceQuestionRuActionMenu';
-import { STATUS_MAPS, DIFFICULTY_LEVELS, LANGUAGES } from '../constants';
+import { STATUS_MAPS, LANGUAGES } from '../constants';
 
 const columnHelper = createColumnHelper<MultipleChoiceQuestionRu>();
 
@@ -46,11 +46,6 @@ const MultipleChoiceQuestionRuTable = memo(
       onDelete: (multipleChoiceQuestionRu: MultipleChoiceQuestionRu) => onMultipleChoiceQuestionRuAction(multipleChoiceQuestionRu, 'delete'),
     });
 
-    const getDifficultyLevelLabel = (value: string) => {
-      const level = DIFFICULTY_LEVELS.find(l => l.value === value);
-      return level ? t(`multipleChoiceQuestionRus.difficultyLevels.${level.value}`) : value;
-    };
-
     const getLanguageLabel = (value: string) => {
       const lang = LANGUAGES.find(l => l.value === value);
       return lang ? lang.label : value;
@@ -66,10 +61,6 @@ const MultipleChoiceQuestionRuTable = memo(
             return <Typography variant="body2">{displayText}</Typography>;
           },
           size: 300,
-        }),
-        columnHelper.accessor('difficultyLevel', {
-          header: t('multipleChoiceQuestionRus.columns.difficultyLevel'),
-          cell: (info) => <Typography variant="body2">{getDifficultyLevelLabel(info.getValue() || '') || '-'}</Typography>,
         }),
         columnHelper.accessor('tags', {
           header: t('multipleChoiceQuestionRus.columns.tags'),

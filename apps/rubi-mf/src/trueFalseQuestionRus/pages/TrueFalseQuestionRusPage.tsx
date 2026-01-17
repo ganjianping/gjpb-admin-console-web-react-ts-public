@@ -49,6 +49,8 @@ const TrueFalseQuestionRusPage: React.FC = () => {
     lang:
       trueFalseQuestionRu.lang ||
       (dialog.getCurrentLanguage ? dialog.getCurrentLanguage() : "EN"),
+    term: trueFalseQuestionRu.term || undefined,
+    week: trueFalseQuestionRu.week || undefined,
     displayOrder: trueFalseQuestionRu.displayOrder ?? 999,
     isActive: Boolean(trueFalseQuestionRu.isActive),
   });
@@ -89,6 +91,8 @@ const TrueFalseQuestionRusPage: React.FC = () => {
         difficultyLevel: formData.difficultyLevel,
         tags: formData.tags,
         lang: formData.lang,
+        term: formData.term,
+        week: formData.week,
         displayOrder: formData.displayOrder,
         isActive: formData.isActive,
       });
@@ -115,6 +119,8 @@ const TrueFalseQuestionRusPage: React.FC = () => {
           difficultyLevel: formData.difficultyLevel,
           tags: formData.tags,
           lang: formData.lang,
+          term: formData.term,
+          week: formData.week,
           displayOrder: formData.displayOrder,
           isActive: formData.isActive,
         },

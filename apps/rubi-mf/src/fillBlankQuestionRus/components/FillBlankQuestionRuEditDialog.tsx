@@ -37,6 +37,8 @@ import {
   LANGUAGE_OPTIONS,
   FILL_BLANK_QUESTION_TAG_SETTING_KEY,
   FILL_BLANK_QUESTION_DIFFICULTY_LEVEL_SETTING_KEY,
+  TERM_OPTIONS,
+  WEEK_OPTIONS,
 } from "../constants";
 import { fillBlankQuestionRuService } from "../services/fillBlankQuestionRuService";
 import "../i18n/translations";
@@ -508,6 +510,42 @@ const FillBlankQuestionRuEditDialog = ({
                 {errors.lang}
               </Typography>
             )}
+          </FormControl>
+
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t("fillBlankQuestionRus.form.term")}</FormLabel>
+            <Select
+              value={formData.term || ""}
+              onChange={(e) => handleChange("term", e.target.value ? Number(e.target.value) : undefined)}
+              displayEmpty
+            >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              {TERM_OPTIONS.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t("fillBlankQuestionRus.form.week")}</FormLabel>
+            <Select
+              value={formData.week || ""}
+              onChange={(e) => handleChange("week", e.target.value ? Number(e.target.value) : undefined)}
+              displayEmpty
+            >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              {WEEK_OPTIONS.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </Select>
           </FormControl>
 
           <FormControl fullWidth>

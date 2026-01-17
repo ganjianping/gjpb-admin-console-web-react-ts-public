@@ -7,6 +7,8 @@ export const getEmptyTrueFalseQuestionRuFormData = (): TrueFalseQuestionRuFormDa
   difficultyLevel: '',
   tags: '',
   lang: 'EN',
+  term: undefined,
+  week: undefined,
   displayOrder: 999,
   isActive: true,
 });

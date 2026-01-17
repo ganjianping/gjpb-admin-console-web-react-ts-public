@@ -7,6 +7,7 @@ import {
 	TextField,
 	Button,
 	FormControl,
+	FormLabel,
 	Select,
 	MenuItem,
 	Box,
@@ -140,6 +141,8 @@ const VideoRuCreateDialog = ({
 					description: formData.description,
 				tags: formData.tags,
 				lang: formData.lang,
+				term: formData.term,
+				week: formData.week,
 				displayOrder: formData.displayOrder,
 				isActive: formData.isActive,
 			});
@@ -311,6 +314,33 @@ const VideoRuCreateDialog = ({
 					{/* Settings */}
 					<Typography variant="h6" sx={{ mb: 1, color: 'text.secondary' }}>Settings</Typography>
 					<TextField label="Difficulty Level" value={formData.difficultyLevel || ''} onChange={(e) => onFormChange('difficultyLevel', e.target.value)} fullWidth />
+					
+					<FormControl fullWidth>
+						<FormLabel>{t('videoRus.form.term')}</FormLabel>
+						<Select
+							value={formData.term?.toString() || ''}
+							onChange={(e) => onFormChange('term', e.target.value ? parseInt(e.target.value) : undefined)}
+						>
+							<MenuItem value=""><em>None</em></MenuItem>
+							{[1, 2, 3, 4].map((term) => (
+								<MenuItem key={term} value={term.toString()}>{term}</MenuItem>
+							))}
+						</Select>
+					</FormControl>
+
+					<FormControl fullWidth>
+						<FormLabel>{t('videoRus.form.week')}</FormLabel>
+						<Select
+							value={formData.week?.toString() || ''}
+							onChange={(e) => onFormChange('week', e.target.value ? parseInt(e.target.value) : undefined)}
+						>
+							<MenuItem value=""><em>None</em></MenuItem>
+							{Array.from({ length: 14 }, (_, i) => i + 1).map((week) => (
+								<MenuItem key={week} value={week.toString()}>{week}</MenuItem>
+							))}
+						</Select>
+					</FormControl>
+					
 					<TextField label={t('videoRus.form.displayOrder') || 'Display Order'} type="number" value={String(formData.displayOrder)} onChange={(e) => onFormChange('displayOrder', Number(e.target.value) || 0)} fullWidth />
 					<FormControlLabel control={<Switch checked={formData.isActive} onChange={(e) => onFormChange('isActive', e.target.checked)} />} label={t('videoRus.form.isActive') || 'Active'} />
 

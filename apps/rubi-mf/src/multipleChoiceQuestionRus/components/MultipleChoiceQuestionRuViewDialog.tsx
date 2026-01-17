@@ -180,6 +180,26 @@ const MultipleChoiceQuestionRuViewDialog: React.FC<
                         {getLanguageLabel(multipleChoiceQuestionRu.lang)}
                       </Typography>
                     </Box>
+                    {multipleChoiceQuestionRu.term && (
+                      <Box sx={{ textAlign: 'center' }}>
+                        <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mb: 0.5 }}>
+                          {t("multipleChoiceQuestionRus.form.term")}
+                        </Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                          {multipleChoiceQuestionRu.term}
+                        </Typography>
+                      </Box>
+                    )}
+                    {multipleChoiceQuestionRu.week && (
+                      <Box sx={{ textAlign: 'center' }}>
+                        <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mb: 0.5 }}>
+                          {t("multipleChoiceQuestionRus.form.week")}
+                        </Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                          {multipleChoiceQuestionRu.week}
+                        </Typography>
+                      </Box>
+                    )}
                     <Box sx={{ textAlign: 'center' }}>
                       <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mb: 0.5 }}>
                         Order

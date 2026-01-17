@@ -1,6 +1,6 @@
 
 import React, { useMemo, useState } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Box, FormControlLabel, Checkbox, FormControl, Select, MenuItem, OutlinedInput, Chip, Typography, TextareaAutosize, LinearProgress, Backdrop, CircularProgress } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Box, FormControlLabel, Checkbox, FormControl, FormLabel, Select, MenuItem, OutlinedInput, Chip, Typography, TextareaAutosize, LinearProgress, Backdrop, CircularProgress } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import type { VideoRuFormData } from '../types/videoRu.types';
 import { LANGUAGE_OPTIONS } from '../constants';
@@ -211,6 +211,33 @@ const VideoRuEditDialog: React.FC<VideoRuEditDialogProps> = ({ open, formData, o
 					{/* Settings */}
 					<Typography variant="h6" sx={{ mb: 1, color: 'text.secondary' }}>Settings</Typography>
 					<TextField label="Difficulty Level" value={formData.difficultyLevel || ''} onChange={e => onFormChange('difficultyLevel', e.target.value)} fullWidth />
+					
+					<FormControl fullWidth>
+						<FormLabel>{t('videoRus.form.term')}</FormLabel>
+						<Select
+							value={formData.term?.toString() || ''}
+							onChange={(e) => onFormChange('term', e.target.value ? parseInt(e.target.value) : undefined)}
+						>
+							<MenuItem value=""><em>None</em></MenuItem>
+							{[1, 2, 3, 4].map((term) => (
+								<MenuItem key={term} value={term.toString()}>{term}</MenuItem>
+							))}
+						</Select>
+					</FormControl>
+
+					<FormControl fullWidth>
+						<FormLabel>{t('videoRus.form.week')}</FormLabel>
+						<Select
+							value={formData.week?.toString() || ''}
+							onChange={(e) => onFormChange('week', e.target.value ? parseInt(e.target.value) : undefined)}
+						>
+							<MenuItem value=""><em>None</em></MenuItem>
+							{Array.from({ length: 14 }, (_, i) => i + 1).map((week) => (
+								<MenuItem key={week} value={week.toString()}>{week}</MenuItem>
+							))}
+						</Select>
+					</FormControl>
+					
 					<TextField label={t('videoRus.form.displayOrder') || 'Display Order'} type="number" value={String(formData.displayOrder)} onChange={e => onFormChange('displayOrder', Number(e.target.value) || 0)} fullWidth />
 					<FormControlLabel control={<Checkbox checked={formData.isActive} onChange={e => onFormChange('isActive', e.target.checked)} />} label={t('videoRus.form.isActive') || 'Active'} />
 				</Box>

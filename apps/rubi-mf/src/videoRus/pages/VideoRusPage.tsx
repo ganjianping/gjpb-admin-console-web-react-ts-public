@@ -55,6 +55,8 @@ const VideoRusPage: React.FC = () => {
     sizeBytes: videoRu.sizeBytes || 0,
     tags: videoRu.tags || '',
     lang: videoRu.lang || (dialog.getCurrentLanguage ? dialog.getCurrentLanguage() : 'EN'),
+    term: videoRu.term || undefined,
+    week: videoRu.week || undefined,
     displayOrder: videoRu.displayOrder || 0,
     isActive: !!videoRu.isActive,
     uploadMethod: 'file' as const,

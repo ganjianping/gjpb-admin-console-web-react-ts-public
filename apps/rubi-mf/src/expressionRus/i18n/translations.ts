@@ -5,7 +5,7 @@ const enTranslations = {
     title: 'Expressions',
     subtitle: 'Manage expressions and idioms',
     description: 'Maintain the expression library with examples',
-    pageTitle: 'Expression Management',
+    pageTitle: 'Expressions',
     create: 'Create Expression',
     edit: 'Edit Expression',
     delete: 'Delete Expression',

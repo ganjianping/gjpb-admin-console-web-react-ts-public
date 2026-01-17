@@ -7,6 +7,8 @@ export interface FreeTextQuestionRu {
   tags?: string | null;
   lang?: string | null;
   displayOrder?: number | null;
+  term?: number | null;
+  week?: number | null;
   isActive?: boolean | null;
   createdBy?: string | null;
   updatedBy?: string | null;
@@ -31,6 +33,8 @@ export interface FreeTextQuestionRuFormData {
   difficultyLevel: string;
   tags: string;
   lang: string;
+  term?: number;
+  week?: number;
   displayOrder: number;
   isActive: boolean;
 }

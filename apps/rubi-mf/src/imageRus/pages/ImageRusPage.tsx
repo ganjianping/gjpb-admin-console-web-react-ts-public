@@ -54,6 +54,8 @@ const ImageRusPage: React.FC = () => {
     altText: imageRu.altText || '',
     tags: imageRu.tags || '',
     lang: imageRu.lang || (dialog.getCurrentLanguage ? dialog.getCurrentLanguage() : 'EN'),
+    term: imageRu.term || undefined,
+    week: imageRu.week || undefined,
     displayOrder: imageRu.displayOrder || 0,
     isActive: !!imageRu.isActive,
     uploadMethod: 'url' as const,

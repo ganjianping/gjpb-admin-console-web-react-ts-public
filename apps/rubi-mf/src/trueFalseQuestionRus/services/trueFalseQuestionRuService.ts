@@ -27,6 +27,8 @@ export interface CreateTrueFalseQuestionRuRequest {
   difficultyLevel?: string;
   tags?: string;
   lang: string;
+  term?: number;
+  week?: number;
   displayOrder?: number;
   isActive?: boolean;
 }
@@ -38,6 +40,8 @@ export interface UpdateTrueFalseQuestionRuRequest {
   difficultyLevel?: string;
   tags?: string;
   lang?: string;
+  term?: number;
+  week?: number;
   displayOrder?: number;
   isActive?: boolean;
 }

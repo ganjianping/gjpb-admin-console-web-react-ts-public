@@ -10,6 +10,8 @@ export const getEmptyVideoRuFormData = (lang = 'EN') => ({
   sizeBytes: 0,
   tags: '',
   lang,
+  term: undefined,
+  week: undefined,
   displayOrder: 999,
   isActive: true,
   uploadMethod: 'file' as const,

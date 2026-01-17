@@ -146,6 +146,26 @@ const TrueFalseQuestionRuViewDialog = ({
                         {difficultyLevelLabel(trueFalseQuestionRu.difficultyLevel)}
                       </Typography>
                     </Box>
+                    {trueFalseQuestionRu.term && (
+                      <Box>
+                        <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mb: 0.5 }}>
+                          {t("trueFalseQuestionRus.form.term")}
+                        </Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                          {trueFalseQuestionRu.term}
+                        </Typography>
+                      </Box>
+                    )}
+                    {trueFalseQuestionRu.week && (
+                      <Box>
+                        <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mb: 0.5 }}>
+                          {t("trueFalseQuestionRus.form.week")}
+                        </Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                          {trueFalseQuestionRu.week}
+                        </Typography>
+                      </Box>
+                    )}
                     <Box>
                       <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mb: 0.5 }}>
                         Display Order

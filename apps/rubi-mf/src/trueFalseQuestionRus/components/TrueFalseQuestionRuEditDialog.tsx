@@ -511,6 +511,32 @@ const TrueFalseQuestionRuEditDialog = ({
           </FormControl>
 
           <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t("trueFalseQuestionRus.form.term")}</FormLabel>
+            <Select
+              value={formData.term?.toString() || ''}
+              onChange={(e) => handleChange('term', e.target.value ? parseInt(e.target.value) : undefined)}
+            >
+              <MenuItem value=""><em>None</em></MenuItem>
+              {[1, 2, 3, 4].map((term) => (
+                <MenuItem key={term} value={term.toString()}>{term}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t("trueFalseQuestionRus.form.week")}</FormLabel>
+            <Select
+              value={formData.week?.toString() || ''}
+              onChange={(e) => handleChange('week', e.target.value ? parseInt(e.target.value) : undefined)}
+            >
+              <MenuItem value=""><em>None</em></MenuItem>
+              {Array.from({ length: 14 }, (_, i) => i + 1).map((week) => (
+                <MenuItem key={week} value={week.toString()}>{week}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl fullWidth>
             <FormLabel sx={{ mb: 1 }}>{t("trueFalseQuestionRus.form.displayOrder")}</FormLabel>
             <TextField
               type="number"

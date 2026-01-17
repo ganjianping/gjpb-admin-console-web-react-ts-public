@@ -9,6 +9,7 @@ import {
   Box,
   FormControl,
   FormLabel,
+  CircularProgress,
   Select,
   MenuItem,
   Checkbox,
@@ -177,6 +178,32 @@ const SentenceRuEditDialog: React.FC<SentenceRuEditDialogProps> = ({
             </Select>
           </FormControl>
 
+          <FormControl fullWidth>
+            <FormLabel>{t('sentenceRus.form.term')}</FormLabel>
+            <Select
+              value={formData.term?.toString() || ''}
+              onChange={(e) => onFormChange('term', e.target.value ? parseInt(e.target.value) : undefined)}
+            >
+              <MenuItem value=""><em>None</em></MenuItem>
+              {[1, 2, 3, 4].map((term) => (
+                <MenuItem key={term} value={term.toString()}>{term}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl fullWidth>
+            <FormLabel>{t('sentenceRus.form.week')}</FormLabel>
+            <Select
+              value={formData.week?.toString() || ''}
+              onChange={(e) => onFormChange('week', e.target.value ? parseInt(e.target.value) : undefined)}
+            >
+              <MenuItem value=""><em>None</em></MenuItem>
+              {Array.from({ length: 14 }, (_, i) => i + 1).map((week) => (
+                <MenuItem key={week} value={week.toString()}>{week}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
           <TextField
             label={t('sentenceRus.form.displayOrder')}
             value={formData.displayOrder}
@@ -200,8 +227,13 @@ const SentenceRuEditDialog: React.FC<SentenceRuEditDialogProps> = ({
         <Button onClick={onClose} disabled={loading}>
           {t('common.cancel')}
         </Button>
-        <Button onClick={handleSubmit} variant="contained" disabled={loading}>
-          {t('common.save')}
+        <Button 
+          onClick={handleSubmit} 
+          variant="contained" 
+          disabled={loading}
+          startIcon={loading ? <CircularProgress size={16} color="inherit" /> : null}
+        >
+          {loading ? t("common.save", "Saving...") : t("common.save")}
         </Button>
       </DialogActions>
     </Dialog>

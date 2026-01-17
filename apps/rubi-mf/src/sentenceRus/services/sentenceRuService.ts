@@ -24,6 +24,8 @@ export interface CreateSentenceRuRequest {
   explanation?: string;
   tags?: string;
   lang: string;
+  term?: number;
+  week?: number;
   difficultyLevel?: string;
   displayOrder?: number;
   isActive?: boolean;
@@ -36,6 +38,8 @@ export interface UpdateSentenceRuRequest {
   explanation?: string;
   tags?: string;
   lang?: string;
+  term?: number;
+  week?: number;
   difficultyLevel?: string;
   displayOrder?: number;
   isActive?: boolean;

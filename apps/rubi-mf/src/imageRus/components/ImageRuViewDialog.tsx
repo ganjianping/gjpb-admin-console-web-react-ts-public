@@ -170,6 +170,18 @@ const ImageRuViewDialog = ({
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Language</Typography>
                   <Chip label={t(`imageRus.languages.${imageRu.lang}`)} size="small" sx={{ fontWeight: 600 }} />
                 </Box>
+                {imageRu.term && (
+                  <Box>
+                    <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>{t("imageRus.form.term")}</Typography>
+                    <Typography variant="body2">{imageRu.term}</Typography>
+                  </Box>
+                )}
+                {imageRu.week && (
+                  <Box>
+                    <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>{t("imageRus.form.week")}</Typography>
+                    <Typography variant="body2">{imageRu.week}</Typography>
+                  </Box>
+                )}
                 <Box>
                   <Typography variant="caption" sx={{ color: 'text.secondary', mb: 0.5, display: 'block' }}>Display Order</Typography>
                   <Typography variant="body2">{imageRu.displayOrder}</Typography>

@@ -33,6 +33,8 @@ export interface VideoRu {
   tags?: string;
   difficultyLevel?: string | null;
   lang: string;
+  term?: number;
+  week?: number;
   displayOrder: number;
   isActive: boolean;
   createdAt: string;
@@ -94,6 +96,8 @@ export interface VideoRuFormData {
   tags: string;
   difficultyLevel?: string;
   lang: string;
+  term?: number;
+  week?: number;
   displayOrder: number;
   isActive: boolean;
   // Legacy videoRu fields (keeping for backward compatibility)

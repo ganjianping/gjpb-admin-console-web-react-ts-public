@@ -23,6 +23,8 @@ export interface CreateImageRequest {
   filename?: string;
   tags: string;
   lang: string;
+  term?: number;
+  week?: number;
   displayOrder?: number;
   isActive?: boolean;
 }
@@ -34,6 +36,8 @@ export interface CreateImageRuByUploadRequest {
   sourceName: string;
   tags: string;
   lang: string;
+  term?: number;
+  week?: number;
   displayOrder?: number;
   isActive?: boolean;
 }
@@ -53,6 +57,8 @@ export interface UpdateImageRequest {
   sourceName?: string;
   tags?: string;
   lang?: string;
+  term?: number;
+  week?: number;
   displayOrder?: number;
   isActive?: boolean;
 }

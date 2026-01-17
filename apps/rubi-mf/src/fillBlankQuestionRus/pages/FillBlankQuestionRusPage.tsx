@@ -49,6 +49,8 @@ const FillBlankQuestionRusPage: React.FC = () => {
     lang:
       fillBlankQuestionRu.lang ||
       (dialog.getCurrentLanguage ? dialog.getCurrentLanguage() : "EN"),
+    term: fillBlankQuestionRu.term ?? undefined,
+    week: fillBlankQuestionRu.week ?? undefined,
     displayOrder: fillBlankQuestionRu.displayOrder ?? 999,
     isActive: Boolean(fillBlankQuestionRu.isActive),
   });
@@ -89,6 +91,8 @@ const FillBlankQuestionRusPage: React.FC = () => {
         difficultyLevel: formData.difficultyLevel,
         tags: formData.tags,
         lang: formData.lang,
+        term: formData.term,
+        week: formData.week,
         displayOrder: formData.displayOrder,
         isActive: formData.isActive,
       });
@@ -115,6 +119,8 @@ const FillBlankQuestionRusPage: React.FC = () => {
           difficultyLevel: formData.difficultyLevel,
           tags: formData.tags,
           lang: formData.lang,
+          term: formData.term,
+          week: formData.week,
           displayOrder: formData.displayOrder,
           isActive: formData.isActive,
         },

@@ -23,6 +23,8 @@ export interface CreateVideoRequest {
   description?: string;
   tags: string;
   lang: string;
+  term?: number;
+  week?: number;
   displayOrder?: number;
   isActive?: boolean;
 }
@@ -38,6 +40,8 @@ export interface CreateVideoRuByUploadRequest {
   description?: string;
   tags: string;
   lang: string;
+  term?: number;
+  week?: number;
   displayOrder?: number;
   isActive?: boolean;
   coverImageFile?: File;
@@ -54,6 +58,8 @@ export interface UpdateVideoRequest {
   sizeBytes?: number;
   tags?: string;
   lang?: string;
+  term?: number;
+  week?: number;
   displayOrder?: number;
   isActive?: boolean;
 }

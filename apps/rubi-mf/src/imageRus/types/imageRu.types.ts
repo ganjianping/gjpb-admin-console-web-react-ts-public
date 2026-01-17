@@ -16,6 +16,8 @@ export interface ImageRu {
   altText: string;
   tags: string;
   lang: string;
+  term?: number;
+  week?: number;
   displayOrder: number;
   createdBy: string;
   updatedBy: string;
@@ -55,6 +57,8 @@ export interface ImageRuFormData {
   altText: string;
   tags: string;
   lang: string;
+  term?: number;
+  week?: number;
   displayOrder: number;
   isActive: boolean;
   uploadMethod: 'url' | 'file'; // 'url' for originalUrl, 'file' for upload

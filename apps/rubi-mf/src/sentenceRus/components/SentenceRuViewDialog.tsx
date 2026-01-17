@@ -97,6 +97,27 @@ const SentenceRuViewDialog: React.FC<SentenceRuViewDialogProps> = ({
             </Box>
           </Box>
 
+          {(sentenceRu.term || sentenceRu.week) && (
+            <Box sx={{ display: 'flex', gap: 2 }}>
+              {sentenceRu.term && (
+                <Box sx={{ flex: 1 }}>
+                  <Typography variant="subtitle2" color="text.secondary">
+                    {t("sentenceRus.form.term")}
+                  </Typography>
+                  <Typography>{sentenceRu.term}</Typography>
+                </Box>
+              )}
+              {sentenceRu.week && (
+                <Box sx={{ flex: 1 }}>
+                  <Typography variant="subtitle2" color="text.secondary">
+                    {t("sentenceRus.form.week")}
+                  </Typography>
+                  <Typography>{sentenceRu.week}</Typography>
+                </Box>
+              )}
+            </Box>
+          )}
+
           <Box>
             <Typography variant="subtitle2" color="text.secondary">
               {t('sentenceRus.form.isActive')}

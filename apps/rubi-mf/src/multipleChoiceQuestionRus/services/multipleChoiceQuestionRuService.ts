@@ -30,6 +30,8 @@ export interface CreateMultipleChoiceQuestionRuRequest {
   difficultyLevel?: string;
   tags?: string;
   lang: string;
+  term?: number;
+  week?: number;
   displayOrder?: number;
   isActive?: boolean;
 }
@@ -45,6 +47,8 @@ export interface UpdateMultipleChoiceQuestionRuRequest {
   difficultyLevel?: string;
   tags?: string;
   lang?: string;
+  term?: number;
+  week?: number;
   displayOrder?: number;
   isActive?: boolean;
 }

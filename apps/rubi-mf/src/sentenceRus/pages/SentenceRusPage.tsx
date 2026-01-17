@@ -45,6 +45,8 @@ const SentenceRusPage: React.FC = () => {
     tags: sentenceRu.tags || "",
     lang: sentenceRu.lang || "EN",
     difficultyLevel: sentenceRu.difficultyLevel || "Beginner",
+    term: sentenceRu.term ?? undefined,
+    week: sentenceRu.week ?? undefined,
     displayOrder: sentenceRu.displayOrder ?? 999,
     isActive: Boolean(sentenceRu.isActive),
   });
@@ -86,6 +88,8 @@ const SentenceRusPage: React.FC = () => {
         tags: dialog.formData.tags,
         lang: dialog.formData.lang,
         difficultyLevel: dialog.formData.difficultyLevel,
+        term: dialog.formData.term,
+        week: dialog.formData.week,
         displayOrder: dialog.formData.displayOrder,
         isActive: dialog.formData.isActive,
       });
@@ -113,6 +117,8 @@ const SentenceRusPage: React.FC = () => {
           tags: dialog.formData.tags,
           lang: dialog.formData.lang,
           difficultyLevel: dialog.formData.difficultyLevel,
+          term: dialog.formData.term,
+          week: dialog.formData.week,
           displayOrder: dialog.formData.displayOrder,
           isActive: dialog.formData.isActive,
         },

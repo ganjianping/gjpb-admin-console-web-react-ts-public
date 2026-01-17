@@ -15,7 +15,7 @@ import { format, parseISO } from "date-fns";
 import { Eye, Tag, CheckCircle2, XCircle, FileText, Calendar } from "lucide-react";
 import type { FreeTextQuestionRu } from "../types/freeTextQuestionRu.types";
 import "../i18n/translations";
-import { LANGUAGE_OPTIONS, DIFFICULTY_LEVEL_OPTIONS } from "../constants";
+import { LANGUAGE_OPTIONS, DIFFICULTY_LEVEL_OPTIONS, TERM_OPTIONS, WEEK_OPTIONS } from "../constants";
 
 interface FreeTextQuestionRuViewDialogProps {
   open: boolean;
@@ -144,6 +144,22 @@ const FreeTextQuestionRuViewDialog = ({
                       </Typography>
                       <Typography variant="body2" sx={{ fontWeight: 600 }}>
                         {difficultyLevelLabel(freeTextQuestionRu.difficultyLevel)}
+                      </Typography>
+                    </Box>
+                    <Box>
+                      <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mb: 0.5 }}>
+                        {t("freeTextQuestionRus.form.term")}
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                        {freeTextQuestionRu.term ? TERM_OPTIONS.find(t => t.value === freeTextQuestionRu.term)?.label : '-'}
+                      </Typography>
+                    </Box>
+                    <Box>
+                      <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mb: 0.5 }}>
+                        {t("freeTextQuestionRus.form.week")}
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                        {freeTextQuestionRu.week ? WEEK_OPTIONS.find(w => w.value === freeTextQuestionRu.week)?.label : '-'}
                       </Typography>
                     </Box>
                     <Box>

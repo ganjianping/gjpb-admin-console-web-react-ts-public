@@ -28,6 +28,8 @@ export const useImageRuHandlers = ({
           sourceName: formData.sourceName,
           tags: formData.tags,
           lang: formData.lang,
+          term: formData.term,
+          week: formData.week,
           displayOrder: formData.displayOrder,
           isActive: formData.isActive,
         };
@@ -40,6 +42,8 @@ export const useImageRuHandlers = ({
           filename: formData.filename,
           tags: formData.tags,
           lang: formData.lang,
+          term: formData.term,
+          week: formData.week,
           displayOrder: formData.displayOrder,
           isActive: formData.isActive,
         };
@@ -72,6 +76,8 @@ export const useImageRuHandlers = ({
         altText: formData.altText,
         tags: formData.tags,
         lang: formData.lang,
+        term: formData.term,
+        week: formData.week,
         displayOrder: formData.displayOrder,
         isActive: formData.isActive,
       };

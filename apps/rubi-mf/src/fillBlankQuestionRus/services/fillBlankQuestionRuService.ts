@@ -27,6 +27,8 @@ export interface CreateFillBlankQuestionRuRequest {
   difficultyLevel?: string;
   tags?: string;
   lang: string;
+  term?: number;
+  week?: number;
   displayOrder?: number;
   isActive?: boolean;
 }
@@ -38,6 +40,8 @@ export interface UpdateFillBlankQuestionRuRequest {
   difficultyLevel?: string;
   tags?: string;
   lang?: string;
+  term?: number;
+  week?: number;
   displayOrder?: number;
   isActive?: boolean;
 }

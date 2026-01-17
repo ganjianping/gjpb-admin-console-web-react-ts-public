@@ -10,6 +10,7 @@ import {
   FormControlLabel,
   Checkbox,
   FormControl,
+  FormLabel,
   Select,
   MenuItem,
   OutlinedInput,
@@ -34,7 +35,7 @@ import { useTranslation } from 'react-i18next';
 import TiptapTextEditor from '../../../../shared-lib/src/ui-components/rich-text/tiptap/tiptapTextEditor';
 import '../i18n/translations';
 import type { ArticleRu, ArticleRuFormData, ArticleRuImage } from '../types/articleRu.types';
-import { ARTICLE_TAG_SETTING_KEY, LANGUAGE_OPTIONS, ARTICLE_LANG_SETTING_KEY, TERM_OPTIONS, WEEK_OPTIONS } from '../constants';
+import { ARTICLE_TAG_SETTING_KEY, LANGUAGE_OPTIONS, ARTICLE_LANG_SETTING_KEY } from '../constants';
 import { articleRuService } from '../services/articleRuService';
 import { getFullArticleRuCoverImageUrl } from '../utils/getFullArticleRuCoverImageUrl';
 
@@ -535,29 +536,27 @@ const ArticleRuEditDialog: React.FC<ArticleRuEditDialogProps> = ({
           />
 
           <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t('articleRus.form.term')}</FormLabel>
             <Select
-              value={formData.term}
-              onChange={(e) => onFormChange('term', e.target.value)}
-              displayEmpty
+              value={formData.term?.toString() || ''}
+              onChange={(e) => onFormChange('term', e.target.value ? parseInt(e.target.value) : undefined)}
             >
-              {TERM_OPTIONS.map((opt) => (
-                <MenuItem key={opt.value} value={opt.value}>
-                  {opt.label}
-                </MenuItem>
+              <MenuItem value=""><em>None</em></MenuItem>
+              {[1, 2, 3, 4].map((term) => (
+                <MenuItem key={term} value={term.toString()}>{term}</MenuItem>
               ))}
             </Select>
           </FormControl>
 
           <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t('articleRus.form.week')}</FormLabel>
             <Select
-              value={formData.week}
-              onChange={(e) => onFormChange('week', e.target.value)}
-              displayEmpty
+              value={formData.week?.toString() || ''}
+              onChange={(e) => onFormChange('week', e.target.value ? parseInt(e.target.value) : undefined)}
             >
-              {WEEK_OPTIONS.map((opt) => (
-                <MenuItem key={opt.value} value={opt.value}>
-                  {opt.label}
-                </MenuItem>
+              <MenuItem value=""><em>None</em></MenuItem>
+              {Array.from({ length: 14 }, (_, i) => i + 1).map((week) => (
+                <MenuItem key={week} value={week.toString()}>{week}</MenuItem>
               ))}
             </Select>
           </FormControl>

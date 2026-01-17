@@ -1,8 +1,8 @@
 import React, { useMemo, useState } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Box, FormControlLabel, Checkbox, FormControl, Select, MenuItem, OutlinedInput, Chip, Typography, TextareaAutosize, LinearProgress, Backdrop, CircularProgress } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Box, FormControlLabel, Checkbox, FormControl, FormLabel, Select, MenuItem, OutlinedInput, Chip, Typography, TextareaAutosize, LinearProgress, Backdrop, CircularProgress } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import type { AudioRuFormData } from '../types/audioRu.types';
-import { LANGUAGE_OPTIONS, TERM_OPTIONS, WEEK_OPTIONS } from '../constants';
+import { LANGUAGE_OPTIONS } from '../constants';
 import TiptapTextEditor from '../../../../shared-lib/src/ui-components/rich-text/tiptap/tiptapTextEditor';
 
 interface AudioRuEditDialogProps {
@@ -119,29 +119,27 @@ const AudioRuEditDialog: React.FC<AudioRuEditDialogProps> = ({ open, formData, o
           <TextField label={t('audioRus.form.displayOrder') || 'Display Order'} type="number" value={String(formData.displayOrder)} onChange={e => onFormChange('displayOrder', Number(e.target.value) || 0)} fullWidth />
 
           <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t('audioRus.form.term')}</FormLabel>
             <Select
-              value={formData.term}
-              onChange={(e) => onFormChange('term', e.target.value)}
-              displayEmpty
+              value={formData.term?.toString() || ''}
+              onChange={(e) => onFormChange('term', e.target.value ? parseInt(e.target.value) : undefined)}
             >
-              {TERM_OPTIONS.map((opt) => (
-                <MenuItem key={opt.value} value={opt.value}>
-                  {opt.label}
-                </MenuItem>
+              <MenuItem value=""><em>None</em></MenuItem>
+              {[1, 2, 3, 4].map((term) => (
+                <MenuItem key={term} value={term.toString()}>{term}</MenuItem>
               ))}
             </Select>
           </FormControl>
 
           <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t('audioRus.form.week')}</FormLabel>
             <Select
-              value={formData.week}
-              onChange={(e) => onFormChange('week', e.target.value)}
-              displayEmpty
+              value={formData.week?.toString() || ''}
+              onChange={(e) => onFormChange('week', e.target.value ? parseInt(e.target.value) : undefined)}
             >
-              {WEEK_OPTIONS.map((opt) => (
-                <MenuItem key={opt.value} value={opt.value}>
-                  {opt.label}
-                </MenuItem>
+              <MenuItem value=""><em>None</em></MenuItem>
+              {Array.from({ length: 14 }, (_, i) => i + 1).map((week) => (
+                <MenuItem key={week} value={week.toString()}>{week}</MenuItem>
               ))}
             </Select>
           </FormControl>

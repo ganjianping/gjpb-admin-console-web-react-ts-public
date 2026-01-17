@@ -28,6 +28,8 @@ import {
   LANGUAGE_OPTIONS,
   FREE_TEXT_QUESTION_TAG_SETTING_KEY,
   FREE_TEXT_QUESTION_DIFFICULTY_LEVEL_SETTING_KEY,
+  TERM_OPTIONS,
+  WEEK_OPTIONS,
 } from "../constants";
 import "../i18n/translations";
 
@@ -295,6 +297,42 @@ const FreeTextQuestionRuCreateDialog = ({
           </FormControl>
 
           <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t("freeTextQuestionRus.form.term")}</FormLabel>
+            <Select
+              value={formData.term?.toString() || ''}
+              onChange={(e) => handleChange('term', e.target.value ? parseInt(e.target.value) : undefined)}
+              displayEmpty
+            >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              {TERM_OPTIONS.map((term) => (
+                <MenuItem key={term.value} value={term.value.toString()}>
+                  {term.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t("freeTextQuestionRus.form.week")}</FormLabel>
+            <Select
+              value={formData.week?.toString() || ''}
+              onChange={(e) => handleChange('week', e.target.value ? parseInt(e.target.value) : undefined)}
+              displayEmpty
+            >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              {WEEK_OPTIONS.map((week) => (
+                <MenuItem key={week.value} value={week.value.toString()}>
+                  {week.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl fullWidth>
             <FormLabel sx={{ mb: 1 }}>{t("freeTextQuestionRus.form.displayOrder")}</FormLabel>
             <TextField
               type="number"
@@ -327,7 +365,7 @@ const FreeTextQuestionRuCreateDialog = ({
           disabled={loading}
           startIcon={loading ? <CircularProgress size={16} /> : null}
         >
-          {loading ? t("common.saving") : t("common.create")}
+          {loading ? t("common.saving") : t("common.save")}
         </Button>
       </DialogActions>
     </Dialog>

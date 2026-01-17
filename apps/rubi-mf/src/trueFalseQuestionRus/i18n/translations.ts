@@ -30,6 +30,8 @@ const enTranslations = {
       difficultyLevel: 'Difficulty Level',
       tags: 'Tags',
       lang: 'Language',
+      term: 'Term',
+      week: 'Week',
       displayOrder: 'Display Order',
       isActive: 'Active Status',
       createdAt: 'Created At',

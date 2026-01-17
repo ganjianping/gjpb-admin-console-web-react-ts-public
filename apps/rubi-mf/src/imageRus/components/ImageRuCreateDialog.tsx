@@ -197,6 +197,26 @@ const ImageRuCreateDialog = ({
             </Select>
           </FormControl>
           
+          <FormControl fullWidth>
+            <FormLabel>{t('imageRus.form.term')}</FormLabel>
+            <Select value={formData.term?.toString() || ''} onChange={(e) => onFormChange('term', e.target.value ? parseInt(e.target.value) : undefined)} error={!!getFieldError('term')}>
+              <MenuItem value=""><em>None</em></MenuItem>
+              {[1, 2, 3, 4].map((term) => (
+                <MenuItem key={term} value={term.toString()}>{term}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          
+          <FormControl fullWidth>
+            <FormLabel>{t('imageRus.form.week')}</FormLabel>
+            <Select value={formData.week?.toString() || ''} onChange={(e) => onFormChange('week', e.target.value ? parseInt(e.target.value) : undefined)} error={!!getFieldError('week')}>
+              <MenuItem value=""><em>None</em></MenuItem>
+              {Array.from({ length: 14 }, (_, i) => i + 1).map((week) => (
+                <MenuItem key={week} value={week.toString()}>{week}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          
           <TextField label={t('imageRus.form.displayOrder')} value={formData.displayOrder} onChange={(e) => onFormChange('displayOrder', parseInt(e.target.value) || 0)} type="number" fullWidth error={!!getFieldError('displayOrder')} helperText={getFieldError('displayOrder')} />
           <FormControlLabel control={<Switch checked={formData.isActive} onChange={(e) => onFormChange('isActive', e.target.checked)} />} label={t('imageRus.form.isActive')} />
 
