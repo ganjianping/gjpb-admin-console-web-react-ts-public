@@ -139,6 +139,12 @@ const VocabularyRuViewDialog = ({ open, vocabularyRu, onClose, onEdit }: Vocabul
                       <Chip icon={<Type size={14} />} label={vocabularyRu.partOfSpeech} color="primary" size="small" sx={{ fontWeight: 600 }} />
                     )}
                     <Chip label={difficultyLevelLabel(vocabularyRu.difficultyLevel)} size="small" variant="outlined" />
+                    {vocabularyRu.term && (
+                      <Chip label={`Term ${vocabularyRu.term}`} size="small" variant="outlined" color="secondary" />
+                    )}
+                    {vocabularyRu.week && (
+                      <Chip label={`Week ${vocabularyRu.week}`} size="small" variant="outlined" color="info" />
+                    )}
                     <Chip
                       icon={vocabularyRu.isActive ? <CheckCircle2 size={14} /> : <XCircle size={14} />}
                       label={vocabularyRu.isActive ? t('vocabularyRus.status.active') : t('vocabularyRus.status.inactive')}

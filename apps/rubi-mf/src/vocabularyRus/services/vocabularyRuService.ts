@@ -50,6 +50,8 @@ export interface CreateVocabularyRuRequest {
   phoneticAudioOriginalUrl?: string;
   tags?: string;
   difficultyLevel?: string;
+  term?: number;
+  week?: number;
   lang: string;
   displayOrder?: number;
   isActive?: boolean;
@@ -93,6 +95,8 @@ export interface UpdateVocabularyRuRequest {
   phoneticAudioOriginalUrl?: string;
   tags?: string;
   difficultyLevel?: string;
+  term?: number;
+  week?: number;
   lang?: string;
   displayOrder?: number;
   isActive?: boolean;

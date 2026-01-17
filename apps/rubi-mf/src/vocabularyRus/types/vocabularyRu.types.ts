@@ -34,6 +34,8 @@ export interface VocabularyRu {
   phoneticAudioOriginalUrl?: string | null;
   tags?: string | null;
   difficultyLevel?: string | null;
+  term?: number | null;
+  week?: number | null;
   lang?: string | null;
   displayOrder?: number | null;
   isActive?: boolean | null;
@@ -88,6 +90,8 @@ export interface VocabularyRuFormData {
   phoneticAudioUploadMethod?: "url" | "file";
   tags: string;
   difficultyLevel: string;
+  term: number;
+  week: number;
   lang: string;
   displayOrder: number;
   isActive: boolean;

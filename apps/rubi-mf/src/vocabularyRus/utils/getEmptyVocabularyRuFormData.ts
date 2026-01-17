@@ -35,6 +35,8 @@ export const getEmptyVocabularyRuFormData = (): VocabularyRuFormData => ({
   phoneticAudioUploadMethod: 'url',
   tags: '',
   difficultyLevel: 'easy',
+  term: 1,
+  week: 1,
   lang: 'EN',
   displayOrder: 999,
   isActive: true,
