@@ -4,6 +4,9 @@ export interface SentenceRu {
   phonetic?: string | null;
   translation?: string | null;
   explanation?: string | null;
+  phoneticAudioFilename?: string | null;
+  phoneticAudioUrl?: string | null;
+  phoneticAudioOriginalUrl?: string | null;
   tags?: string | null;
   difficultyLevel?: string | null;
   lang?: string | null;
@@ -32,6 +35,10 @@ export interface SentenceRuFormData {
   phonetic: string;
   translation: string;
   explanation: string;
+  phoneticAudioFilename: string;
+  phoneticAudioOriginalUrl: string;
+  phoneticAudioUploadMethod?: "url" | "file";
+  phoneticAudioFile: File | null;
   tags: string;
   lang: string;
   difficultyLevel: string;

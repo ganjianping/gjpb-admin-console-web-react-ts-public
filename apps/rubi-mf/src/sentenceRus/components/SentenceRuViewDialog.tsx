@@ -9,8 +9,10 @@ import {
   Typography,
   Chip,
   Divider,
+  IconButton,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import { Volume2 } from 'lucide-react';
 import type { SentenceRu } from '../types/sentenceRu.types';
 import { format, parseISO } from 'date-fns';
 
@@ -26,6 +28,18 @@ const SentenceRuViewDialog: React.FC<SentenceRuViewDialogProps> = ({
   onClose,
 }) => {
   const { t } = useTranslation();
+
+  const handlePlayAudio = (audioUrl: string) => {
+    try {
+      const audio = new Audio(audioUrl);
+      audio.volume = 0.5;
+      audio.play().catch((error) => {
+        console.error("Failed to play audio:", error);
+      });
+    } catch (error) {
+      console.error("Error creating audio:", error);
+    }
+  };
 
   if (!sentenceRu) return null;
 
@@ -45,7 +59,18 @@ const SentenceRuViewDialog: React.FC<SentenceRuViewDialogProps> = ({
             <Typography variant="subtitle2" color="text.secondary">
               {t('sentenceRus.form.phonetic')}
             </Typography>
-            <div dangerouslySetInnerHTML={{ __html: sentenceRu.phonetic || '-' }} />
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              {sentenceRu.phoneticAudioUrl && (
+                <IconButton
+                  size="small"
+                  onClick={() => handlePlayAudio(sentenceRu.phoneticAudioUrl)}
+                  sx={{ p: 0.5 }}
+                >
+                  <Volume2 size={16} />
+                </IconButton>
+              )}
+              <div dangerouslySetInnerHTML={{ __html: sentenceRu.phonetic || '-' }} />
+            </Box>
           </Box>
           
           <Box sx={{ flex: 1 }}>

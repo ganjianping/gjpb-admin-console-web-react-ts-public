@@ -1,6 +1,7 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, IconButton } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { memo, useMemo } from "react";
+import { Volume2 } from "lucide-react";
 import "../i18n/translations";
 import {
   DataTable,
@@ -23,6 +24,18 @@ const SentenceRuTable = memo(
   }: any) => {
     const { t } = useTranslation();
 
+    const handlePlayAudio = (audioUrl: string) => {
+      try {
+        const audio = new Audio(audioUrl);
+        audio.volume = 0.5;
+        audio.play().catch((error) => {
+          console.error("Failed to play audio:", error);
+        });
+      } catch (error) {
+        console.error("Error creating audio:", error);
+      }
+    };
+
     const actionMenuItems = useSentenceRuActionMenu({
       onView: (sentenceRu: SentenceRu) =>
         onSentenceRuAction(sentenceRu, "view"),
@@ -38,13 +51,28 @@ const SentenceRuTable = memo(
           header: t("sentenceRus.columns.name"),
           cell: (info) => {
             const value = info.getValue();
+            const sentenceRu = info.row.original;
             // Remove HTML tags and limit to 100 characters
             const cleanText = value?.replace(/<[^>]*>/g, '') || '';
             const truncatedText = cleanText.length > 100 ? `${cleanText.substring(0, 100)}...` : cleanText;
             return (
-              <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                {truncatedText}
-              </Typography>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                {sentenceRu.phoneticAudioUrl && (
+                  <IconButton
+                    size="small"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handlePlayAudio(sentenceRu.phoneticAudioUrl);
+                    }}
+                    sx={{ p: 0.5 }}
+                  >
+                    <Volume2 size={16} />
+                  </IconButton>
+                )}
+                <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                  {truncatedText}
+                </Typography>
+              </Box>
             );
           },
           size: 300,

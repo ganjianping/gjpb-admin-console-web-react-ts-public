@@ -49,6 +49,11 @@ const SentenceRusPage: React.FC = () => {
     week: sentenceRu.week ?? undefined,
     displayOrder: sentenceRu.displayOrder ?? 999,
     isActive: Boolean(sentenceRu.isActive),
+    phoneticAudioFilename: sentenceRu.phoneticAudioFilename || "",
+    phoneticAudioUrl: sentenceRu.phoneticAudioUrl || "",
+    phoneticAudioOriginalUrl: sentenceRu.phoneticAudioOriginalUrl || "",
+    phoneticAudioUploadMethod: "url" as const,
+    phoneticAudioFile: null,
   });
 
   const handleSearch = () => {
@@ -80,19 +85,42 @@ const SentenceRusPage: React.FC = () => {
   const handleCreateConfirm = async () => {
     dialog.setLoading(true);
     try {
-      await sentenceRuService.createSentenceRu({
-        name: dialog.formData.name,
-        phonetic: dialog.formData.phonetic,
-        translation: dialog.formData.translation,
-        explanation: dialog.formData.explanation,
-        tags: dialog.formData.tags,
-        lang: dialog.formData.lang,
-        difficultyLevel: dialog.formData.difficultyLevel,
-        term: dialog.formData.term,
-        week: dialog.formData.week,
-        displayOrder: dialog.formData.displayOrder,
-        isActive: dialog.formData.isActive,
-      });
+      // Use form-data upload if a file is selected
+      if (dialog.formData.phoneticAudioFile) {
+        await sentenceRuService.createSentenceRuByUpload({
+          name: dialog.formData.name,
+          phonetic: dialog.formData.phonetic,
+          translation: dialog.formData.translation,
+          explanation: dialog.formData.explanation,
+          tags: dialog.formData.tags,
+          lang: dialog.formData.lang,
+          difficultyLevel: dialog.formData.difficultyLevel,
+          term: dialog.formData.term,
+          week: dialog.formData.week,
+          displayOrder: dialog.formData.displayOrder,
+          isActive: dialog.formData.isActive,
+          phoneticAudioFile: dialog.formData.phoneticAudioFile,
+          phoneticAudioFilename: dialog.formData.phoneticAudioFilename || "",
+          phoneticAudioOriginalUrl: dialog.formData.phoneticAudioOriginalUrl || "",
+        });
+      } else {
+        await sentenceRuService.createSentenceRu({
+          name: dialog.formData.name,
+          phonetic: dialog.formData.phonetic,
+          translation: dialog.formData.translation,
+          explanation: dialog.formData.explanation,
+          tags: dialog.formData.tags,
+          lang: dialog.formData.lang,
+          difficultyLevel: dialog.formData.difficultyLevel,
+          term: dialog.formData.term,
+          week: dialog.formData.week,
+          displayOrder: dialog.formData.displayOrder,
+          isActive: dialog.formData.isActive,
+          phoneticAudioFilename: dialog.formData.phoneticAudioFilename || "",
+          phoneticAudioUrl: dialog.formData.phoneticAudioUrl || "",
+          phoneticAudioOriginalUrl: dialog.formData.phoneticAudioOriginalUrl || "",
+        });
+      }
       await loadSentenceRus();
       dialog.setDialogOpen(false);
     } catch (err) {
@@ -107,22 +135,48 @@ const SentenceRusPage: React.FC = () => {
     if (!dialog.selectedSentenceRu) return;
     dialog.setLoading(true);
     try {
-      await sentenceRuService.updateSentenceRu(
-        dialog.selectedSentenceRu.id,
-        {
-          name: dialog.formData.name,
-          phonetic: dialog.formData.phonetic,
-          translation: dialog.formData.translation,
-          explanation: dialog.formData.explanation,
-          tags: dialog.formData.tags,
-          lang: dialog.formData.lang,
-          difficultyLevel: dialog.formData.difficultyLevel,
-          term: dialog.formData.term,
-          week: dialog.formData.week,
-          displayOrder: dialog.formData.displayOrder,
-          isActive: dialog.formData.isActive,
-        },
-      );
+      // Use form-data upload if a file is selected
+      if (dialog.formData.phoneticAudioFile) {
+        await sentenceRuService.updateSentenceRuWithFiles(
+          dialog.selectedSentenceRu.id,
+          {
+            name: dialog.formData.name,
+            phonetic: dialog.formData.phonetic,
+            translation: dialog.formData.translation,
+            explanation: dialog.formData.explanation,
+            tags: dialog.formData.tags,
+            lang: dialog.formData.lang,
+            difficultyLevel: dialog.formData.difficultyLevel,
+            term: dialog.formData.term,
+            week: dialog.formData.week,
+            displayOrder: dialog.formData.displayOrder,
+            isActive: dialog.formData.isActive,
+            phoneticAudioFile: dialog.formData.phoneticAudioFile,
+            phoneticAudioFilename: dialog.formData.phoneticAudioFilename || "",
+            phoneticAudioOriginalUrl: dialog.formData.phoneticAudioOriginalUrl || "",
+          },
+        );
+      } else {
+        await sentenceRuService.updateSentenceRu(
+          dialog.selectedSentenceRu.id,
+          {
+            name: dialog.formData.name,
+            phonetic: dialog.formData.phonetic,
+            translation: dialog.formData.translation,
+            explanation: dialog.formData.explanation,
+            tags: dialog.formData.tags,
+            lang: dialog.formData.lang,
+            difficultyLevel: dialog.formData.difficultyLevel,
+            term: dialog.formData.term,
+            week: dialog.formData.week,
+            displayOrder: dialog.formData.displayOrder,
+            isActive: dialog.formData.isActive,
+            phoneticAudioFilename: dialog.formData.phoneticAudioFilename || "",
+            phoneticAudioUrl: dialog.formData.phoneticAudioUrl || "",
+            phoneticAudioOriginalUrl: dialog.formData.phoneticAudioOriginalUrl || "",
+          },
+        );
+      }
       await loadSentenceRus();
       dialog.setDialogOpen(false);
     } catch (err) {

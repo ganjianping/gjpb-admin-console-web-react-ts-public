@@ -16,8 +16,12 @@ import {
   FormControlLabel,
   OutlinedInput,
   Chip,
+  Radio,
+  RadioGroup,
+  Alert,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import { Upload } from 'lucide-react';
 import { TiptapTextEditor } from '../../../../shared-lib/src/ui-components';
 import type { SentenceRuFormData } from '../types/sentenceRu.types';
 import { LANGUAGE_OPTIONS, DIFFICULTY_LEVEL_OPTIONS, SENTENCE_RU_TAG_SETTING_KEY, SENTENCE_RU_DIFFICULTY_LEVEL_SETTING_KEY } from '../constants';
@@ -154,6 +158,89 @@ const SentenceRuEditDialog: React.FC<SentenceRuEditDialogProps> = ({
               </Select>
             </FormControl>
           </Box>
+
+          <FormControl component="fieldset">
+            <FormLabel component="legend">
+              {t('sentenceRus.form.phoneticAudioUploadMethod')}
+            </FormLabel>
+            <RadioGroup
+              row
+              value={formData.phoneticAudioUploadMethod || "url"}
+              onChange={(e) =>
+                onFormChange(
+                  "phoneticAudioUploadMethod",
+                  e.target.value as "url" | "file",
+                )
+              }
+            >
+              <FormControlLabel
+                value="url"
+                control={<Radio />}
+                label={t('sentenceRus.form.byUrl')}
+              />
+              <FormControlLabel
+                value="file"
+                control={<Radio />}
+                label={t('sentenceRus.form.uploadFile')}
+              />
+            </RadioGroup>
+          </FormControl>
+
+          {formData.phoneticAudioUploadMethod === "file" && (
+            <Box>
+              <Button
+                variant="outlined"
+                component="label"
+                startIcon={<Upload size={20} />}
+                fullWidth
+                sx={{ mb: 1 }}
+              >
+                {formData.phoneticAudioFile
+                  ? formData.phoneticAudioFile.name
+                  : t('sentenceRus.form.choosePhoneticAudioFile')}
+                <input
+                  type="file"
+                  hidden
+                  accept="audio/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      onFormChange("phoneticAudioFile", file);
+                    }
+                  }}
+                />
+              </Button>
+              {formData.phoneticAudioFile && (
+                <Alert severity="info" sx={{ mt: 1 }}>
+                  {t('sentenceRus.form.selectedFile')}:{' '}
+                  {formData.phoneticAudioFile.name} (
+                  {(formData.phoneticAudioFile.size / 1024).toFixed(2)} KB)
+                </Alert>
+              )}
+            </Box>
+          )}
+
+          {formData.phoneticAudioUploadMethod === "url" && (
+            <TextField
+              label={t('sentenceRus.form.phoneticAudioOriginalUrl')}
+              value={formData.phoneticAudioOriginalUrl}
+              onChange={(e) =>
+                onFormChange("phoneticAudioOriginalUrl", e.target.value)
+              }
+              fullWidth
+              placeholder="https://example.com/phonetic-audio.mp3"
+            />
+          )}
+
+          <TextField
+            label={t('sentenceRus.form.phoneticAudioFilename')}
+            value={formData.phoneticAudioFilename}
+            onChange={(e) =>
+              onFormChange("phoneticAudioFilename", e.target.value)
+            }
+            fullWidth
+            placeholder="phonetic-audio.mp3"
+          />
 
           <FormControl fullWidth>
             <FormLabel>{t('sentenceRus.form.tags')}</FormLabel>
