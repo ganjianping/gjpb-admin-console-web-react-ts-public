@@ -63,7 +63,7 @@ const SentenceRuViewDialog: React.FC<SentenceRuViewDialogProps> = ({
               {sentenceRu.phoneticAudioUrl && (
                 <IconButton
                   size="small"
-                  onClick={() => handlePlayAudio(sentenceRu.phoneticAudioUrl)}
+                  onClick={() => handlePlayAudio(sentenceRu.phoneticAudioUrl!)}
                   sx={{ p: 0.5 }}
                 >
                   <Volume2 size={16} />

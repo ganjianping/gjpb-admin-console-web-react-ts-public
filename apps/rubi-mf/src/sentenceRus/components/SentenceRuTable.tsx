@@ -62,7 +62,7 @@ const SentenceRuTable = memo(
                     size="small"
                     onClick={(e) => {
                       e.stopPropagation();
-                      handlePlayAudio(sentenceRu.phoneticAudioUrl);
+                      handlePlayAudio(sentenceRu.phoneticAudioUrl!);
                     }}
                     sx={{ p: 0.5 }}
                   >

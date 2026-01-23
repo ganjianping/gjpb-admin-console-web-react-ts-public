@@ -23,6 +23,7 @@ export interface CreateSentenceRuRequest {
   translation?: string;
   explanation?: string;
   phoneticAudioFilename?: string;
+  phoneticAudioUrl?: string;
   phoneticAudioOriginalUrl?: string;
   tags?: string;
   lang: string;
@@ -43,6 +44,7 @@ export interface UpdateSentenceRuRequest {
   translation?: string;
   explanation?: string;
   phoneticAudioFilename?: string;
+  phoneticAudioUrl?: string;
   phoneticAudioOriginalUrl?: string;
   tags?: string;
   lang?: string;

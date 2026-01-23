@@ -36,6 +36,7 @@ export interface SentenceRuFormData {
   translation: string;
   explanation: string;
   phoneticAudioFilename: string;
+  phoneticAudioUrl: string;
   phoneticAudioOriginalUrl: string;
   phoneticAudioUploadMethod?: "url" | "file";
   phoneticAudioFile: File | null;

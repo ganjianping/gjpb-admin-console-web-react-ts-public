@@ -6,6 +6,7 @@ export const getEmptySentenceRuFormData = (): SentenceRuFormData => ({
   translation: '',
   explanation: '',
   phoneticAudioFilename: '',
+  phoneticAudioUrl: '',
   phoneticAudioOriginalUrl: '',
   phoneticAudioUploadMethod: 'url',
   phoneticAudioFile: null,

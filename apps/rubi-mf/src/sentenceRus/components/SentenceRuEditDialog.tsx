@@ -273,7 +273,7 @@ const SentenceRuEditDialog: React.FC<SentenceRuEditDialogProps> = ({
             <FormLabel>{t('sentenceRus.form.term')}</FormLabel>
             <Select
               value={formData.term?.toString() || ''}
-              onChange={(e) => onFormChange('term', e.target.value ? parseInt(e.target.value) : undefined)}
+              onChange={(e) => onFormChange('term', e.target.value ? Number.parseInt(e.target.value) : undefined)}
             >
               <MenuItem value=""><em>None</em></MenuItem>
               {[1, 2, 3, 4].map((term) => (
@@ -286,7 +286,7 @@ const SentenceRuEditDialog: React.FC<SentenceRuEditDialogProps> = ({
             <FormLabel>{t('sentenceRus.form.week')}</FormLabel>
             <Select
               value={formData.week?.toString() || ''}
-              onChange={(e) => onFormChange('week', e.target.value ? parseInt(e.target.value) : undefined)}
+              onChange={(e) => onFormChange('week', e.target.value ? Number.parseInt(e.target.value) : undefined)}
             >
               <MenuItem value=""><em>None</em></MenuItem>
               {Array.from({ length: 14 }, (_, i) => i + 1).map((week) => (
