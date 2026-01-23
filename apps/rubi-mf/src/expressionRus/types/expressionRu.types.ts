@@ -5,6 +5,9 @@ export interface ExpressionRu {
   translation?: string | null;
   explanation?: string | null;
   example?: string | null;
+  phoneticAudioFilename?: string | null;
+  phoneticAudioUrl?: string | null;
+  phoneticAudioOriginalUrl?: string | null;
   tags?: string | null;
   difficultyLevel?: string | null;
   term?: number | null;
@@ -34,6 +37,10 @@ export interface ExpressionRuFormData {
   translation: string;
   explanation: string;
   example: string;
+  phoneticAudioFilename: string;
+  phoneticAudioOriginalUrl: string;
+  phoneticAudioUploadMethod?: "url" | "file";
+  phoneticAudioFile: File | null;
   tags: string;
   lang: string;
   difficultyLevel: string;

@@ -43,6 +43,10 @@ const ExpressionRusPage: React.FC = () => {
     translation: expressionRu.translation || "",
     explanation: expressionRu.explanation || "",
     example: expressionRu.example || "",
+    phoneticAudioFilename: expressionRu.phoneticAudioFilename || "",
+    phoneticAudioOriginalUrl: expressionRu.phoneticAudioOriginalUrl || "",
+    phoneticAudioUploadMethod: "url",
+    phoneticAudioFile: null,
     tags: expressionRu.tags || "",
     lang: expressionRu.lang || "EN",
     difficultyLevel: expressionRu.difficultyLevel || "Beginner",
@@ -81,20 +85,43 @@ const ExpressionRusPage: React.FC = () => {
   const handleCreateConfirm = async () => {
     dialog.setLoading(true);
     try {
-      await expressionRuService.createExpressionRu({
-        name: dialog.formData.name,
-        phonetic: dialog.formData.phonetic,
-        translation: dialog.formData.translation,
-        explanation: dialog.formData.explanation,
-        example: dialog.formData.example,
-        tags: dialog.formData.tags,
-        lang: dialog.formData.lang,
-        difficultyLevel: dialog.formData.difficultyLevel,
-        term: dialog.formData.term,
-        week: dialog.formData.week,
-        displayOrder: dialog.formData.displayOrder,
-        isActive: dialog.formData.isActive,
-      });
+      // Use form-data upload if phonetic audio file is present
+      if (dialog.formData.phoneticAudioFile) {
+        await expressionRuService.createExpressionRuByUpload({
+          name: dialog.formData.name,
+          phonetic: dialog.formData.phonetic,
+          translation: dialog.formData.translation,
+          explanation: dialog.formData.explanation,
+          example: dialog.formData.example,
+          phoneticAudioFilename: dialog.formData.phoneticAudioFilename,
+          phoneticAudioOriginalUrl: dialog.formData.phoneticAudioOriginalUrl,
+          tags: dialog.formData.tags,
+          lang: dialog.formData.lang,
+          difficultyLevel: dialog.formData.difficultyLevel,
+          term: dialog.formData.term,
+          week: dialog.formData.week,
+          displayOrder: dialog.formData.displayOrder,
+          isActive: dialog.formData.isActive,
+          phoneticAudioFile: dialog.formData.phoneticAudioFile || undefined,
+        });
+      } else {
+        await expressionRuService.createExpressionRu({
+          name: dialog.formData.name,
+          phonetic: dialog.formData.phonetic,
+          translation: dialog.formData.translation,
+          explanation: dialog.formData.explanation,
+          example: dialog.formData.example,
+          phoneticAudioFilename: dialog.formData.phoneticAudioFilename,
+          phoneticAudioOriginalUrl: dialog.formData.phoneticAudioOriginalUrl,
+          tags: dialog.formData.tags,
+          lang: dialog.formData.lang,
+          difficultyLevel: dialog.formData.difficultyLevel,
+          term: dialog.formData.term,
+          week: dialog.formData.week,
+          displayOrder: dialog.formData.displayOrder,
+          isActive: dialog.formData.isActive,
+        });
+      }
       await loadExpressionRus();
       dialog.setDialogOpen(false);
     } catch (err) {
@@ -109,23 +136,49 @@ const ExpressionRusPage: React.FC = () => {
     if (!dialog.selectedExpressionRu) return;
     dialog.setLoading(true);
     try {
-      await expressionRuService.updateExpressionRu(
-        dialog.selectedExpressionRu.id,
-        {
-          name: dialog.formData.name,
-          phonetic: dialog.formData.phonetic,
-          translation: dialog.formData.translation,
-          explanation: dialog.formData.explanation,
-          example: dialog.formData.example,
-          tags: dialog.formData.tags,
-          lang: dialog.formData.lang,
-          difficultyLevel: dialog.formData.difficultyLevel,
-          term: dialog.formData.term,
-          week: dialog.formData.week,
-          displayOrder: dialog.formData.displayOrder,
-          isActive: dialog.formData.isActive,
-        },
-      );
+      // Use form-data upload if phonetic audio file is present
+      if (dialog.formData.phoneticAudioFile) {
+        await expressionRuService.updateExpressionRuWithFiles(
+          dialog.selectedExpressionRu.id,
+          {
+            name: dialog.formData.name,
+            phonetic: dialog.formData.phonetic,
+            translation: dialog.formData.translation,
+            explanation: dialog.formData.explanation,
+            example: dialog.formData.example,
+            phoneticAudioFilename: dialog.formData.phoneticAudioFilename,
+            phoneticAudioOriginalUrl: dialog.formData.phoneticAudioOriginalUrl,
+            tags: dialog.formData.tags,
+            lang: dialog.formData.lang,
+            difficultyLevel: dialog.formData.difficultyLevel,
+            term: dialog.formData.term,
+            week: dialog.formData.week,
+            displayOrder: dialog.formData.displayOrder,
+            isActive: dialog.formData.isActive,
+            phoneticAudioFile: dialog.formData.phoneticAudioFile || undefined,
+          },
+        );
+      } else {
+        await expressionRuService.updateExpressionRu(
+          dialog.selectedExpressionRu.id,
+          {
+            name: dialog.formData.name,
+            phonetic: dialog.formData.phonetic,
+            translation: dialog.formData.translation,
+            explanation: dialog.formData.explanation,
+            example: dialog.formData.example,
+            phoneticAudioFilename: dialog.formData.phoneticAudioFilename,
+            phoneticAudioOriginalUrl: dialog.formData.phoneticAudioOriginalUrl,
+            tags: dialog.formData.tags,
+            lang: dialog.formData.lang,
+            difficultyLevel: dialog.formData.difficultyLevel,
+            term: dialog.formData.term,
+            week: dialog.formData.week,
+            displayOrder: dialog.formData.displayOrder,
+            isActive: dialog.formData.isActive,
+          },
+        );
+      }
       await loadExpressionRus();
       dialog.setDialogOpen(false);
     } catch (err) {

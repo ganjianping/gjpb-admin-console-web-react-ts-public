@@ -16,8 +16,12 @@ import {
   FormControlLabel,
   OutlinedInput,
   Chip,
+  Radio,
+  RadioGroup,
+  Alert,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import { Upload } from 'lucide-react';
 import { TiptapTextEditor } from '../../../../shared-lib/src/ui-components';
 import type { ExpressionRuFormData } from '../types/expressionRu.types';
 import { LANGUAGE_OPTIONS, DIFFICULTY_LEVEL_OPTIONS, EXPRESSION_RU_TAG_SETTING_KEY, EXPRESSION_RU_DIFFICULTY_LEVEL_SETTING_KEY } from '../constants';
@@ -187,6 +191,89 @@ const ExpressionRuCreateDialog: React.FC<ExpressionRuCreateDialogProps> = ({
               </Select>
             </FormControl>
           </Box>
+
+          <FormControl component="fieldset">
+            <FormLabel component="legend">
+              {t('expressionRus.form.phoneticAudioUploadMethod')}
+            </FormLabel>
+            <RadioGroup
+              row
+              value={formData.phoneticAudioUploadMethod || "url"}
+              onChange={(e) =>
+                onFormChange(
+                  "phoneticAudioUploadMethod",
+                  e.target.value as "url" | "file",
+                )
+              }
+            >
+              <FormControlLabel
+                value="url"
+                control={<Radio />}
+                label={t('expressionRus.form.byUrl')}
+              />
+              <FormControlLabel
+                value="file"
+                control={<Radio />}
+                label={t('expressionRus.form.uploadFile')}
+              />
+            </RadioGroup>
+          </FormControl>
+
+          {formData.phoneticAudioUploadMethod === "file" && (
+            <Box>
+              <Button
+                variant="outlined"
+                component="label"
+                startIcon={<Upload size={20} />}
+                fullWidth
+                sx={{ mb: 1 }}
+              >
+                {formData.phoneticAudioFile
+                  ? formData.phoneticAudioFile.name
+                  : t('expressionRus.form.choosePhoneticAudioFile')}
+                <input
+                  type="file"
+                  hidden
+                  accept="audio/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      onFormChange("phoneticAudioFile", file);
+                    }
+                  }}
+                />
+              </Button>
+              {formData.phoneticAudioFile && (
+                <Alert severity="info" sx={{ mt: 1 }}>
+                  {t('expressionRus.form.selectedFile')}:{' '}
+                  {formData.phoneticAudioFile.name} (
+                  {(formData.phoneticAudioFile.size / 1024).toFixed(2)} KB)
+                </Alert>
+              )}
+            </Box>
+          )}
+
+          {formData.phoneticAudioUploadMethod === "url" && (
+            <TextField
+              label={t('expressionRus.form.phoneticAudioOriginalUrl')}
+              value={formData.phoneticAudioOriginalUrl}
+              onChange={(e) =>
+                onFormChange("phoneticAudioOriginalUrl", e.target.value)
+              }
+              fullWidth
+              placeholder="https://example.com/phonetic-audio.mp3"
+            />
+          )}
+
+          <TextField
+            label={t('expressionRus.form.phoneticAudioFilename')}
+            value={formData.phoneticAudioFilename}
+            onChange={(e) =>
+              onFormChange("phoneticAudioFilename", e.target.value)
+            }
+            fullWidth
+            placeholder="phonetic-audio.mp3"
+          />
 
           <FormControl fullWidth>
             <FormLabel>{t('expressionRus.form.tags')}</FormLabel>

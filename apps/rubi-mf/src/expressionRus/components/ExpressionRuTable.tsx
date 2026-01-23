@@ -1,4 +1,5 @@
 import { Box, Typography } from "@mui/material";
+import { Volume2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { memo, useMemo } from "react";
 import "../i18n/translations";
@@ -36,11 +37,52 @@ const ExpressionRuTable = memo(
       () => [
         columnHelper.accessor("name", {
           header: t("expressionRus.columns.name"),
-          cell: (info) => (
-            <Typography variant="body2" sx={{ fontWeight: 600 }}>
-              {info.getValue()}
-            </Typography>
-          ),
+          cell: (info) => {
+            const expressionRu = info.row.original as ExpressionRu;
+            const name = info.getValue();
+
+            const handlePlayAudio = () => {
+              if (expressionRu.phoneticAudioUrl) {
+                console.log("Playing audio for expression:", expressionRu.name, "URL:", expressionRu.phoneticAudioUrl);
+                try {
+                  const audio = new Audio(expressionRu.phoneticAudioUrl);
+                  audio.volume = 0.5; // Set volume to 50%
+                  audio
+                    .play()
+                    .then(() => console.log("Audio started playing for:", expressionRu.name))
+                    .catch((err) => {
+                      console.error("Failed to play audio for:", expressionRu.name, err);
+                      console.error("Audio URL:", expressionRu.phoneticAudioUrl);
+                    });
+                } catch (error) {
+                  console.error("Error creating audio element for:", expressionRu.name, error);
+                }
+              } else {
+                console.log("No audio URL available for expression:", expressionRu.name);
+              }
+            };
+
+            return (
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                  {name}
+                </Typography>
+                {expressionRu.phoneticAudioUrl && (
+                  <Box
+                    sx={{
+                      cursor: "pointer",
+                      "&:hover": { opacity: 0.7 },
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                    onClick={handlePlayAudio}
+                  >
+                    <Volume2 size={14} />
+                  </Box>
+                )}
+              </Box>
+            );
+          },
           size: 300,
         }),
         columnHelper.accessor("lang", {

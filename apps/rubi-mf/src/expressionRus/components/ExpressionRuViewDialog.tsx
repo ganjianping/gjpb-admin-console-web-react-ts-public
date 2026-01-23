@@ -9,8 +9,10 @@ import {
   Typography,
   Chip,
   Divider,
+  IconButton,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import { Volume2 } from 'lucide-react';
 import type { ExpressionRu } from '../types/expressionRu.types';
 import { format, parseISO } from 'date-fns';
 
@@ -46,7 +48,22 @@ const ExpressionRuViewDialog: React.FC<ExpressionRuViewDialogProps> = ({
               <Typography variant="subtitle2" color="text.secondary">
                 {t('expressionRus.form.phonetic')}
               </Typography>
-              <Typography>{expressionRu.phonetic || '-'}</Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography>{expressionRu.phonetic || '-'}</Typography>
+                {expressionRu.phoneticAudioUrl && (
+                  <IconButton
+                    size="small"
+                    onClick={() => {
+                      const audio = new Audio(expressionRu.phoneticAudioUrl!);
+                      audio.volume = 0.5;
+                      audio.play();
+                    }}
+                    sx={{ color: 'primary.main' }}
+                  >
+                    <Volume2 size={18} />
+                  </IconButton>
+                )}
+              </Box>
             </Box>
             <Box sx={{ flex: 1 }}>
               <Typography variant="subtitle2" color="text.secondary">
