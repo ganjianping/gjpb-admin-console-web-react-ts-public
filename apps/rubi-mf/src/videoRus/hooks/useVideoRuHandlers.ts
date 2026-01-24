@@ -4,26 +4,38 @@ import type { VideoRuFormData } from '../types/videoRu.types';
 export const useVideoRuHandlers = ({ onSuccess, onError, onRefresh }: { onSuccess: (msg: string) => void; onError: (msg: string) => void; onRefresh?: () => void }) => {
   const createVideoRu = async (data: VideoRuFormData) => {
     try {
-      if (data.uploadMethod === 'file' && data.file) {
-        await videoRuService.createVideoRuByUpload(({
-          file: data.file,
+      if (data.videoFile) {
+        await videoRuService.createVideoRuByUpload({
+          file: data.videoFile,
           name: data.name,
+          filename: data.filename,
+          coverImageFilename: data.coverImageFilename,
+          coverImageFile: data.coverImageFile || undefined,
           sourceName: data.sourceName,
-          tags: data.tags,
-          lang: data.lang,
-          displayOrder: data.displayOrder,
-          isActive: data.isActive,
-        } as unknown) as any);
-      } else {
-        await videoRuService.createVideoRu(({
-          name: data.name,
           originalUrl: data.originalUrl,
-          sourceName: data.sourceName,
+          description: data.description,
           tags: data.tags,
           lang: data.lang,
+          term: data.term,
+          week: data.week,
           displayOrder: data.displayOrder,
           isActive: data.isActive,
-        } as unknown) as any);
+        });
+      } else {
+        await videoRuService.createVideoRu({
+          name: data.name,
+          filename: data.filename,
+          coverImageFilename: data.coverImageFilename,
+          sourceName: data.sourceName,
+          originalUrl: data.originalUrl,
+          description: data.description,
+          tags: data.tags,
+          lang: data.lang,
+          term: data.term,
+          week: data.week,
+          displayOrder: data.displayOrder,
+          isActive: data.isActive,
+        });
       }
       onSuccess('VideoRu created successfully');
     } catch (err: any) {

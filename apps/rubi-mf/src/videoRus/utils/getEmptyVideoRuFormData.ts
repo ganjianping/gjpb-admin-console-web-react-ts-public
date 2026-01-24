@@ -1,19 +1,18 @@
+import type { VideoRuFormData } from '../types/videoRu.types';
 
-export const getEmptyVideoRuFormData = (lang = 'EN') => ({
+export const getEmptyVideoRuFormData = (lang = 'EN'): VideoRuFormData => ({
   name: '',
   filename: '',
   coverImageFilename: '',
   sourceName: '',
   originalUrl: '',
-  coverImageFile: null,
   description: '',
-  sizeBytes: 0,
   tags: '',
   lang,
   term: undefined,
   week: undefined,
   displayOrder: 999,
   isActive: true,
-  uploadMethod: 'file' as const,
-  file: null,
+  videoFile: null,
+  coverImageFile: null,
 });

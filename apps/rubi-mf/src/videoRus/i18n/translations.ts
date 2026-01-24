@@ -26,12 +26,26 @@ const enTranslations = {
     form: {
       name: 'Video Name',
       description: 'Description',
+      videoFile: 'Video File',
       videoRuFile: 'Video File',
+      coverImage: 'Cover Image',
       coverImageFile: 'Cover Image File',
       coverImageFilename: 'Cover Image Filename',
       sourceName: 'Source Name',
       originalUrl: 'Original URL',
       filename: 'Filename',
+      filenameHelp: 'Optional - auto-filled from selected file',
+      coverImageFilenameHelp: 'Optional - auto-filled from selected file',
+      chooseVideoFile: 'Choose Video File',
+      chooseCoverImage: 'Choose Cover Image',
+      selectedFile: 'Selected file',
+      replaceVideoFile: 'Replace Video File (Optional)',
+      replaceCoverImage: 'Replace Cover Image (Optional)',
+      basicInfo: 'Basic Information',
+      classification: 'Classification',
+      settings: 'Settings',
+      video: 'Video',
+      fileSize: 'File Size',
       thumbnailFilename: 'Thumbnail Filename',
       extension: 'Extension',
       mimeType: 'MIME Type',
@@ -50,6 +64,8 @@ const enTranslations = {
       byUrl: 'By URL',
       uploadFile: 'Upload File',
       chooseFile: 'Choose File',
+      createdAt: 'Created At',
+      updatedAt: 'Updated At',
     },
     filters: {
       searchByName: 'Search by name',
@@ -134,10 +150,27 @@ const zhTranslations = {
     },
     form: {
       name: '视频名称',
+      description: '描述',
+      videoFile: '视频文件',
+      videoRuFile: '视频文件',
+      coverImage: '封面图片',
+      coverImageFile: '封面图片文件',
       coverImageFilename: '封面图片文件名',
       sourceName: '来源名称',
       originalUrl: '原始链接',
       filename: '文件名',
+      filenameHelp: '可选 - 从选择的文件自动填充',
+      coverImageFilenameHelp: '可选 - 从选择的文件自动填充',
+      chooseVideoFile: '选择视频文件',
+      chooseCoverImage: '选择封面图片',
+      selectedFile: '已选择文件',
+      replaceVideoFile: '替换视频文件（可选）',
+      replaceCoverImage: '替换封面图片（可选）',
+      basicInfo: '基本信息',
+      classification: '分类',
+      settings: '设置',
+      video: '视频',
+      fileSize: '文件大小',
       thumbnailFilename: '缩略图文件名',
       extension: '扩展名',
       mimeType: 'MIME 类型',
@@ -147,6 +180,8 @@ const zhTranslations = {
       altText: '替代文本',
       tags: '标签',
       lang: '语言',
+      term: '学期',
+      week: '周',
       displayOrder: '显示顺序',
       isActive: '启用状态',
       status: '状态',
@@ -154,6 +189,8 @@ const zhTranslations = {
       byUrl: '通过链接',
       uploadFile: '上传文件',
       chooseFile: '选择文件',
+      createdAt: '创建时间',
+      updatedAt: '更新时间',
     },
     filters: {
       searchByName: '按名称搜索',
@@ -199,6 +236,8 @@ const zhTranslations = {
       filename: '文件名',
       extension: '扩展名',
       language: '语言',
+      term: '学期',
+      week: '周',
       displayOrder: '显示顺序',
       originalUrl: '原始链接',
       tags: '标签',
@@ -211,5 +250,28 @@ const zhTranslations = {
   },
 };
 
+// Add common translations
+const commonEnTranslations = {
+  common: {
+    cancel: 'Cancel',
+    save: 'Save',
+    close: 'Close',
+    pleaseWait: 'Please wait...',
+  },
+};
+
+const commonZhTranslations = {
+  common: {
+    cancel: '取消',
+    save: '保存',
+    close: '关闭',
+    pleaseWait: '请稍候...',
+  },
+};
+
 i18n.addResourceBundle('en', 'translation', enTranslations, true, true);
 i18n.addResourceBundle('zh', 'translation', zhTranslations, true, true);
+i18n.addResourceBundle('en', 'translation', commonEnTranslations, true, true);
+i18n.addResourceBundle('zh', 'translation', commonZhTranslations, true, true);
+
+export default i18n;

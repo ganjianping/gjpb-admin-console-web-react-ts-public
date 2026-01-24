@@ -1,7 +1,7 @@
 import React from 'react';
 // register feature translations early so they are available when dialogs mount
 import '../i18n/translations';
-import type { VideoRu, VideoRuSearchFormData } from '../types/videoRu.types';
+import type { VideoRu, VideoRuSearchFormData, VideoRuFormData } from '../types/videoRu.types';
 import type { VideoRuQueryParams } from '../services/videoRuService';
 import { Box, Collapse } from '@mui/material';
 import VideoRuPageHeader from '../components/VideoRuPageHeader';
@@ -44,23 +44,21 @@ const VideoRusPage: React.FC = () => {
   const dialog = useVideoRuDialog();
   const [deleteTarget, setDeleteTarget] = React.useState<VideoRu | null>(null);
   const [deleting, setDeleting] = React.useState(false);
-  const videoRuToFormData = (videoRu: VideoRu) => ({
+  const videoRuToFormData = (videoRu: VideoRu): VideoRuFormData => ({
     name: videoRu.name || '',
     filename: videoRu.filename || '',
     coverImageFilename: videoRu.coverImageFilename || '',
-    coverImageFile: null,
     description: videoRu.description || '',
     sourceName: videoRu.sourceName || '',
     originalUrl: videoRu.originalUrl || '',
-    sizeBytes: videoRu.sizeBytes || 0,
     tags: videoRu.tags || '',
     lang: videoRu.lang || (dialog.getCurrentLanguage ? dialog.getCurrentLanguage() : 'EN'),
     term: videoRu.term || undefined,
     week: videoRu.week || undefined,
     displayOrder: videoRu.displayOrder || 0,
     isActive: !!videoRu.isActive,
-    uploadMethod: 'file' as const,
-    file: null,
+    videoFile: null,
+    coverImageFile: null,
   });
 
   // Removed unused: const [deleteTarget, setDeleteTarget] = useState<VideoRu | null>(null);
@@ -221,29 +219,13 @@ const VideoRusPage: React.FC = () => {
           open={dialog.dialogOpen}
           formData={dialog.formData}
           onFormChange={(field, value) => dialog.setFormData(prev => ({ ...prev, [field]: value }))}
+          videoId={dialog.selectedVideoRu.id}
           onClose={() => dialog.setDialogOpen(false)}
-          onSubmit={async (useFormData?: boolean) => {
-            if (!dialog.selectedVideoRu) return;
-            try {
-              dialog.setLoading(true);
-              // If caller requests FormData (e.g., cover image present) use multipart update
-              if (useFormData) {
-                await videoRuService.updateVideoRuWithFiles(dialog.selectedVideoRu.id, dialog.formData as any);
-              } else {
-                await videoRuService.updateVideoRu(dialog.selectedVideoRu.id, dialog.formData as any);
-              }
-              // refresh list after update
-              await loadVideoRus();
-              dialog.setLoading(false);
-              dialog.setDialogOpen(false);
-            } catch (err) {
-              dialog.setLoading(false);
-              // set basic form error
-              dialog.setFormErrors({ general: (err as any)?.message || 'Failed to update videoRu' });
-            }
-          }}
           loading={dialog.loading}
-          formErrors={dialog.formErrors}
+          onReset={() => dialog.setFormData(getEmptyVideoRuFormData())}
+          onUpdated={async () => {
+            await loadVideoRus();
+          }}
         />
       )}
     </Box>
