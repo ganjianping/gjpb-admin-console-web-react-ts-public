@@ -330,11 +330,14 @@ const TrueFalseQuestionRuEditDialog = ({
 
           <FormControl fullWidth error={!!errors.answer} required>
             <FormLabel sx={{ mb: 1 }}>{t("trueFalseQuestionRus.form.answer")}</FormLabel>
-            <TiptapTextEditor
+            <Select
               value={formData.answer}
-              onChange={(value) => handleChange("answer", value)}
-              placeholder={t("trueFalseQuestionRus.form.answer")}
-            />
+              onChange={(e) => handleChange("answer", e.target.value)}
+              error={!!errors.answer}
+            >
+              <MenuItem value="TRUE">TRUE</MenuItem>
+              <MenuItem value="FALSE">FALSE</MenuItem>
+            </Select>
             {errors.answer && (
               <Typography variant="caption" color="error" sx={{ mt: 0.5 }}>
                 {errors.answer}
