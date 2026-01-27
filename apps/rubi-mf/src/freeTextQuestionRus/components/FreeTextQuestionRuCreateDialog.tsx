@@ -239,6 +239,123 @@ const FreeTextQuestionRuCreateDialog = ({
           </FormControl>
 
           <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t("freeTextQuestionRus.form.description")}</FormLabel>
+            <TiptapTextEditor
+              value={formData.description}
+              onChange={(value) => handleChange("description", value)}
+              placeholder={t("freeTextQuestionRus.form.description")}
+            />
+          </FormControl>
+
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t("freeTextQuestionRus.form.questiona")}</FormLabel>
+            <TiptapTextEditor
+              value={formData.questiona}
+              onChange={(value) => handleChange("questiona", value)}
+              placeholder={t("freeTextQuestionRus.form.questiona")}
+            />
+          </FormControl>
+
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t("freeTextQuestionRus.form.answera")}</FormLabel>
+            <TiptapTextEditor
+              value={formData.answera}
+              onChange={(value) => handleChange("answera", value)}
+              placeholder={t("freeTextQuestionRus.form.answera")}
+            />
+          </FormControl>
+
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t("freeTextQuestionRus.form.questionb")}</FormLabel>
+            <TiptapTextEditor
+              value={formData.questionb}
+              onChange={(value) => handleChange("questionb", value)}
+              placeholder={t("freeTextQuestionRus.form.questionb")}
+            />
+          </FormControl>
+
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t("freeTextQuestionRus.form.answerb")}</FormLabel>
+            <TiptapTextEditor
+              value={formData.answerb}
+              onChange={(value) => handleChange("answerb", value)}
+              placeholder={t("freeTextQuestionRus.form.answerb")}
+            />
+          </FormControl>
+
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t("freeTextQuestionRus.form.questionc")}</FormLabel>
+            <TiptapTextEditor
+              value={formData.questionc}
+              onChange={(value) => handleChange("questionc", value)}
+              placeholder={t("freeTextQuestionRus.form.questionc")}
+            />
+          </FormControl>
+
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t("freeTextQuestionRus.form.answerc")}</FormLabel>
+            <TiptapTextEditor
+              value={formData.answerc}
+              onChange={(value) => handleChange("answerc", value)}
+              placeholder={t("freeTextQuestionRus.form.answerc")}
+            />
+          </FormControl>
+
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t("freeTextQuestionRus.form.questiond")}</FormLabel>
+            <TiptapTextEditor
+              value={formData.questiond}
+              onChange={(value) => handleChange("questiond", value)}
+              placeholder={t("freeTextQuestionRus.form.questiond")}
+            />
+          </FormControl>
+
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t("freeTextQuestionRus.form.answerd")}</FormLabel>
+            <TiptapTextEditor
+              value={formData.answerd}
+              onChange={(value) => handleChange("answerd", value)}
+              placeholder={t("freeTextQuestionRus.form.answerd")}
+            />
+          </FormControl>
+
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t("freeTextQuestionRus.form.questione")}</FormLabel>
+            <TiptapTextEditor
+              value={formData.questione}
+              onChange={(value) => handleChange("questione", value)}
+              placeholder={t("freeTextQuestionRus.form.questione")}
+            />
+          </FormControl>
+
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t("freeTextQuestionRus.form.answere")}</FormLabel>
+            <TiptapTextEditor
+              value={formData.answere}
+              onChange={(value) => handleChange("answere", value)}
+              placeholder={t("freeTextQuestionRus.form.answere")}
+            />
+          </FormControl>
+
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t("freeTextQuestionRus.form.questionf")}</FormLabel>
+            <TiptapTextEditor
+              value={formData.questionf}
+              onChange={(value) => handleChange("questionf", value)}
+              placeholder={t("freeTextQuestionRus.form.questionf")}
+            />
+          </FormControl>
+
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>{t("freeTextQuestionRus.form.answerf")}</FormLabel>
+            <TiptapTextEditor
+              value={formData.answerf}
+              onChange={(value) => handleChange("answerf", value)}
+              placeholder={t("freeTextQuestionRus.form.answerf")}
+            />
+          </FormControl>
+
+          <FormControl fullWidth>
             <FormLabel sx={{ mb: 1 }}>{t("freeTextQuestionRus.form.difficultyLevel")}</FormLabel>
             <Select
               value={formData.difficultyLevel}
