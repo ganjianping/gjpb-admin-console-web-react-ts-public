@@ -133,12 +133,7 @@ const FreeTextQuestionRuCreateDialog = ({
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    if (!formData.question.trim()) {
-      newErrors.question = t("common.required");
-    }
-    if (!formData.answer.trim()) {
-      newErrors.answer = t("common.required");
-    }
+    // Question and Answer are optional now; only validate lang
     if (!formData.lang) {
       newErrors.lang = t("common.required");
     }
@@ -201,7 +196,7 @@ const FreeTextQuestionRuCreateDialog = ({
           </Alert>
         )}
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          <FormControl fullWidth error={!!errors.question} required>
+          <FormControl fullWidth error={!!errors.question}>
             <FormLabel sx={{ mb: 1 }}>{t("freeTextQuestionRus.form.question")}</FormLabel>
             <TiptapTextEditor
               value={formData.question}
@@ -215,7 +210,7 @@ const FreeTextQuestionRuCreateDialog = ({
             )}
           </FormControl>
 
-          <FormControl fullWidth error={!!errors.answer} required>
+          <FormControl fullWidth error={!!errors.answer}>
             <FormLabel sx={{ mb: 1 }}>{t("freeTextQuestionRus.form.answer")}</FormLabel>
             <TiptapTextEditor
               value={formData.answer}
