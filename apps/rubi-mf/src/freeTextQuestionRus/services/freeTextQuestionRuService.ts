@@ -37,8 +37,6 @@ export interface CreateFreeTextQuestionRuRequest {
   answere?: string;
   questionf?: string;
   answerf?: string;
-  failCount?: number;
-  successCount?: number;
   difficultyLevel?: string;
   tags?: string;
   lang: string;
@@ -65,8 +63,6 @@ export interface UpdateFreeTextQuestionRuRequest {
   answere?: string;
   questionf?: string;
   answerf?: string;
-  failCount?: number;
-  successCount?: number;
   difficultyLevel?: string;
   tags?: string;
   lang?: string;
