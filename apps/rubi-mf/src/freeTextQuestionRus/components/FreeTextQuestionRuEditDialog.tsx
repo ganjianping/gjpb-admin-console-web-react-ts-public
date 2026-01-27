@@ -148,6 +148,8 @@ const FreeTextQuestionRuEditDialog = ({
         difficultyLevel: freeTextQuestionRu.difficultyLevel || "",
         tags: freeTextQuestionRu.tags || "",
         lang: freeTextQuestionRu.lang || (i18n.language.toUpperCase().startsWith("ZH") ? "ZH" : "EN"),
+        term: freeTextQuestionRu.term ?? undefined,
+        week: freeTextQuestionRu.week ?? undefined,
         displayOrder: freeTextQuestionRu.displayOrder ?? 999,
         isActive: freeTextQuestionRu.isActive ?? true,
       });
