@@ -9,8 +9,6 @@ import {
   Chip,
   Card,
   CardContent,
-  Grid,
-  Divider,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { format, parseISO } from "date-fns";
@@ -76,7 +74,7 @@ const FreeTextQuestionRuViewDialog = ({
     );
   };
 
-  const renderQuestionAnswerPair = (questionField: string, answerField: string, questionValue: any, answerValue: any, label: string) => {
+  const renderQuestionAnswerPair = (questionValue: any, answerValue: any, label: string) => {
     if (!hasValue(questionValue) && !hasValue(answerValue)) return null;
 
     return (
@@ -152,7 +150,7 @@ const FreeTextQuestionRuViewDialog = ({
                 <Box sx={{ mb: 3 }}>
                   <Box sx={{ p: 3, backgroundColor: 'rgba(255,255,255,0.9)', borderRadius: 2, border: '2px solid', borderColor: 'primary.main' }}>
                     <Typography variant="body1" sx={{ fontWeight: 500, fontSize: '1rem', lineHeight: 1.8 }}>
-                      <div dangerouslySetInnerHTML={{ __html: freeTextQuestionRu.answer }} />
+                      <div dangerouslySetInnerHTML={{ __html: freeTextQuestionRu.answer! }} />
                     </Typography>
                   </Box>
                 </Box>
@@ -162,7 +160,7 @@ const FreeTextQuestionRuViewDialog = ({
               {hasValue(freeTextQuestionRu.tags) && (
                 <Box sx={{ mt: 3 }}>
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, justifyContent: 'center' }}>
-                    {freeTextQuestionRu.tags.split(',').filter(Boolean).map((tag) => (
+                    {freeTextQuestionRu.tags!.split(',').filter(Boolean).map((tag) => (
                       <Chip key={tag.trim()} icon={<Tag size={14} />} label={tag.trim()} size="small" variant="outlined" sx={{ fontWeight: 500, borderRadius: 2 }} />
                     ))}
                   </Box>
@@ -182,12 +180,12 @@ const FreeTextQuestionRuViewDialog = ({
               {renderField("Explanation", freeTextQuestionRu.explanation, <MessageSquare size={18} color="#2e7d32" />, true)}
 
               {/* Question/Answer Pairs */}
-              {renderQuestionAnswerPair("questiona", "answera", freeTextQuestionRu.questiona, freeTextQuestionRu.answera, "Question A")}
-              {renderQuestionAnswerPair("questionb", "answerb", freeTextQuestionRu.questionb, freeTextQuestionRu.answerb, "Question B")}
-              {renderQuestionAnswerPair("questionc", "answerc", freeTextQuestionRu.questionc, freeTextQuestionRu.answerc, "Question C")}
-              {renderQuestionAnswerPair("questiond", "answerd", freeTextQuestionRu.questiond, freeTextQuestionRu.answerd, "Question D")}
-              {renderQuestionAnswerPair("questione", "answere", freeTextQuestionRu.questione, freeTextQuestionRu.answere, "Question E")}
-              {renderQuestionAnswerPair("questionf", "answerf", freeTextQuestionRu.questionf, freeTextQuestionRu.answerf, "Question F")}
+              {renderQuestionAnswerPair(freeTextQuestionRu.questiona, freeTextQuestionRu.answera, "Question A")}
+              {renderQuestionAnswerPair(freeTextQuestionRu.questionb, freeTextQuestionRu.answerb, "Question B")}
+              {renderQuestionAnswerPair(freeTextQuestionRu.questionc, freeTextQuestionRu.answerc, "Question C")}
+              {renderQuestionAnswerPair(freeTextQuestionRu.questiond, freeTextQuestionRu.answerd, "Question D")}
+              {renderQuestionAnswerPair(freeTextQuestionRu.questione, freeTextQuestionRu.answere, "Question E")}
+              {renderQuestionAnswerPair(freeTextQuestionRu.questionf, freeTextQuestionRu.answerf, "Question F")}
             </Box>
 
             {/* Right Column - Metadata and Stats */}
