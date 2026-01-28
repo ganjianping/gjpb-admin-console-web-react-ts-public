@@ -51,7 +51,12 @@ const FreeTextQuestionRuTable = memo(
           header: t("freeTextQuestionRus.columns.question"),
           cell: (info) => {
             const question = info.getValue();
-            const displayText = stripHtmlAndTruncate(question);
+            const rowData = info.row.original;
+            
+            // If question is empty, use description instead
+            const displayValue = question || rowData.description || "";
+            const displayText = stripHtmlAndTruncate(displayValue);
+            
             return (
               <Typography variant="body2" sx={{ fontWeight: 500 }}>
                 {displayText}
