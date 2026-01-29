@@ -217,10 +217,14 @@ const FillBlankQuestionRuCreateDialog = ({
 
           <FormControl fullWidth error={!!errors.answer} required>
             <FormLabel sx={{ mb: 1 }}>{t("fillBlankQuestionRus.form.answer")}</FormLabel>
-            <TiptapTextEditor
+            <TextField
               value={formData.answer}
-              onChange={(value) => handleChange("answer", value)}
+              onChange={(e) => handleChange("answer", e.target.value)}
               placeholder={t("fillBlankQuestionRus.form.answer")}
+              multiline
+              minRows={2}
+              maxRows={8}
+              fullWidth
             />
             {errors.answer && (
               <Typography variant="caption" color="error" sx={{ mt: 0.5 }}>
