@@ -98,6 +98,24 @@ const FillBlankQuestionRuViewDialog = ({
                       </Box>
                     </Box>
                   )}
+
+                  {/* Grammar Chapter */}
+                  {fillBlankQuestionRu.grammarChapter && (
+                    <Box sx={{ mt: 2, textAlign: 'center' }}>
+                      <Typography variant="body2" color="text.secondary">
+                        Grammar Chapter: <strong>{fillBlankQuestionRu.grammarChapter}</strong>
+                      </Typography>
+                    </Box>
+                  )}
+
+                  {/* Science Chapter */}
+                  {fillBlankQuestionRu.scienceChapter && (
+                    <Box sx={{ mt: 2, textAlign: 'center' }}>
+                      <Typography variant="body2" color="text.secondary">
+                        Science Chapter: <strong>{fillBlankQuestionRu.scienceChapter}</strong>
+                      </Typography>
+                    </Box>
+                  )}
                 </CardContent>
               </Card>
 

@@ -166,6 +166,24 @@ const FreeTextQuestionRuViewDialog = ({
                   </Box>
                 </Box>
               )}
+
+              {/* Grammar Chapter */}
+              {hasValue(freeTextQuestionRu.grammarChapter) && (
+                <Box sx={{ mt: 2, textAlign: 'center' }}>
+                  <Typography variant="body2" color="text.secondary">
+                    Grammar Chapter: <strong>{freeTextQuestionRu.grammarChapter}</strong>
+                  </Typography>
+                </Box>
+              )}
+
+              {/* Science Chapter */}
+              {hasValue(freeTextQuestionRu.scienceChapter) && (
+                <Box sx={{ mt: 2, textAlign: 'center' }}>
+                  <Typography variant="body2" color="text.secondary">
+                    Science Chapter: <strong>{freeTextQuestionRu.scienceChapter}</strong>
+                  </Typography>
+                </Box>
+              )}
             </CardContent>
           </Card>
 

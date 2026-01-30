@@ -46,6 +46,8 @@ const FillBlankQuestionRusPage: React.FC = () => {
     explanation: fillBlankQuestionRu.explanation || "",
     difficultyLevel: fillBlankQuestionRu.difficultyLevel || "",
     tags: fillBlankQuestionRu.tags || "",
+    grammarChapter: fillBlankQuestionRu.grammarChapter || "",
+    scienceChapter: fillBlankQuestionRu.scienceChapter || "",
     lang:
       fillBlankQuestionRu.lang ||
       (dialog.getCurrentLanguage ? dialog.getCurrentLanguage() : "EN"),
@@ -90,6 +92,8 @@ const FillBlankQuestionRusPage: React.FC = () => {
         explanation: formData.explanation,
         difficultyLevel: formData.difficultyLevel,
         tags: formData.tags,
+        grammarChapter: formData.grammarChapter,
+        scienceChapter: formData.scienceChapter,
         lang: formData.lang,
         term: formData.term,
         week: formData.week,
@@ -118,6 +122,8 @@ const FillBlankQuestionRusPage: React.FC = () => {
           explanation: formData.explanation,
           difficultyLevel: formData.difficultyLevel,
           tags: formData.tags,
+          grammarChapter: formData.grammarChapter,
+          scienceChapter: formData.scienceChapter,
           lang: formData.lang,
           term: formData.term,
           week: formData.week,

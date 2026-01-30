@@ -61,6 +61,8 @@ const FreeTextQuestionRusPage: React.FC = () => {
     successCount: freeTextQuestionRu.successCount ?? undefined,
     difficultyLevel: freeTextQuestionRu.difficultyLevel || "",
     tags: freeTextQuestionRu.tags || "",
+    grammarChapter: freeTextQuestionRu.grammarChapter || "",
+    scienceChapter: freeTextQuestionRu.scienceChapter || "",
     lang:
       freeTextQuestionRu.lang ||
       (dialog.getCurrentLanguage ? dialog.getCurrentLanguage() : "EN"),
@@ -118,6 +120,8 @@ const FreeTextQuestionRusPage: React.FC = () => {
         answerf: formData.answerf,
         difficultyLevel: formData.difficultyLevel,
         tags: formData.tags,
+        grammarChapter: formData.grammarChapter,
+        scienceChapter: formData.scienceChapter,
         lang: formData.lang,
         term: formData.term,
         week: formData.week,
@@ -159,6 +163,8 @@ const FreeTextQuestionRusPage: React.FC = () => {
           answerf: formData.answerf,
           difficultyLevel: formData.difficultyLevel,
           tags: formData.tags,
+          grammarChapter: formData.grammarChapter,
+          scienceChapter: formData.scienceChapter,
           lang: formData.lang,
           term: formData.term,
           week: formData.week,

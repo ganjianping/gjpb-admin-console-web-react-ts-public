@@ -5,6 +5,8 @@ export interface TrueFalseQuestionRu {
   explanation?: string | null;
   difficultyLevel?: string | null;
   tags?: string | null;
+  grammarChapter?: string | null;
+  scienceChapter?: string | null;
   lang?: string | null;
   displayOrder?: number | null;
   term?: number | null;
@@ -32,6 +34,8 @@ export interface TrueFalseQuestionRuFormData {
   explanation: string;
   difficultyLevel: string;
   tags: string;
+  grammarChapter: string;
+  scienceChapter: string;
   lang: string;
   term?: number;
   week?: number;

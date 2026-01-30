@@ -26,6 +26,8 @@ export interface CreateFillBlankQuestionRuRequest {
   explanation?: string;
   difficultyLevel?: string;
   tags?: string;
+  grammarChapter?: string;
+  scienceChapter?: string;
   lang: string;
   term?: number;
   week?: number;
@@ -39,6 +41,8 @@ export interface UpdateFillBlankQuestionRuRequest {
   explanation?: string;
   difficultyLevel?: string;
   tags?: string;
+  grammarChapter?: string;
+  scienceChapter?: string;
   lang?: string;
   term?: number;
   week?: number;

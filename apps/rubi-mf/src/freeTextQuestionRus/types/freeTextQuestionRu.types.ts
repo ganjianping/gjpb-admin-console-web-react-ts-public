@@ -20,6 +20,8 @@ export interface FreeTextQuestionRu {
   successCount?: number | null;
   difficultyLevel?: string | null;
   tags?: string | null;
+  grammarChapter?: string | null;
+  scienceChapter?: string | null;
   lang?: string | null;
   displayOrder?: number | null;
   term?: number | null;
@@ -62,6 +64,8 @@ export interface FreeTextQuestionRuFormData {
   successCount?: number;
   difficultyLevel: string;
   tags: string;
+  grammarChapter: string;
+  scienceChapter: string;
   lang: string;
   term?: number;
   week?: number;

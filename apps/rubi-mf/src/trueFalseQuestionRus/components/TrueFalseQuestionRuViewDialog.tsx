@@ -98,6 +98,24 @@ const TrueFalseQuestionRuViewDialog = ({
                       </Box>
                     </Box>
                   )}
+
+                  {/* Grammar Chapter */}
+                  {trueFalseQuestionRu.grammarChapter && (
+                    <Box sx={{ mt: 2, textAlign: 'center' }}>
+                      <Typography variant="body2" color="text.secondary">
+                        Grammar Chapter: <strong>{trueFalseQuestionRu.grammarChapter}</strong>
+                      </Typography>
+                    </Box>
+                  )}
+
+                  {/* Science Chapter */}
+                  {trueFalseQuestionRu.scienceChapter && (
+                    <Box sx={{ mt: 2, textAlign: 'center' }}>
+                      <Typography variant="body2" color="text.secondary">
+                        Science Chapter: <strong>{trueFalseQuestionRu.scienceChapter}</strong>
+                      </Typography>
+                    </Box>
+                  )}
                 </CardContent>
               </Card>
 

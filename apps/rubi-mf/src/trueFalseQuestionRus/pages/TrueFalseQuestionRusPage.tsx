@@ -46,6 +46,8 @@ const TrueFalseQuestionRusPage: React.FC = () => {
     explanation: trueFalseQuestionRu.explanation || "",
     difficultyLevel: trueFalseQuestionRu.difficultyLevel || "",
     tags: trueFalseQuestionRu.tags || "",
+    grammarChapter: trueFalseQuestionRu.grammarChapter || "",
+    scienceChapter: trueFalseQuestionRu.scienceChapter || "",
     lang:
       trueFalseQuestionRu.lang ||
       (dialog.getCurrentLanguage ? dialog.getCurrentLanguage() : "EN"),
@@ -90,6 +92,8 @@ const TrueFalseQuestionRusPage: React.FC = () => {
         explanation: formData.explanation,
         difficultyLevel: formData.difficultyLevel,
         tags: formData.tags,
+        grammarChapter: formData.grammarChapter,
+        scienceChapter: formData.scienceChapter,
         lang: formData.lang,
         term: formData.term,
         week: formData.week,
@@ -118,6 +122,8 @@ const TrueFalseQuestionRusPage: React.FC = () => {
           explanation: formData.explanation,
           difficultyLevel: formData.difficultyLevel,
           tags: formData.tags,
+          grammarChapter: formData.grammarChapter,
+          scienceChapter: formData.scienceChapter,
           lang: formData.lang,
           term: formData.term,
           week: formData.week,

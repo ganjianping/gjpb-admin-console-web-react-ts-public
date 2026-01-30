@@ -6,6 +6,8 @@ export const getEmptyTrueFalseQuestionRuFormData = (): TrueFalseQuestionRuFormDa
   explanation: '',
   difficultyLevel: '',
   tags: '',
+  grammarChapter: '',
+  scienceChapter: '',
   lang: 'EN',
   term: undefined,
   week: undefined,

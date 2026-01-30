@@ -11,6 +11,8 @@ export interface MultipleChoiceQuestionRu {
   failCount: number;
   successCount: number;
   tags: string;
+  grammarChapter?: string | null;
+  scienceChapter?: string | null;
   lang: string;
   term?: number;
   week?: number;
@@ -42,6 +44,8 @@ export interface MultipleChoiceQuestionRuFormData {
   explanation: string;
   difficultyLevel: string;
   tags: string;
+  grammarChapter: string;
+  scienceChapter: string;
   lang: string;
   term?: number;
   week?: number;

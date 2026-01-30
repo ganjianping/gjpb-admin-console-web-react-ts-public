@@ -388,6 +388,32 @@ const FreeTextQuestionRuCreateDialog = ({
             </Select>
           </FormControl>
 
+          {/* Show grammarChapter if Tags contains 'Grammar' */}
+          {formData.tags && formData.tags.split(',').map(t => t.trim()).includes('Grammar') && (
+            <FormControl fullWidth>
+              <FormLabel sx={{ mb: 1 }}>{t("freeTextQuestionRus.form.grammarChapter")}</FormLabel>
+              <TextField
+                value={formData.grammarChapter}
+                onChange={(e) => handleChange("grammarChapter", e.target.value)}
+                placeholder="Enter grammar chapter"
+                fullWidth
+              />
+            </FormControl>
+          )}
+
+          {/* Show scienceChapter if Tags contains 'Science' */}
+          {formData.tags && formData.tags.split(',').map(t => t.trim()).includes('Science') && (
+            <FormControl fullWidth>
+              <FormLabel sx={{ mb: 1 }}>{t("freeTextQuestionRus.form.scienceChapter")}</FormLabel>
+              <TextField
+                value={formData.scienceChapter}
+                onChange={(e) => handleChange("scienceChapter", e.target.value)}
+                placeholder="Enter science chapter"
+                fullWidth
+              />
+            </FormControl>
+          )}
+
           <FormControl fullWidth error={!!errors.lang} required>
             <FormLabel sx={{ mb: 1 }}>{t("freeTextQuestionRus.form.lang")}</FormLabel>
             <Select

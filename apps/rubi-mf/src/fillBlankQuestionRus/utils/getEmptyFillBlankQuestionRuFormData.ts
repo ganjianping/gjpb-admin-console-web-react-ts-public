@@ -6,6 +6,8 @@ export const getEmptyFillBlankQuestionRuFormData = (): FillBlankQuestionRuFormDa
   explanation: '',
   difficultyLevel: '',
   tags: '',
+  grammarChapter: '',
+  scienceChapter: '',
   lang: 'EN',
   term: undefined,
   week: undefined,

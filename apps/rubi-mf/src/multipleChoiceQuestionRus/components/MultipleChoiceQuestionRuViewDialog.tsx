@@ -229,6 +229,24 @@ const MultipleChoiceQuestionRuViewDialog: React.FC<
                       ))}
                     </Box>
                   )}
+
+                  {/* Grammar Chapter */}
+                  {multipleChoiceQuestionRu.grammarChapter && (
+                    <Box sx={{ mt: 2, textAlign: 'center' }}>
+                      <Typography variant="body2" color="text.secondary">
+                        Grammar Chapter: <strong>{multipleChoiceQuestionRu.grammarChapter}</strong>
+                      </Typography>
+                    </Box>
+                  )}
+
+                  {/* Science Chapter */}
+                  {multipleChoiceQuestionRu.scienceChapter && (
+                    <Box sx={{ mt: 2, textAlign: 'center' }}>
+                      <Typography variant="body2" color="text.secondary">
+                        Science Chapter: <strong>{multipleChoiceQuestionRu.scienceChapter}</strong>
+                      </Typography>
+                    </Box>
+                  )}
                 </CardContent>
               </Card>
 

@@ -21,6 +21,8 @@ export const getEmptyFreeTextQuestionRuFormData = (): FreeTextQuestionRuFormData
   successCount: undefined,
   difficultyLevel: '',
   tags: '',
+  grammarChapter: '',
+  scienceChapter: '',
   lang: 'EN',
   term: undefined,
   week: undefined,

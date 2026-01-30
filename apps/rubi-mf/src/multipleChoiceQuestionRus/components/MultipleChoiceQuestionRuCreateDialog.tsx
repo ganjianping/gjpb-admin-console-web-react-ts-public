@@ -506,7 +506,35 @@ const MultipleChoiceQuestionRuCreateDialog: React.FC<
                 ))}
               </Select>
             </FormControl>
+          </Box>
 
+          {/* Show grammarChapter if Tags contains 'Grammar' */}
+          {formData.tags && formData.tags.split(',').map(t => t.trim()).includes('Grammar') && (
+            <FormControl fullWidth>
+              <FormLabel sx={{ mb: 1 }}>{t("multipleChoiceQuestionRus.form.grammarChapter")}</FormLabel>
+              <TextField
+                value={formData.grammarChapter}
+                onChange={(e) => handleFormChange("grammarChapter", e.target.value)}
+                placeholder="Enter grammar chapter"
+                fullWidth
+              />
+            </FormControl>
+          )}
+
+          {/* Show scienceChapter if Tags contains 'Science' */}
+          {formData.tags && formData.tags.split(',').map(t => t.trim()).includes('Science') && (
+            <FormControl fullWidth>
+              <FormLabel sx={{ mb: 1 }}>{t("multipleChoiceQuestionRus.form.scienceChapter")}</FormLabel>
+              <TextField
+                value={formData.scienceChapter}
+                onChange={(e) => handleFormChange("scienceChapter", e.target.value)}
+                placeholder="Enter science chapter"
+                fullWidth
+              />
+            </FormControl>
+          )}
+
+          <Box sx={{ display: "flex", gap: 2 }}>
             <FormControl fullWidth>
               <FormLabel sx={{ mb: 1 }}>{t("multipleChoiceQuestionRus.form.term")}</FormLabel>
               <Select

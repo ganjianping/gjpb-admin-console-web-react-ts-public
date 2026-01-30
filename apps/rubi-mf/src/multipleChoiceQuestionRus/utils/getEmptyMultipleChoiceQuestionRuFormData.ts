@@ -10,6 +10,8 @@ export const getEmptyMultipleChoiceQuestionRuFormData = (): MultipleChoiceQuesti
   explanation: '',
   difficultyLevel: '',
   tags: '',
+  grammarChapter: '',
+  scienceChapter: '',
   lang: 'EN',
   term: undefined,
   week: undefined,
