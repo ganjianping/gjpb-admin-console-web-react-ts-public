@@ -122,6 +122,58 @@ const TrueFalseQuestionRuEditDialog = ({
     }
   }, [i18n.language]);
 
+  const availableGrammarChapters = useMemo(() => {
+    try {
+      const settings = localStorage.getItem("gjpb_app_settings");
+      if (!settings) return [] as string[];
+      const appSettings = JSON.parse(settings) as Array<{
+        name: string;
+        value: string;
+        lang: string;
+      }>;
+      const currentLang = i18n.language.toUpperCase().startsWith("ZH")
+        ? "ZH"
+        : "EN";
+      const grammarChapterSetting = appSettings.find(
+        (s) => s.name === "grammar_chapters" && s.lang === currentLang,
+      );
+      if (!grammarChapterSetting) return [] as string[];
+      return grammarChapterSetting.value
+        .split(",")
+        .map((v) => v.trim())
+        .filter(Boolean);
+    } catch (err) {
+      console.error("[TrueFalseQuestionRuEditDialog] Error loading grammar chapters:", err);
+      return [] as string[];
+    }
+  }, [i18n.language]);
+
+  const availableScienceChapters = useMemo(() => {
+    try {
+      const settings = localStorage.getItem("gjpb_app_settings");
+      if (!settings) return [] as string[];
+      const appSettings = JSON.parse(settings) as Array<{
+        name: string;
+        value: string;
+        lang: string;
+      }>;
+      const currentLang = i18n.language.toUpperCase().startsWith("ZH")
+        ? "ZH"
+        : "EN";
+      const scienceChapterSetting = appSettings.find(
+        (s) => s.name === "science_chapters" && s.lang === currentLang,
+      );
+      if (!scienceChapterSetting) return [] as string[];
+      return scienceChapterSetting.value
+        .split(",")
+        .map((v) => v.trim())
+        .filter(Boolean);
+    } catch (err) {
+      console.error("[TrueFalseQuestionRuEditDialog] Error loading science chapters:", err);
+      return [] as string[];
+    }
+  }, [i18n.language]);
+
   useEffect(() => {
     if (open && trueFalseQuestionRu) {
       setFormData({
@@ -501,12 +553,18 @@ const TrueFalseQuestionRuEditDialog = ({
           {formData.tags && formData.tags.split(',').map(t => t.trim()).includes('Grammar') && (
             <FormControl fullWidth>
               <FormLabel sx={{ mb: 1 }}>{t("trueFalseQuestionRus.form.grammarChapter")}</FormLabel>
-              <TextField
+              <Select
                 value={formData.grammarChapter}
                 onChange={(e) => handleChange("grammarChapter", e.target.value)}
-                placeholder="Enter grammar chapter"
-                fullWidth
-              />
+                displayEmpty
+              >
+                <MenuItem value=""><em>None</em></MenuItem>
+                {availableGrammarChapters.map((chapter) => (
+                  <MenuItem key={chapter} value={chapter}>
+                    {chapter}
+                  </MenuItem>
+                ))}
+              </Select>
             </FormControl>
           )}
 
@@ -514,12 +572,18 @@ const TrueFalseQuestionRuEditDialog = ({
           {formData.tags && formData.tags.split(',').map(t => t.trim()).includes('Science') && (
             <FormControl fullWidth>
               <FormLabel sx={{ mb: 1 }}>{t("trueFalseQuestionRus.form.scienceChapter")}</FormLabel>
-              <TextField
+              <Select
                 value={formData.scienceChapter}
                 onChange={(e) => handleChange("scienceChapter", e.target.value)}
-                placeholder="Enter science chapter"
-                fullWidth
-              />
+                displayEmpty
+              >
+                <MenuItem value=""><em>None</em></MenuItem>
+                {availableScienceChapters.map((chapter) => (
+                  <MenuItem key={chapter} value={chapter}>
+                    {chapter}
+                  </MenuItem>
+                ))}
+              </Select>
             </FormControl>
           )}
 
