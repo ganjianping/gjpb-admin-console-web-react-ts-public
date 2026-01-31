@@ -73,7 +73,7 @@ export const useImageRus = () => {
       hasInitiallyLoaded.current = true;
       loadImageRus();
     }
-  }, [loadImageRus]);
+  }, []);
 
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);

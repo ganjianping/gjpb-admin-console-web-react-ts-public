@@ -57,7 +57,7 @@ export const useAudioRus = () => {
       hasInitiallyLoaded.current = true;
       loadAudioRus();
     }
-  }, [loadAudioRus]);
+  }, []);
 
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);

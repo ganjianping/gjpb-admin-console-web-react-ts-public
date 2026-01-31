@@ -56,7 +56,7 @@ export const useSentenceRus = () => {
       hasInitiallyLoaded.current = true;
       loadSentenceRus();
     }
-  }, [loadSentenceRus]);
+  }, []);
 
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);

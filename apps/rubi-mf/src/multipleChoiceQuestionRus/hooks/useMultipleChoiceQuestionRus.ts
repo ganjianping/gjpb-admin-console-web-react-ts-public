@@ -57,7 +57,7 @@ export const useMultipleChoiceQuestionRus = () => {
       hasInitiallyLoaded.current = true;
       loadMultipleChoiceQuestionRus();
     }
-  }, [loadMultipleChoiceQuestionRus]);
+  }, []);
 
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);

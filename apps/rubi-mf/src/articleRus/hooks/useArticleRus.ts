@@ -57,7 +57,7 @@ export const useArticleRus = () => {
       hasInitiallyLoaded.current = true;
       loadArticleRus();
     }
-  }, [loadArticleRus]);
+  }, []);
 
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);

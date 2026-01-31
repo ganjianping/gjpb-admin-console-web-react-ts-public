@@ -56,7 +56,7 @@ export const useTrueFalseQuestionRus = () => {
       hasInitiallyLoaded.current = true;
       loadTrueFalseQuestionRus();
     }
-  }, [loadTrueFalseQuestionRus]);
+  }, []);
 
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);

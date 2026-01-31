@@ -20,9 +20,12 @@ const ExpressionRusPage: React.FC = () => {
   const {
     allExpressionRus,
     filteredExpressionRus,
-    setFilteredExpressionRus,
+    pagination,
     loading,
+    pageSize,
     loadExpressionRus,
+    handlePageChange,
+    handlePageSizeChange,
   } = useExpressionRus();
   
   const {
@@ -31,7 +34,6 @@ const ExpressionRusPage: React.FC = () => {
     handleSearchPanelToggle,
     handleSearchFormChange,
     handleClearSearch,
-    applyClientSideFiltersWithData,
   } = useExpressionRuSearch(allExpressionRus);
   
   const dialog = useExpressionRuDialog();
@@ -56,9 +58,16 @@ const ExpressionRusPage: React.FC = () => {
     isActive: Boolean(expressionRu.isActive),
   });
 
-  const handleSearch = () => {
-    const filtered = applyClientSideFiltersWithData(searchFormData);
-    setFilteredExpressionRus(filtered);
+  const handleSearch = async () => {
+    const params: any = {};
+    if (searchFormData.name) params.name = searchFormData.name;
+    if (searchFormData.lang) params.lang = searchFormData.lang;
+    if (searchFormData.difficultyLevel) params.difficultyLevel = searchFormData.difficultyLevel;
+    if (searchFormData.tags) params.tags = searchFormData.tags;
+    if (searchFormData.isActive !== null && searchFormData.isActive !== '') {
+      params.isActive = searchFormData.isActive === 'true';
+    }
+    await loadExpressionRus(params, 0, pageSize);
   };
 
   const handleCreateExpressionRu = () => {
@@ -223,9 +232,31 @@ const ExpressionRusPage: React.FC = () => {
       ) : (
         <ExpressionRuTable
           expressionRus={filteredExpressionRus}
-          pagination={null}
-          onPageChange={() => {}}
-          onPageSizeChange={() => {}}
+          pagination={pagination}
+          onPageChange={async (newPage: number) => {
+            handlePageChange(newPage);
+            const params: any = {};
+            if (searchFormData.name) params.name = searchFormData.name;
+            if (searchFormData.lang) params.lang = searchFormData.lang;
+            if (searchFormData.difficultyLevel) params.difficultyLevel = searchFormData.difficultyLevel;
+            if (searchFormData.tags) params.tags = searchFormData.tags;
+            if (searchFormData.isActive !== null && searchFormData.isActive !== '') {
+              params.isActive = searchFormData.isActive === 'true';
+            }
+            await loadExpressionRus(params, newPage, pageSize);
+          }}
+          onPageSizeChange={async (newPageSize: number) => {
+            handlePageSizeChange(newPageSize);
+            const params: any = {};
+            if (searchFormData.name) params.name = searchFormData.name;
+            if (searchFormData.lang) params.lang = searchFormData.lang;
+            if (searchFormData.difficultyLevel) params.difficultyLevel = searchFormData.difficultyLevel;
+            if (searchFormData.tags) params.tags = searchFormData.tags;
+            if (searchFormData.isActive !== null && searchFormData.isActive !== '') {
+              params.isActive = searchFormData.isActive === 'true';
+            }
+            await loadExpressionRus(params, 0, newPageSize);
+          }}
           onExpressionRuAction={handleExpressionRuAction}
         />
       )}

@@ -57,7 +57,7 @@ export const useVideoRus = () => {
       hasInitiallyLoaded.current = true;
       loadVideoRus();
     }
-  }, [loadVideoRus]);
+  }, []);
 
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);

@@ -57,7 +57,7 @@ export const useVocabularyRus = () => {
       hasInitiallyLoaded.current = true;
       loadVocabularyRus();
     }
-  }, [loadVocabularyRus]);
+  }, []);
 
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);

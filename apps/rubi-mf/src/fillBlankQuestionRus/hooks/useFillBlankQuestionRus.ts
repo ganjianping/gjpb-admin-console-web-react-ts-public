@@ -56,7 +56,7 @@ export const useFillBlankQuestionRus = () => {
       hasInitiallyLoaded.current = true;
       loadFillBlankQuestionRus();
     }
-  }, [loadFillBlankQuestionRus]);
+  }, []);
 
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);

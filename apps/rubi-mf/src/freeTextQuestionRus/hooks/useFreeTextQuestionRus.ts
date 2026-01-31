@@ -56,7 +56,7 @@ export const useFreeTextQuestionRus = () => {
       hasInitiallyLoaded.current = true;
       loadFreeTextQuestionRus();
     }
-  }, [loadFreeTextQuestionRus]);
+  }, []);
 
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);

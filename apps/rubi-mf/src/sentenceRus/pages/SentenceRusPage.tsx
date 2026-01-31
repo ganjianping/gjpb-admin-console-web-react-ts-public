@@ -20,9 +20,12 @@ const SentenceRusPage: React.FC = () => {
   const {
     allSentenceRus,
     filteredSentenceRus,
-    setFilteredSentenceRus,
+    pagination,
     loading,
+    pageSize,
     loadSentenceRus,
+    handlePageChange,
+    handlePageSizeChange,
   } = useSentenceRus();
   
   const {
@@ -31,7 +34,6 @@ const SentenceRusPage: React.FC = () => {
     handleSearchPanelToggle,
     handleSearchFormChange,
     handleClearSearch,
-    applyClientSideFiltersWithData,
   } = useSentenceRuSearch(allSentenceRus);
   
   const dialog = useSentenceRuDialog();
@@ -56,9 +58,16 @@ const SentenceRusPage: React.FC = () => {
     phoneticAudioFile: null,
   });
 
-  const handleSearch = () => {
-    const filtered = applyClientSideFiltersWithData(searchFormData);
-    setFilteredSentenceRus(filtered);
+  const handleSearch = async () => {
+    const params: any = {};
+    if (searchFormData.name) params.name = searchFormData.name;
+    if (searchFormData.lang) params.lang = searchFormData.lang;
+    if (searchFormData.difficultyLevel) params.difficultyLevel = searchFormData.difficultyLevel;
+    if (searchFormData.tags) params.tags = searchFormData.tags;
+    if (searchFormData.isActive !== null && searchFormData.isActive !== '') {
+      params.isActive = searchFormData.isActive === 'true';
+    }
+    await loadSentenceRus(params, 0, pageSize);
   };
 
   const handleCreateSentenceRu = () => {
@@ -219,9 +228,31 @@ const SentenceRusPage: React.FC = () => {
       ) : (
         <SentenceRuTable
           sentenceRus={filteredSentenceRus}
-          pagination={null}
-          onPageChange={() => {}}
-          onPageSizeChange={() => {}}
+          pagination={pagination}
+          onPageChange={async (newPage: number) => {
+            handlePageChange(newPage);
+            const params: any = {};
+            if (searchFormData.name) params.name = searchFormData.name;
+            if (searchFormData.lang) params.lang = searchFormData.lang;
+            if (searchFormData.difficultyLevel) params.difficultyLevel = searchFormData.difficultyLevel;
+            if (searchFormData.tags) params.tags = searchFormData.tags;
+            if (searchFormData.isActive !== null && searchFormData.isActive !== '') {
+              params.isActive = searchFormData.isActive === 'true';
+            }
+            await loadSentenceRus(params, newPage, pageSize);
+          }}
+          onPageSizeChange={async (newPageSize: number) => {
+            handlePageSizeChange(newPageSize);
+            const params: any = {};
+            if (searchFormData.name) params.name = searchFormData.name;
+            if (searchFormData.lang) params.lang = searchFormData.lang;
+            if (searchFormData.difficultyLevel) params.difficultyLevel = searchFormData.difficultyLevel;
+            if (searchFormData.tags) params.tags = searchFormData.tags;
+            if (searchFormData.isActive !== null && searchFormData.isActive !== '') {
+              params.isActive = searchFormData.isActive === 'true';
+            }
+            await loadSentenceRus(params, 0, newPageSize);
+          }}
           onSentenceRuAction={handleSentenceRuAction}
         />
       )}

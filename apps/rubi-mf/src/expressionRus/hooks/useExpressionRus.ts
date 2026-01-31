@@ -56,7 +56,7 @@ export const useExpressionRus = () => {
       hasInitiallyLoaded.current = true;
       loadExpressionRus();
     }
-  }, [loadExpressionRus]);
+  }, []);
 
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
