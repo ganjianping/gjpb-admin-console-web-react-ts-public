@@ -117,7 +117,6 @@ const SentenceRusPage: React.FC = () => {
           displayOrder: dialog.formData.displayOrder,
           isActive: dialog.formData.isActive,
           phoneticAudioFilename: dialog.formData.phoneticAudioFilename || "",
-          phoneticAudioUrl: dialog.formData.phoneticAudioUrl || "",
           phoneticAudioOriginalUrl: dialog.formData.phoneticAudioOriginalUrl || "",
         });
       }
@@ -172,7 +171,6 @@ const SentenceRusPage: React.FC = () => {
             displayOrder: dialog.formData.displayOrder,
             isActive: dialog.formData.isActive,
             phoneticAudioFilename: dialog.formData.phoneticAudioFilename || "",
-            phoneticAudioUrl: dialog.formData.phoneticAudioUrl || "",
             phoneticAudioOriginalUrl: dialog.formData.phoneticAudioOriginalUrl || "",
           },
         );
