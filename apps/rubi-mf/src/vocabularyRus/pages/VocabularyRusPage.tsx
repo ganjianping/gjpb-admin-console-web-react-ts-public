@@ -21,9 +21,9 @@ const VocabularyRusPage: React.FC = () => {
   const {
     allVocabularyRus,
     filteredVocabularyRus,
-    setFilteredVocabularyRus,
     pagination,
     loading,
+    pageSize,
     loadVocabularyRus,
     handlePageChange,
     handlePageSizeChange,
@@ -34,7 +34,6 @@ const VocabularyRusPage: React.FC = () => {
     handleSearchPanelToggle,
     handleSearchFormChange,
     handleClearSearch,
-    applyClientSideFiltersWithData,
   } = useVocabularyRuSearch(allVocabularyRus);
   const dialog = useVocabularyRuDialog();
   const [deleteTarget, setDeleteTarget] = React.useState<VocabularyRu | null>(
@@ -85,9 +84,16 @@ const VocabularyRusPage: React.FC = () => {
     dictionaryUrl: vocabularyRu.dictionaryUrl || "",
   });
 
-  const handleSearch = () => {
-    const filtered = applyClientSideFiltersWithData(searchFormData);
-    setFilteredVocabularyRus(filtered);
+  const handleSearch = async () => {
+    const params: any = {};
+    if (searchFormData.name) params.name = searchFormData.name;
+    if (searchFormData.lang) params.lang = searchFormData.lang;
+    if (searchFormData.difficultyLevel) params.difficultyLevel = searchFormData.difficultyLevel;
+    if (searchFormData.tags) params.tags = searchFormData.tags;
+    if (searchFormData.isActive !== null && searchFormData.isActive !== '') {
+      params.isActive = searchFormData.isActive === 'true';
+    }
+    await loadVocabularyRus(params, 0, pageSize);
   };
 
   const handleCreateVocabularyRu = () => {
@@ -346,8 +352,30 @@ const VocabularyRusPage: React.FC = () => {
         <VocabularyRuTable
           vocabularyRus={filteredVocabularyRus}
           pagination={pagination}
-          onPageChange={handlePageChange}
-          onPageSizeChange={handlePageSizeChange}
+          onPageChange={async (newPage: number) => {
+            handlePageChange(newPage);
+            const params: any = {};
+            if (searchFormData.name) params.name = searchFormData.name;
+            if (searchFormData.lang) params.lang = searchFormData.lang;
+            if (searchFormData.difficultyLevel) params.difficultyLevel = searchFormData.difficultyLevel;
+            if (searchFormData.tags) params.tags = searchFormData.tags;
+            if (searchFormData.isActive !== null && searchFormData.isActive !== '') {
+              params.isActive = searchFormData.isActive === 'true';
+            }
+            await loadVocabularyRus(params, newPage, pageSize);
+          }}
+          onPageSizeChange={async (newPageSize: number) => {
+            handlePageSizeChange(newPageSize);
+            const params: any = {};
+            if (searchFormData.name) params.name = searchFormData.name;
+            if (searchFormData.lang) params.lang = searchFormData.lang;
+            if (searchFormData.difficultyLevel) params.difficultyLevel = searchFormData.difficultyLevel;
+            if (searchFormData.tags) params.tags = searchFormData.tags;
+            if (searchFormData.isActive !== null && searchFormData.isActive !== '') {
+              params.isActive = searchFormData.isActive === 'true';
+            }
+            await loadVocabularyRus(params, 0, newPageSize);
+          }}
           onVocabularyRuAction={handleVocabularyRuAction}
         />
       )}
