@@ -45,7 +45,7 @@ const LoginPage = () => {
     enableSystemPreferenceSync: true,
     enableDebugging: true 
   });
-  // Resolve Vite base at runtime so assets load correctly when app is served under a subpath (e.g. /admin/)
+  // Resolve Vite base at runtime so assets load correctly when app is served under a subpath (e.g. /blog-admin/)
   const __baseUrl = (import.meta as any).env?.BASE_URL ?? '/';
   
   // Get the intended destination from location state
